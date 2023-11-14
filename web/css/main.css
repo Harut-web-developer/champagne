@@ -1,0 +1,103 @@
+.logoLoc{
+    padding-left: 1rem !important;
+}
+.dashboardName > img{
+    margin-right: 10px !important;
+    width: 35px !important;
+}
+.dashboardName{
+    font-size: 1.5em;
+    /* margin: 0px auto; */
+    width: 75%;
+    display: flex;
+    justify-content: center;
+}
+.dashboardName > i{
+    font-size: 1.3em;
+}
+.app-brand-logo > img{
+    width: 50px;
+    height: auto;
+}
+.app-brand-text{
+    text-transform: capitalize !important;
+}
+.formDesign{
+    display: flex;
+    flex-wrap: wrap;
+}
+.warehouseName{
+    padding: 0px 10px;
+}
+.warehouseType{
+    padding: 0px 10px;
+}
+.clientName{
+    padding: 0px 10px;
+}
+.clientLocation{
+    padding: 0px 10px;
+}
+.clientPhone{
+    padding: 0px 10px;
+}
+.nomenclatureName{
+    padding: 0px 10px;
+}
+.nomenclaturePrice{
+    padding: 0px 10px;
+}
+.usersName{
+    padding: 0px 10px;
+}
+.usersUsername{
+    padding: 0px 10px;
+}
+.usersRole{
+     padding: 0px 10px;
+ }
+.loguser{
+    padding: 0px 10px;
+}
+.logAction{
+    padding: 0px 10px;
+}
+.logDate{
+     padding: 0px 10px;
+ }
+.usersPassword{
+    padding: 0px 10px;
+}
+.table > thead > tr > th{
+    text-align: center ;
+}
+.table > tbody > tr > td{
+    text-align: center ;
+}
+.layout-page{
+    background: darkgrey;
+}
+.card{
+    padding: 20px;
+}
+.ordersName{
+    padding: 0px 10px;
+}
+.ordersTotalPrice{
+    padding: 0px 10px;
+}
+.ordersTotalCount{
+    padding: 0px 10px;
+}
+.productsWarehouse{
+    padding: 0px 10px;
+}
+.productsNomenclature{
+    padding: 0px 10px;
+}
+.productsCount{
+    padding: 0px 10px;
+}
+.productsPrice{
+    padding: 0px 10px;
+}
