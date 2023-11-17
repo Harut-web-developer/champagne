@@ -21,7 +21,6 @@ class AppAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'css/site.css',
-        'css/main.css',
     ];
     public $js = [
         '/js/helpers.js',
@@ -34,6 +33,7 @@ class AppAsset extends AssetBundle
         '/js/jquery.js',
         '/js/perfect-scrollbar.js',
         '/js/popper.js',
+        '/js/script.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

@@ -49,4 +49,7 @@ class Warehouse extends \yii\db\ActiveRecord
             'updated_at' => 'Updated At',
         ];
     }
+    public function getDefaultTitle(){
+        return CustomfieldsBlocksTitle::findOne(['id'=>1]);
+    }
 }

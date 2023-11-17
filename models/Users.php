@@ -121,5 +121,8 @@ class Users extends ActiveRecord implements IdentityInterface
     public function getRoleName(){
         return $this->hasOne(Roles::className(), ['id'=>'role_id']);
     }
+    public function getDefaultTitle(){
+        return CustomfieldsBlocksTitle::findOne(['id'=>18]);
+    }
 
 }

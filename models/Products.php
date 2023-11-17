@@ -62,4 +62,7 @@ class Products extends \yii\db\ActiveRecord
     public function getNomenclatureName(){
         return $this->hasOne(Nomenclature::className(), ['id'=>'nomenclature_id']);
     }
+    public function getDefaultTitle(){
+        return CustomfieldsBlocksTitle::findOne(['id'=>10]);
+    }
 }

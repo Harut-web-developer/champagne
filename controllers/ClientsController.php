@@ -26,9 +26,6 @@ class ClientsController extends Controller
         } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
             return $this->actionLogin();
         }
-//        else if ($action->id == 'forgot-password'){
-//            return  $this->redirect('site/forgot-password');
-//        }
         if(!$session['username']){
             $this->redirect('/site/logout');
         }
@@ -96,7 +93,11 @@ class ClientsController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
-                return $this->redirect(['index', 'id' => $model->id]);
+            $_POST['item_id'] = $model->id;
+            if($post['newblocks'] || $post['new_fild_name']){
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
+                return $this->redirect(['create', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -125,7 +126,11 @@ class ClientsController extends Controller
             $model->phone = $post['Clients']['phone'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
-            return $this->redirect(['index', 'id' => $model->id]);
+            $_POST['item_id'] = $model->id;
+            if($post['newblocks'] || $post['new_fild_name']){
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
+            return $this->redirect(['create', 'id' => $model->id]);
         }
         return $this->render('update', [
             'model' => $model,

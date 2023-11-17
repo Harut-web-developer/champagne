@@ -1,7 +1,7 @@
 <?php
 
 namespace app\controllers;
-
+use Yii;
 use app\models\Nomenclature;
 use app\models\Products;
 use app\models\ProductsSearch;
@@ -81,7 +81,11 @@ class ProductsController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
-                return $this->redirect(['index', 'id' => $model->id]);
+            $_POST['item_id'] = $model->id;
+            if($post['newblocks'] || $post['new_fild_name']){
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
+                return $this->redirect(['create', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -116,7 +120,11 @@ class ProductsController extends Controller
             $model->price = $post['Products']['price'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
-            return $this->redirect(['index', 'id' => $model->id]);
+            $_POST['item_id'] = $model->id;
+            if($post['newblocks'] || $post['new_fild_name']){
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
+            return $this->redirect(['create', 'id' => $model->id]);
         }
         $warehouse = Warehouse::find()->select('id,name')->asArray()->all();
         $warehouse = ArrayHelper::map($warehouse,'id','name');

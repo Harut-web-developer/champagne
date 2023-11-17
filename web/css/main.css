@@ -74,9 +74,7 @@
 .table > tbody > tr > td{
     text-align: center ;
 }
-.layout-page{
-    background: darkgrey;
-}
+
 .card{
     padding: 20px;
 }
@@ -100,4 +98,119 @@
 }
 .productsPrice{
     padding: 0px 10px;
+}
+.only-active{
+    display:none;
+}
+.default-panel{
+    border-radius:20px;
+    border:1px solid #cfcfcf;
+    padding:20px;
+    position:relative;
+    margin:20px;
+}
+.panel-title{
+    position:absolute;
+    top:-20px;
+    left:40px;
+    font-size:22px;
+    display:flex;
+    background:#fff;
+}
+.create-block{
+    margin-left:15px;
+}
+.non-active{
+    border:0px;
+    pointer-events: none;
+}
+.el-active{
+    border:1px solid #cfcfcf;
+    pointer-events: inherit;
+}
+.actions button{
+    background:none;
+    border:0px;
+
+}
+.new-panel,.default-panel{
+    position:relative;
+    margin-top:40px;
+    min-height:200px;
+}
+.actions > .dropdown-list{
+    padding:15px;
+    list-style-type:none;
+    min-width:100px;
+    max-width:300px;
+    min-height:auto;
+    border:1px solid #cfcfcf;
+    border-radius:20px;
+    font-size:1.1em;
+    display:none;
+    position:absolute;
+    background: white;
+    z-index: 1;
+
+}
+.actions > .dropdown-menu{
+    padding:5px;
+    width: 320px;
+}
+.actions > .dropdown-menu li{
+    padding:5px;
+    padding-bottom:15px;
+    cursor:pointer;
+    text-align:center;
+    margin-bottom:5px;
+    border-bottom:1px solid #ccc;
+}
+.add_list_item{
+    cursor:pointer !important;
+    font-size:22px !important;
+}
+.remove-field{
+    position:absolute;
+    right:5px;
+    top: calc(50% - 25px);
+}
+.remove-field-new{
+    position:absolute;
+    right:5px;
+    top: calc(60% - 25px);
+}
+.new-field{
+    border:1px solid #ccc;
+    border-radius:5px;
+    position:relative;
+    padding:10px;
+    padding-right:50px;
+    margin-bottom:20px;
+}
+
+.bx-trash{
+    font-size:40px;
+    cursor:pointer;
+}
+.new-field input,.new-field select,.new-field textarea{
+    width:100%;
+    border:1px solid #ccc;
+    padding:5px;
+    border-radius:3px;
+    margin-bottom:10px;
+}
+.dropdown-menu li span{
+    font-size:14px;
+}
+.active-dropdown{
+    display: block;
+}
+.createable-panel,.edite-block-title-save,.edite-block-title-save-new-field{
+    display:none;
+}
+.edite-block-trash-new > i{
+    font-size:18px;
+}
+.edite-block-trash > i{
+    font-size:18px;
 }
