@@ -97,11 +97,91 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
             <?php } ?>
         </div>
         <button class="btn btn-default btn-sm create-block" type="button">Create Block</button>
+        <div class="default-panel">
+            <div class="panel-title premission">
+                <span class="non-active">Premissions</span>
+            </div>
+            <div class="premission-content">
+                <div class="premission-content-items">
+                    <span class="items-title">warehouse create</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">warehouse update</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">warehouse delete</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">clients create</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">clients update</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">clients delete</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">nomenclature create</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">nomenclature update</span>
+                    <input type="checkbox" name="">
+                </div>
+
+                <div class="premission-content-items">
+                    <span class="items-title">nomenclature delete</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">users create</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">users update</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">users delete</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">products create</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">products update</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">products delete</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">orders create</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">orders update</span>
+                    <input type="checkbox" name="">
+                </div>
+                <div class="premission-content-items">
+                    <span class="items-title">orders delete</span>
+                    <input type="checkbox" name="">
+                </div>
+            </div>
+        </div>
         <div class="card-footer">
             <?= Html::submitButton('Save', ['class' => 'btn rounded-pill btn-secondary']) ?>
         </div>
-
         <?php ActiveForm::end(); ?>
+
         <div class="default-panel createable-panel new-panel" data-page="users">
             <div class="panel-title">
                 <span class="non-active">NEW BLOCK</span>
