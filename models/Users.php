@@ -119,4 +119,8 @@ class Users extends ActiveRecord implements IdentityInterface
         }
     }
 
+    public function getRoleName(){
+        return $this->hasOne(Roles::className(), ['id'=>'role_id']);
+    }
+
 }

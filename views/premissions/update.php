@@ -3,20 +3,21 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\Users $model */
+/** @var app\models\Premissions $model */
 
-$this->title = 'Update Users: ' . $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
+$this->title = 'Update Premissions: ' . $model->name;
+$this->params['breadcrumbs'][] = ['label' => 'Premissions', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="users-update">
+<div class="premissions-update">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,
         'roles' => $roles,
+
     ]) ?>
 
 </div>

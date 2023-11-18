@@ -2,42 +2,20 @@
 
 namespace app\controllers;
 
-
-use Yii;
-use app\models\Users;
-use app\models\UsersSearch;
 use app\models\Roles;
-use yii\helpers\ArrayHelper;
+use app\models\RolesSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * UsersController implements the CRUD actions for Users model.
+ * RolesController implements the CRUD actions for Roles model.
  */
-class UsersController extends Controller
+class RolesController extends Controller
 {
     /**
      * @inheritDoc
      */
-    public function beforeAction($action)
-    {
-        $session = Yii::$app->session;
-        if ($action->id !== 'login' && !(isset($session['user_id']) && $session['logged'])) {
-            return $this->redirect(['site/login']);
-        } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
-            return $this->actionLogin();
-        }
-//        else if ($action->id == 'forgot-password'){
-//            return  $this->redirect('site/forgot-password');
-//        }
-        if(!$session['username']){
-            $this->redirect('/site/logout');
-        }
-        return parent::beforeAction($action);
-
-    }
-
     public function behaviors()
     {
         return array_merge(
@@ -54,13 +32,13 @@ class UsersController extends Controller
     }
 
     /**
-     * Lists all Users models.
+     * Lists all Roles models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new UsersSearch();
+        $searchModel = new RolesSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -70,7 +48,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Displays a single Users model.
+     * Displays a single Roles model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -83,38 +61,34 @@ class UsersController extends Controller
     }
 
     /**
-     * Creates a new Users model.
+     * Creates a new Roles model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Users();
+        $model = new Roles();
+
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-            $model->name = $post['Users']['name'];
-            $model->username = $post['Users']['username'];
-            $model->role_id = $post['Users']['role_id'];
-            $model->auth_key = $this->generateRandomString();
-            $model->password = $post['Users']['password'];
+            $model->name = $post['Roles']['name'];
+            $model->access = intval($post['Roles']['access']);
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
-            $model->save(false);
+            $model->save();
                 return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
-        $roles = Roles::find()->select('id,name')->asArray()->all();
-        $roles = ArrayHelper::map($roles,'id','name');
+
         return $this->render('create', [
             'model' => $model,
-            'roles' => $roles,
         ]);
     }
 
     /**
-     * Updates an existing Users model.
+     * Updates an existing Roles model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -127,26 +101,20 @@ class UsersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-            $model->name = $post['Users']['name'];
-            $model->username = $post['Users']['username'];
-            $model->role_id = $post['Users']['role_id'];
-            $model->auth_key = $this->generateRandomString();
-            $model->password = $post['Users']['password'];
+            $model->name = $post['Roles']['name'];
+            $model->access = intval($post['Roles']['access']);
             $model->updated_at = date('Y-m-d H:i:s');
-            $model->save(false);
+            $model->save();
             return $this->redirect(['index', 'id' => $model->id]);
         }
 
-        $roles = Roles::find()->select('id,name')->asArray()->all();
-        $roles = ArrayHelper::map($roles,'id','name');
         return $this->render('update', [
             'model' => $model,
-            'roles' => $roles,
         ]);
     }
 
     /**
-     * Deletes an existing Users model.
+     * Deletes an existing Roles model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -154,34 +122,25 @@ class UsersController extends Controller
      */
     public function actionDelete($id)
     {
-        $users = Users::findOne($id);
-        $users->status = '0';
-        $users->save();
+        $roles = Roles::findOne($id);
+        $roles->status = '0';
+        $roles->save();
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Users model based on its primary key value.
+     * Finds the Roles model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Users the loaded model
+     * @return Roles the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Users::findOne(['id' => $id])) !== null) {
+        if (($model = Roles::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
-    public function generateRandomString($length = 10) {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[random_int(0, $charactersLength - 1)];
-        }
-        return $randomString;
     }
 }

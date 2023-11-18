@@ -1,6 +1,6 @@
 <?php
 
-use app\models\Users;
+use app\models\Roles;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -8,16 +8,16 @@ use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var app\models\UsersSearch $searchModel */
+/** @var app\models\RolesSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Users';
+$this->title = 'Roles';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="users-index">
+<div class="roles-index">
     <h1><?= Html::encode($this->title) ?></h1>
     <p>
-        <?= Html::a('Create Users', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+        <?= Html::a('Create Roles', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
     </p>
     <div class="card">
     <?= GridView::widget([
@@ -25,24 +25,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'name',
-            'username',
-            [
-                'attribute' => 'Role',
-                'value' => function ($model) {
-                    if ($model->roleName) {
-                        return $model->roleName->name;
-                    } else {
-                        return 'empty';
-                    }
-                }
-            ],
+            'access',
             [
                 'header' => 'Actions',
                 'class' => ActionColumn::className(),
                 'template' => '{update} {delete}',
-                'urlCreator' => function ($action, Users $model, $key, $index, $column) {
+                'urlCreator' => function ($action, Roles $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                }
             ],
         ],
         'dataProvider' => new ActiveDataProvider([
@@ -52,5 +42,6 @@ $this->params['breadcrumbs'][] = $this->title;
 //                ],
         ]),
     ]); ?>
-    </div>
+
+
 </div>

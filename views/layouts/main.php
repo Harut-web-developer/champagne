@@ -108,6 +108,16 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                                 <div data-i18n="Analytics">Log</div>
                             </a>
                         </li>
+                        <li class="menu-item ">
+                            <a href="/roles" class="menu-link">
+                                <div data-i18n="Analytics">Roles</div>
+                            </a>
+                        </li>
+                        <li class="menu-item ">
+                            <a href="/premissions" class="menu-link">
+                                <div data-i18n="Analytics">Premissions</div>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
