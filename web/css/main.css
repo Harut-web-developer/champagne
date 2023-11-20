@@ -219,7 +219,12 @@
 }
 .premission-content{
     display:flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+}
+.rows-checkbox{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
 }
 .premission-content-items{
     /*display:flex;*/
