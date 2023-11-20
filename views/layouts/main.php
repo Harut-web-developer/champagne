@@ -35,6 +35,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     <link rel="stylesheet" href="/css/demo.css">
     <link rel="stylesheet" href="/css/perfect-scrollbar.css">
     <link rel="stylesheet" href="/css/apex-charts.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <?= Html::csrfMetaTags() ?>
 </head>
 <body>
 <?php $this->beginBody() ?>

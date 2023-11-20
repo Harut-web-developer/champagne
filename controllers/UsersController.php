@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 
+use app\models\UserPremissions;
 use Yii;
 use app\models\Users;
 use app\models\UsersSearch;
@@ -28,9 +29,6 @@ class UsersController extends Controller
         } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
             return $this->actionLogin();
         }
-//        else if ($action->id == 'forgot-password'){
-//            return  $this->redirect('site/forgot-password');
-//        }
         if(!$session['username']){
             $this->redirect('/site/logout');
         }
@@ -93,6 +91,7 @@ class UsersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+
             $model->name = $post['Users']['name'];
             $model->username = $post['Users']['username'];
             $model->role_id = $post['Users']['role_id'];
@@ -101,7 +100,21 @@ class UsersController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
-                return $this->redirect(['index', 'id' => $model->id]);
+            $_POST['item_id'] = $model->id;
+            if($post['newblocks'] || $post['new_fild_name']){
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
+            if(!empty($post['premission'])){
+                for ($i = 0; $i < count($post['premission']);$i++){
+                    $premission = new UserPremissions();
+                    $premission->user_id = $model->id;
+                    $premission->premission_id = $post['premission'][$i];
+                    $premission->created_at = date('Y-m-d H:i:s');
+                    $premission->updated_at = date('Y-m-d H:i:s');
+                    $premission->save(false);
+                }
+            }
+                return $this->redirect(['create', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -134,7 +147,11 @@ class UsersController extends Controller
             $model->password = $post['Users']['password'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
-            return $this->redirect(['index', 'id' => $model->id]);
+            $_POST['item_id'] = $model->id;
+            if($post['newblocks'] || $post['new_fild_name']){
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
+            return $this->redirect(['create', 'id' => $model->id]);
         }
 
         $roles = Roles::find()->select('id,name')->asArray()->all();

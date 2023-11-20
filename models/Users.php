@@ -122,5 +122,18 @@ class Users extends ActiveRecord implements IdentityInterface
     public function getRoleName(){
         return $this->hasOne(Roles::className(), ['id'=>'role_id']);
     }
+    public static function checkPremission($premission){
+         $session = Yii::$app->session;
+         $have_access = false;
+
+         $userPrem = UserPremissions::findOne(['user_id'=>$session->get('user_id'),'premission_id'=>$premission]);
+         if($userPrem){
+             $have_access = true;
+         }
+         return  $have_access;
+    }
+    public function getDefaultTitle(){
+        return CustomfieldsBlocksTitle::findOne(['id'=>18]);
+    }
 
 }

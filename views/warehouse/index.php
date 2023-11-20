@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Users;
 use app\models\Warehouse;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
@@ -13,11 +14,21 @@ use yii\grid\GridView;
 
 $this->title = 'Warehouses';
 $this->params['breadcrumbs'][] = $this->title;
+$have_access_create = Users::checkPremission(1);
+$have_access_update = Users::checkPremission(2);
+if ($have_access_update){
+    $actions_ = '{update} {delete}';
+} else {
+    $actions_ = '{delete}';
+}
+
 ?>
 <div class="warehouse-index">
     <h1><?= Html::encode($this->title) ?></h1>
     <p>
-        <?= Html::a('Create Warehouse', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+        <?php if($have_access_create){ ?>
+          <?= Html::a('Create Warehouse', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+        <?php } ?>
     </p>
     <div class="card">
         <?= GridView::widget([
@@ -30,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                      'header' => 'Actions',
                     'class' => ActionColumn::className(),
-                    'template' => '{update} {delete}',
+                    'template' => $actions_,
                     'urlCreator' => function ($action, Warehouse $model, $key, $index, $column) {
                         return Url::toRoute([$action, 'id' => $model->id]);
                     }

@@ -57,6 +57,11 @@ class WarehouseController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(3);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+
         $searchModel = new WarehouseSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -86,16 +91,25 @@ class WarehouseController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(1);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new Warehouse();
         if ($this->request->isPost) {
-            date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            date_default_timezone_set('Asia/Yerevan');
+
             $model->name = $post['Warehouse']['name'];
             $model->type = $post['Warehouse']['type'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
-            return $this->redirect(['index', 'id' => $model->id]);
+            $_POST['item_id'] = $model->id;
+            if($post['newblocks'] || $post['new_fild_name']){
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
+            return $this->redirect(['create', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -113,6 +127,10 @@ class WarehouseController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(2);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost) {
@@ -122,7 +140,12 @@ class WarehouseController extends Controller
             $model->type = $post['Warehouse']['type'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
-            return $this->redirect(['index', 'id' => $model->id]);
+            $_POST['item_id'] = $model->id;
+
+            if($post['newblocks'] || $post['new_fild_name']){
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
+            return $this->redirect(['create', 'id' => $model->id]);
         }
 
         return $this->render('update', [

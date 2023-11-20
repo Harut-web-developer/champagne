@@ -6,36 +6,38 @@ use app\models\CustomfieldsBlocksTitle;
 use app\models\CustomfieldsBlocksInputs;
 
 /** @var yii\web\View $this */
-/** @var app\models\Users $model */
+/** @var app\models\Clients $model */
 /** @var yii\widgets\ActiveForm $form */
-$blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>1])->orderBy(['order_number'=>SORT_ASC])->all();
-
+$blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'clients','block_type'=>1])->orderBy(['order_number'=>SORT_ASC])->all();
+$req = true;
+if(isset($action__)){
+    $req = false;
+}
 ?>
-<div class="users-form">
+
+
+<div class="clients-form">
     <div class="card card-primary">
         <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
         <div class="dinamic-form">
-            <input type="hidden" name="page" value="users">
-            <div class="default-panel" data-id="1" data-page="users">
+            <input type="hidden" name="page" value="clients">
+            <div class="default-panel" data-id="17" data-page="clients">
                 <div class="panel-title">
                     <span class="non-active"><?=$model->DefaultTitle->title?></span>
                     <input type="text" name="newblocks[<?php echo $model->DefaultTitle->id;?>]" value="<?=$model->DefaultTitle->title?>"  class="only-active form-control">
                     <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
                     <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 usersName">
-                    <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => true]) ?>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 clientName">
+                    <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => $req]) ?>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 usersUsername">
-                    <?= $form->field($model, 'username')->textInput(['maxlength' => true,'required' => true]) ?>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 clientLocation">
+                    <?= $form->field($model, 'location')->textInput(['maxlength' => true,'required' => $req]) ?>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 usersUsername">
-                    <?= $form->field($model, 'role_id')->dropDownList($roles,['required' => true]) ?>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 clientPhone">
+                    <?= $form->field($model, 'phone')->input('number',['required' => $req]) ?>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 usersPassword">
-                    <?= $form->field($model, 'password')->passwordInput(['required' => true]) ?>
-                </div>
-                <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>1])->all(); ?>
+                <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>17])->all(); ?>
                 <?php if(!empty($fields)){ ?>
                     <?php foreach ($fields as $fild => $fild_simple){ ?>
                         <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
@@ -61,7 +63,7 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
             </div>
             <?php if(!empty($blocks)){ ?>
                 <?php foreach ($blocks as $block => $block_val){ ?>
-                    <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="users">
+                    <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="clients">
                         <div class="panel-title">
                             <span class="non-active"><?=$block_val->title?></span>
                             <input type="text" name="newblocks[<?php echo $block_val->id;?>]" value="<?=$block_val->title?>"  class="only-active form-control">
@@ -72,7 +74,7 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                         <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->all(); ?>
                         <?php if(!empty($fields)){ ?>
                             <?php foreach ($fields as $fild => $fild_simple){ ?>
-                                <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
+                                <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id,false);?>
                             <?php } ?>
                         <?php } ?>
                         <div class="actions">
@@ -97,97 +99,12 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
             <?php } ?>
         </div>
         <button class="btn btn-default btn-sm create-block" type="button">Create Block</button>
-        <div class="default-panel">
-            <div class="panel-title premission">
-                <span class="non-active">Premissions</span>
-            </div>
-            <div class="premission-content">
-                <div class="rows-checkbox">
-                    <div class="premission-content-items">
-                        <span class="items-title">warehouse create</span>
-                        <input type="checkbox" value="1" name="premission[]">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">warehouse update</span>
-                        <input type="checkbox" value="2" name="premission[]">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">warehouse delete</span>
-                        <input type="checkbox" name="wd">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">clients create</span>
-                        <input type="checkbox" name="cc">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">clients update</span>
-                        <input type="checkbox" name="cu">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">clients delete</span>
-                        <input type="checkbox" name="cd">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">nomenclature create</span>
-                        <input type="checkbox" name="nc">
-                    </div>
-                </div>
-                <div class="rows-checkbox">
-                    <div class="premission-content-items">
-                        <span class="items-title">nomenclature update</span>
-                        <input type="checkbox" name="nu">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">nomenclature delete</span>
-                        <input type="checkbox" name="nd">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">users create</span>
-                        <input type="checkbox" name="uc">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">users update</span>
-                        <input type="checkbox" name="uu">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">users delete</span>
-                        <input type="checkbox" name="ud">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">products create</span>
-                        <input type="checkbox" name="pc">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">products update</span>
-                        <input type="checkbox" name="pu">
-                    </div>
-                </div>
-                <div class="rows-checkbox">
-                    <div class="premission-content-items">
-                        <span class="items-title">products delete</span>
-                        <input type="checkbox" name="pd">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">orders create</span>
-                        <input type="checkbox" name="oc">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">orders update</span>
-                        <input type="checkbox" name="ou">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">orders delete</span>
-                        <input type="checkbox" name="od">
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="card-footer">
             <?= Html::submitButton('Save', ['class' => 'btn rounded-pill btn-secondary']) ?>
         </div>
-        <?php ActiveForm::end(); ?>
 
-        <div class="default-panel createable-panel new-panel" data-page="users">
+        <?php ActiveForm::end(); ?>
+        <div class="default-panel createable-panel new-panel" data-page="clients">
             <div class="panel-title">
                 <span class="non-active">NEW BLOCK</span>
                 <input type="text"  value="NEW BLOCK" name="newblocks[]" class="only-active form-control">
@@ -215,3 +132,5 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
         </div>
     </div>
 </div>
+
+
