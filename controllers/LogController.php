@@ -58,6 +58,10 @@ class LogController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(28);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $searchModel = new LogSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -87,6 +91,10 @@ class LogController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(25);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new Log();
 
         if ($this->request->isPost) {
@@ -113,6 +121,10 @@ class LogController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(26);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
@@ -135,6 +147,10 @@ class LogController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(27);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $log = Log::findOne($id);
         $log->status = '0';
         $log->save();

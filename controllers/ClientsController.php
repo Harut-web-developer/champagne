@@ -53,6 +53,10 @@ class ClientsController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(8);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $searchModel = new ClientsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -82,6 +86,10 @@ class ClientsController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(5);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new Clients();
 
         if ($this->request->isPost) {
@@ -134,6 +142,10 @@ class ClientsController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(6);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost) {
@@ -164,6 +176,10 @@ class ClientsController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(7);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $clients = Clients::findOne($id);
         $clients->status = '0';
         $clients->save();

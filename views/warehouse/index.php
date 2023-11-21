@@ -16,10 +16,35 @@ $this->title = 'Warehouses';
 $this->params['breadcrumbs'][] = $this->title;
 $have_access_create = Users::checkPremission(1);
 $have_access_update = Users::checkPremission(2);
-if ($have_access_update){
-    $actions_ = '{update} {delete}';
-} else {
-    $actions_ = '{delete}';
+$have_access_delete = Users::checkPremission(3);
+$action_column = [];
+if ($have_access_update && $have_access_delete){
+    $action_column[] = [
+        'header' => 'Actions',
+        'class' => ActionColumn::className(),
+        'template' => '{update} {delete}',
+        'urlCreator' => function ($action, Warehouse $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+} else if($have_access_update){
+    $action_column[] = [
+        'header' => 'Actions',
+        'class' => ActionColumn::className(),
+        'template' => '{update}',
+        'urlCreator' => function ($action, Warehouse $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}else if($have_access_delete){
+    $action_column[] = [
+        'header' => 'Actions',
+        'class' => ActionColumn::className(),
+        'template' => '{delete}',
+        'urlCreator' => function ($action, Warehouse $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
 }
 
 ?>
@@ -32,27 +57,18 @@ if ($have_access_update){
     </p>
     <div class="card">
         <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-        //        'filterModel' => $searchModel,
-            'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
-                    'name',
-                    'type',
-                [
-                     'header' => 'Actions',
-                    'class' => ActionColumn::className(),
-                    'template' => $actions_,
-                    'urlCreator' => function ($action, Warehouse $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id' => $model->id]);
-                    }
-                ],
-            ],
             'dataProvider' => new ActiveDataProvider([
                 'query' => $dataProvider->query->andWhere(['status' => '1']),
 //                'pagination' => [
 //                    'pageSize' => 20,
 //                ],
             ]),
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                    'name',
+                    'type',
+                    ...$action_column,
+            ],
         ]); ?>
     </div>
 </div>

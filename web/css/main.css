@@ -219,8 +219,7 @@
 }
 .premission-content{
     display:flex;
-    flex-direction:column;
-    /*flex-wrap: wrap;*/
+    flex-direction: column;
 }
 .rows-checkbox{
     display: flex;
@@ -235,5 +234,7 @@
     float: right;
     color:gray !important;
     font-size:25px;
-
+}
+.addOrders{
+    margin-top:35px;
 }

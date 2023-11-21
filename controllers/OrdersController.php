@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\Clients;
+use app\models\Nomenclature;
 use app\models\Orders;
 use app\models\OrdersSearch;
 use app\models\Users;
@@ -40,6 +42,10 @@ class OrdersController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(24);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $searchModel = new OrdersSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -69,12 +75,17 @@ class OrdersController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(21);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new Orders();
 
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
             $model->user_id = $post['Orders']['user_id'];
+            $model->clients_id = $post['Orders']['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
             $model->total_count = $post['Orders']['total_count'];
             $model->created_at = date('Y-m-d H:i:s');
@@ -84,11 +95,20 @@ class OrdersController extends Controller
         } else {
             $model->loadDefaultValues();
         }
+//        echo "<pre>";
+
+        $nomenclatures = Nomenclature::find()
+            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+            ->asArray()->all();
+        $clients = Clients::find()->select('id, name')->asArray()->all();
+        $clients = ArrayHelper::map($clients,'id','name');
         $users = Users::find()->select('id, name')->asArray()->all();
         $users = ArrayHelper::map($users,'id','name');
         return $this->render('create', [
             'model' => $model,
             'users' => $users,
+            'clients' => $clients,
+            'nomenclatures' => $nomenclatures
         ]);
     }
 
@@ -101,6 +121,10 @@ class OrdersController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(22);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost) {
@@ -130,6 +154,10 @@ class OrdersController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(23);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $orders = Orders::findOne($id);
         $orders->status = '0';
         $orders->save();

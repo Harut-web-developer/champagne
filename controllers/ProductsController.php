@@ -1,6 +1,7 @@
 <?php
 
 namespace app\controllers;
+use app\models\Users;
 use Yii;
 use app\models\Nomenclature;
 use app\models\Products;
@@ -41,6 +42,10 @@ class ProductsController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(20);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $searchModel = new ProductsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -70,6 +75,10 @@ class ProductsController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(17);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new Products();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
@@ -128,6 +137,10 @@ class ProductsController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(18);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost) {
@@ -165,6 +178,10 @@ class ProductsController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(19);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $products = Products::findOne($id);
         $products->status = '0';
         $products->save();

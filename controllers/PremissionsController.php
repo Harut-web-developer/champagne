@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Premissions;
 use app\models\PremissionsSearch;
 use app\models\Roles;
+use app\models\Users;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -40,6 +41,10 @@ class PremissionsController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(36);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $searchModel = new PremissionsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -69,6 +74,10 @@ class PremissionsController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(33);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new Premissions();
 
         if ($this->request->isPost) {
@@ -100,6 +109,10 @@ class PremissionsController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(34);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost) {
@@ -128,6 +141,10 @@ class PremissionsController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(35);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $premissions = Premissions::findOne($id);
         $premissions->status = '0';
         $premissions->save();
