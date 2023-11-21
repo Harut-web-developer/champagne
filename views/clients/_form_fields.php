@@ -74,7 +74,7 @@ if(isset($action__)){
                         <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->all(); ?>
                         <?php if(!empty($fields)){ ?>
                             <?php foreach ($fields as $fild => $fild_simple){ ?>
-                                <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
+                                <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id,false);?>
                             <?php } ?>
                         <?php } ?>
                         <div class="actions">

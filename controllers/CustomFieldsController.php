@@ -78,7 +78,8 @@ class CustomFieldsController extends Controller
         if ($this->request->isPost) {
             $post = $this->request->post();
 
-            if(count($post['newblocks']) > 1){
+            if(count($post['newblocks']) >= 1){
+
                 foreach ($post['newblocks'] as $newBlock => $block_val){
                     $model = CustomfieldsBlocksTitle::findOne(['id'=>$newBlock,'page'=>$post['page']]);
                     if(!$model){
@@ -120,12 +121,13 @@ class CustomFieldsController extends Controller
                                            } else {
                                                $field_val__ = $post['new_fild_value'][$newBlock][$input_item][$i];
                                            }
-
-                                           $new_input_value = new CustomfieldsBlocksInputValues();
-                                           $new_input_value->input_id = $new_input->id;
-                                           $new_input_value->value_ = $field_val__;
-                                           $new_input_value->item_id = intval($_POST['item_id']);
-                                           $new_input_value->save(false);
+                                           if(isset($_POST['item_id'])) {
+                                               $new_input_value = new CustomfieldsBlocksInputValues();
+                                               $new_input_value->input_id = $new_input->id;
+                                               $new_input_value->value_ = $field_val__;
+                                               $new_input_value->item_id = intval($_POST['item_id']);
+                                               $new_input_value->save(false);
+                                           }
                                        } else {
                                            if(!empty($post['new_fild_value'][$newBlock][$input_item][$i])){
                                                for ($j = 0; $j < count($post['new_fild_value'][$newBlock][$input_item][$i]); $j++){
@@ -144,13 +146,10 @@ class CustomFieldsController extends Controller
                 }
 
                 if(!empty($post['CF'])){
-
                     foreach ($post['CF'] as $field_ => $field_val){
-
                         if(isset($_FILES['CF']['name'][$field_]) && $_FILES['CF']['name'][$field_]){
                             $uploaddir = 'uploads/cf/';
                             $uploadfile = $uploaddir .time().basename($_FILES['CF']['name'][$field_]);
-
                             if (move_uploaded_file($_FILES['CF']['tmp_name'][$field_], $uploadfile)) {
                                 $field_val = $uploadfile;
                             }

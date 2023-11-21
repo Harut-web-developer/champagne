@@ -2,10 +2,12 @@
 
 namespace app\controllers;
 
-use app\models\Roles;
+
+use app\models\UserPremissions;
 use Yii;
 use app\models\Users;
 use app\models\UsersSearch;
+use app\models\Roles;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -56,6 +58,10 @@ class UsersController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(16);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -85,6 +91,11 @@ class UsersController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(13);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+//        echo "<pre>";
         $model = new Users();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
@@ -97,6 +108,16 @@ class UsersController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
+            if(!empty($post['premission'])){
+                for ($i = 0; $i < count($post['premission']);$i++){
+                    $premission = new UserPremissions();
+                    $premission->user_id = $model->id;
+                    $premission->premission_id = intval($post['premission'][$i]);
+                    $premission->created_at = date('Y-m-d H:i:s');
+                    $premission->updated_at = date('Y-m-d H:i:s');
+                    $premission->save(false);
+                }
+            }
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
@@ -122,6 +143,10 @@ class UsersController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(14);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost) {
@@ -134,17 +159,31 @@ class UsersController extends Controller
             $model->password = $post['Users']['password'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
+            if(!empty($post['premission'])){
+                for ($i = 0; $i < count($post['premission']);$i++){
+                    $premission = new UserPremissions();
+                    $premission->user_id = $model->id;
+                    $premission->premission_id = intval($post['premission'][$i]);
+                    $premission->created_at = date('Y-m-d H:i:s');
+                    $premission->updated_at = date('Y-m-d H:i:s');
+                    $premission->save(false);
+                }
+            }
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
             return $this->redirect(['create', 'id' => $model->id]);
         }
+//echo "<pre>";
         $roles = Roles::find()->select('id,name')->asArray()->all();
         $roles = ArrayHelper::map($roles,'id','name');
+//        $user_premission_select = UserPremissions::find()->select('id,premission_id')->where(['user_id' => $id])->asArray()->all();
+//        $user_premission_select = array_column($user_premission_select,'premission_id');
         return $this->render('update', [
             'model' => $model,
             'roles' => $roles,
+//            'user_premission_select' => $user_premission_select
         ]);
     }
 
@@ -157,6 +196,10 @@ class UsersController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(15);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $users = Users::findOne($id);
         $users->status = '0';
         $users->save();

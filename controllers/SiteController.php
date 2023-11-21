@@ -26,35 +26,35 @@ class SiteController extends Controller
         } else if($action->id == 'login') {
             return $this->redirect('/warehouse');
         }
-        else if ($action->id === 'forgot-password'){
-            return  $this->redirect('site/forgot-password');
-        }
+//        else if ($action->id === 'forgot-password'){
+//            return  $this->redirect('site/forgot-password');
+//        }
         return parent::beforeAction($action);
     }
 
 
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
-        ];
-    }
+//    public function behaviors()
+//    {
+//        return [
+//            'access' => [
+//                'class' => AccessControl::class,
+//                'only' => ['logout'],
+//                'rules' => [
+//                    [
+//                        'actions' => ['logout'],
+//                        'allow' => true,
+//                        'roles' => ['@'],
+//                    ],
+//                ],
+//            ],
+//            'verbs' => [
+//                'class' => VerbFilter::class,
+//                'actions' => [
+//                    'logout' => ['post'],
+//                ],
+//            ],
+//        ];
+//    }
 
     /**
      * {@inheritdoc}

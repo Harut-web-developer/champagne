@@ -222,12 +222,19 @@
     flex-direction: column;
 }
 .rows-checkbox{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 .premission-content-items{
-    /*display:flex;*/
-    /*flex-direction:column;*/
     margin: 0px 10px 10px;
+}
+.right-btn{
+    margin-top:25px;
+    float: right;
+    color:gray !important;
+    font-size:25px;
+}
+.addOrders{
+    margin-top:35px;
 }

@@ -31,8 +31,8 @@ class Orders extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'total_price', 'total_count'], 'required'],
-            [['user_id', 'total_count'], 'integer'],
+            [['user_id','clients_id', 'total_price', 'total_count'], 'required'],
+            [['user_id','clients_id', 'total_count'], 'integer'],
             [['status'], 'string'],
             [['total_price'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
@@ -47,6 +47,7 @@ class Orders extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User',
+            'clients_id' => 'Clients',
             'status' => 'Status',
             'total_price' => 'Total Price',
             'total_count' => 'Total Count',
@@ -57,4 +58,7 @@ class Orders extends \yii\db\ActiveRecord
      public function getUsersName(){
         return $this->hasOne(Users::className(),['id' => 'user_id']);
      }
+    public function getClientsName(){
+        return $this->hasOne(Clients::className(),['id' => 'clients_id']);
+    }
 }

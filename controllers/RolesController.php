@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Roles;
 use app\models\RolesSearch;
+use app\models\Users;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -38,6 +39,10 @@ class RolesController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(32);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $searchModel = new RolesSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -67,6 +72,10 @@ class RolesController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(29);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new Roles();
 
         if ($this->request->isPost) {
@@ -96,6 +105,10 @@ class RolesController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(30);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost) {
@@ -122,6 +135,10 @@ class RolesController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(31);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $roles = Roles::findOne($id);
         $roles->status = '0';
         $roles->save();

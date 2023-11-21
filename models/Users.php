@@ -104,22 +104,32 @@ class Users extends ActiveRecord implements IdentityInterface
         return $this->getAuthKey() === $authKey;
     }
 
-    public static function checkUser($id){
-        $user = Users::findOne($id);
-        date_default_timezone_set('Asia/Yerevan');
-        $datetime_1 = $user->updated_at;
-        $datetime_2 = date('Y-m-d H:i:s');
-        $start_datetime = new \DateTime($datetime_1);
-        $diff = $start_datetime->diff(new \DateTime($datetime_2));
-        $total_minutes = $diff->i;
-        if($total_minutes > 1) {
-            return false;
-        } else {
-            return true;
-        }
-    }
+//    public static function checkUser($id){
+//        $user = Users::findOne($id);
+//        date_default_timezone_set('Asia/Yerevan');
+//        $datetime_1 = $user->updated_at;
+//        $datetime_2 = date('Y-m-d H:i:s');
+//        $start_datetime = new \DateTime($datetime_1);
+//        $diff = $start_datetime->diff(new \DateTime($datetime_2));
+//        $total_minutes = $diff->i;
+//        if($total_minutes > 1) {
+//            return false;
+//        } else {
+//            return true;
+//        }
+//    }
+
     public function getRoleName(){
         return $this->hasOne(Roles::className(), ['id'=>'role_id']);
+    }
+    public static function checkPremission($premission){
+         $session = Yii::$app->session;
+         $have_access = false;
+         $userPrem = UserPremissions::findOne(['user_id'=>$session->get('user_id'),'premission_id'=>$premission]);
+         if($userPrem){
+             $have_access = true;
+         }
+         return  $have_access;
     }
     public function getDefaultTitle(){
         return CustomfieldsBlocksTitle::findOne(['id'=>18]);

@@ -46,22 +46,28 @@ class CustomfieldsBlocksInputs extends \yii\db\ActiveRecord
             'type' => 'Type',
         ];
     }
-    public static function  createElement($element, $item_id){
+    public static function  createElement($element, $item_id, $values = true){
         if(empty($element)){
             return 'Cant create input';
         }
         $input_ = '<div class="new-field" data-field='.$element->id.'>';
-        $value = CustomfieldsBlocksInputValues::findOne(['input_id'=>$element->id,'item_id'=>$item_id]);
+        if($values) {
+            $value = CustomfieldsBlocksInputValues::findOne(['input_id' => $element->id, 'item_id' => $item_id]);
+            $type_ = 'data-name';
+        } else {
+            $value = false;
+            $type_ = 'name';
+        }
         $field_value = '';
         if($value){
             $field_value = $value->value_;
         }
         switch ($element->type){
             case 0:
-                $input_ .= '<label>'.$element->label.'</label><input type="number" value="'.$field_value.'" name="CF['.$element->id.']">';
+                $input_ .= '<label>'.$element->label.'</label><input type="number" value="'.$field_value.'" '.$type_.'="CF['.$element->id.']">';
                 break;
             case 1:
-                $input_ .= '<label>'.$element->label.'</label><input type="text" value="'.$field_value.'" name="CF['.$element->id.']">';
+                $input_ .= '<label>'.$element->label.'</label><input type="text" value="'.$field_value.'" '.$type_.'="CF['.$element->id.']">';
                 break;
             case 2:
                 $items = CustomfieldsBlocksSelectOptions::find()->where(['select_id'=>$element->id])->all();
@@ -75,19 +81,19 @@ class CustomfieldsBlocksInputs extends \yii\db\ActiveRecord
                         }
                     }
                 }
-                $input_ .= '<label>'.$element->label.'</label><select type="number"  name="CF['.$element->id.']">'.$item_options.'</select>';
+                $input_ .= '<label>'.$element->label.'</label><select type="number"  '.$type_.'="CF['.$element->id.']">'.$item_options.'</select>';
                 break;
             case 3:
-                $input_ .= '<label>'.$element->label.'</label><hr><img src="/'.$field_value.'" style="width:100px;"><input type="hidden" name="CF['.$element->id.']"> <input type="file" value="'.$field_value.'" name="CF['.$element->id.']">';
+                $input_ .= '<label>'.$element->label.'</label><hr><img src="/'.$field_value.'" style="width:100px;"><input type="hidden" '.$type_.'="CF['.$element->id.']"> <input type="file" value="'.$field_value.'" name="CF['.$element->id.']">';
                 break;
             case 4:
-                $input_ .= '<label>'.$element->label.'</label><textarea  name="CF['.$element->id.']">'.$field_value.'</textarea>';
+                $input_ .= '<label>'.$element->label.'</label><textarea  '.$type_.'="CF['.$element->id.']">'.$field_value.'</textarea>';
                 break;
             case 5:
-                $input_ .= '<label>'.$element->label.'</label><input type="date" value="'.$field_value.'" name="CF['.$element->id.']">';
+                $input_ .= '<label>'.$element->label.'</label><input type="date" value="'.$field_value.'" '.$type_.'="CF['.$element->id.']">';
                 break;
             case 6:
-                $input_ .= '<label>'.$element->label.'</label><input type="datetime-local" value="'.$field_value.'" name="CF['.$element->id.']">';
+                $input_ .= '<label>'.$element->label.'</label><input type="datetime-local" value="'.$field_value.'" '.$type_.'="CF['.$element->id.']">';
                 break;
 
         }

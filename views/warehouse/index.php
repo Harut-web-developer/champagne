@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Users;
 use app\models\Warehouse;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
@@ -13,35 +14,61 @@ use yii\grid\GridView;
 
 $this->title = 'Warehouses';
 $this->params['breadcrumbs'][] = $this->title;
+$have_access_create = Users::checkPremission(1);
+$have_access_update = Users::checkPremission(2);
+$have_access_delete = Users::checkPremission(3);
+$action_column = [];
+if ($have_access_update && $have_access_delete){
+    $action_column[] = [
+        'header' => 'Actions',
+        'class' => ActionColumn::className(),
+        'template' => '{update} {delete}',
+        'urlCreator' => function ($action, Warehouse $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+} else if($have_access_update){
+    $action_column[] = [
+        'header' => 'Actions',
+        'class' => ActionColumn::className(),
+        'template' => '{update}',
+        'urlCreator' => function ($action, Warehouse $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}else if($have_access_delete){
+    $action_column[] = [
+        'header' => 'Actions',
+        'class' => ActionColumn::className(),
+        'template' => '{delete}',
+        'urlCreator' => function ($action, Warehouse $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}
+
 ?>
 <div class="warehouse-index">
     <h1><?= Html::encode($this->title) ?></h1>
     <p>
-        <?= Html::a('Create Warehouse', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+        <?php if($have_access_create){ ?>
+          <?= Html::a('Create Warehouse', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+        <?php } ?>
     </p>
     <div class="card">
         <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-        //        'filterModel' => $searchModel,
-            'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
-                    'name',
-                    'type',
-                [
-                     'header' => 'Actions',
-                    'class' => ActionColumn::className(),
-                    'template' => '{update} {delete}',
-                    'urlCreator' => function ($action, Warehouse $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id' => $model->id]);
-                    }
-                ],
-            ],
             'dataProvider' => new ActiveDataProvider([
                 'query' => $dataProvider->query->andWhere(['status' => '1']),
 //                'pagination' => [
 //                    'pageSize' => 20,
 //                ],
             ]),
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                    'name',
+                    'type',
+                    ...$action_column,
+            ],
         ]); ?>
     </div>
 </div>

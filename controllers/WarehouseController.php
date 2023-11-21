@@ -26,9 +26,6 @@ class WarehouseController extends Controller
         } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
             return $this->actionLogin();
         }
-//        else if ($action->id == 'forgot-password'){
-//            return  $this->redirect('site/forgot-password');
-//        }
         if(!$session['username']){
             $this->redirect('/site/logout');
         }
@@ -57,6 +54,11 @@ class WarehouseController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(4);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+
         $searchModel = new WarehouseSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -86,6 +88,10 @@ class WarehouseController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(1);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new Warehouse();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -118,6 +124,10 @@ class WarehouseController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(2);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost) {
@@ -149,6 +159,10 @@ class WarehouseController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(3);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $warehouse = Warehouse::findOne($id);
         $warehouse->status = '0';
         $warehouse->save();
