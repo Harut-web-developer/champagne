@@ -108,6 +108,25 @@ class NomenclatureController extends Controller
         ]);
     }
 
+    public function actionCreateFields()
+    {
+        $model = new Nomenclature();
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+
+            if($post['newblocks'] || $post['new_fild_name']){
+
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
+            return $this->redirect(['index']);
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('create-fields', [
+            'model' => $model,
+        ]);
+    }
     /**
      * Updates an existing Nomenclature model.
      * If update is successful, the browser will be redirected to the 'view' page.

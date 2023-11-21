@@ -15,7 +15,7 @@ $this->title = 'Nomenclatures';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="nomenclature-index">
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1><?= Html::encode($this->title) ?> <?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h1>
     <p>
         <?= Html::a('Create Nomenclature', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
     </p>

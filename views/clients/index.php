@@ -18,7 +18,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?> <?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h1>
     <p>
         <?= Html::a('Create Clients', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
-
     </p>
     <div class="card">
     <?= GridView::widget([

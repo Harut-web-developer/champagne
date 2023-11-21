@@ -50,13 +50,14 @@ class CustomfieldsBlocksInputs extends \yii\db\ActiveRecord
         if(empty($element)){
             return 'Cant create input';
         }
+
         $input_ = '<div class="new-field" data-field='.$element->id.'>';
         if($values) {
             $value = CustomfieldsBlocksInputValues::findOne(['input_id' => $element->id, 'item_id' => $item_id]);
-            $type_ = 'data-name';
+            $type_ = 'name';
         } else {
             $value = false;
-            $type_ = 'name';
+            $type_ = 'data-name';
         }
         $field_value = '';
         if($value){
@@ -84,7 +85,7 @@ class CustomfieldsBlocksInputs extends \yii\db\ActiveRecord
                 $input_ .= '<label>'.$element->label.'</label><select type="number"  '.$type_.'="CF['.$element->id.']">'.$item_options.'</select>';
                 break;
             case 3:
-                $input_ .= '<label>'.$element->label.'</label><hr><img src="/'.$field_value.'" style="width:100px;"><input type="hidden" '.$type_.'="CF['.$element->id.']"> <input type="file" value="'.$field_value.'" name="CF['.$element->id.']">';
+                $input_ .= '<label>'.$element->label.'</label><hr><img src="/'.$field_value.'" style="width:100px;"><input type="hidden" '.$type_.'="CF['.$element->id.']"> <input type="file" value="'.$field_value.'" '.$type_.'="CF['.$element->id.']">';
                 break;
             case 4:
                 $input_ .= '<label>'.$element->label.'</label><textarea  '.$type_.'="CF['.$element->id.']">'.$field_value.'</textarea>';
