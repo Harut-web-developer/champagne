@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 
+use app\models\User;
 use app\models\UserPremissions;
 use Yii;
 use app\models\Users;
@@ -131,6 +132,26 @@ class UsersController extends Controller
         return $this->render('create', [
             'model' => $model,
             'roles' => $roles,
+        ]);
+    }
+
+    public function actionCreateFields()
+    {
+        $model = new Users();
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+
+            if($post['newblocks'] || $post['new_fild_name']){
+
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
+            return $this->redirect(['index']);
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('create-fields', [
+            'model' => $model,
         ]);
     }
 

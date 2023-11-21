@@ -109,6 +109,25 @@ class ProductsController extends Controller
         ]);
     }
 
+    public function actionCreateFields()
+    {
+        $model = new Products();
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+
+            if($post['newblocks'] || $post['new_fild_name']){
+
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
+            return $this->redirect(['index']);
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('create-fields', [
+            'model' => $model,
+        ]);
+    }
     /**
      * Updates an existing Products model.
      * If update is successful, the browser will be redirected to the 'view' page.

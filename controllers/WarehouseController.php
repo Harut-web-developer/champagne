@@ -88,10 +88,10 @@ class WarehouseController extends Controller
      */
     public function actionCreate()
     {
-        $have_access = Users::checkPremission(1);
-        if(!$have_access){
-            $this->redirect('/site/403');
-        }
+//        $have_access = Users::checkPremission(1);
+//        if(!$have_access){
+//            $this->redirect('/site/403');
+//        }
         $model = new Warehouse();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -115,6 +115,25 @@ class WarehouseController extends Controller
         ]);
     }
 
+    public function actionCreateFields()
+    {
+        $model = new Warehouse();
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+
+            if($post['newblocks'] || $post['new_fild_name']){
+
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
+            return $this->redirect(['index']);
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('create-fields', [
+            'model' => $model,
+        ]);
+    }
     /**
      * Updates an existing Warehouse model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -124,10 +143,10 @@ class WarehouseController extends Controller
      */
     public function actionUpdate($id)
     {
-        $have_access = Users::checkPremission(2);
-        if(!$have_access){
-            $this->redirect('/site/403');
-        }
+//        $have_access = Users::checkPremission(2);
+//        if(!$have_access){
+//            $this->redirect('/site/403');
+//        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost) {

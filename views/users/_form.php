@@ -38,30 +38,13 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                 <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>1])->all(); ?>
                 <?php if(!empty($fields)){ ?>
                     <?php foreach ($fields as $fild => $fild_simple){ ?>
-                        <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
+                        <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id, false);?>
                     <?php } ?>
                 <?php } ?>
-                <div class="actions">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            Create Fild
-                        </button>
-                        <ul class="dropdown-menu" style="">
-                            <li data-type="number">NUMBER <br><span>Lorem ipsum dolor sit amet.</span>
-                            </li>
-                            <li data-type="varchar">TEXT (255 Simbols) <br><span>Lorem ipsum dolor sit amet.</span></li>
-                            <li data-type="list">LIST <br><span>Lorem ipsum dolor sit amet.</span></li>
-                            <li data-type="file">FILE <br><span>Lorem ipsum dolor sit amet.</span></li>
-                            <li data-type="text">TEXTAREA <br><span>Lorem ipsum dolor sit amet.</span></li>
-                            <li data-type="date">DATE <br><span>Lorem ipsum dolor sit amet.</span></li>
-                            <li data-type="datetime">DATETIME <br><span>Lorem ipsum dolor sit amet.</span></li>
-                        </ul>
-                    </div>
-                </div>
             </div>
             <?php if(!empty($blocks)){ ?>
                 <?php foreach ($blocks as $block => $block_val){ ?>
-                    <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="users">
+                    <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="clients">
                         <div class="panel-title">
                             <span class="non-active"><?=$block_val->title?></span>
                             <input type="text" name="newblocks[<?php echo $block_val->id;?>]" value="<?=$block_val->title?>"  class="only-active form-control">
@@ -72,7 +55,7 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                         <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->all(); ?>
                         <?php if(!empty($fields)){ ?>
                             <?php foreach ($fields as $fild => $fild_simple){ ?>
-                                <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
+                                <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id,false);?>
                             <?php } ?>
                         <?php } ?>
                         <div class="actions">
@@ -96,7 +79,6 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                 <?php } ?>
             <?php } ?>
         </div>
-        <button class="btn btn-default btn-sm create-block" type="button">Create Block</button>
         <div class="default-panel">
             <div class="panel-title premission">
                 <span class="non-active">Premissions</span>
@@ -419,31 +401,6 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
         </div>
         <?php ActiveForm::end(); ?>
 
-        <div class="default-panel createable-panel new-panel" data-page="users">
-            <div class="panel-title">
-                <span class="non-active">NEW BLOCK</span>
-                <input type="text"  value="NEW BLOCK" name="newblocks[]" class="only-active form-control">
-                <button type="button" class="btn btn-default btn-sm edite-block-title-new" ><i class='bx bx-edit-alt'></i></button>
-                <button type="button" class="btn btn-default btn-sm edite-block-title-save-new-field" ><i class='bx bx-save'></i></button>
-                <button type="button" class="btn btn-default btn-sm edite-block-trash-new" onclick="$(this).closest('.new-panel').remove()"><i class="bx bx-trash"></i></button>
-            </div>
-            <div class="actions">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        Create Fild
-                    </button>
-                    <ul class="dropdown-menu" style="">
-                        <li data-type="number">NUMBER <br><span>Lorem ipsum dolor sit amet.</span>
-                        </li>
-                        <li data-type="varchar">TEXT (255 Simbols) <br><span>Lorem ipsum dolor sit amet.</span></li>
-                        <li data-type="list">LIST <br><span>Lorem ipsum dolor sit amet.</span></li>
-                        <li data-type="file">FILE <br><span>Lorem ipsum dolor sit amet.</span></li>
-                        <li data-type="text">TEXTAREA <br><span>Lorem ipsum dolor sit amet.</span></li>
-                        <li data-type="date">DATE <br><span>Lorem ipsum dolor sit amet.</span></li>
-                        <li data-type="datetime">DATETIME <br><span>Lorem ipsum dolor sit amet.</span></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+
     </div>
 </div>

@@ -47,7 +47,7 @@ if ($have_access_update && $have_access_delete){
 }
 ?>
 <div class="users-index">
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1><?= Html::encode($this->title) ?> <?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h1>
     <p>
         <?php if($have_access_create){ ?>
             <?= Html::a('Create Users', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
