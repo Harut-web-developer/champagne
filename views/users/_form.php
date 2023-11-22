@@ -83,159 +83,58 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
             <div class="panel-title premission">
                 <span class="non-active">Premissions</span>
             </div>
-            <?php if($model->id){ var_dump($model->id);?>
+            <?php if($model->id){?>
                 <div class="premission-content">
                     <div class="rows-checkbox">
-                        <div class="premission-content-items">
-                            <span class="items-title">warehouse create</span>
-<!--                            <input type="checkbox" --><?php //echo ($user_premission_select['premission_id'] === '1') ? 'checked' : ""; ?><!-- value="1" name="premission[]">-->
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">warehouse update</span>
-                            <input type="checkbox" value="2" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">warehouse delete</span>
-                            <input type="checkbox" value="3" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">warehouse view</span>
-                            <input type="checkbox" value="4" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">clients create</span>
-                            <input type="checkbox" value="5" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">clients update</span>
-                            <input type="checkbox" value="6" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">clients delete</span>
-                            <input type="checkbox" value="7" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">clients view</span>
-                            <input type="checkbox" value="8" name="premission[]">
-                        </div>
-                    </div>
-                    <div class="rows-checkbox">
-                        <div class="premission-content-items">
-                            <span class="items-title">nomenclature create</span>
-                            <input type="checkbox" value="9" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">nomenclature update</span>
-                            <input type="checkbox" value="10" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">nomenclature delete</span>
-                            <input type="checkbox" value="11" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">nomenclature view</span>
-                            <input type="checkbox" value="12" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">users create</span>
-                            <input type="checkbox" value="13" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">users update</span>
-                            <input type="checkbox" value="14" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">users delete</span>
-                            <input type="checkbox"  value="15" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">users view</span>
-                            <input type="checkbox" value="16" name="premission[]">
-                        </div>
-                    </div>
-                    <div class="rows-checkbox">
-                        <div class="premission-content-items">
-                            <span class="items-title">products create</span>
-                            <input type="checkbox" value="17" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">products update</span>
-                            <input type="checkbox" value="18" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">products delete</span>
-                            <input type="checkbox" value="19" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">products view</span>
-                            <input type="checkbox" value="20" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">orders create</span>
-                            <input type="checkbox" value="21" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">orders update</span>
-                            <input type="checkbox" value="22" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">orders delete</span>
-                            <input type="checkbox" value="23" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">orders view</span>
-                            <input type="checkbox" value="24" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">log create</span>
-                            <input type="checkbox" value="25" name="premission[]">
-                        </div>
-                    </div>
-                    <div class="rows-checkbox">
-                        <div class="premission-content-items">
-                            <span class="items-title">log update</span>
-                            <input type="checkbox" value="26" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">log delete</span>
-                            <input type="checkbox" value="27" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">log view</span>
-                            <input type="checkbox" value="28" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">roles create</span>
-                            <input type="checkbox" value="29" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">roles update</span>
-                            <input type="checkbox" value="30" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">roles delete</span>
-                            <input type="checkbox" value="31" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">roles view</span>
-                            <input type="checkbox" value="32" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">premissions create</span>
-                            <input type="checkbox" value="33" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">premissions update</span>
-                            <input type="checkbox" value="34" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">premissions delete</span>
-                            <input type="checkbox" value="35" name="premission[]">
-                        </div>
-                        <div class="premission-content-items">
-                            <span class="items-title">premissions view</span>
-                            <input type="checkbox" value="36" name="premission[]">
-                        </div>
+                        <?php
+                        $permissions = [
+                            ['id' => 1, 'name' => 'warehouse create'],
+                            ['id' => 2, 'name' => 'warehouse update'],
+                            ['id' => 3, 'name' => 'warehouse delete'],
+                            ['id' => 4, 'name' => 'warehouse view'],
+                            ['id' => 5, 'name' => 'clients create'],
+                            ['id' => 6, 'name' => 'clients update'],
+                            ['id' => 7, 'name' => 'clients delete'],
+                            ['id' => 8, 'name' => 'clients view'],
+                            ['id' => 9, 'name' => 'nomenclature create'],
+                            ['id' => 10, 'name' => 'nomenclature update'],
+                            ['id' => 11, 'name' => 'nomenclature delete'],
+                            ['id' => 12, 'name' => 'nomenclature view'],
+                            ['id' => 13, 'name' => 'users create'],
+                            ['id' => 14, 'name' => 'users update'],
+                            ['id' => 15, 'name' => 'users delete'],
+                            ['id' => 16, 'name' => 'users view'],
+                            ['id' => 17, 'name' => 'products create'],
+                            ['id' => 18, 'name' => 'products update'],
+                            ['id' => 19, 'name' => 'products delete'],
+                            ['id' => 20, 'name' => 'products view'],
+                            ['id' => 21, 'name' => 'orders create'],
+                            ['id' => 22, 'name' => 'orders update'],
+                            ['id' => 23, 'name' => 'orders delete'],
+                            ['id' => 24, 'name' => 'orders view'],
+                            ['id' => 25, 'name' => 'log delete'],
+                            ['id' => 26, 'name' => 'log delete'],
+                            ['id' => 27, 'name' => 'log delete'],
+                            ['id' => 28, 'name' => 'log delete'],
+                            ['id' => 29, 'name' => 'roles create'],
+                            ['id' => 30, 'name' => 'roles update'],
+                            ['id' => 31, 'name' => 'roles delete'],
+                            ['id' => 32, 'name' => 'roles view'],
+                            ['id' => 33, 'name' => 'premissions create'],
+                            ['id' => 34, 'name' => 'premissions update'],
+                            ['id' => 35, 'name' => 'premissions delete'],
+                            ['id' => 36, 'name' => 'premissions view'],
+                        ];
+
+                        foreach ($permissions as $permission) {
+                            $permissionId = $permission['id'];
+                            $permissionName = $permission['name'];
+                            ?>
+                            <div class="premission-content-items">
+                                <span class="items-title"><?php echo $permissionName; ?></span>
+                                <input type="checkbox" <?php echo (in_array($permissionId, array_column($user_premission_select, 'premission_id'))) ? 'checked' : ''; ?> value="<?php echo $permissionId; ?>" name="premission[]">
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             <?php } else{ ?>

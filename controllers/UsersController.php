@@ -181,6 +181,7 @@ class UsersController extends Controller
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
             if(!empty($post['premission'])){
+                UserPremissions::deleteAll(['user_id' => $model->id]);
                 for ($i = 0; $i < count($post['premission']);$i++){
                     $premission = new UserPremissions();
                     $premission->user_id = $model->id;
@@ -196,15 +197,14 @@ class UsersController extends Controller
             }
             return $this->redirect(['create', 'id' => $model->id]);
         }
-//echo "<pre>";
         $roles = Roles::find()->select('id,name')->asArray()->all();
         $roles = ArrayHelper::map($roles,'id','name');
-//        $user_premission_select = UserPremissions::find()->select('id,premission_id')->where(['user_id' => $id])->asArray()->all();
+        $user_premission_select = UserPremissions::find()->select('id,premission_id')->where(['user_id' => $id])->asArray()->all();
 //        $user_premission_select = array_column($user_premission_select,'premission_id');
         return $this->render('update', [
             'model' => $model,
             'roles' => $roles,
-//            'user_premission_select' => $user_premission_select
+            'user_premission_select' => $user_premission_select,
         ]);
     }
 
