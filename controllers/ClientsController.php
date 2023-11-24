@@ -86,6 +86,8 @@ class ClientsController extends Controller
      */
     public function actionCreate()
     {
+
+//        var_dump(coords);
         $have_access = Users::checkPremission(5);
         if(!$have_access){
             $this->redirect('/site/403');
@@ -114,6 +116,24 @@ class ClientsController extends Controller
             'model' => $model,
         ]);
     }
+
+    public function actionCoordsLocation()
+    {
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            $latlong = $post['coords'][0].','.$post['coords'][1];
+            return json_encode($latlong);
+        }
+    }
+
+    public function actionClientsLocation()
+    {
+        if ($this->request->isPost) {
+            $allDataClients = Clients::find()->select('location')->asArray()->all();
+            return json_encode($allDataClients);
+        }
+    }
+
     public function actionCreateFields()
     {
         $model = new Clients();

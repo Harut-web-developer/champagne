@@ -14,6 +14,8 @@ if(isset($action__)){
     $req = false;
 }
 ?>
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=e243c296-f6a7-46b7-950a-bd42eb4b2684" type="text/javascript"></script>
+<script src="/js/event_reverse_geocode.js" type="text/javascript"></script>
 
 
 <div class="clients-form">
@@ -32,7 +34,9 @@ if(isset($action__)){
                     <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => $req]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 clientLocation">
-                    <?= $form->field($model, 'location')->textInput(['maxlength' => true,'required' => $req]) ?>
+                    <?= $form->field($model, 'location')->textInput(['maxlength' => true,'readonly' => true,'required' => $req]) ?>
+                    <div id="map">
+                    </div>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 clientPhone">
                     <?= $form->field($model, 'phone')->input('number',['required' => $req]) ?>
@@ -89,4 +93,9 @@ if(isset($action__)){
     </div>
 </div>
 
-
+<style>
+    #map {
+        width: 100%;
+        height: 400px;
+    }
+</style>
