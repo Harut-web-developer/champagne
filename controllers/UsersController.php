@@ -199,7 +199,7 @@ class UsersController extends Controller
 //echo "<pre>";
         $roles = Roles::find()->select('id,name')->asArray()->all();
         $roles = ArrayHelper::map($roles,'id','name');
-//        $user_premission_select = UserPremissions::find()->select('id,premission_id')->where(['user_id' => $id])->asArray()->all();
+        $user_premission_select = UserPremissions::find()->select('id,premission_id')->where(['user_id' => $id])->asArray()->all();
 //        $user_premission_select = array_column($user_premission_select,'premission_id');
         return $this->render('update', [
             'model' => $model,

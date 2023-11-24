@@ -83,7 +83,7 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
             <div class="panel-title premission">
                 <span class="non-active">Premissions</span>
             </div>
-            <?php if($model->id){ var_dump($model->id);?>
+            <?php if($model->id){?>
                 <div class="premission-content">
                     <div class="rows-checkbox">
                         <div class="premission-content-items">

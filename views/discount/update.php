@@ -3,24 +3,23 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\Orders $model */
+/** @var app\models\Discount $model */
 
-$this->title = 'Update Orders: ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Orders', 'url' => ['index']];
+$this->title = 'Update Discount: ' . $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Discounts', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="orders-update">
+<div class="discount-update">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,
-        'users' => $users,
         'clients' => $clients,
-        'nomenclatures' => $nomenclatures,
-        'order_items' => $order_items,
-
+        'products' => $products,
+        'discount_clients_id' => $discount_clients_id,
+        'discount_products_id' => $discount_products_id,
     ]) ?>
 
 </div>
