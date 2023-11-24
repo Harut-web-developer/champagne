@@ -139,8 +139,7 @@ $('body').on('click','.edite-block-title-save-new-field',function (){
     $(this).closest('.panel-title').find('.edite-block-title-new').show();
     $(this).hide();
 });
-// $('body').on('click','.create-block-item',function () {
-//     $(this).closest('.actions').find('.dropdown-list').toggleClass('active-dropdown');
-//     $('.create-block-item').not(this).closest('.actions').children('.dropdown-list').removeClass('active-dropdown');
-//     // $(this).closest('.actions').not('.dropdown-list').removeClass('active-dropdown');
-// });
+$(document).ready(function() {
+    $('.js-example-basic-multiple').select2();
+});
+

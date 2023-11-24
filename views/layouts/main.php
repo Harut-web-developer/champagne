@@ -29,6 +29,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/fonts/boxicons.css">
     <link rel="stylesheet" href="/css/core.css" class="template-customizer-core-css">
     <link rel="stylesheet" href="/css/theme-default.css" class="template-customizer-theme-css">
@@ -118,6 +119,11 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                         <li class="menu-item ">
                             <a href="/premissions" class="menu-link">
                                 <div data-i18n="Analytics">Premissions</div>
+                            </a>
+                        </li>
+                        <li class="menu-item ">
+                            <a href="/discount" class="menu-link">
+                                <div data-i18n="Analytics">Discount</div>
                             </a>
                         </li>
                         <li class="menu-item ">
@@ -244,6 +250,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <?php $this->endBody() ?>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </body>
 </html>
 <?php $this->endPage() ?>
