@@ -21,8 +21,8 @@ $(document).ready(function () {
                                         <td class="count"><input type="number" name="count_[]" value="`+count+`" class="form-control countProduct"></td>
                                         <td class="price">`+price+` <input type="hidden" name="price[]" value="`+price+`"></td>
                                         <td class="cost">`+cost+` <input type="hidden" name="cost[]" value="`+cost+`"></td>
-                                        <td class="discount">`+discount+` <input type="hidden" name="discount[]" value="`+discount+`"></td>
-                                        <td class="priceBeforeDiscount">`+priceBeforeDiscount+` <input type="hidden" name="priceBeforeDiscount[]" value="`+priceBeforeDiscount+`"></td>
+<!--                                        <td class="discount">`+discount+` <input type="hidden" name="discount[]" value="`+discount+`"></td>-->
+<!--                                        <td class="priceBeforeDiscount">`+priceBeforeDiscount+` <input type="hidden" name="priceBeforeDiscount[]" value="`+priceBeforeDiscount+`"></td>-->
                                         <td class="total"><span>`+total+`</span><input type="hidden" name="total[]" value="`+total+`"></td>
                                         <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Delete</button></td>
                                      </tr>`;
@@ -106,8 +106,8 @@ $(document).ready(function () {
                                         <td class="count"><input type="number" name="count_[]" value="`+count+`" class="form-control countProduct"></td>
                                         <td class="price">`+price+` <input type="hidden" name="price[]" value="`+price+`"></td>
                                         <td class="cost">`+cost+` <input type="hidden" name="cost[]" value="`+cost+`"></td>
-                                        <td class="discount">`+discount+` <input type="hidden" name="discount[]" value="`+discount+`"></td>
-                                        <td class="priceBeforeDiscount">`+priceBeforeDiscount+` <input type="hidden" name="priceBeforeDiscount[]" value="`+priceBeforeDiscount+`"></td>
+<!--                                        // <td class="discount">`+discount+` <input type="hidden" name="discount[]" value="`+discount+`"></td>-->
+<!--                                        // <td class="priceBeforeDiscount">`+priceBeforeDiscount+` <input type="hidden" name="priceBeforeDiscount[]" value="`+priceBeforeDiscount+`"></td>-->
                                         <td class="total"><span>`+total+`</span><input type="hidden" name="total[]" value="`+total+`"></td>
                                         <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Delete</button></td>
                                      </tr>`;

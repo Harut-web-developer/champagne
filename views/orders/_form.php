@@ -44,8 +44,8 @@ use yii\widgets\ActiveForm;
                                 <th>Count</th>
                                 <th>Price</th>
                                 <th>Cost</th>
-                                <th>Discount</th>
-                                <th>Before discounting</th>
+<!--                                <th>Discount</th>-->
+<!--                                <th>Before discounting</th>-->
                                 <th>Total</th>
                                 <th>Actions</th>
                             </tr>
@@ -62,8 +62,8 @@ use yii\widgets\ActiveForm;
                                         <td class="count"><input type="number" name="count_[]" value="<?=$item['count']?>" class="form-control countProductForUpdate"></td>
                                         <td class="price"><?=$item['price']?><input type="hidden" name="price[]" value="<?=$item['price']?>"></td>
                                         <td class="cost"><?=$item['cost']?><input type="hidden" name="cost[]" value="<?=$item['cost']?>"></td>
-                                        <td class="discount"><?=$item['discount']?><input type="hidden" name="discount[]" value="<?=$item['discount']?>"></td>
-                                        <td class="priceBeforeDiscount"><?=$item['price_before_discount']?><input type="hidden" name="priceBeforeDiscount[]" value="<?=$item['price_before_discount']?>"></td>
+<!--                                        <td class="discount">--><?php //=$item['discount']?><!--<input type="hidden" name="discount[]" value="--><?php //=$item['discount']?><!--"></td>-->
+<!--                                        <td class="priceBeforeDiscount">--><?php //=$item['price_before_discount']?><!--<input type="hidden" name="priceBeforeDiscount[]" value="--><?php //=$item['price_before_discount']?><!--"></td>-->
                                         <td class="total"><span><?=$item['count'] * $item['price']?></span><input type="hidden" name="total[]" value="<?=$item['count'] * $item['price']?>"></td>
                                         <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsFromDB">Delete</button></td>
                                     </tr>
@@ -112,8 +112,8 @@ use yii\widgets\ActiveForm;
                                                         <input type="number" class="form-control ordersCountInput">
                                                         <input class="ordersPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
                                                         <input class="ordersCostInput" type="hidden" value="<?=$nomenclature['cost']?>">
-                                                        <input class="ordersPriceBrforeDiscount" type="hidden" value="<?=$nomenclature['price_before_discount']?>">
-                                                        <input class="ordersDiscountInput" type="hidden" value="<?=$nomenclature['discount_id']?>">
+<!--                                                        <input class="ordersPriceBrforeDiscount" type="hidden" value="--><?php //=$nomenclature['price_before_discount']?><!--">-->
+<!--                                                        <input class="ordersDiscountInput" type="hidden" value="--><?php //=$nomenclature['discount_id']?><!--">-->
                                                     </td>
                                                 </tr>
                                                 <?php
@@ -174,8 +174,8 @@ use yii\widgets\ActiveForm;
                                 <th>Count</th>
                                 <th>Price</th>
                                 <th>Cost</th>
-                                <th>Discount</th>
-                                <th>Before discounting</th>
+<!--                                <th>Discount</th>-->
+<!--                                <th>Before discounting</th>-->
                                 <th>Total</th>
                                 <th>Actions</th>
                             </tr>
@@ -223,8 +223,8 @@ use yii\widgets\ActiveForm;
                                                         <input type="number" class="form-control ordersCountInput">
                                                         <input class="ordersPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
                                                         <input class="ordersCostInput" type="hidden" value="<?=$nomenclature['cost']?>">
-                                                        <input class="ordersPriceBrforeDiscount" type="hidden" value="<?=$nomenclature['price_before_discount']?>">
-                                                        <input class="ordersDiscountInput" type="hidden" value="<?=$nomenclature['discount_id']?>">
+<!--                                                        <input class="ordersPriceBrforeDiscount" type="hidden" value="--><?php //=$nomenclature['price_before_discount']?><!--">-->
+<!--                                                        <input class="ordersDiscountInput" type="hidden" value="--><?php //=$nomenclature['discount_id']?><!--">-->
                                                     </td>
                                                 </tr>
                                                 <?php

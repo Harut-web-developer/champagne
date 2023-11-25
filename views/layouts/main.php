@@ -107,6 +107,11 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                             </a>
                         </li>
                         <li class="menu-item ">
+                            <a href="/documents" class="menu-link">
+                                <div data-i18n="Analytics">Documents</div>
+                            </a>
+                        </li>
+                        <li class="menu-item ">
                             <a href="/log" class="menu-link">
                                 <div data-i18n="Analytics">Log</div>
                             </a>
@@ -124,6 +129,11 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                         <li class="menu-item ">
                             <a href="/discount" class="menu-link">
                                 <div data-i18n="Analytics">Discount</div>
+                            </a>
+                        </li>
+                        <li class="menu-item ">
+                            <a href="/rates" class="menu-link">
+                                <div data-i18n="Analytics">Rates</div>
                             </a>
                         </li>
                         <li class="menu-item ">
