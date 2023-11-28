@@ -17,7 +17,6 @@ if(isset($action__)){
 <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=e243c296-f6a7-46b7-950a-bd42eb4b2684" type="text/javascript"></script>
 <script src="/js/event_reverse_geocode.js" type="text/javascript"></script>
 
-
 <div class="clients-form">
     <div class="card card-primary">
         <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
@@ -37,6 +36,14 @@ if(isset($action__)){
                     <?= $form->field($model, 'location')->textInput(['maxlength' => true,'readonly' => true,'required' => $req]) ?>
                     <div id="map">
                     </div>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 route">
+                    <label for="multipleClients">Routes</label>
+                    <select class="form-select form-control" aria-label="Default select example" name="Clients[route]">
+                        <?php foreach ($route as $index => $rout) { ?>
+                            <option value="<?= $rout['id'] ?>" <?= $rout['id'] ? 'selected' : '' ?> ><?= $rout['route'] ?></option>
+                        <?php } ?>
+                    </select>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 clientPhone">
                     <?= $form->field($model, 'phone')->input('number',['required' => $req]) ?>

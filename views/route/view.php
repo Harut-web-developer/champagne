@@ -4,14 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\Clients $model */
+/** @var app\models\Route $model */
 
-$this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Clients', 'url' => ['index']];
+$this->title = $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Routes', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="clients-view">
+<div class="route-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -30,13 +30,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'route_id',
-            'name',
-            'location',
-            'phone',
+            'route',
             'status',
-            'created_at',
-            'updated_at',
         ],
     ]) ?>
 

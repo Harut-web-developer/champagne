@@ -4,11 +4,13 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Clients;
+use app\models\Route;
 use app\models\ClientsSearch;
 use app\models\Users;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * ClientsController implements the CRUD actions for Clients model.
@@ -78,7 +80,6 @@ class ClientsController extends Controller
             'model' => $this->findModel($id),
         ]);
     }
-
     /**
      * Creates a new Clients model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -86,19 +87,18 @@ class ClientsController extends Controller
      */
     public function actionCreate()
     {
-
 //        var_dump(coords);
         $have_access = Users::checkPremission(5);
         if(!$have_access){
             $this->redirect('/site/403');
         }
         $model = new Clients();
-
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
             $model->name = $post['Clients']['name'];
             $model->location = $post['Clients']['location'];
+            $model->route_id = $post['Clients']['route'];
             $model->phone = $post['Clients']['phone'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
@@ -111,20 +111,22 @@ class ClientsController extends Controller
         } else {
             $model->loadDefaultValues();
         }
-
+        $route = Route::find()->select('id, route')->asArray()->all();
         return $this->render('create', [
             'model' => $model,
+            'route' => $route,
         ]);
     }
 
-    public function actionCoordsLocation()
-    {
-        if ($this->request->isPost) {
-            $post = $this->request->post();
-            $latlong = $post['coords'][0].','.$post['coords'][1];
-            return json_encode($latlong);
-        }
-    }
+//    public function actionCoordsLocation()
+//    {
+//        if ($this->request->isPost) {
+//            $post = $this->request->post();
+//            $latlong = $post['coords'][0].','.$post['coords'][1];
+//            return json_encode($latlong);
+//        }
+//    }
+
 
     public function actionClientsLocation()
     {
@@ -153,6 +155,7 @@ class ClientsController extends Controller
             'model' => $model,
         ]);
     }
+
     /**
      * Updates an existing Clients model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -167,12 +170,14 @@ class ClientsController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
-
+//        $route_value_update = Clients::find()->select('route')->where(['id' => $model->id])->one();
+//        $model->route = $route_value_update['route'];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
             $model->name = $post['Clients']['name'];
             $model->location = $post['Clients']['location'];
+            $model->route_id = $post['Clients']['route'];
             $model->phone = $post['Clients']['phone'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
@@ -182,8 +187,10 @@ class ClientsController extends Controller
             }
             return $this->redirect(['create', 'id' => $model->id]);
         }
+        $route = Route::find()->select('id, route')->asArray()->all();
         return $this->render('update', [
             'model' => $model,
+            'route' => $route,
         ]);
     }
 

@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property string $name
  * @property string $location
+ * @property string $route_id
  * @property int $phone
  * @property string|null $status
  * @property string $created_at
@@ -31,8 +32,8 @@ class Clients extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'location', 'phone'], 'required'],
-            [['phone'], 'integer'],
+            [['name', 'location', 'phone', 'route_id'], 'required'],
+            [['phone', 'route_id'], 'integer'],
             [['status'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'location'], 'string', 'max' => 255],
@@ -49,6 +50,7 @@ class Clients extends \yii\db\ActiveRecord
             'name' => 'Անուն',
             'location' => 'Տեղադիրք',
             'phone' => 'Հեռախոսահամար',
+            'route_id' => 'Երթուղի',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
@@ -56,5 +58,9 @@ class Clients extends \yii\db\ActiveRecord
     }
     public function getDefaultTitle(){
         return CustomfieldsBlocksTitle::findOne(['id'=>17]);
+    }
+
+    public function getRouteName(){
+        return $this->hasOne(Route::className(), ['id'=>'route_id']);
     }
 }
