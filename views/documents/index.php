@@ -11,7 +11,7 @@ use yii\grid\GridView;
 /** @var app\models\DocumentsSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Documents';
+$this->title = 'Փաստաթուղթ';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="documents-index">
@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Documents', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+        <?= Html::a('Ստեղծել փաստաթուղթ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -35,13 +35,40 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'user_id',
-            'warehouse_id',
-            'rate_id',
+            [
+                'attribute' => 'Օգտագործող',
+                'value' => function ($model) {
+                    if ($model->usersName) {
+                        return $model->usersName->name;
+                    } else {
+                        return 'empty';
+                    }
+                }
+            ],
+            [
+                'attribute' => 'Պահեստ',
+                'value' => function ($model) {
+                    if ($model->warehouseName) {
+                        return $model->warehouseName->name;
+                    } else {
+                        return 'empty';
+                    }
+                }
+            ],
+            [
+                'attribute' => 'Փոխարժեք',
+                'value' => function ($model) {
+                    if ($model->rateName) {
+                        return $model->rateName->name;
+                    } else {
+                        return 'empty';
+                    }
+                }
+            ],
             'comment',
             'date',
             [
-                'header' => 'Actions',
+                'header' => 'Գործողություն',
                 'class' => ActionColumn::className(),
                 'template' => '{update} {delete}',
                 'urlCreator' => function ($action, Documents $model, $key, $index, $column) {

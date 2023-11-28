@@ -12,7 +12,7 @@ use yii\grid\GridView;
 /** @var app\models\ProductsSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Products';
+$this->title = 'Ապրանքներ';
 $this->params['breadcrumbs'][] = $this->title;
 $have_access_create = Users::checkPremission(17);
 $have_access_update = Users::checkPremission(18);
@@ -20,7 +20,7 @@ $have_access_delete = Users::checkPremission(19);
 $action_column = [];
 if ($have_access_update && $have_access_delete){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{update} {delete}',
         'urlCreator' => function ($action, Products $model, $key, $index, $column) {
@@ -29,7 +29,7 @@ if ($have_access_update && $have_access_delete){
     ];
 } else if($have_access_update){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{update}',
         'urlCreator' => function ($action, Products $model, $key, $index, $column) {
@@ -38,7 +38,7 @@ if ($have_access_update && $have_access_delete){
     ];
 }else if($have_access_delete){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{delete}',
         'urlCreator' => function ($action, Products $model, $key, $index, $column) {
@@ -51,7 +51,7 @@ if ($have_access_update && $have_access_delete){
     <h1><?= Html::encode($this->title) ?> <?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h1>
     <p>
         <?php if($have_access_create){ ?>
-            <?= Html::a('Create Products', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+            <?= Html::a('Ստեղծել ապրանք', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
         <?php } ?>
     </p>
     <div class="card">
@@ -60,7 +60,7 @@ if ($have_access_update && $have_access_delete){
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
-                'attribute' => 'Warehouse',
+                'attribute' => 'Պահեստ',
                 'value' => function ($model) {
                     if ($model->warehouseName) {
                         return $model->warehouseName->name;
@@ -70,7 +70,7 @@ if ($have_access_update && $have_access_delete){
                 }
             ],
                         [
-                'attribute' => 'Nomenclature',
+                'attribute' => 'Անվանակարգ',
                 'value' => function ($model) {
                     if ($model->nomenclatureName) {
                         return $model->nomenclatureName->name;

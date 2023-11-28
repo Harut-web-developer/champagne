@@ -43,8 +43,8 @@ class Warehouse extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'type' => 'Type',
+            'name' => 'Անուն',
+            'type' => 'Տեսակ',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

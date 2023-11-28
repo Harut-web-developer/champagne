@@ -13,13 +13,13 @@ use yii\widgets\ActiveForm;
         <?php $form = ActiveForm::begin(); ?>
         <div class="default-panel">
             <div class="panel-title premission">
-                <span class="non-active">Orders</span>
+                <span class="non-active">Փոխարժեք</span>
             </div>
             <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                 <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => true]) ?>
             </div>
             <div class="card-footer">
-                <?= Html::submitButton('Save', ['class' => 'btn rounded-pill  btn-secondary']) ?>
+                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary']) ?>
             </div>
         </div>
         <?php ActiveForm::end(); ?>

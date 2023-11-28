@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Documents $model */
 
-$this->title = 'Create Documents';
+$this->title = 'Ստեղծել փաստաթուղթ';
 $this->params['breadcrumbs'][] = ['label' => 'Documents', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -17,7 +17,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'users' => $users,
         'warehouse' => $warehouse,
-        'rates' => $rates
+        'rates' => $rates,
+        'nomenclatures' => $nomenclatures
     ]) ?>
 
 </div>

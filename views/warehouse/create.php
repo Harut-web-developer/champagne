@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Warehouse $model */
 
-$this->title = 'Create Warehouse';
+$this->title = 'Ստեղծել պահեստ';
 $this->params['breadcrumbs'][] = ['label' => 'Warehouses', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

@@ -12,7 +12,7 @@ use yii\grid\GridView;
 /** @var app\models\OrdersSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Orders';
+$this->title = 'Վաճառքներ';
 $this->params['breadcrumbs'][] = $this->title;
 $have_access_create = Users::checkPremission(21);
 $have_access_update = Users::checkPremission(22);
@@ -20,7 +20,7 @@ $have_access_delete = Users::checkPremission(23);
 $action_column = [];
 if ($have_access_update && $have_access_delete){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{update} {delete}',
         'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
@@ -29,7 +29,7 @@ if ($have_access_update && $have_access_delete){
     ];
 } else if($have_access_update){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{update}',
         'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
@@ -38,7 +38,7 @@ if ($have_access_update && $have_access_delete){
     ];
 }else if($have_access_delete){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{delete}',
         'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
@@ -51,7 +51,7 @@ if ($have_access_update && $have_access_delete){
     <h1><?= Html::encode($this->title) ?></h1>
     <p>
         <?php if($have_access_create){ ?>
-            <?= Html::a('Create Orders', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+            <?= Html::a('Ստեղծել վաճառքներ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
         <?php } ?>
     </p>
     <div class="card">
@@ -65,7 +65,7 @@ if ($have_access_update && $have_access_delete){
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
-                'attribute' => 'User',
+                'attribute' => 'Օգտագործող',
                 'value' => function ($model) {
                     if ($model->usersName) {
                         return $model->usersName->name;
@@ -75,7 +75,7 @@ if ($have_access_update && $have_access_delete){
                 }
             ],
             [
-                'attribute' => 'Clients',
+                'attribute' => 'Հաճախորդ',
                 'value' => function ($model) {
                     if ($model->clientsName) {
                         return $model->clientsName->name;

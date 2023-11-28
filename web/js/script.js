@@ -1,6 +1,17 @@
 $(document).ready(function() {
     $('.js-example-basic-multiple').select2();
 
+
+        var pgurl = window.location.href.substr(window.location.href
+            .lastIndexOf("/")+1);
+        $(".menu-sub a ").each(function(){
+            if($(this).attr("href") == '/'+pgurl || $(this).attr("href") == '' )
+                $(this).parent().addClass("active");
+        })
+
+
+
+
     $('body').on('click','.edite-block-title',function (){
         $(this).closest('.panel-title').find('.non-active').hide();
         $(this).closest('.panel-title').find('.only-active').show();

@@ -46,10 +46,10 @@ class Discount extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'type' => 'Type',
-            'discount' => 'Discount',
-            'start_date' => 'Start Date',
-            'end_date' => 'End Date',
+            'type' => 'Տեսակ',
+            'discount' => 'Տոկոս',
+            'start_date' => 'Զեղչի սկիզբը',
+            'end_date' => 'Զեղչի ավարտ',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

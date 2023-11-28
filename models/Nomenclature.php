@@ -43,9 +43,9 @@ class Nomenclature extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'cost' => 'Cost',
-            'price' => 'Price',
+            'name' => 'Անուն',
+            'cost' => 'Ինքնարժեք',
+            'price' => 'Գին',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

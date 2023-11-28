@@ -11,7 +11,7 @@ use yii\grid\GridView;
 /** @var app\models\RatesSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Rates';
+$this->title = 'Փոխարժեք';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="rates-index">
@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Rates', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+        <?= Html::a('Ստեղծել փոխարժեք', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
             'name',
             [
-                'header' => 'Actions',
+                'header' => 'Գործողություն',
                 'class' => ActionColumn::className(),
                 'template' => '{update} {delete}',
                 'urlCreator' => function ($action, Rates $model, $key, $index, $column) {

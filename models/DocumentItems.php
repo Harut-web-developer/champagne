@@ -5,7 +5,7 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "document_id".
+ * This is the model class for table "document_items".
  *
  * @property int $id
  * @property int $document_id
@@ -17,14 +17,14 @@ use Yii;
  * @property string $created_at
  * @property string $updated_at
  */
-class DocumentId extends \yii\db\ActiveRecord
+class DocumentItems extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'document_id';
+        return 'document_items';
     }
 
     /**

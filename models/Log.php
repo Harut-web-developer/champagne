@@ -42,9 +42,9 @@ class Log extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'User ID',
-            'action' => 'Action',
-            'create_date' => 'Create Date',
+            'user_id' => 'Օգտագործող',
+            'action' => 'Գործողություն',
+            'create_date' => 'Ստեղծման ամսաթիվ',
         ];
     }
 }

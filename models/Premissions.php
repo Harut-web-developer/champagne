@@ -45,8 +45,8 @@ class Premissions extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'role_id' => 'Role ID',
-            'name' => 'Name',
+            'role_id' => 'Դեր',
+            'name' => 'Անուն',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

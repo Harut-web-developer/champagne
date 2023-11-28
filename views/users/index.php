@@ -11,7 +11,7 @@ use yii\grid\GridView;
 /** @var app\models\UsersSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Users';
+$this->title = 'Օգտագործող';
 $this->params['breadcrumbs'][] = $this->title;
 $have_access_create = Users::checkPremission(13);
 $have_access_update = Users::checkPremission(14);
@@ -19,7 +19,7 @@ $have_access_delete = Users::checkPremission(15);
 $action_column = [];
 if ($have_access_update && $have_access_delete){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{update} {delete}',
         'urlCreator' => function ($action, Users $model, $key, $index, $column) {
@@ -28,7 +28,7 @@ if ($have_access_update && $have_access_delete){
     ];
 } else if($have_access_update){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{update}',
         'urlCreator' => function ($action, Users $model, $key, $index, $column) {
@@ -37,7 +37,7 @@ if ($have_access_update && $have_access_delete){
     ];
 }else if($have_access_delete){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{delete}',
         'urlCreator' => function ($action, Users $model, $key, $index, $column) {
@@ -50,7 +50,7 @@ if ($have_access_update && $have_access_delete){
     <h1><?= Html::encode($this->title) ?> <?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h1>
     <p>
         <?php if($have_access_create){ ?>
-            <?= Html::a('Create Users', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+            <?= Html::a('Ստեղծել', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
         <?php } ?>
     </p>
     <div class="card">
@@ -61,7 +61,7 @@ if ($have_access_update && $have_access_delete){
             'name',
             'username',
             [
-                'attribute' => 'Role',
+                'attribute' => 'Դեր',
                 'value' => function ($model) {
                     if ($model->roleName) {
                         return $model->roleName->name;

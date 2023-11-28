@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
         <?php $form = ActiveForm::begin(); ?>
             <div class="default-panel">
                 <div class="panel-title premission">
-                    <span class="non-active">Discount</span>
+                    <span class="non-active">Զեղչ</span>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
                     <?= $form->field($model, 'type')->dropDownList([ 'percent' => 'Percent', 'money' => 'Money', ], ['prompt' => '']) ?>
@@ -23,7 +23,7 @@ use yii\widgets\ActiveForm;
                 </div>
                 <?php if ($model->id){ ?>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 discount">
-                        <label for="multipleClients">Clients</label>
+                        <label for="multipleClients">Հաճախորդ</label>
                         <select id="multipleClients" class="js-example-basic-multiple form-control" name="clients[]" multiple="multiple">
                             <?php foreach ($clients as $client){
                                 $isSelected = in_array($client['id'], $discount_clients_id);
@@ -33,7 +33,7 @@ use yii\widgets\ActiveForm;
                         </select>
                     </div>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 discount">
-                        <label for="multipleProducts">Products</label>
+                        <label for="multipleProducts">Ապրանք</label>
                         <select id="multipleProducts" class="js-example-basic-multiple form-control" name="products[]" multiple="multiple">
                             <?php foreach ($products as $product){
                                 $selected = in_array($product['id'], $discount_products_id);
@@ -44,7 +44,7 @@ use yii\widgets\ActiveForm;
                     </div>
                     <?php }else{ ?>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 discount">
-                        <label for="multipleClients">Clients</label>
+                        <label for="multipleClients">Հաճախորդ</label>
                         <select id="multipleClients" class="js-example-basic-multiple form-control" name="clients[]" multiple="multiple">
                             <?php foreach ($clients as $client){ ?>
                                 <option value="<?=$client['id']?>"><?=$client['name']?></option>
@@ -52,7 +52,7 @@ use yii\widgets\ActiveForm;
                         </select>
                     </div>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 discount">
-                        <label for="multipleProducts">Products</label>
+                        <label for="multipleProducts">Ապրանք</label>
                         <select id="multipleProducts" class="js-example-basic-multiple form-control" name="products[]" multiple="multiple">
                             <?php foreach ($products as $product){ ?>
                                 <option value="<?=$product['id']?>"><?=$product['name']?></option>
@@ -69,7 +69,7 @@ use yii\widgets\ActiveForm;
                 </div>
             </div>
             <div class="form-group">
-                <?= Html::submitButton('Save', ['class' => 'btn rounded-pill btn-secondary']) ?>
+                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
             </div>
         <?php ActiveForm::end(); ?>
     </div>

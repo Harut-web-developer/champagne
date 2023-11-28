@@ -46,9 +46,9 @@ class Clients extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'location' => 'Location',
-            'phone' => 'Phone',
+            'name' => 'Անուն',
+            'location' => 'Տեղադիրք',
+            'phone' => 'Հեռախոսահամար',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

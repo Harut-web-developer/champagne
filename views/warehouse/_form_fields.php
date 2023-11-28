@@ -45,7 +45,7 @@ if(isset($action__)){
                         <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                             Create Fild
                         </button>
-                        <ul class="dropdown-menu" style="">
+                        <ul class="dropdown-menu custom_field_menu" style="">
                             <li data-type="number">NUMBER <br><span>Lorem ipsum dolor sit amet.</span>
                             </li>
                             <li data-type="varchar">TEXT (255 Simbols) <br><span>Lorem ipsum dolor sit amet.</span></li>
@@ -79,7 +79,7 @@ if(isset($action__)){
                                 <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                     Create Fild
                                 </button>
-                                <ul class="dropdown-menu" style="">
+                                <ul class="dropdown-menu custom_field_menu" style="">
                                     <li data-type="number">NUMBER <br><span>Lorem ipsum dolor sit amet.</span>
                                     </li>
                                     <li data-type="varchar">TEXT (255 Simbols) <br><span>Lorem ipsum dolor sit amet.</span></li>
@@ -116,7 +116,7 @@ if(isset($action__)){
                     <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         Create Fild
                     </button>
-                    <ul class="dropdown-menu" style="">
+                    <ul class="dropdown-menu custom_field_menu" style="">
                         <li data-type="number">NUMBER <br><span>Lorem ipsum dolor sit amet.</span>
                         </li>
                         <li data-type="varchar">TEXT (255 Simbols) <br><span>Lorem ipsum dolor sit amet.</span></li>

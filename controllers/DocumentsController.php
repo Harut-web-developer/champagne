@@ -2,8 +2,10 @@
 
 namespace app\controllers;
 
+use app\models\DocumentItems;
 use app\models\Documents;
 use app\models\DocumentsSearch;
+use app\models\Nomenclature;
 use app\models\Rates;
 use app\models\Users;
 use app\models\Warehouse;
@@ -71,20 +73,31 @@ class DocumentsController extends Controller
      */
     public function actionCreate()
     {
-//        echo "<pre>";
         $model = new Documents();
-
         if ($this->request->isPost) {
             $post = $this->request->post();
             date_default_timezone_set('Asia/Yerevan');
             $model->user_id = $post['Documents']['user_id'];
             $model->warehouse_id = $post['Documents']['warehouse_id'];
             $model->rate_id = $post['Documents']['rate_id'];
+            $model->rate_value = $post['Documents']['rate_value'];
+            $model->document_type = $post['Documents']['document_type'];
             $model->comment = $post['Documents']['comment'];
             $model->date = $post['Documents']['date'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
+                for ($i = 0; $i < count($post['document_items']); $i++){
+                    $document_items = new DocumentItems();
+                    $document_items->document_id = $model->id;
+                    $document_items->nomenclature_id = $post['document_items'][$i];
+                    $document_items->count = $post['count_'][$i];
+                    $document_items->price = $post['price'][$i];
+                    $document_items->AAH = $post['aah'];
+                    $document_items->created_at = date('Y-m-d H:i:s');
+                    $document_items->updated_at = date('Y-m-d H:i:s');
+                    $document_items->save();
+                }
                 return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
@@ -95,11 +108,16 @@ class DocumentsController extends Controller
         $warehouse =  ArrayHelper::map($warehouse,'id','name');
         $rates = Rates::find()->select('id,name')->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
+        $nomenclatures = Nomenclature::find()->select('nomenclature.id,nomenclature.name,nomenclature.price,
+        nomenclature.cost,products.id as products_id,products.count,')
+            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+            ->asArray()->all();
         return $this->render('create', [
             'model' => $model,
             'users' => $users,
             'warehouse' => $warehouse,
-            'rates' => $rates
+            'rates' => $rates,
+            'nomenclatures' => $nomenclatures
         ]);
     }
 
@@ -112,6 +130,7 @@ class DocumentsController extends Controller
      */
     public function actionUpdate($id)
     {
+//        echo  "<pre>";
         $model = $this->findModel($id);
 
         if ($this->request->isPost) {
@@ -120,15 +139,60 @@ class DocumentsController extends Controller
             $model->user_id = $post['Documents']['user_id'];
             $model->warehouse_id = $post['Documents']['warehouse_id'];
             $model->rate_id = $post['Documents']['rate_id'];
+            $model->rate_value = $post['Documents']['rate_value'];
+            $model->document_type = $post['Documents']['document_type'];
             $model->comment = $post['Documents']['comment'];
             $model->date = $post['Documents']['date'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
+            $items = $post['document_items'];
+            foreach ($items as $j => $item){
+                if ($item != 'null'){
+                    $document_items_update = DocumentItems::findOne(intval($item));
+                    $document_items_update->document_id = $id;
+                    $document_items_update->nomenclature_id = $post['items'][$j];
+                    $document_items_update->count = $post['count_'][$j];
+                    $document_items_update->price = $post['price'][$j];
+                    $document_items_update->AAH = $post['aah'];
+                    $document_items_update->updated_at = date('Y-m-d H:i:s');
+                    $document_items_update->save();
+                }else{
+                    $document_items_update = new DocumentItems();
+                    $document_items_update->document_id = $id;
+                    $document_items_update->nomenclature_id = $post['items'][$j];
+                    $document_items_update->count = $post['count_'][$j];
+                    $document_items_update->price = $post['price'][$j];
+                    $document_items_update->AAH = $post['aah'];
+                    $document_items_update->created_at = date('Y-m-d H:i:s');
+                    $document_items_update->updated_at = date('Y-m-d H:i:s');
+                    $document_items_update->save();
+                }
+            }
             return $this->redirect(['index', 'id' => $model->id]);
         }
-
+        $users = Users::find()->select('id,name')->asArray()->all();
+        $users = ArrayHelper::map($users,'id','name');
+        $warehouse = Warehouse::find()->select('id,name')->asArray()->all();
+        $warehouse =  ArrayHelper::map($warehouse,'id','name');
+        $rates = Rates::find()->select('id,name')->asArray()->all();
+        $rates = ArrayHelper::map($rates,'id','name');
+        $nomenclatures = Nomenclature::find()->select('nomenclature.id,nomenclature.name,nomenclature.price,
+        nomenclature.cost,products.count,')
+            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+            ->asArray()->all();
+        $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')
+            ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
+            ->where(['document_items.document_id' => $id])
+            ->asArray()->all();
+        $aah = DocumentItems::find()->select('AAH')->where(['document_id' => $id])->asArray()->one();
         return $this->render('update', [
             'model' => $model,
+            'users' => $users,
+            'warehouse' => $warehouse,
+            'rates' => $rates,
+            'nomenclatures' => $nomenclatures,
+            'document_items' => $document_items,
+            'aah' => $aah
         ]);
     }
 
@@ -147,6 +211,15 @@ class DocumentsController extends Controller
         return $this->redirect(['index']);
     }
 
+    public function actionDeleteDocumentItems(){
+        if ($this->request->isPost){
+            $post_id = intval($this->request->post('id'));
+            $delete_items = DocumentItems::findOne($post_id)->delete();
+            if (isset($delete_items)){
+                return json_encode(true);
+            }
+        }
+    }
     /**
      * Finds the Documents model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

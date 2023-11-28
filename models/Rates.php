@@ -42,7 +42,7 @@ class Rates extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => 'Անուն',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

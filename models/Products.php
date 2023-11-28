@@ -47,10 +47,10 @@ class Products extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'warehouse_id' => 'Warehouse',
-            'nomenclature_id' => 'Nomenclature',
-            'count' => 'Count',
-            'price' => 'Price',
+            'warehouse_id' => 'Պահեստ',
+            'nomenclature_id' => 'Անվանակարգ',
+            'count' => 'Քանակ',
+            'price' => 'Գին',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

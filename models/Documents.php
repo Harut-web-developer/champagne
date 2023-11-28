@@ -33,8 +33,8 @@ class Documents extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'warehouse_id', 'rate_id', 'comment', 'date', 'created_at', 'updated_at'], 'required'],
-            [['user_id', 'warehouse_id', 'rate_id'], 'integer'],
+            [['user_id', 'warehouse_id', 'rate_id', 'rate_value', 'document_type', 'comment', 'date'], 'required'],
+            [['user_id', 'warehouse_id', 'rate_id', 'rate_value'], 'integer'],
             [['date', 'created_at', 'updated_at'], 'safe'],
             [['status'], 'string'],
             [['comment'], 'string', 'max' => 255],
@@ -48,14 +48,25 @@ class Documents extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'User ID',
-            'warehouse_id' => 'Warehouse ID',
-            'rate_id' => 'Rate ID',
-            'comment' => 'Comment',
-            'date' => 'Date',
+            'user_id' => 'Օգտագործող',
+            'warehouse_id' => 'Պահեստ',
+            'rate_id' => 'Փոխարժեք',
+            'rate_value' => 'Փոխարժեք',
+            'document_type' => 'Փաստաթղթի տեսակը',
+            'comment' => 'Մեկնաբանություն',
+            'date' => 'Ստեղծման ժամանակը',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+     public function getUsersName(){
+        return $this->hasOne(Users::className(), ['id'=>'user_id']);
+     }
+    public function getWarehouseName(){
+        return $this->hasOne(Warehouse::className(), ['id'=>'warehouse_id']);
+    }
+    public function getRateName(){
+        return $this->hasOne(Rates::className(), ['id'=>'rate_id']);
     }
 }
