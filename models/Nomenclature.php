@@ -29,8 +29,8 @@ class Nomenclature extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'price', 'created_at', 'updated_at'], 'required'],
-            [['price'], 'number'],
+            [['name','cost','price' ], 'required'],
+            [['price','cost'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['name'], 'string', 'max' => 255],
         ];
@@ -43,8 +43,9 @@ class Nomenclature extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'price' => 'Price',
+            'name' => 'Անուն',
+            'cost' => 'Ինքնարժեք',
+            'price' => 'Գին',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Discount;
 use Yii;
 use app\models\Nomenclature;
 use app\models\NomenclatureSearch;
@@ -98,7 +99,8 @@ class NomenclatureController extends Controller
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
             $model->name = $post['Nomenclature']['name'];
-            $model->price = $post['Nomenclature']['price'];
+            $model->cost = intval($post['Nomenclature']['cost']);
+            $model->price = intval($post['Nomenclature']['price']);
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
@@ -110,9 +112,10 @@ class NomenclatureController extends Controller
         } else {
             $model->loadDefaultValues();
         }
-
+        $discounts = Discount::find()->select('id,discount')->asArray()->all();
         return $this->render('create', [
             'model' => $model,
+            'discounts' => $discounts
         ]);
     }
 
@@ -121,16 +124,13 @@ class NomenclatureController extends Controller
         $model = new Nomenclature();
         if ($this->request->isPost) {
             $post = $this->request->post();
-
             if($post['newblocks'] || $post['new_fild_name']){
-
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
             return $this->redirect(['index']);
         } else {
             $model->loadDefaultValues();
         }
-
         return $this->render('create-fields', [
             'model' => $model,
         ]);
@@ -154,6 +154,7 @@ class NomenclatureController extends Controller
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
             $model->name = $post['Nomenclature']['name'];
+            $model->cost = intval($post['Nomenclature']['cost']);
             $model->price = $post['Nomenclature']['price'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();

@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
             <?php $form = ActiveForm::begin(); ?>
             <div class="default-panel">
                 <div class="panel-title premission">
-                    <span class="non-active">Orders</span>
+                    <span class="non-active">Վաճառք</span>
                 </div>
                 <!--            <div class="card-body formDesign">-->
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
@@ -32,7 +32,7 @@ use yii\widgets\ActiveForm;
             </div>
             <div class="default-panel">
                 <div class="panel-title premission">
-                    <span class="non-active">Add orders</span>
+                    <span class="non-active">Վաճառքի ցուցակ</span>
                 </div>
                 <div class="card">
                     <div class="table-responsive text-nowrap">
@@ -40,14 +40,14 @@ use yii\widgets\ActiveForm;
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Name</th>
-                                <th>Count</th>
-                                <th>Price</th>
-                                <th>Cost</th>
-                                <th>Discount</th>
-                                <th>Before discounting</th>
-                                <th>Total</th>
-                                <th>Actions</th>
+                                <th>Անուն</th>
+                                <th>Քանակ</th>
+                                <th>Գին</th>
+                                <th>Ինքնարժեք</th>
+<!--                                <th>Discount</th>-->
+<!--                                <th>Before discounting</th>-->
+                                <th>Ընդհանուր գումար</th>
+                                <th>Գործողություն</th>
                             </tr>
                             </thead>
                             <tbody class="table-border-bottom-0">
@@ -62,10 +62,10 @@ use yii\widgets\ActiveForm;
                                         <td class="count"><input type="number" name="count_[]" value="<?=$item['count']?>" class="form-control countProductForUpdate"></td>
                                         <td class="price"><?=$item['price']?><input type="hidden" name="price[]" value="<?=$item['price']?>"></td>
                                         <td class="cost"><?=$item['cost']?><input type="hidden" name="cost[]" value="<?=$item['cost']?>"></td>
-                                        <td class="discount"><?=$item['discount']?><input type="hidden" name="discount[]" value="<?=$item['discount']?>"></td>
-                                        <td class="priceBeforeDiscount"><?=$item['price_before_discount']?><input type="hidden" name="priceBeforeDiscount[]" value="<?=$item['price_before_discount']?>"></td>
+<!--                                        <td class="discount">--><?php //=$item['discount']?><!--<input type="hidden" name="discount[]" value="--><?php //=$item['discount']?><!--"></td>-->
+<!--                                        <td class="priceBeforeDiscount">--><?php //=$item['price_before_discount']?><!--<input type="hidden" name="priceBeforeDiscount[]" value="--><?php //=$item['price_before_discount']?><!--"></td>-->
                                         <td class="total"><span><?=$item['count'] * $item['price']?></span><input type="hidden" name="total[]" value="<?=$item['count'] * $item['price']?>"></td>
-                                        <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsFromDB">Delete</button></td>
+                                        <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsFromDB">Ջնջել</button></td>
                                     </tr>
                                <?php }?>
                             </tbody>
@@ -73,13 +73,13 @@ use yii\widgets\ActiveForm;
                     </div>
                 </div>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn rounded-pill btn-secondary addOrders" data-bs-toggle="modal" data-bs-target="#largeModal">add</button>
+                <button type="button" class="btn rounded-pill btn-secondary addOrders" data-bs-toggle="modal" data-bs-target="#largeModal">Ավելացնել ապրանք</button>
                 <!-- Modal -->
                 <div class="modal fade" id="largeModal" tabindex="-1" style="display: none;" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel3">Add orders</h5>
+                                <h5 class="modal-title" id="exampleModalLabel3">Ապրանքացուցակ</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
@@ -89,9 +89,9 @@ use yii\widgets\ActiveForm;
                                             <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>Check</th>
-                                                <th>Name</th>
-                                                <th>Count</th>
+                                                <th>Ընտրել</th>
+                                                <th>Անուն</th>
+                                                <th>Քանակ</th>
                                             </tr>
                                             </thead>
                                             <tbody class="table-border-bottom-0">
@@ -112,8 +112,8 @@ use yii\widgets\ActiveForm;
                                                         <input type="number" class="form-control ordersCountInput">
                                                         <input class="ordersPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
                                                         <input class="ordersCostInput" type="hidden" value="<?=$nomenclature['cost']?>">
-                                                        <input class="ordersPriceBrforeDiscount" type="hidden" value="<?=$nomenclature['price_before_discount']?>">
-                                                        <input class="ordersDiscountInput" type="hidden" value="<?=$nomenclature['discount_id']?>">
+<!--                                                        <input class="ordersPriceBrforeDiscount" type="hidden" value="--><?php //=$nomenclature['price_before_discount']?><!--">-->
+<!--                                                        <input class="ordersDiscountInput" type="hidden" value="--><?php //=$nomenclature['discount_id']?><!--">-->
                                                     </td>
                                                 </tr>
                                                 <?php
@@ -125,7 +125,7 @@ use yii\widgets\ActiveForm;
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn rounded-pill btn-secondary update" data-bs-dismiss="modal">Add orders</button>
+                                <button type="button" class="btn rounded-pill btn-secondary update" data-bs-dismiss="modal">Ավելացնել ցուցակում</button>
                             </div>
                         </div>
                     </div>
@@ -133,7 +133,7 @@ use yii\widgets\ActiveForm;
 
             </div>
             <div class="card-footer">
-                <?= Html::submitButton('Save', ['class' => 'btn rounded-pill btn-secondary']) ?>
+                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
             </div>
             <?php ActiveForm::end(); ?>
         </div>
@@ -144,7 +144,7 @@ use yii\widgets\ActiveForm;
             <?php $form = ActiveForm::begin(); ?>
             <div class="default-panel">
                 <div class="panel-title premission">
-                    <span class="non-active">Orders</span>
+                    <span class="non-active">Վաճառք</span>
                 </div>
                 <!--            <div class="card-body formDesign">-->
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
@@ -162,7 +162,7 @@ use yii\widgets\ActiveForm;
             </div>
             <div class="default-panel">
                 <div class="panel-title premission">
-                    <span class="non-active">Add orders</span>
+                    <span class="non-active">Վաճառքի ցուցակ</span>
                 </div>
                 <div class="card">
                     <div class="table-responsive text-nowrap">
@@ -170,14 +170,14 @@ use yii\widgets\ActiveForm;
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Name</th>
-                                <th>Count</th>
-                                <th>Price</th>
-                                <th>Cost</th>
-                                <th>Discount</th>
-                                <th>Before discounting</th>
-                                <th>Total</th>
-                                <th>Actions</th>
+                                <th>Անուն</th>
+                                <th>Քանակ</th>
+                                <th>Գին</th>
+                                <th>Ինքնարժեք</th>
+<!--                                <th>Discount</th>-->
+<!--                                <th>Before discounting</th>-->
+                                <th>Ընդհանուր գումար</th>
+                                <th>Գործողություն</th>
                             </tr>
                             </thead>
                             <tbody class="table-border-bottom-0">
@@ -187,13 +187,13 @@ use yii\widgets\ActiveForm;
                     </div>
                 </div>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn rounded-pill btn-secondary addOrders" data-bs-toggle="modal" data-bs-target="#largeModal">add</button>
+                <button type="button" class="btn rounded-pill btn-secondary addOrders" data-bs-toggle="modal" data-bs-target="#largeModal">Ավելացնել ապրանք</button>
                 <!-- Modal -->
                 <div class="modal fade" id="largeModal" tabindex="-1" style="display: none;" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel3">Add orders</h5>
+                                <h5 class="modal-title" id="exampleModalLabel3">Ապրանքացուցակ</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
@@ -203,9 +203,9 @@ use yii\widgets\ActiveForm;
                                             <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>Check</th>
-                                                <th>Name</th>
-                                                <th>Count</th>
+                                                <th>Ընտրել</th>
+                                                <th>Անուն</th>
+                                                <th>Քանակ</th>
                                             </tr>
                                             </thead>
                                             <tbody class="table-border-bottom-0">
@@ -223,8 +223,8 @@ use yii\widgets\ActiveForm;
                                                         <input type="number" class="form-control ordersCountInput">
                                                         <input class="ordersPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
                                                         <input class="ordersCostInput" type="hidden" value="<?=$nomenclature['cost']?>">
-                                                        <input class="ordersPriceBrforeDiscount" type="hidden" value="<?=$nomenclature['price_before_discount']?>">
-                                                        <input class="ordersDiscountInput" type="hidden" value="<?=$nomenclature['discount_id']?>">
+<!--                                                        <input class="ordersPriceBrforeDiscount" type="hidden" value="--><?php //=$nomenclature['price_before_discount']?><!--">-->
+<!--                                                        <input class="ordersDiscountInput" type="hidden" value="--><?php //=$nomenclature['discount_id']?><!--">-->
                                                     </td>
                                                 </tr>
                                                 <?php
@@ -236,7 +236,7 @@ use yii\widgets\ActiveForm;
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn rounded-pill btn-secondary create" data-bs-dismiss="modal">Add orders</button>
+                                <button type="button" class="btn rounded-pill btn-secondary create" data-bs-dismiss="modal">Ավելացնել ցուցակում</button>
                             </div>
                         </div>
                     </div>
@@ -244,7 +244,7 @@ use yii\widgets\ActiveForm;
 
             </div>
             <div class="card-footer">
-                <?= Html::submitButton('Save', ['class' => 'btn rounded-pill btn-secondary']) ?>
+                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
             </div>
             <?php ActiveForm::end(); ?>
         </div>

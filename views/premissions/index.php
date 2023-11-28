@@ -12,7 +12,7 @@ use yii\grid\GridView;
 /** @var app\models\PremissionsSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Premissions';
+$this->title = 'Թույլտվություններ';
 $this->params['breadcrumbs'][] = $this->title;
 $have_access_create = Users::checkPremission(33);
 $have_access_update = Users::checkPremission(34);
@@ -20,7 +20,7 @@ $have_access_delete = Users::checkPremission(35);
 $action_column = [];
 if ($have_access_update && $have_access_delete){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{update} {delete}',
         'urlCreator' => function ($action, Premissions $model, $key, $index, $column) {
@@ -29,7 +29,7 @@ if ($have_access_update && $have_access_delete){
     ];
 } else if($have_access_update){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{update}',
         'urlCreator' => function ($action, Premissions $model, $key, $index, $column) {
@@ -38,7 +38,7 @@ if ($have_access_update && $have_access_delete){
     ];
 }else if($have_access_delete){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{delete}',
         'urlCreator' => function ($action, Premissions $model, $key, $index, $column) {
@@ -51,7 +51,7 @@ if ($have_access_update && $have_access_delete){
     <h1><?= Html::encode($this->title) ?></h1>
     <p>
         <?php if($have_access_create){ ?>
-            <?= Html::a('Create Premissions', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+            <?= Html::a('Ստեղծել թույտվություններ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
         <?php } ?>
     </p>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -66,7 +66,7 @@ if ($have_access_update && $have_access_delete){
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
-                'attribute' => 'Role',
+                'attribute' => 'Դեր',
                 'value' => function ($model) {
                     if ($model->roleName) {
                         return $model->roleName->name;

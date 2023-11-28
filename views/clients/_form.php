@@ -93,7 +93,7 @@ if(isset($action__)){
             <?php } ?>
         </div>
         <div class="card-footer">
-            <?= Html::submitButton('Save', ['class' => 'btn rounded-pill btn-secondary']) ?>
+            <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

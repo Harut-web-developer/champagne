@@ -45,8 +45,8 @@ class Roles extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'access' => 'Access',
+            'name' => 'Անուն',
+            'access' => 'Մուտք',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

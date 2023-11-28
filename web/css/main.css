@@ -7,6 +7,7 @@
 }
 .dashboardName{
     font-size: 1.5em;
+    padding:15px;
     /* margin: 0px auto; */
     width: 75%;
     display: flex;
@@ -14,6 +15,22 @@
 }
 .dashboardName > i{
     font-size: 1.3em;
+}
+.menu-item > a::before{
+    display:none !important;
+}
+.menu-link{
+    padding-left: 1rem !important;
+}
+.menu-link > i{
+    padding-right:10px !important;
+}
+ li.active a{
+    font-weight:900;
+     font-size:16px !important;
+}
+.active i{
+    font-size:23px;
 }
 .app-brand-logo > img{
     width: 50px;
@@ -25,6 +42,22 @@
 .formDesign{
     display: flex;
     flex-wrap: wrap;
+}
+.rateDocument{
+    padding: 0px 10px !important;
+    display:flex;
+    justify-content: space-between;
+    margin-bottom:0px;
+}
+.rateLabel{
+    padding-bottom: 2px;
+    padding-left: 10px;
+}
+.rateType{
+    width:48%;
+}
+.rateValue{
+    width:48%;
 }
 .warehouseName{
     padding: 0px 10px;
@@ -141,7 +174,7 @@
     margin-top:40px;
     min-height:200px;
 }
-.actions > .dropdown-list{
+.dropdown-list{
     padding:15px;
     list-style-type:none;
     min-width:100px;
@@ -156,11 +189,12 @@
     z-index: 1;
 
 }
-.actions > .dropdown-menu{
+
+.custom_field_menu{
     padding:5px;
     width: 320px;
 }
-.actions > .dropdown-menu li{
+.custom_field_menu li{
     padding:5px;
     padding-bottom:15px;
     cursor:pointer;
@@ -239,5 +273,8 @@
     font-size:25px;
 }
 .addOrders{
+    margin-top:35px;
+}
+.addDocuments{
     margin-top:35px;
 }

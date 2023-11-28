@@ -46,11 +46,11 @@ class Orders extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'User',
-            'clients_id' => 'Clients',
+            'user_id' => 'Օգտագործող',
+            'clients_id' => 'Հաճախորդ',
             'status' => 'Status',
-            'total_price' => 'Total Price',
-            'total_count' => 'Total Count',
+            'total_price' => 'Ընդհանուր գումար',
+            'total_count' => 'Ընդհանուր քանակ',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

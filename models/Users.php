@@ -48,10 +48,10 @@ class Users extends ActiveRecord implements IdentityInterface
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'username' => 'Username',
-            'password' => 'Password',
-            'role_id' => 'Role',
+            'name' => 'Անուն',
+            'username' => 'Օգտանուն',
+            'password' => 'Գաղտնաբառ',
+            'role_id' => 'Օգտագործողի կարգավիճակ',
             'auth_key' => 'Auth Key',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

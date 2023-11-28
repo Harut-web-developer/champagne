@@ -12,7 +12,7 @@ use yii\grid\GridView;
 /** @var app\models\WarehouseSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Warehouses';
+$this->title = 'Պահեստներ';
 $this->params['breadcrumbs'][] = $this->title;
 $have_access_create = Users::checkPremission(1);
 $have_access_update = Users::checkPremission(2);
@@ -20,7 +20,7 @@ $have_access_delete = Users::checkPremission(3);
 $action_column = [];
 if ($have_access_update && $have_access_delete){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{update} {delete}',
         'urlCreator' => function ($action, Warehouse $model, $key, $index, $column) {
@@ -29,7 +29,7 @@ if ($have_access_update && $have_access_delete){
     ];
 } else if($have_access_update){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{update}',
         'urlCreator' => function ($action, Warehouse $model, $key, $index, $column) {
@@ -38,7 +38,7 @@ if ($have_access_update && $have_access_delete){
     ];
 }else if($have_access_delete){
     $action_column[] = [
-        'header' => 'Actions',
+        'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{delete}',
         'urlCreator' => function ($action, Warehouse $model, $key, $index, $column) {
@@ -52,7 +52,7 @@ if ($have_access_update && $have_access_delete){
     <h1><?= Html::encode($this->title) ?> <?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h1>
     <p>
         <?php if($have_access_create){ ?>
-          <?= Html::a('Create Warehouse', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+          <?= Html::a('Ստեղծել պահեստ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
         <?php } ?>
     </p>
     <div class="card">

@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Log $model */
 
-$this->title = 'Create Log';
+$this->title = 'Ստեղծել տեղեկամատյան';
 $this->params['breadcrumbs'][] = ['label' => 'Logs', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

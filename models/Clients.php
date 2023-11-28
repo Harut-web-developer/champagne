@@ -47,10 +47,10 @@ class Clients extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'location' => 'Location',
-            'route_id' => 'Route',
-            'phone' => 'Phone',
+            'route_id' => 'Երթուղի',
+            'name' => 'Անուն',
+            'location' => 'Տեղադիրք',
+            'phone' => 'Հեռախոսահամար',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

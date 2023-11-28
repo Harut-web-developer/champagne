@@ -11,13 +11,13 @@ use yii\grid\GridView;
 /** @var app\models\DiscountSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Discounts';
+$this->title = 'Զեղչեր';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="discount-index">
     <h1><?= Html::encode($this->title) ?></h1>
     <p>
-        <?= Html::a('Create Discount', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+        <?= Html::a('Ստեղծել զեղչ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
     </p>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     <div class="card">
@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'type',
             'discount',
             [
-                'attribute' => 'Start date',
+                'attribute' => 'Զեղչի սկիզբ',
                 'value' => function ($model) {
                     if ($model->start_date) {
                         return $model->start_date;
@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'attribute' => 'Start date',
+                'attribute' => 'Զեղչի ավարտ',
                 'value' => function ($model) {
                     if ($model->end_date) {
                         return $model->end_date;
@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'header' => 'Actions',
+                'header' => 'Գործողություն',
                 'class' => ActionColumn::className(),
                 'template' => '{update} {delete}',
                 'urlCreator' => function ($action, Discount $model, $key, $index, $column) {

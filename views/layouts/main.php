@@ -77,63 +77,87 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 
                     <ul class="menu-sub">
                         <li class="menu-item ">
+                            <a href="/map" class="menu-link">
+                                <i class='bx bx-map-alt'></i>
+                                <div data-i18n="Analytics">Քարտեզ</div>
+                            </a>
+                        </li>
+                        <li class="menu-item ">
                             <a href="/warehouse" class="menu-link">
-                                <div data-i18n="Analytics">Warehouse</div>
+                                <i class='bx bx-building' ></i>
+                                <div data-i18n="Analytics">Պահեստներ</div>
                             </a>
                         </li>
                         <li class="menu-item ">
                             <a href="/clients" class="menu-link">
-                                <div data-i18n="Analytics">Clients</div>
+                                <i class='bx bx-store-alt'></i>
+                                <div data-i18n="Analytics">Հաճախորդներ</div>
                             </a>
                         </li>
                         <li class="menu-item ">
                             <a href="/nomenclature" class="menu-link">
-                                <div data-i18n="Analytics">Nomenclature</div>
+                                <i class='bx bx-notepad' ></i>
+                                <div data-i18n="Analytics">Անվանակարգ</div>
                             </a>
                         </li>
                         <li class="menu-item ">
                             <a href="/users" class="menu-link">
-                                <div data-i18n="Analytics">Users</div>
+                                <i class='bx bx-male-female' ></i>
+                                <div data-i18n="Analytics">Օգտագործող</div>
                             </a>
                         </li>
                         <li class="menu-item ">
                             <a href="/products" class="menu-link">
-                                <div data-i18n="Analytics">Products</div>
+                                <i class='bx bx-cube-alt'></i>
+                                <div data-i18n="Analytics">Ապրանքներ</div>
                             </a>
                         </li>
                         <li class="menu-item ">
                             <a href="/orders" class="menu-link">
-                                <div data-i18n="Analytics">Orders</div>
+                                <i class='bx bx-cart-add' ></i>
+                                <div data-i18n="Analytics">Վաճառքներ</div>
+                            </a>
+                        </li>
+                        <li class="menu-item ">
+                            <a href="/documents" class="menu-link">
+                                <i class='bx bx-receipt'></i>
+                                <div data-i18n="Analytics">Փաստաթղթեր</div>
                             </a>
                         </li>
                         <li class="menu-item ">
                             <a href="/log" class="menu-link">
-                                <div data-i18n="Analytics">Log</div>
+                                <i class='bx bxs-calendar-check' ></i>
+                                <div data-i18n="Analytics">Տեղեկամատյան</div>
                             </a>
                         </li>
                         <li class="menu-item ">
                             <a href="/roles" class="menu-link">
-                                <div data-i18n="Analytics">Roles</div>
+                                <i class='bx bx-check-shield' ></i>
+                                <div data-i18n="Analytics">Դեր</div>
                             </a>
                         </li>
                         <li class="menu-item ">
                             <a href="/premissions" class="menu-link">
-                                <div data-i18n="Analytics">Premissions</div>
+                                <i class="bx bx-cog"></i>
+                                <div data-i18n="Analytics">Թույլտվություններ</div>
                             </a>
                         </li>
                         <li class="menu-item ">
                             <a href="/discount" class="menu-link">
-                                <div data-i18n="Analytics">Discount</div>
+                                <i class='bx bxs-bank'></i>
+                                <div data-i18n="Analytics">Տոկոս</div>
                             </a>
                         </li>
                         <li class="menu-item ">
-                            <a href="/map" class="menu-link">
-                                <div data-i18n="Analytics">Map</div>
+                            <a href="/rates" class="menu-link">
+                                <i class='bx bx-money-withdraw'></i>
+                                <div data-i18n="Analytics">Փոխարժեք</div>
                             </a>
                         </li>
                         <li class="menu-item ">
                             <a href="/route" class="menu-link">
-                                <div data-i18n="Analytics">Route</div>
+                                <i class='bx bxs-direction-left'></i>
+                                <div data-i18n="Analytics">Երթուղի</div>
                             </a>
                         </li>
                     </ul>
@@ -159,7 +183,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     <div class="navbar-nav align-items-center">
                         <div class="nav-item d-flex align-items-center">
                             <i class="bx bx-search fs-4 lh-0"></i>
-                            <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2" placeholder="Search..." aria-label="Search...">
+                            <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2" placeholder="Փնտրել..." aria-label="Search...">
                         </div>
                     </div>
                     <!-- /Search -->

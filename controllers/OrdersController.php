@@ -101,8 +101,8 @@ class OrdersController extends Controller
                     $order_items_create->price = $post['price'][$i] * $post['count_'][$i];
                     $order_items_create->count = $post['count_'][$i];
                     $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
-                    $order_items_create->discount = $post['discount'][$i];
-                    $order_items_create->price_before_discount = $post['product_id'][$i];
+                    $order_items_create->discount = 0;
+                    $order_items_create->price_before_discount = 1000;
                     $order_items_create->created_at = date('Y-m-d H:i:s');
                     $order_items_create->updated_at = date('Y-m-d H:i:s');
                     $order_items_create->save(false);
@@ -112,7 +112,7 @@ class OrdersController extends Controller
             $model->loadDefaultValues();
         }
         $nomenclatures = Nomenclature::find()->select('nomenclature.id,nomenclature.name,nomenclature.price,
-        nomenclature.cost,nomenclature.discount_id,nomenclature.price_before_discount,products.id as products_id,products.count,')
+        nomenclature.cost,products.id as products_id,products.count,')
             ->leftJoin('products','nomenclature.id = products.nomenclature_id')
             ->asArray()->all();
         $clients = Clients::find()->select('id, name')->asArray()->all();
@@ -162,8 +162,8 @@ class OrdersController extends Controller
                     $order_item->price = $post['price'][$k] *$post['count_'][$k];
                     $order_item->count = $post['count_'][$k];
                     $order_item->cost = $post['cost'][$k] * $post['count_'][$k];
-                    $order_item->discount = $post['discount'][$k];
-                    $order_item->price_before_discount = $post['priceBeforeDiscount'][$k];
+                    $order_item->discount = 0;
+                    $order_item->price_before_discount = 1500;
                     $order_item->updated_at = date('Y-m-d H:i:s');
                     $quantity += $order_item->count;
                     $tot_price += $order_item->price;
@@ -175,8 +175,8 @@ class OrdersController extends Controller
                     $order_item->price = $post['price'][$k] *$post['count_'][$k];
                     $order_item->count = $post['count_'][$k];
                     $order_item->cost = $post['cost'][$k] * $post['count_'][$k];
-                    $order_item->discount = $post['discount'][$k];
-                    $order_item->price_before_discount = $post['priceBeforeDiscount'][$k];
+                    $order_item->discount = 0;
+                    $order_item->price_before_discount = 1500;
                     $order_item->created_at = date('Y-m-d H:i:s');
                     $order_item->updated_at = date('Y-m-d H:i:s');
                     $quantity += $order_item->count;
@@ -191,7 +191,7 @@ class OrdersController extends Controller
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $nomenclatures = Nomenclature::find()->select('nomenclature.id,nomenclature.name,nomenclature.price,
-        nomenclature.cost,nomenclature.discount_id,nomenclature.price_before_discount,products.id as products_id,products.count,')
+        nomenclature.cost,products.id as products_id,products.count,')
             ->leftJoin('products','nomenclature.id = products.nomenclature_id')
             ->asArray()->all();
         $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price / order_items.count) as price,
