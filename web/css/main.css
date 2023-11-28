@@ -17,13 +17,13 @@
     font-size: 1.3em;
 }
 .menu-item > a::before{
-    display:none;
+    display:none !important;
 }
 .menu-link{
     padding-left: 1rem !important;
 }
 .menu-link > i{
-    padding-right:10px;
+    padding-right:10px !important;
 }
  li.active a{
     font-weight:900;

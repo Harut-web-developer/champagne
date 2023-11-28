@@ -156,7 +156,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                         </li>
                         <li class="menu-item ">
                             <a href="/route" class="menu-link">
-                                <div data-i18n="Analytics">Route</div>
+                                <i class='bx bxs-direction-left'></i>
+                                <div data-i18n="Analytics">Երթուղի</div>
                             </a>
                         </li>
                     </ul>
