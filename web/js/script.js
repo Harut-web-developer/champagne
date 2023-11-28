@@ -142,4 +142,22 @@ $('body').on('click','.edite-block-title-save-new-field',function (){
 $(document).ready(function() {
     $('.js-example-basic-multiple').select2();
 });
+// $('#valuemap').change(function () {
+//     var location_value = $(this).val();
+//     var csrfToken = $('meta[name="csrf-token"]').attr("content");
+//     console.log(location_value)
+//     $.ajax({
+//         url: "/map/location-value",
+//         method: 'post',
+//         dataType: 'json',
+//         data: {
+//             locationvalue: location_value,
+//             _csrf: csrfToken
+//         },
+//         success:function (data){
+//             console.log(data)
+//         }
+//     });
+// });
+
 

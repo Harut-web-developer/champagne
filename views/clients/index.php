@@ -64,6 +64,17 @@ if ($have_access_update && $have_access_delete){
         ]),
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+            [
+                'attribute' => 'route_id',
+                'value' => function ($model) {
+                    if ($model->routeName) {
+                        return $model->routeName->route;
+                    } else {
+                        return 'empty';
+                    }
+                }
+            ],
+//            'route_id',
             'name',
             'location',
             'phone',
