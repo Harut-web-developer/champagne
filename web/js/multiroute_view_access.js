@@ -1,8 +1,9 @@
 function init () {
     // Создаем карту.
 
-    $('#valuemap').change(function () {
-        var location_value = $(this).val();
+    $('#routeSelect, #myLocalDate').on('change', function() {
+        var location_value = $('#routeSelect').val();
+        var date = $("#myLocalDate").val();
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:"/map/location-value",
@@ -10,15 +11,18 @@ function init () {
             dataType:'json',
             data:{
                 locationvalue: location_value,
+                date:date,
                 _csrf:csrfToken,
             },
             success:function(data){
-                console.log(data)
                 var arr = [];
-                for (var i=0; i<data.length;i++)
+                for (var i = 0; i < data['location'].length; i++) {
+                    arr.push(data['location'][i]['location']);
+                }
+                arr.unshift(data['warehouse']['location']);
+                for (var j=1; i<arr.length;i++)
                 {
-                    arr[i] = [data[i]['location']] + ",";
-                    console.log(arr[i])
+                    console.log(arr[j]);
                 }
                 var multiRoute = new ymaps.multiRouter.MultiRoute({
                     referencePoints: arr,

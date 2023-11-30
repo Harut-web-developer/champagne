@@ -37,14 +37,25 @@ if(isset($action__)){
                     <div id="map">
                     </div>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 route">
-                    <label for="multipleClients">Routes</label>
-                    <select class="form-select form-control" aria-label="Default select example" name="Clients[route]">
-                        <?php foreach ($route as $index => $rout) { ?>
-                            <option value="<?= $rout['id'] ?>" <?= $rout['id'] ? 'selected' : '' ?> ><?= $rout['route'] ?></option>
-                        <?php } ?>
-                    </select>
-                </div>
+                <?php if (empty($model->id)){ ?>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 route">
+                        <label for="multipleClients">Routes</label>
+                        <select class="form-select form-control" aria-label="Default select example" name="Clients[route]">
+                            <?php foreach ($route as $index => $rout) { ?>
+                                <option value="<?= $rout['id'] ?>" <?= $rout['id'] ? 'selected' : '' ?> ><?= $rout['route'] ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                <?php } else { ?>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 route">
+                        <label for="multipleClients">Routes</label>
+                        <select class="form-select form-control" aria-label="Default select example" name="Clients[route]">
+                            <?php foreach ($route as $index => $rout) { ?>
+                                <option value="<?= $rout['id'] ?>" <?= ($rout['id'] == $route_value_update['route_id']) ? 'selected' : '' ?> ><?= $rout['route']?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                <?php } ?>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 clientPhone">
                     <?= $form->field($model, 'phone')->input('number',['required' => $req]) ?>
                 </div>

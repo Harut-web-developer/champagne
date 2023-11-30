@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property string $name
+ * @property string $location
  * @property string $type
  * @property string $created_at
  * @property string $updated_at
@@ -29,10 +30,10 @@ class Warehouse extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'type'], 'required'],
+            [['name', 'location', 'type'], 'required'],
             [['type'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
-            [['name'], 'string', 'max' => 255],
+            [['name', 'location'], 'string', 'max' => 255],
         ];
     }
 
@@ -44,6 +45,7 @@ class Warehouse extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Անուն',
+            'location' => 'Գտնվելու վայրը',
             'type' => 'Տեսակ',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

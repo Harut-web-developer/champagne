@@ -18,7 +18,7 @@ class WarehouseSearch extends Warehouse
     {
         return [
             [['id'], 'integer'],
-            [['name', 'type', 'created_at', 'updated_at'], 'safe'],
+            [['name', 'type', 'location', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 

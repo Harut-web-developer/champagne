@@ -16,8 +16,8 @@ use yii\widgets\ActiveForm;
     <div class="form-group col-md-12 col-lg-12 col-sm-12" style="display: flex;">
         <div class="form-group col-md-5 col-lg-3 col-sm-6 loguser">
             <label for="multipleClients">Routes</label>
-            <select id="valuemap" class="form-select form-control" aria-label="Default select example">
-                <option value="">Select the route</option>
+            <select class="form-select form-control valuemap" id="routeSelect" aria-label="Default select example">
+                <option>Select the route</option>
                 <?php foreach ($route as $index => $rout ){ ?>
                     <option value="<?= $rout['id'] ?>"><?= $rout['route'] ?></option>
                 <?php } ?>
@@ -25,14 +25,9 @@ use yii\widgets\ActiveForm;
         </div>
         <div class="form-group col-md-5 col-lg-3 col-sm-6 logAction">
             <label for="date">Select a date</label>
-            <input class="fil-input form-control" type="datetime-local" name="start_date" value="<?= $_GET['start_date'] ?? '' ?>">
+            <input id="myLocalDate" class="fil-input form-control valuemap" type="datetime-local" name="date">
         </div>
     </div>
-
-
-
-
-
     <div id="map"></div>
 </body>
 <style>

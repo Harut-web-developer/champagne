@@ -11,7 +11,7 @@ use Yii;
  * @property string $name
  * @property string $location
  * @property string $route_id
- * @property int $phone
+ * @property string $phone
  * @property string|null $status
  * @property string $created_at
  * @property string $updated_at
@@ -33,8 +33,8 @@ class Clients extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'location', 'phone', 'route_id'], 'required'],
-            [['phone', 'route_id'], 'integer'],
-            [['status'], 'string'],
+            [['route_id'], 'integer'],
+            [['status', 'phone'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'location'], 'string', 'max' => 255],
         ];

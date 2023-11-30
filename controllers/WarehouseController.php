@@ -98,6 +98,7 @@ class WarehouseController extends Controller
             date_default_timezone_set('Asia/Yerevan');
 
             $model->name = $post['Warehouse']['name'];
+            $model->location = $post['Warehouse']['location'];
             $model->type = $post['Warehouse']['type'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
@@ -153,6 +154,7 @@ class WarehouseController extends Controller
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
             $model->name = $post['Warehouse']['name'];
+            $model->location = $post['Warehouse']['location'];
             $model->type = $post['Warehouse']['type'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();

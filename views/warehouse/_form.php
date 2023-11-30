@@ -26,6 +26,9 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'warehouse','block_typ
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseName">
                     <?= $form->field($model, 'name')->textInput(['required'=>true]) ?>
                 </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseLocation">
+                    <?= $form->field($model, 'location')->textInput(['required'=>true]) ?>
+                </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseType">
                     <?= $form->field($model, 'type')->dropDownList([ 'usual' => 'Usual', 'virtual' => 'Virtual', ], ['prompt' => 'choose type','options' => ['required' => true,]]) ?>
                 </div>

@@ -9,6 +9,8 @@ use Yii;
  *
  * @property int $id
  * @property int $user_id
+ * @property int $clients_id
+ * @property int $order_number
  * @property string $status
  * @property float $total_price
  * @property int $total_count
@@ -32,7 +34,7 @@ class Orders extends \yii\db\ActiveRecord
     {
         return [
             [['user_id','clients_id', 'total_price', 'total_count'], 'required'],
-            [['user_id','clients_id', 'total_count'], 'integer'],
+            [['user_id','clients_id', 'total_count', 'order_number'], 'integer'],
             [['status'], 'string'],
             [['total_price'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
@@ -48,6 +50,7 @@ class Orders extends \yii\db\ActiveRecord
             'id' => 'ID',
             'user_id' => 'Օգտագործող',
             'clients_id' => 'Հաճախորդ',
+            'order_number' => 'order',
             'status' => 'Status',
             'total_price' => 'Ընդհանուր գումար',
             'total_count' => 'Ընդհանուր քանակ',

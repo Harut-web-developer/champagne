@@ -76,7 +76,7 @@ if ($have_access_update && $have_access_delete){
             ],
 //            'route_id',
             'name',
-            'location',
+//            'location',
             'phone',
             ...$action_column,
         ],

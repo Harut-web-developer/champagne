@@ -2,8 +2,12 @@
 
 namespace app\controllers;
 
+
+use app\models\Clients;
+use app\models\Orders;
 use app\models\Route;
 use app\models\RouteSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -31,6 +35,12 @@ class RouteController extends Controller
         );
     }
 
+    public function beforeAction($action)
+    {
+        $this->enableCsrfValidation = false;
+        return parent::beforeAction($action);
+    }
+
     /**
      * Lists all Route models.
      *
@@ -55,9 +65,30 @@ class RouteController extends Controller
      */
     public function actionView($id)
     {
+        $result = Clients::find()->select('id,name')->where(['=', 'route_id', intval($id)])->asArray()->all();
+
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'result' => $result,
+//            'alldata' => $alldata,
         ]);
+    }
+
+    public function actionSave()
+    {
+        $db = Yii::$app->db;
+        if ($this->request->isPost) {
+            if (!empty($_POST['sort'])) {
+                foreach ($_POST['sort'] as $i => $row) {
+                    $client = Clients::findOne($row);
+                    $client->sort_ = $i;
+                    $client->save(false);
+                }
+            }
+            return 'success';
+        } else {
+            return 'error';
+        }
     }
 
     /**

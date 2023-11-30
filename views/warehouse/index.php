@@ -66,6 +66,7 @@ if ($have_access_update && $have_access_delete){
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
                     'name',
+                    'location',
                     'type',
                     ...$action_column,
             ],

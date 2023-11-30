@@ -118,15 +118,14 @@ class ClientsController extends Controller
         ]);
     }
 
-//    public function actionCoordsLocation()
-//    {
-//        if ($this->request->isPost) {
-//            $post = $this->request->post();
-//            $latlong = $post['coords'][0].','.$post['coords'][1];
-//            return json_encode($latlong);
-//        }
-//    }
-
+    public function actionCoordsLocation()
+    {
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            $latlong = $post['coords'][0].','.$post['coords'][1];
+            return json_encode($latlong);
+        }
+    }
 
     public function actionClientsLocation()
     {
@@ -170,8 +169,8 @@ class ClientsController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
-//        $route_value_update = Clients::find()->select('route')->where(['id' => $model->id])->one();
-//        $model->route = $route_value_update['route'];
+        $route_value_update = Clients::find()->select('id, route_id')->where(['id' => $model->id])->one();
+//        $route_value_update = $route_value_update['route_id'];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -191,6 +190,7 @@ class ClientsController extends Controller
         return $this->render('update', [
             'model' => $model,
             'route' => $route,
+            'route_value_update' => $route_value_update,
         ]);
     }
 
