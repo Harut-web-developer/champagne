@@ -24,7 +24,7 @@ class MapController extends Controller
             $value = $get['locationvalue'];
             $valuedate =$get['date'];
             date_default_timezone_set('UTC');
-            $warehouse = Warehouse::find()->select('location')->where(['id' => 16])->asArray()->one();
+            $warehouse = Warehouse::find()->select('location')->where(['id' => 1])->asArray()->one();
             $formattedSelectedDate = Yii::$app->formatter->asDatetime($valuedate, 'yyyy-MM-dd');
             $locations = Orders::find()
                 ->select(["clients.location", 'DATE_FORMAT(orders.updated_at, "%Y-%m-%d") as updated_at'])
