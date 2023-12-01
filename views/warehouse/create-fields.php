@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Warehouse $model */
 
-$this->title = 'Configure Form Warehouse';
+$this->title = 'Դաշտերի կարգավորում';
 $this->params['breadcrumbs'][] = ['label' => 'Warehouse', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

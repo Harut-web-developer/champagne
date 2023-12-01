@@ -6,9 +6,9 @@ use app\models\CustomfieldsBlocksTitle;
 use app\models\CustomfieldsBlocksInputs;
 
 /** @var yii\web\View $this */
-/** @var app\models\Warehouse $model */
+/** @var app\models\Clients $model */
 /** @var yii\widgets\ActiveForm $form */
-$blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'warehouse','block_type'=>1])->orderBy(['order_number'=>SORT_ASC])->all();
+$blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'documents','block_type'=>1])->orderBy(['order_number'=>SORT_ASC])->all();
 $req = true;
 if(isset($action__)){
     $req = false;
@@ -16,28 +16,53 @@ if(isset($action__)){
 ?>
 
 
-<div class="warehouse-form">
+<div class="clients-form">
     <div class="card card-primary">
         <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
         <div class="dinamic-form">
-            <input type="hidden" name="page" value="warehouse">
-            <div class="default-panel" data-id="1" data-page="warehouse">
+            <input type="hidden" name="page" value="clients">
+            <div class="default-panel" data-id="41" data-page="clients">
                 <div class="panel-title">
                     <span class="non-active"><?=$model->DefaultTitle->title?></span>
                     <input type="text" name="newblocks[<?php echo $model->DefaultTitle->id;?>]" value="<?=$model->DefaultTitle->title?>"  class="only-active form-control">
                     <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
                     <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseName">
-                    <?= $form->field($model, 'name')->textInput(['required'=>$req]) ?>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                    <?= $form->field($model, 'document_type')->dropDownList([ '1' => 'Մուտք', '2' => 'Ելք','3' => 'Տեղափոխություն','4' => 'Խոտան', ]) ?>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseType">
-                    <?= $form->field($model, 'type')->dropDownList([ 'usual' => 'Usual', 'virtual' => 'Virtual', ], ['prompt' => 'choose type','options' => ['required' => $req,]]) ?>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                    <?= $form->field($model, 'user_id')->dropDownList($users) ?>
                 </div>
-                <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>1])->all(); ?>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                    <?= $form->field($model, 'warehouse_id')->dropDownList($warehouse) ?>
+                </div>
+                <label class="rateLabel" for="rate">Փոխարժեք</label>
+                <div id="rate" class="form-group col-md-12 col-lg-12 col-sm-12 rateDocument">
+                    <div class="rateType">
+                        <?= $form->field($model, 'rate_id')->dropDownList($rates)->label(false) ?>
+                    </div>
+                    <div class="rateValue">
+                        <?= $form->field($model, 'rate_value')->input('number')->label(false) ?>
+                    </div>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                    <label for="aah">ԱԱՀ</label>
+                    <select class="form-control" name="aah" id="aah">
+                        <option value="true">Կա</option>
+                        <option value="false">Չկա</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                    <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                    <?= $form->field($model, 'date')->input('datetime-local') ?>
+                </div>
+                <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>41])->all(); ?>
                 <?php if(!empty($fields)){ ?>
                     <?php foreach ($fields as $fild => $fild_simple){ ?>
-                        <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id, false);?>
+                        <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id,false);?>
                     <?php } ?>
                 <?php } ?>
                 <div class="actions">
@@ -59,7 +84,7 @@ if(isset($action__)){
             </div>
             <?php if(!empty($blocks)){ ?>
                 <?php foreach ($blocks as $block => $block_val){ ?>
-                    <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="warehouse">
+                    <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="clients">
                         <div class="panel-title">
                             <span class="non-active"><?=$block_val->title?></span>
                             <input type="text" name="newblocks[<?php echo $block_val->id;?>]" value="<?=$block_val->title?>"  class="only-active form-control">
@@ -70,7 +95,7 @@ if(isset($action__)){
                         <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->all(); ?>
                         <?php if(!empty($fields)){ ?>
                             <?php foreach ($fields as $fild => $fild_simple){ ?>
-                                <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id, false);?>
+                                <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id,false);?>
                             <?php } ?>
                         <?php } ?>
                         <div class="actions">
@@ -92,8 +117,6 @@ if(isset($action__)){
                     </div>
                 <?php } ?>
             <?php } ?>
-
-
         </div>
         <button class="btn btn-default btn-sm create-block" type="button">Ստեղծել բլոկ</button>
         <div class="card-footer">
@@ -101,7 +124,7 @@ if(isset($action__)){
         </div>
 
         <?php ActiveForm::end(); ?>
-        <div class="default-panel createable-panel new-panel" data-page="warehouse">
+        <div class="default-panel createable-panel new-panel" data-page="clients">
             <div class="panel-title">
                 <span class="non-active">Նոր բլոկ</span>
                 <input type="text"  value="Նոր բլոկ" name="newblocks[]" class="only-active form-control">
@@ -128,3 +151,5 @@ if(isset($action__)){
         </div>
     </div>
 </div>
+
+

@@ -27,7 +27,7 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'warehouse','block_typ
                     <?= $form->field($model, 'name')->textInput(['required'=>true]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseType">
-                    <?= $form->field($model, 'type')->dropDownList([ 'usual' => 'Usual', 'virtual' => 'Virtual', ], ['prompt' => 'choose type','options' => ['required' => true,]]) ?>
+                    <?= $form->field($model, 'type')->dropDownList([ 'usual' => 'Սովորական', 'virtual' => 'Վիրտուալ', ], ['prompt' => 'Ընտրել տեսակը','options' => ['required' => true,]]) ?>
                 </div>
                 <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>1])->all(); ?>
                 <?php if(!empty($fields)){ ?>

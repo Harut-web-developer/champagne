@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use app\models\Route;
 use app\models\RouteSearch;
+use app\models\Users;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -16,20 +18,33 @@ class RouteController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors()
+    public function beforeAction($action)
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
+        $session = Yii::$app->session;
+        if ($action->id !== 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->redirect(['site/login']);
+        } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->actionLogin();
+        }
+        if(!$session['username']){
+            $this->redirect('/site/logout');
+        }
+        return parent::beforeAction($action);
     }
+//    public function behaviors()
+//    {
+//        return array_merge(
+//            parent::behaviors(),
+//            [
+//                'verbs' => [
+//                    'class' => VerbFilter::className(),
+//                    'actions' => [
+//                        'delete' => ['POST'],
+//                    ],
+//                ],
+//            ]
+//        );
+//    }
 
     /**
      * Lists all Route models.
@@ -38,6 +53,10 @@ class RouteController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(52);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $searchModel = new RouteSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -67,6 +86,10 @@ class RouteController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(49);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new Route();
 
         if ($this->request->isPost) {
@@ -94,6 +117,10 @@ class RouteController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(50);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
@@ -114,6 +141,10 @@ class RouteController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(51);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

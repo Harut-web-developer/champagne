@@ -278,3 +278,45 @@
 .addDocuments{
     margin-top:35px;
 }
+.mapFilter{
+    display:flex;
+    flex-wrap:wrap;
+}
+@media screen and (max-width: 424px) {
+    .loguser, .logAction{
+        width:80%;
+    }
+}
+@media screen and (min-width: 425px) and (max-width: 454px) {
+    .loguser, .logAction{
+        width:50%;
+    }
+}
+@media screen and (max-width: 315px) {
+    .rateDocument{
+        display:flex;
+        flex-wrap:wrap;
+    }
+    .rateType, .rateValue{
+        width:100%;
+    }
+}
+.select2-selection{
+    width:100% !important;
+}
+.selGroup{
+    display:flex;
+    flex-direction:column;
+}
+.clientSelect,.productSelect{
+    display:flex !important;
+    flex-direction:column !important;
+    max-width: 100% !important;
+}
+.scrollMenu{
+    height: 150vh !important;
+    overflow-y: auto !important;
+}
+.userIcons{
+    font-size: 45px;
+}

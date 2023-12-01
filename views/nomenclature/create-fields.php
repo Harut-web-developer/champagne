@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Nomenclature $model */
 
-$this->title = 'Configure Form Nomenclatures';
+$this->title = 'Դաշտերի կարգավորում';
 $this->params['breadcrumbs'][] = ['label' => 'Nomenclature', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

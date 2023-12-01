@@ -11,7 +11,7 @@ use yii\grid\GridView;
 /** @var app\models\UsersSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Օգտագործող';
+$this->title = 'Օգտատեր';
 $this->params['breadcrumbs'][] = $this->title;
 $have_access_create = Users::checkPremission(13);
 $have_access_update = Users::checkPremission(14);
@@ -50,23 +50,25 @@ if ($have_access_update && $have_access_delete){
     <h1><?= Html::encode($this->title) ?> <?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h1>
     <p>
         <?php if($have_access_create){ ?>
-            <?= Html::a('Ստեղծել', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+            <?= Html::a('Ավելացնել օգտատեր', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
         <?php } ?>
     </p>
     <div class="card">
     <?= GridView::widget([
+        'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
+        'summaryOptions' => ['class' => 'summary'],
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'name',
             'username',
             [
-                'attribute' => 'Դեր',
+                'attribute' => 'Կարգավիճակ',
                 'value' => function ($model) {
                     if ($model->roleName) {
                         return $model->roleName->name;
                     } else {
-                        return 'empty';
+                        return 'Դատարկ';
                     }
                 }
             ],

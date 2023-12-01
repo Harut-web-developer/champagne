@@ -43,22 +43,25 @@ use yii\widgets\ActiveForm;
                         </select>
                     </div>
                     <?php }else{ ?>
-                    <div class="form-group col-md-12 col-lg-12 col-sm-12 discount">
-                        <label for="multipleClients">Հաճախորդ</label>
-                        <select id="multipleClients" class="js-example-basic-multiple form-control" name="clients[]" multiple="multiple">
-                            <?php foreach ($clients as $client){ ?>
-                                <option value="<?=$client['id']?>"><?=$client['name']?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-12 col-lg-12 col-sm-12 discount">
-                        <label for="multipleProducts">Ապրանք</label>
-                        <select id="multipleProducts" class="js-example-basic-multiple form-control" name="products[]" multiple="multiple">
-                            <?php foreach ($products as $product){ ?>
-                                <option value="<?=$product['id']?>"><?=$product['name']?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
+                        <div class="form-group selGroup">
+                            <div class="clientSelect">
+                                <label for="multipleClients">Հաճախորդ</label>
+                                <select id="multipleClients" class="js-example-basic-multiple form-control " name="clients[]" multiple="multiple">
+                                    <?php foreach ($clients as $client){ ?>
+                                        <option value="<?=$client['id']?>"><?=$client['name']?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="productSelect">
+                                <label for="multipleProducts">Ապրանք</label>
+                                <select id="multipleProducts" class="js-example-basic-multiple form-control " name="products[]" multiple="multiple">
+                                    <?php foreach ($products as $product){ ?>
+                                        <option value="<?=$product['id']?>"><?=$product['name']?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+
                     <?php } ?>
 
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountStartDate">

@@ -6,9 +6,11 @@ use app\models\DocumentItems;
 use app\models\Documents;
 use app\models\DocumentsSearch;
 use app\models\Nomenclature;
+use app\models\Products;
 use app\models\Rates;
 use app\models\Users;
 use app\models\Warehouse;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -22,20 +24,33 @@ class DocumentsController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors()
+    public function beforeAction($action)
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
+        $session = Yii::$app->session;
+        if ($action->id !== 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->redirect(['site/login']);
+        } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->actionLogin();
+        }
+        if(!$session['username']){
+            $this->redirect('/site/logout');
+        }
+        return parent::beforeAction($action);
     }
+//    public function behaviors()
+//    {
+//        return array_merge(
+//            parent::behaviors(),
+//            [
+//                'verbs' => [
+//                    'class' => VerbFilter::className(),
+//                    'actions' => [
+//                        'delete' => ['POST'],
+//                    ],
+//                ],
+//            ]
+//        );
+//    }
 
     /**
      * Lists all Documents models.
@@ -44,6 +59,10 @@ class DocumentsController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(40);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $searchModel = new DocumentsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -73,8 +92,13 @@ class DocumentsController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(37);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new Documents();
         if ($this->request->isPost) {
+
             $post = $this->request->post();
             date_default_timezone_set('Asia/Yerevan');
             $model->user_id = $post['Documents']['user_id'];
@@ -86,7 +110,7 @@ class DocumentsController extends Controller
             $model->date = $post['Documents']['date'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
-            $model->save();
+            $model->save(false);
                 for ($i = 0; $i < count($post['document_items']); $i++){
                     $document_items = new DocumentItems();
                     $document_items->document_id = $model->id;
@@ -96,8 +120,21 @@ class DocumentsController extends Controller
                     $document_items->AAH = $post['aah'];
                     $document_items->created_at = date('Y-m-d H:i:s');
                     $document_items->updated_at = date('Y-m-d H:i:s');
-                    $document_items->save();
+                    $document_items->save(false);
                 }
+                if ($post['Documents']['document_type'] === '1'){
+                    for ($i = 0; $i < count($post['document_items']); $i++) {
+                        $products = new Products();
+                        $products->warehouse_id = $post['Documents']['warehouse_id'];
+                        $products->nomenclature_id = $post['document_items'][$i];
+                        $products->count = $post['count_'][$i];
+                        $products->price = $post['price'][$i];
+                        $products->created_at = date('Y-m-d H:i:s');
+                        $products->updated_at = date('Y-m-d H:i:s');
+                        $products->save(false);
+                        }
+                }
+
                 return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
@@ -121,6 +158,26 @@ class DocumentsController extends Controller
         ]);
     }
 
+    public function actionCreateFields()
+    {
+        $model = new Documents();
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+
+            if($post['newblocks'] || $post['new_fild_name']){
+
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
+            return $this->redirect(['index']);
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('create-fields', [
+            'model' => $model,
+        ]);
+    }
+
     /**
      * Updates an existing Documents model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -130,6 +187,10 @@ class DocumentsController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(38);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
 //        echo  "<pre>";
         $model = $this->findModel($id);
 
@@ -140,7 +201,6 @@ class DocumentsController extends Controller
             $model->warehouse_id = $post['Documents']['warehouse_id'];
             $model->rate_id = $post['Documents']['rate_id'];
             $model->rate_value = $post['Documents']['rate_value'];
-            $model->document_type = $post['Documents']['document_type'];
             $model->comment = $post['Documents']['comment'];
             $model->date = $post['Documents']['date'];
             $model->updated_at = date('Y-m-d H:i:s');
@@ -205,6 +265,10 @@ class DocumentsController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(39);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $documents = Documents::findOne($id);
         $documents->status = '0';
         $documents->save();

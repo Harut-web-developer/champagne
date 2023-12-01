@@ -51,8 +51,10 @@ class Users extends ActiveRecord implements IdentityInterface
             'name' => 'Անուն',
             'username' => 'Օգտանուն',
             'password' => 'Գաղտնաբառ',
-            'role_id' => 'Օգտագործողի կարգավիճակ',
+            'role_id' => 'Կարգավիճակ',
             'auth_key' => 'Auth Key',
+            'email' => 'Էլ.փոստ',
+            'phone' => 'Հեռախոսահամար',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

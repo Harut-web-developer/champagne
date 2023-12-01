@@ -33,20 +33,20 @@ class ClientsController extends Controller
         }
         return parent::beforeAction($action);
     }
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
+//    public function behaviors()
+//    {
+//        return array_merge(
+//            parent::behaviors(),
+//            [
+//                'verbs' => [
+//                    'class' => VerbFilter::className(),
+//                    'actions' => [
+//                        'delete' => ['POST'],
+//                    ],
+//                ],
+//            ]
+//        );
+//    }
 
     /**
      * Lists all Clients models.
@@ -118,14 +118,14 @@ class ClientsController extends Controller
         ]);
     }
 
-//    public function actionCoordsLocation()
-//    {
-//        if ($this->request->isPost) {
-//            $post = $this->request->post();
-//            $latlong = $post['coords'][0].','.$post['coords'][1];
-//            return json_encode($latlong);
-//        }
-//    }
+    public function actionCoordsLocation()
+    {
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            $latlong = $post['coords'][0].','.$post['coords'][1];
+            return json_encode($latlong);
+        }
+    }
 
 
     public function actionClientsLocation()

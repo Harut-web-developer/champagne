@@ -9,17 +9,19 @@ use yii\widgets\ActiveForm;
 ?>
 
 <div class="route-form">
-
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'route')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'status')->dropDownList([ 1 => '1', 0 => '0', ], ['prompt' => '']) ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn rounded-pill btn-secondary']) ?>
+    <div class="card card-primary">
+        <?php $form = ActiveForm::begin(); ?>
+            <div class="default-panel">
+                <div class="panel-title premission">
+                    <span class="non-active">Երթուղի</span>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                    <?= $form->field($model, 'route')->textInput(['maxlength' => true]) ?>
+                </div>
+            </div>
+            <div class="card-footer">
+                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
+            </div>
+        <?php ActiveForm::end(); ?>
     </div>
-
-    <?php ActiveForm::end(); ?>
-
 </div>

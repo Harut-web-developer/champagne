@@ -57,6 +57,8 @@ if ($have_access_update && $have_access_delete){
     </p>
     <div class="card">
         <?= GridView::widget([
+            'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
+            'summaryOptions' => ['class' => 'summary'],
             'dataProvider' => new ActiveDataProvider([
                 'query' => $dataProvider->query->andWhere(['status' => '1']),
 //                'pagination' => [
@@ -66,7 +68,16 @@ if ($have_access_update && $have_access_delete){
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
                     'name',
-                    'type',
+                [
+                    'attribute' => 'Տեսակ',
+                    'value' => function ($model) {
+                        if ($model->type === 'usual') {
+                            return 'Սովորական';
+                        } else {
+                            return 'Վիրտուալ';
+                        }
+                    }
+                ],
                     ...$action_column,
             ],
         ]); ?>

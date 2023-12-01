@@ -20,20 +20,33 @@ class ProductsController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors()
+    public function beforeAction($action)
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
+        $session = Yii::$app->session;
+        if ($action->id !== 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->redirect(['site/login']);
+        } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->actionLogin();
+        }
+        if(!$session['username']){
+            $this->redirect('/site/logout');
+        }
+        return parent::beforeAction($action);
     }
+//    public function behaviors()
+//    {
+//        return array_merge(
+//            parent::behaviors(),
+//            [
+//                'verbs' => [
+//                    'class' => VerbFilter::className(),
+//                    'actions' => [
+//                        'delete' => ['POST'],
+//                    ],
+//                ],
+//            ]
+//        );
+//    }
 
     /**
      * Lists all Products models.
@@ -187,7 +200,22 @@ class ProductsController extends Controller
         $products->save();
         return $this->redirect(['index']);
     }
-
+    public function actionGetProducts(){
+        if ($this->request->isPost){
+            $post = $this->request->post();
+            $products_count = Products::find()->select('SUM(count) as count')->where(['nomenclature_id' => $post['itemId']])->asArray()->all();
+//            var_dump($products_count[0]['count']);
+            if ($products_count[0]['count'] === null){
+                return json_encode(['count' => 'dontExists']);
+            }elseif ($post['count'] > intval($products_count[0]['count'])){
+                return json_encode(['count' => 'countMore']);
+            }elseif (intval($post['count']) <= 0){
+                return json_encode(['count' => 'nullable']);
+            }else{
+                return json_encode(['count' => 'exists']);
+            }
+        }
+    }
     /**
      * Finds the Products model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

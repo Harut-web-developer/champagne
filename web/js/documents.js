@@ -12,7 +12,7 @@ $(document).ready(function () {
                                          <td>`+id+`<input type="hidden" name="document_items[]" value="`+id+`"></td>
                                          <td class="name">`+name+`</td>
                                          <td class="count"><input type="number" name="count_[]" value="`+count+`" class="form-control countDocuments"></td>
-                                         <td class="price">`+price+` <input type="hidden" name="price[]" value="`+price+`"></td>
+                                         <td class="price"><input type="text" name="price[]" value="`+price+`" class="form-control priceDocuments"></td>
                                          <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                       </tr>`;
             }
@@ -36,7 +36,7 @@ $(document).ready(function () {
                                          <td>`+id+`<input type="hidden" name="document_items[]" value="null"><input type="hidden" name="items[]" value="`+id+`"></td>
                                          <td class="name">`+name+`</td>
                                          <td class="count"><input type="number" name="count_[]" value="`+count+`" class="form-control countDocuments"></td>
-                                         <td class="price">`+price+` <input type="hidden" name="price[]" value="`+price+`"></td>
+                                         <td class="price"><input type="text" name="price[]" value="`+price+`" class="form-control priceDocuments"></td>
                                          <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                       </tr>`;
             }
@@ -63,8 +63,12 @@ $(document).ready(function () {
         })
     })
 
-
-
+    $('body').on('click','.priceDocuments',function () {
+        $(this).val($(this).val().replace(/[^0-9.]/g, ''));
+    })
+    $('body').on('keyup','.priceDocuments',function () {
+        $(this).val($(this).val().replace(/[^0-9.]/g, ''));
+    })
 
 
 
