@@ -204,7 +204,6 @@ class ProductsController extends Controller
         if ($this->request->isPost){
             $post = $this->request->post();
             $products_count = Products::find()->select('SUM(count) as count')->where(['nomenclature_id' => $post['itemId']])->asArray()->all();
-//            var_dump($products_count[0]['count']);
             if ($products_count[0]['count'] === null){
                 return json_encode(['count' => 'dontExists']);
             }elseif ($post['count'] > intval($products_count[0]['count'])){

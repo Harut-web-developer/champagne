@@ -101,7 +101,10 @@ $(document).ready(function () {
                 let priceBeforeDiscount = $(this).children('.ordersAddCount').find('.ordersPriceBrforeDiscount').val();
                 let total = +parseFloat(price * count).toFixed(2);
                 addOrdersTableBody +=`<tr class="tableNomenclature">
-                                        <th>`+id+` <input type="hidden" name="order_items[]" value="null"><input type="hidden" name="product_id[]" value="`+product_id+`"></th>
+                                        <th>`+id+` <input type="hidden" name="order_items[]" value="null">
+                                            <input type="hidden" name="product_id[]" value="`+product_id+`">
+                                            <input type="hidden" name="nom_id[]" value="`+id+`">
+                                        </th>
                                         <td class="name">`+name+`</td>
                                         <td class="count"><input type="number" name="count_[]" value="`+count+`" class="form-control countProduct"></td>
                                         <td class="price">`+price+` <input type="hidden" name="price[]" value="`+price+`"></td>

@@ -57,7 +57,10 @@ use yii\widgets\ActiveForm;
                                     $itemsArray[] = $item['product_id'];
                                     ?>
                                     <tr class="tableNomenclature">
-                                        <td><?=$keys + 1?><input class="orderItemsId" type="hidden" name="order_items[]" value="<?=$item['id']?>"><input type="hidden" name="product_id[]" value="<?=$item['product_id']?>"></td>
+                                        <td><?=$keys + 1?><input class="orderItemsId" type="hidden" name="order_items[]" value="<?=$item['id']?>">
+                                            <input type="hidden" name="product_id[]" value="<?=$item['product_id']?>">
+                                            <input type="hidden" name="nom_id[]" value="<?=$item['nom_id']?>">
+                                        </td>
                                         <td class="name"><?=$item['name']?></td>
                                         <td class="count"><input type="number" name="count_[]" value="<?=$item['count']?>" class="form-control countProductForUpdate"></td>
                                         <td class="price"><?=$item['price']?><input type="hidden" name="price[]" value="<?=$item['price']?>"></td>

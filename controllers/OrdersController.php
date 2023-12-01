@@ -108,10 +108,18 @@ class OrdersController extends Controller
             $model->total_count = $post['Orders']['total_count'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
+            $model->save();
             for ($i = 0; $i < count($post['order_items']); $i++){
-                var_dump(-$post['count_'][$i]);
+                $product_write_out = new Products();
+                $product_write_out->warehouse_id = 1;
+                $product_write_out->nomenclature_id = $post['order_items'][$i];
+                $product_write_out->document_id = $model->id;
+                $product_write_out->count = -intval($post['count_'][$i]);
+                $product_write_out->price = $post['price'][$i];
+                $product_write_out->created_at = date('Y-m-d H:i:s');
+                $product_write_out->updated_at = date('Y-m-d H:i:s');
+                $product_write_out->save();
             }
-//            $model->save();
                 for ($i = 0; $i < count($post['order_items']); $i++){
                     $order_items_create = new OrderItems();
                     $order_items_create->order_id = $model->id;
@@ -123,7 +131,7 @@ class OrdersController extends Controller
                     $order_items_create->price_before_discount = 1000;
                     $order_items_create->created_at = date('Y-m-d H:i:s');
                     $order_items_create->updated_at = date('Y-m-d H:i:s');
-//                    $order_items_create->save(false);
+                    $order_items_create->save(false);
                 }
                 return $this->redirect(['index', 'id' => $model->id]);
         } else {
@@ -172,6 +180,7 @@ class OrdersController extends Controller
             $items = $post['order_items'];
             $quantity = 0;
             $tot_price = 0;
+
             foreach ($items as $k => $item){
                 if($item != 'null'){
                     $order_item = OrderItems::findOne($item);
@@ -186,6 +195,20 @@ class OrdersController extends Controller
                     $quantity += $order_item->count;
                     $tot_price += $order_item->price;
                     $order_item->save(false);
+
+
+                    $product_write_out = Products::find()->select('count')->where(['and',['document_id' => $model->id,'nomenclature_id' => $post['nom_id'][$k]]])->one();
+                    $product_write_out->count = -intval($post['count_'][$k]);
+                    $product_write_out->save(false);
+//                    $product_write_out->warehouse_id = 1;
+//                    $product_write_out->nomenclature_id = $post['order_items'][$i];
+//                    $product_write_out->document_id = $model->id;
+//                    $product_write_out->count = -intval($post['count_'][$i]);
+//                    $product_write_out->price = $post['price'][$i];
+//                    $product_write_out->created_at = date('Y-m-d H:i:s');
+//                    $product_write_out->updated_at = date('Y-m-d H:i:s');
+//                    $product_write_out->save();
+
                 } else {
                     $order_item = new OrderItems();
                     $order_item->order_id = $id;
@@ -200,6 +223,16 @@ class OrdersController extends Controller
                     $quantity += $order_item->count;
                     $tot_price += $order_item->price;
                     $order_item->save(false);
+
+                    $product_write_out = new Products();
+                    $product_write_out->warehouse_id = 1;
+                    $product_write_out->nomenclature_id = $post['nom_id'][$k];
+                    $product_write_out->document_id = $model->id;
+                    $product_write_out->count = -intval($post['count_'][$k]);
+                    $product_write_out->price = $post['price'][$k];
+                    $product_write_out->created_at = date('Y-m-d H:i:s');
+                    $product_write_out->updated_at = date('Y-m-d H:i:s');
+                    $product_write_out->save(false);
                 }
             }
             $order = Orders::findOne($id);
@@ -213,7 +246,7 @@ class OrdersController extends Controller
             ->leftJoin('products','nomenclature.id = products.nomenclature_id')
             ->asArray()->all();
         $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price / order_items.count) as price,
-        (order_items.cost / order_items.count) as cost,order_items.discount,order_items.price_before_discount,nomenclature.name ')
+        (order_items.cost / order_items.count) as cost,order_items.discount,order_items.price_before_discount,nomenclature.name, (nomenclature.id) as nom_id')
             ->leftJoin('products','products.id = order_items.product_id')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['order_id' => $id])->asArray()->all();
