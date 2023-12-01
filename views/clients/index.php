@@ -56,6 +56,8 @@ if ($have_access_update && $have_access_delete){
     </p>
     <div class="card">
     <?= GridView::widget([
+        'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
+        'summaryOptions' => ['class' => 'summary'],
         'dataProvider' => new ActiveDataProvider([
             'query' => $dataProvider->query->andWhere(['status' => '1']),
 //                'pagination' => [
@@ -70,7 +72,7 @@ if ($have_access_update && $have_access_delete){
                     if ($model->routeName) {
                         return $model->routeName->route;
                     } else {
-                        return 'empty';
+                        return 'Դատարկ';
                     }
                 }
             ],

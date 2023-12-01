@@ -6,10 +6,10 @@ use yii\helpers\Html;
 /** @var app\models\Clients $model */
 
 $this->title = 'Դաշտերի կարգավորում';
-$this->params['breadcrumbs'][] = ['label' => 'Clients', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Documents', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="clients-create">
+<div class="documents-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

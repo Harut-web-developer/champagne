@@ -48,7 +48,7 @@ class Documents extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'Օգտագործող',
+            'user_id' => 'Օգտատեր',
             'warehouse_id' => 'Պահեստ',
             'rate_id' => 'Փոխարժեք',
             'rate_value' => 'Փոխարժեք',
@@ -59,6 +59,9 @@ class Documents extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+    public function getDefaultTitle(){
+        return CustomfieldsBlocksTitle::findOne(['id'=>41]);
     }
      public function getUsersName(){
         return $this->hasOne(Users::className(), ['id'=>'user_id']);

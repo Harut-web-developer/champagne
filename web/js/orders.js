@@ -224,8 +224,72 @@ $(document).ready(function () {
         }
 
     })
+    $('body').on('keyup','.ordersCountInput',function (){
+        var this_ = $(this);
+        var id = this_.closest('.addOrdersTableTr').find("input:checkbox").attr('data-id');
+        var count = this_.val();
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url: '/products/get-products',
+            method: 'post',
+            datatype: 'json',
+            data: {
+                itemId: id,
+                count:count,
+                _csrf: csrfToken
+            },
+            success:function (data) {
+                let parse = JSON.parse(data)
+                if (data){
+                    if (parse.count === 'nullable'){
+                        this_.val('')
+                    }else if (parse.count === 'countMore'){
+                        this_.val('')
+                        alert('Պահեստում նման քանակի ապրանք չկա');
+                    }else if (parse.count === 'dontExists'){
+                        alert('Նման ապրանք պահեստում գոյություն չունի')
+                    }
+                    // else if(parse.count === 'exists'){
+                    //
+                    // }
+                }
+            }
+        })
 
+    })
+    $('body').on('click','.ordersCountInput',function (){
+        var this_ = $(this);
+        var id = this_.closest('.addOrdersTableTr').find("input:checkbox").attr('data-id');
+        var count = this_.val();
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url: '/products/get-products',
+            method: 'post',
+            datatype: 'json',
+            data: {
+                itemId: id,
+                count:count,
+                _csrf: csrfToken
+            },
+            success:function (data) {
+                let parse = JSON.parse(data)
+                if (data){
+                    if (parse.count === 'nullable'){
+                        this_.val('')
+                    }else if (parse.count === 'countMore'){
+                        this_.val('')
+                        alert('Պահեստում նման քանակի ապրանք չկա');
+                    }else if (parse.count === 'dontExists'){
+                        alert('Նման ապրանք պահեստում գոյություն չունի')
+                    }
+                    // else if(parse.count === 'exists'){
+                    //
+                    // }
+                }
+            }
+        })
 
+    })
 
 
 

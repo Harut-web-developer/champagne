@@ -37,20 +37,20 @@ class UsersController extends Controller
 
     }
 
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
+//    public function behaviors()
+//    {
+//        return array_merge(
+//            parent::behaviors(),
+//            [
+//                'verbs' => [
+//                    'class' => VerbFilter::className(),
+//                    'actions' => [
+//                        'delete' => ['POST'],
+//                    ],
+//                ],
+//            ]
+//        );
+//    }
 
     /**
      * Lists all Users models.
@@ -70,6 +70,26 @@ class UsersController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionProfile(){
+        $session = Yii::$app->session;
+        $model = $this->findModel($session['user_id']);
+        if($this->request->isPost){
+            date_default_timezone_set('Asia/Yerevan');
+            $post = $this->request->post();
+            $model->password = $post['Users']['password'];
+            $model->email = $post['Users']['email'];
+            $model->phone = $post['Users']['phone'];
+            $model->updated_at = date('Y-m-d H:i:s');
+            $model->save(false);
+            return $this->redirect(['profile', 'id' => $model->id]);
+        }else{
+            $model->loadDefaultValues();
+        }
+        return $this->render('profile',[
+            'model' => $model,
+        ] );
     }
 
     /**
@@ -106,6 +126,8 @@ class UsersController extends Controller
             $model->role_id = $post['Users']['role_id'];
             $model->auth_key = $this->generateRandomString();
             $model->password = $post['Users']['password'];
+            $model->email = $post['Users']['email'];
+            $model->phone = $post['Users']['phone'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
@@ -178,6 +200,8 @@ class UsersController extends Controller
             $model->role_id = $post['Users']['role_id'];
             $model->auth_key = $this->generateRandomString();
             $model->password = $post['Users']['password'];
+            $model->email = $post['Users']['email'];
+            $model->phone = $post['Users']['phone'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
             if(!empty($post['premission'])){

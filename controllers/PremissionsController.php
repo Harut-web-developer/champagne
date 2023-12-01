@@ -6,6 +6,7 @@ use app\models\Premissions;
 use app\models\PremissionsSearch;
 use app\models\Roles;
 use app\models\Users;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -19,20 +20,33 @@ class PremissionsController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors()
+    public function beforeAction($action)
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
+        $session = Yii::$app->session;
+        if ($action->id !== 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->redirect(['site/login']);
+        } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->actionLogin();
+        }
+        if(!$session['username']){
+            $this->redirect('/site/logout');
+        }
+        return parent::beforeAction($action);
     }
+//    public function behaviors()
+//    {
+//        return array_merge(
+//            parent::behaviors(),
+//            [
+//                'verbs' => [
+//                    'class' => VerbFilter::className(),
+//                    'actions' => [
+//                        'delete' => ['POST'],
+//                    ],
+//                ],
+//            ]
+//        );
+//    }
 
     /**
      * Lists all Premissions models.

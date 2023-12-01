@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use app\models\Rates;
 use app\models\RatesSearch;
+use app\models\Users;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -16,20 +18,33 @@ class RatesController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors()
+    public function beforeAction($action)
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
+        $session = Yii::$app->session;
+        if ($action->id !== 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->redirect(['site/login']);
+        } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->actionLogin();
+        }
+        if(!$session['username']){
+            $this->redirect('/site/logout');
+        }
+        return parent::beforeAction($action);
     }
+//    public function behaviors()
+//    {
+//        return array_merge(
+//            parent::behaviors(),
+//            [
+//                'verbs' => [
+//                    'class' => VerbFilter::className(),
+//                    'actions' => [
+//                        'delete' => ['POST'],
+//                    ],
+//                ],
+//            ]
+//        );
+//    }
 
     /**
      * Lists all Rates models.
@@ -38,6 +53,10 @@ class RatesController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(48);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $searchModel = new RatesSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -67,6 +86,10 @@ class RatesController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(45);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new Rates();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -94,6 +117,10 @@ class RatesController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(46);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost) {
@@ -119,6 +146,10 @@ class RatesController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(47);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $rates = Rates::findOne($id);
         $rates->status = '0';
         $rates->save();

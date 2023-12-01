@@ -18,10 +18,10 @@ use yii\widgets\ActiveForm;
             <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                 <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => true]) ?>
             </div>
+        </div>
             <div class="card-footer">
                 <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary']) ?>
             </div>
-        </div>
         <?php ActiveForm::end(); ?>
     </div>
 </div>

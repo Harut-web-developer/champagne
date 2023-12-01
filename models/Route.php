@@ -40,7 +40,7 @@ class Route extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'route' => 'Route',
+            'route' => 'Երթուղի',
             'status' => 'Status',
         ];
     }

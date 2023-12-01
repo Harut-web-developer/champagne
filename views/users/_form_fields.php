@@ -46,17 +46,16 @@ if(isset($action__)){
                 <div class="actions">
                     <div class="btn-group">
                         <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            Create Fild
+                            Ստեղծել դաշտ
                         </button>
-                        <ul class="dropdown-menu" style="">
-                            <li data-type="number">NUMBER <br><span>Lorem ipsum dolor sit amet.</span>
-                            </li>
-                            <li data-type="varchar">TEXT (255 Simbols) <br><span>Lorem ipsum dolor sit amet.</span></li>
-                            <li data-type="list">LIST <br><span>Lorem ipsum dolor sit amet.</span></li>
-                            <li data-type="file">FILE <br><span>Lorem ipsum dolor sit amet.</span></li>
-                            <li data-type="text">TEXTAREA <br><span>Lorem ipsum dolor sit amet.</span></li>
-                            <li data-type="date">DATE <br><span>Lorem ipsum dolor sit amet.</span></li>
-                            <li data-type="datetime">DATETIME <br><span>Lorem ipsum dolor sit amet.</span></li>
+                        <ul class="dropdown-menu custom_field_menu" style="">
+                            <li data-type="number">NUMBER <br><span>Թվային արժեք ավելացնելու դաշտ:</span></li>
+                            <li data-type="varchar">TEXT (255 Simbols) <br><span>Տեքստ ավելացնելու դաշտ:</span></li>
+                            <li data-type="list">LIST <br><span>Ցուցակներ լրացնելու դաշտ:</span></li>
+                            <li data-type="file">FILE <br><span>Նկար ավելացնելու դաշտ:</span></li>
+                            <li data-type="text">TEXTAREA <br><span>Մեշ ծավալով տեքստ ավելացնելու դաշտ:</span></li>
+                            <li data-type="date">DATE <br><span>Ամսաթիվ ավելացնելու դաշտ:</span></li>
+                            <li data-type="datetime">DATETIME <br><span>Ժամ և ամսաթիվ ավելացնելու դաշտ:</span></li>
                         </ul>
                     </div>
                 </div>
@@ -80,17 +79,16 @@ if(isset($action__)){
                         <div class="actions">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Create Fild
+                                    Ստեղծել դաշտ
                                 </button>
-                                <ul class="dropdown-menu" style="">
-                                    <li data-type="number">NUMBER <br><span>Lorem ipsum dolor sit amet.</span>
-                                    </li>
-                                    <li data-type="varchar">TEXT (255 Simbols) <br><span>Lorem ipsum dolor sit amet.</span></li>
-                                    <li data-type="list">LIST <br><span>Lorem ipsum dolor sit amet.</span></li>
-                                    <li data-type="file">FILE <br><span>Lorem ipsum dolor sit amet.</span></li>
-                                    <li data-type="text">TEXTAREA <br><span>Lorem ipsum dolor sit amet.</span></li>
-                                    <li data-type="date">DATE <br><span>Lorem ipsum dolor sit amet.</span></li>
-                                    <li data-type="datetime">DATETIME <br><span>Lorem ipsum dolor sit amet.</span></li>
+                                <ul class="dropdown-menu custom_field_menu" style="">
+                                    <li data-type="number">NUMBER <br><span>Թվային արժեք ավելացնելու դաշտ:</span></li>
+                                    <li data-type="varchar">TEXT (255 Simbols) <br><span>Տեքստ ավելացնելու դաշտ:</span></li>
+                                    <li data-type="list">LIST <br><span>Ցուցակներ լրացնելու դաշտ:</span></li>
+                                    <li data-type="file">FILE <br><span>Նկար ավելացնելու դաշտ:</span></li>
+                                    <li data-type="text">TEXTAREA <br><span>Մեշ ծավալով տեքստ ավելացնելու դաշտ:</span></li>
+                                    <li data-type="date">DATE <br><span>Ամսաթիվ ավելացնելու դաշտ:</span></li>
+                                    <li data-type="datetime">DATETIME <br><span>Ժամ և ամսաթիվ ավելացնելու դաշտ:</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -98,101 +96,16 @@ if(isset($action__)){
                 <?php } ?>
             <?php } ?>
         </div>
-        <button class="btn btn-default btn-sm create-block" type="button">Create Block</button>
-        <div class="default-panel">
-            <div class="panel-title premission">
-                <span class="non-active">Premissions</span>
-            </div>
-            <div class="premission-content">
-                <div class="rows-checkbox">
-                    <div class="premission-content-items">
-                        <span class="items-title">warehouse create</span>
-                        <input type="checkbox" value="1" name="premission[]">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">warehouse update</span>
-                        <input type="checkbox" value="2" name="premission[]">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">warehouse delete</span>
-                        <input type="checkbox" name="wd">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">clients create</span>
-                        <input type="checkbox" name="cc">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">clients update</span>
-                        <input type="checkbox" name="cu">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">clients delete</span>
-                        <input type="checkbox" name="cd">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">nomenclature create</span>
-                        <input type="checkbox" name="nc">
-                    </div>
-                </div>
-                <div class="rows-checkbox">
-                    <div class="premission-content-items">
-                        <span class="items-title">nomenclature update</span>
-                        <input type="checkbox" name="nu">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">nomenclature delete</span>
-                        <input type="checkbox" name="nd">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">users create</span>
-                        <input type="checkbox" name="uc">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">users update</span>
-                        <input type="checkbox" name="uu">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">users delete</span>
-                        <input type="checkbox" name="ud">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">products create</span>
-                        <input type="checkbox" name="pc">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">products update</span>
-                        <input type="checkbox" name="pu">
-                    </div>
-                </div>
-                <div class="rows-checkbox">
-                    <div class="premission-content-items">
-                        <span class="items-title">products delete</span>
-                        <input type="checkbox" name="pd">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">orders create</span>
-                        <input type="checkbox" name="oc">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">orders update</span>
-                        <input type="checkbox" name="ou">
-                    </div>
-                    <div class="premission-content-items">
-                        <span class="items-title">orders delete</span>
-                        <input type="checkbox" name="od">
-                    </div>
-                </div>
-            </div>
-        </div>
+        <button class="btn btn-default btn-sm create-block" type="button">Ստեղծել բլոկ</button>
         <div class="card-footer">
-            <?= Html::submitButton('Save', ['class' => 'btn rounded-pill btn-secondary']) ?>
+            <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
         </div>
         <?php ActiveForm::end(); ?>
 
         <div class="default-panel createable-panel new-panel" data-page="users">
             <div class="panel-title">
-                <span class="non-active">NEW BLOCK</span>
-                <input type="text"  value="NEW BLOCK" name="newblocks[]" class="only-active form-control">
+                <span class="non-active">Նոր բլոկ</span>
+                <input type="text"  value="Նոր բլոկ" name="newblocks[]" class="only-active form-control">
                 <button type="button" class="btn btn-default btn-sm edite-block-title-new" ><i class='bx bx-edit-alt'></i></button>
                 <button type="button" class="btn btn-default btn-sm edite-block-title-save-new-field" ><i class='bx bx-save'></i></button>
                 <button type="button" class="btn btn-default btn-sm edite-block-trash-new" onclick="$(this).closest('.new-panel').remove()"><i class="bx bx-trash"></i></button>
@@ -200,17 +113,16 @@ if(isset($action__)){
             <div class="actions">
                 <div class="btn-group">
                     <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        Create Fild
+                        Ստեղծել դաշտ
                     </button>
-                    <ul class="dropdown-menu" style="">
-                        <li data-type="number">NUMBER <br><span>Lorem ipsum dolor sit amet.</span>
-                        </li>
-                        <li data-type="varchar">TEXT (255 Simbols) <br><span>Lorem ipsum dolor sit amet.</span></li>
-                        <li data-type="list">LIST <br><span>Lorem ipsum dolor sit amet.</span></li>
-                        <li data-type="file">FILE <br><span>Lorem ipsum dolor sit amet.</span></li>
-                        <li data-type="text">TEXTAREA <br><span>Lorem ipsum dolor sit amet.</span></li>
-                        <li data-type="date">DATE <br><span>Lorem ipsum dolor sit amet.</span></li>
-                        <li data-type="datetime">DATETIME <br><span>Lorem ipsum dolor sit amet.</span></li>
+                    <ul class="dropdown-menu custom_field_menu" style="">
+                        <li data-type="number">NUMBER <br><span>Թվային արժեք ավելացնելու դաշտ:</span></li>
+                        <li data-type="varchar">TEXT (255 Simbols) <br><span>Տեքստ ավելացնելու դաշտ:</span></li>
+                        <li data-type="list">LIST <br><span>Ցուցակներ լրացնելու դաշտ:</span></li>
+                        <li data-type="file">FILE <br><span>Նկար ավելացնելու դաշտ:</span></li>
+                        <li data-type="text">TEXTAREA <br><span>Մեշ ծավալով տեքստ ավելացնելու դաշտ:</span></li>
+                        <li data-type="date">DATE <br><span>Ամսաթիվ ավելացնելու դաշտ:</span></li>
+                        <li data-type="datetime">DATETIME <br><span>Ժամ և ամսաթիվ ավելացնելու դաշտ:</span></li>
                     </ul>
                 </div>
             </div>

@@ -7,7 +7,9 @@ use app\models\Nomenclature;
 use app\models\OrderItems;
 use app\models\Orders;
 use app\models\OrdersSearch;
+use app\models\Products;
 use app\models\Users;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -21,20 +23,33 @@ class OrdersController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors()
+    public function beforeAction($action)
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
+        $session = Yii::$app->session;
+        if ($action->id !== 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->redirect(['site/login']);
+        } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->actionLogin();
+        }
+        if(!$session['username']){
+            $this->redirect('/site/logout');
+        }
+        return parent::beforeAction($action);
     }
+//    public function behaviors()
+//    {
+//        return array_merge(
+//            parent::behaviors(),
+//            [
+//                'verbs' => [
+//                    'class' => VerbFilter::className(),
+//                    'actions' => [
+//                        'delete' => ['POST'],
+//                    ],
+//                ],
+//            ]
+//        );
+//    }
 
     /**
      * Lists all Orders models.
@@ -93,7 +108,10 @@ class OrdersController extends Controller
             $model->total_count = $post['Orders']['total_count'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
-            $model->save();
+            for ($i = 0; $i < count($post['order_items']); $i++){
+                var_dump(-$post['count_'][$i]);
+            }
+//            $model->save();
                 for ($i = 0; $i < count($post['order_items']); $i++){
                     $order_items_create = new OrderItems();
                     $order_items_create->order_id = $model->id;
@@ -105,7 +123,7 @@ class OrdersController extends Controller
                     $order_items_create->price_before_discount = 1000;
                     $order_items_create->created_at = date('Y-m-d H:i:s');
                     $order_items_create->updated_at = date('Y-m-d H:i:s');
-                    $order_items_create->save(false);
+//                    $order_items_create->save(false);
                 }
                 return $this->redirect(['index', 'id' => $model->id]);
         } else {

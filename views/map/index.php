@@ -18,6 +18,11 @@ use yii\widgets\ActiveForm;
             <label for="multipleClients">Routes</label>
             <select class="form-select form-control valuemap" id="routeSelect" aria-label="Default select example">
                 <option>Select the route</option>
+    <div class="form-group col-md-12 col-lg-12 col-sm-12 mapFilter">
+        <div class="form-group col-md-6 col-lg-6 col-sm-6 loguser">
+            <label for="multipleClients">Երթուղի</label>
+            <select id="valuemap" class="form-select form-control" aria-label="Default select example">
+                <option value="">Ընտրել երթուղին</option>
                 <?php foreach ($route as $index => $rout ){ ?>
                     <option value="<?= $rout['id'] ?>"><?= $rout['route'] ?></option>
                 <?php } ?>
@@ -26,6 +31,9 @@ use yii\widgets\ActiveForm;
         <div class="form-group col-md-5 col-lg-3 col-sm-6 logAction">
             <label for="date">Select a date</label>
             <input id="myLocalDate" class="fil-input form-control valuemap" type="datetime-local" name="date">
+        <div class="form-group col-md-6 col-lg-6 col-sm-6 logAction">
+            <label for="date">Ընտրել ամսաթիվը</label>
+            <input class="fil-input form-control" type="datetime-local" name="start_date" value="<?= $_GET['start_date'] ?? '' ?>">
         </div>
     </div>
     <div id="map"></div>

@@ -56,7 +56,14 @@ if ($have_access_update && $have_access_delete){
     </p>
     <div class="card">
     <?= GridView::widget([
-        'dataProvider' => $dataProvider,
+        'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
+        'summaryOptions' => ['class' => 'summary'],
+        'dataProvider' => new ActiveDataProvider([
+            'query' => $dataProvider->query->andWhere(['status' => '1']),
+//                'pagination' => [
+//                    'pageSize' => 20,
+//                ],
+        ]),
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
@@ -65,7 +72,7 @@ if ($have_access_update && $have_access_delete){
                     if ($model->warehouseName) {
                         return $model->warehouseName->name;
                     } else {
-                        return 'empty';
+                        return 'Դատարկ';
                     }
                 }
             ],
@@ -75,7 +82,7 @@ if ($have_access_update && $have_access_delete){
                     if ($model->nomenclatureName) {
                         return $model->nomenclatureName->name;
                     } else {
-                        return 'empty';
+                        return 'Դատարկ';
                     }
                 }
             ],
@@ -83,12 +90,6 @@ if ($have_access_update && $have_access_delete){
             'price',
             ...$action_column,
         ],
-        'dataProvider' => new ActiveDataProvider([
-            'query' => $dataProvider->query->andWhere(['status' => '1']),
-//                'pagination' => [
-//                    'pageSize' => 20,
-//                ],
-        ]),
     ]); ?>
     </div>
 </div>

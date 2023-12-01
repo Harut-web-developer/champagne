@@ -32,20 +32,20 @@ class WarehouseController extends Controller
         return parent::beforeAction($action);
 
     }
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
+//    public function behaviors()
+//    {
+//        return array_merge(
+//            parent::behaviors(),
+//            [
+//                'verbs' => [
+//                    'class' => VerbFilter::className(),
+//                    'actions' => [
+//                        'delete' => ['POST'],
+//                    ],
+//                ],
+//            ]
+//        );
+//    }
 
     /**
      * Lists all Warehouse models.
@@ -88,10 +88,10 @@ class WarehouseController extends Controller
      */
     public function actionCreate()
     {
-//        $have_access = Users::checkPremission(1);
-//        if(!$have_access){
-//            $this->redirect('/site/403');
-//        }
+        $have_access = Users::checkPremission(1);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new Warehouse();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -144,10 +144,10 @@ class WarehouseController extends Controller
      */
     public function actionUpdate($id)
     {
-//        $have_access = Users::checkPremission(2);
-//        if(!$have_access){
-//            $this->redirect('/site/403');
-//        }
+        $have_access = Users::checkPremission(2);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost) {

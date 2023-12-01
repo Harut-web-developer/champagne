@@ -8,6 +8,8 @@ use app\models\DiscountClients;
 use app\models\DiscountProducts;
 use app\models\DiscountSearch;
 use app\models\Products;
+use app\models\Users;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -20,20 +22,33 @@ class DiscountController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors()
+    public function beforeAction($action)
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
+        $session = Yii::$app->session;
+        if ($action->id !== 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->redirect(['site/login']);
+        } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->actionLogin();
+        }
+        if(!$session['username']){
+            $this->redirect('/site/logout');
+        }
+        return parent::beforeAction($action);
     }
+//    public function behaviors()
+//    {
+//        return array_merge(
+//            parent::behaviors(),
+//            [
+//                'verbs' => [
+//                    'class' => VerbFilter::className(),
+//                    'actions' => [
+//                        'delete' => ['POST'],
+//                    ],
+//                ],
+//            ]
+//        );
+//    }
 
     /**
      * Lists all Discount models.
@@ -42,6 +57,10 @@ class DiscountController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(44);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $searchModel = new DiscountSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -71,6 +90,10 @@ class DiscountController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(41);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
 //        echo "<pre>";
         $model = new Discount();
         if ($this->request->isPost) {
@@ -135,6 +158,10 @@ class DiscountController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(42);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
@@ -220,6 +247,10 @@ class DiscountController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(43);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $discount = Discount::findOne($id);
         $discount->status = '0';
         $discount->save();

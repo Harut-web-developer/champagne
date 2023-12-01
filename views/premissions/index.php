@@ -57,6 +57,8 @@ if ($have_access_update && $have_access_delete){
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     <div class="card">
     <?= GridView::widget([
+        'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
+        'summaryOptions' => ['class' => 'summary'],
         'dataProvider' => new ActiveDataProvider([
             'query' => $dataProvider->query->andWhere(['status' => '1']),
 //                'pagination' => [
@@ -66,24 +68,18 @@ if ($have_access_update && $have_access_delete){
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
-                'attribute' => 'Դեր',
+                'attribute' => 'Կարգավիճակ',
                 'value' => function ($model) {
                     if ($model->roleName) {
                         return $model->roleName->name;
                     } else {
-                        return 'empty';
+                        return 'Դատարկ';
                     }
                 }
             ],
             'name',
             ...$action_column,
         ],
-        'dataProvider' => new ActiveDataProvider([
-            'query' => $dataProvider->query->andWhere(['status' => '1']),
-//                'pagination' => [
-//                    'pageSize' => 20,
-//                ],
-        ]),
     ]); ?>
 
     </div>

@@ -62,7 +62,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 
             <div class="menu-inner-shadow"></div>
 
-            <ul class="menu-inner py-1 ps ps--active-y">
+            <ul class="menu-inner py-1 ps ps--active-y scrollMenu">
                 <!-- Dashboards -->
                 <li class="menu-item open">
                     <div class="dashboardName">
@@ -71,8 +71,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                         <div data-i18n="Dashboards">Dashboards</div>
                     </div>
 <!--                    <a href="javascript:void(0);" class="menu-link menu-toggle">-->
-
-<!--                        <div class="badge bg-danger rounded-pill ms-auto">5</div>-->
+<!---->
+<!--                      <div class="badge bg-danger rounded-pill ms-auto">5</div>-->
 <!--                    </a>-->
 
                     <ul class="menu-sub">
@@ -103,7 +103,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                         <li class="menu-item ">
                             <a href="/users" class="menu-link">
                                 <i class='bx bx-male-female' ></i>
-                                <div data-i18n="Analytics">Օգտագործող</div>
+                                <div data-i18n="Analytics">Օգտատեր</div>
                             </a>
                         </li>
                         <li class="menu-item ">
@@ -133,7 +133,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                         <li class="menu-item ">
                             <a href="/roles" class="menu-link">
                                 <i class='bx bx-check-shield' ></i>
-                                <div data-i18n="Analytics">Դեր</div>
+                                <div data-i18n="Analytics">Կարգավիճակ</div>
                             </a>
                         </li>
                         <li class="menu-item ">
@@ -145,7 +145,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                         <li class="menu-item ">
                             <a href="/discount" class="menu-link">
                                 <i class='bx bxs-bank'></i>
-                                <div data-i18n="Analytics">Տոկոս</div>
+                                <div data-i18n="Analytics">Զեղչ</div>
                             </a>
                         </li>
                         <li class="menu-item ">
@@ -163,7 +163,9 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     </ul>
                 </li>
 
-                <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 362px; right: 4px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 91px;"></div></div></ul>
+                <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div>
+                <div class="ps__rail-y" style="top: 0px; height: 362px; right: 4px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 91px;"></div></div>
+            </ul>
         </aside>
         <!-- / Menu -->
 
@@ -198,7 +200,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                         <li class="nav-item navbar-dropdown dropdown-user dropdown">
                             <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                                 <div class="avatar avatar-online">
-                                    <img src="/img/avatars/1.png" alt="" class="w-px-40 h-auto rounded-circle">
+                                    <i class='bx bxs-user userIcons'></i>
+<!--                                    <img src="/img/avatars/1.png" alt="" class="w-px-40 h-auto rounded-circle">-->
                                 </div>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
@@ -207,7 +210,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                                         <div class="d-flex">
                                             <div class="flex-shrink-0 me-3">
                                                 <div class="avatar avatar-online">
-                                                    <img src="/img/avatars/1.png" alt="" class="w-px-40 h-auto rounded-circle">
+                                                    <i class='bx bxs-user userIcons'></i>
                                                 </div>
                                             </div>
                                             <div class="flex-grow-1">
@@ -221,22 +224,22 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                                     <div class="dropdown-divider"></div>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="#">
+                                    <a class="dropdown-item" href="/users/profile">
                                         <i class="bx bx-user me-2"></i>
-                                        <span class="align-middle">My Profile</span>
+                                        <span class="align-middle">Իմ պրոֆիլը</span>
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="#">
                                         <i class="bx bx-cog me-2"></i>
-                                        <span class="align-middle">Settings</span>
+                                        <span class="align-middle">Կարգավորումներ</span>
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="#">
                         <span class="d-flex align-items-center align-middle">
                           <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
-                          <span class="flex-grow-1 align-middle ms-1">Billing</span>
+                          <span class="flex-grow-1 align-middle ms-1">Վաճառք</span>
                           <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
                         </span>
                                     </a>
