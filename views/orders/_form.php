@@ -29,6 +29,9 @@ use yii\widgets\ActiveForm;
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'total_count')->textInput(['readonly'=> true]) ?>
                 </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
+                    <?= $form->field($model, 'comment')->textarea() ?>
+                </div>
             </div>
             <div class="default-panel">
                 <div class="panel-title premission">
@@ -59,7 +62,7 @@ use yii\widgets\ActiveForm;
                                     <tr class="tableNomenclature">
                                         <td><?=$keys + 1?><input class="orderItemsId" type="hidden" name="order_items[]" value="<?=$item['id']?>">
                                             <input type="hidden" name="product_id[]" value="<?=$item['product_id']?>">
-                                            <input type="hidden" name="nom_id[]" value="<?=$item['nom_id']?>">
+                                            <input class="nomId"  type="hidden" name="nom_id[]" value="<?=$item['nom_id']?>">
                                         </td>
                                         <td class="name"><?=$item['name']?></td>
                                         <td class="count"><input type="number" name="count_[]" value="<?=$item['count']?>" class="form-control countProductForUpdate"></td>
@@ -161,6 +164,9 @@ use yii\widgets\ActiveForm;
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'total_count')->textInput(['readonly'=> true]) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
+                    <?= $form->field($model, 'comment')->textarea() ?>
                 </div>
             </div>
             <div class="default-panel">

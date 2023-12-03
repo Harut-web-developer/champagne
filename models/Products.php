@@ -33,8 +33,8 @@ class Products extends \yii\db\ActiveRecord
     {
         return [
             [['warehouse_id', 'nomenclature_id', 'count', 'price'], 'required'],
-            [['warehouse_id', 'nomenclature_id', 'count','document_id'], 'integer'],
-            [['price'], 'number'],
+            [['warehouse_id', 'nomenclature_id','document_id'], 'integer'],
+            [['price', 'count'], 'number'],
             [['status'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
         ];

@@ -125,27 +125,35 @@ $(document).ready(function () {
         $('#orders-total_count').attr('value', countSum);
     })
     $('body').on('keyup','.countProductForUpdate', function (){
-        if ($(this).val() < 1 || $(this).val() === ""){
-            var this_ = $(this);
-            var itemId = this_.closest('.tableNomenclature').find('.orderItemsId').val();
-            var csrfToken = $('meta[name="csrf-token"]').attr("content");
-            $.ajax({
-                url:'/orders/delete-items',
-                method:'post',
-                datatype:'json',
-                data:{
-                  itemId:itemId,
-                    _csrf:csrfToken
-                },
-                success:function (data){
-                    if (data === 'true'){
-                        this_.closest('.tableNomenclature').remove();
-                    }else {
-                        alert('dont exist item or unsuccessfuly deleted');
-                    }
-                }
-            })
+        if ($(this).val() === "" || $(this).val() < 1){
+            alert('Տվյալ դաշտը չպետք է բացասական արժեք ունենա կամ դատարկ լինի։');
+            $(this).val(1)
         }
+        // else if ($(this).val() < 1){
+            // alert('Քանակը չի կարող բացասական լինել։');
+            // $(this).val(1)
+            // var this_ = $(this);
+            // var itemId = this_.closest('.tableNomenclature').find('.orderItemsId').val();
+            // var nomId = this_.closest('.tableNomenclature').find('.nomId').val();
+            // var csrfToken = $('meta[name="csrf-token"]').attr("content");
+            // $.ajax({
+            //     url:'/orders/delete-items',
+            //     method:'post',
+            //     datatype:'json',
+            //     data:{
+            //         itemId:itemId,
+            //         nomId:nomId,
+            //         _csrf:csrfToken
+            //     },
+            //     success:function (data){
+            //         if (data === 'true'){
+            //             this_.closest('.tableNomenclature').remove();
+            //         }else {
+            //             alert('dont exist item or unsuccessfuly deleted');
+            //         }
+            //     }
+            // })
+        // }
             var totalSum = 0;
             var countSum = 0;
             $(this).closest('.tableNomenclature').find('.total').children('span').text(parseFloat($(this).val() * $(this).closest('.tableNomenclature').find('.price').children('input').val()).toFixed(2))
@@ -159,26 +167,9 @@ $(document).ready(function () {
 
     })
     $('body').on('click','.countProductForUpdate', function (){
-        if ($(this).val() < 1 || $(this).val() === ""){
-            var this_ = $(this);
-            var itemId = this_.closest('.tableNomenclature').find('.orderItemsId').val();
-            var csrfToken = $('meta[name="csrf-token"]').attr("content");
-            $.ajax({
-                url:'/orders/delete-items',
-                method:'post',
-                datatype:'json',
-                data:{
-                    itemId:itemId,
-                    _csrf:csrfToken
-                },
-                success:function (data){
-                    if (data === 'true'){
-                        this_.closest('.tableNomenclature').remove();
-                    }else {
-                        alert('dont exist item or unsuccessfuly deleted');
-                    }
-                }
-            })
+        if ($(this).val() === "" || $(this).val() < 1){
+            alert('Տվյալ դաշտը չպետք է բացասական արժեք ունենա կամ դատարկ լինի։');
+            $(this).val(1)
         }
         var totalSum = 0;
         var countSum = 0;
@@ -197,6 +188,7 @@ $(document).ready(function () {
         if (confirmed){
             var this_ = $(this);
             var itemId = this_.closest('.tableNomenclature').find('.orderItemsId').val();
+            var nomId = this_.closest('.tableNomenclature').find('.nomId').val();
             var csrfToken = $('meta[name="csrf-token"]').attr("content");
             $.ajax({
                 url:'/orders/delete-items',
@@ -204,6 +196,7 @@ $(document).ready(function () {
                 datatype:'json',
                 data:{
                     itemId:itemId,
+                    nomId:nomId,
                     _csrf:csrfToken
                 },
                 success:function (data){
@@ -251,6 +244,7 @@ $(document).ready(function () {
                         alert('Պահեստում նման քանակի ապրանք չկա');
                     }else if (parse.count === 'dontExists'){
                         alert('Նման ապրանք պահեստում գոյություն չունի')
+                        this_.val('')
                     }
                     // else if(parse.count === 'exists'){
                     //

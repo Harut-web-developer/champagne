@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
                 <?= $form->field($model, 'email')->input('email') ?>
             </div>
             <div class="form-group col-md-12 col-lg-12 col-sm-12 clientName">
-                <?= $form->field($model, 'phone')->input('number') ?>
+                <?= $form->field($model, 'phone')->input('text') ?>
             </div>
         </div>
         <div class="card-footer">

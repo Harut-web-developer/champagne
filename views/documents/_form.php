@@ -88,7 +88,7 @@ use yii\widgets\ActiveForm;
                                     </td>
                                     <td class="name"><?=$document_item['name']?></td>
                                     <td class="count"><input type="number" name="count_[]" value="<?=$document_item['count']?>" class="form-control countDocuments"></td>
-                                    <td class="price"><?=$document_item['price']?><input type="hidden" name="price[]" value="<?=$document_item['price']?>"></td>
+                                    <td class="price"><input type="number" name="price[]" value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>
                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteDocumentItems">Ջնջել</button></td>
                                 </tr>
                                 <?php

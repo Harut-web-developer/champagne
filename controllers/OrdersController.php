@@ -106,6 +106,7 @@ class OrdersController extends Controller
             $model->clients_id = $post['Orders']['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
             $model->total_count = $post['Orders']['total_count'];
+            $model->comment = $post['Orders']['comment'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
@@ -114,6 +115,7 @@ class OrdersController extends Controller
                 $product_write_out->warehouse_id = 1;
                 $product_write_out->nomenclature_id = $post['order_items'][$i];
                 $product_write_out->document_id = $model->id;
+                $product_write_out->type = 2;
                 $product_write_out->count = -intval($post['count_'][$i]);
                 $product_write_out->price = $post['price'][$i];
                 $product_write_out->created_at = date('Y-m-d H:i:s');
@@ -175,12 +177,12 @@ class OrdersController extends Controller
             $model->clients_id = $post['Orders']['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
             $model->total_count = $post['Orders']['total_count'];
+            $model->comment = $post['Orders']['comment'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
             $items = $post['order_items'];
             $quantity = 0;
             $tot_price = 0;
-
             foreach ($items as $k => $item){
                 if($item != 'null'){
                     $order_item = OrderItems::findOne($item);
@@ -196,19 +198,15 @@ class OrdersController extends Controller
                     $tot_price += $order_item->price;
                     $order_item->save(false);
 
-
-                    $product_write_out = Products::find()->select('count')->where(['and',['document_id' => $model->id,'nomenclature_id' => $post['nom_id'][$k]]])->one();
+                    $product_write_out = Products::find()->select('products.*')
+                        ->where(['and',['document_id' => $model->id,'type' => 2,'nomenclature_id' => $post['nom_id'][$k]]])->one();
+                    $product_write_out->warehouse_id = 1;
+                    $product_write_out->nomenclature_id = $post['nom_id'][$k];
+                    $product_write_out->price = $post['price'][$k];
                     $product_write_out->count = -intval($post['count_'][$k]);
-                    $product_write_out->save(false);
-//                    $product_write_out->warehouse_id = 1;
-//                    $product_write_out->nomenclature_id = $post['order_items'][$i];
-//                    $product_write_out->document_id = $model->id;
-//                    $product_write_out->count = -intval($post['count_'][$i]);
-//                    $product_write_out->price = $post['price'][$i];
-//                    $product_write_out->created_at = date('Y-m-d H:i:s');
-//                    $product_write_out->updated_at = date('Y-m-d H:i:s');
-//                    $product_write_out->save();
-
+                    $product_write_out->type = 2;
+                    $product_write_out->updated_at = date('Y-m-d H:i:s');
+                    $product_write_out->save();
                 } else {
                     $order_item = new OrderItems();
                     $order_item->order_id = $id;
@@ -230,6 +228,7 @@ class OrdersController extends Controller
                     $product_write_out->document_id = $model->id;
                     $product_write_out->count = -intval($post['count_'][$k]);
                     $product_write_out->price = $post['price'][$k];
+                    $product_write_out->type = 2;
                     $product_write_out->created_at = date('Y-m-d H:i:s');
                     $product_write_out->updated_at = date('Y-m-d H:i:s');
                     $product_write_out->save(false);
@@ -285,9 +284,22 @@ class OrdersController extends Controller
 
     public function actionDeleteItems(){
         if ($this->request->isPost){
-            $id = intval($this->request->post('itemId'));
-            $delete_items = OrderItems::findOne($id)->delete();
-            if(isset($delete_items)){
+
+            $item_id = intval($this->request->post('itemId'));
+            $nom_id = intval($this->request->post('nomId'));
+            $orders_id = OrderItems::find()->select('order_id')->where(['id' => $item_id])->one();
+            $order_items_exists = OrderItems::find()->where(['order_id' => $orders_id->order_id])->count();
+            $delete_items = OrderItems::findOne($item_id)->delete();
+            $delete_products = Products::findOne([
+                'document_id' => $orders_id->order_id,
+                'nomenclature_id' => $nom_id,
+                'type' => 2
+            ])->delete();
+            var_dump($order_items_exists);
+            if ($order_items_exists == 0){
+                $delete_order = Orders::findOne();
+            }
+            if(isset($delete_items) && isset($delete_products)){
             return json_encode(true);
             }else{
                 return json_encode(false);

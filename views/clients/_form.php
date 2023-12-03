@@ -57,7 +57,7 @@ if(isset($action__)){
                     </div>
                 <?php } ?>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 clientPhone">
-                    <?= $form->field($model, 'phone')->input('number',['required' => $req]) ?>
+                    <?= $form->field($model, 'phone')->input('text',['required' => $req]) ?>
                 </div>
                 <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>17])->all(); ?>
                 <?php if(!empty($fields)){ ?>
