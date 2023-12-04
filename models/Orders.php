@@ -32,9 +32,9 @@ class Orders extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id','clients_id', 'total_price', 'total_count'], 'required'],
+            [['user_id','clients_id', 'total_price', 'total_count','comment'], 'required'],
             [['user_id','clients_id', 'total_count'], 'integer'],
-            [['status'], 'string'],
+            [['status','comment'], 'string'],
             [['total_price'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
         ];
@@ -50,6 +50,7 @@ class Orders extends \yii\db\ActiveRecord
             'user_id' => 'Օգտատեր',
             'clients_id' => 'Հաճախորդ',
             'status' => 'Status',
+            'comment' => 'Մեկնաբանություն',
             'total_price' => 'Ընդհանուր գումար',
             'total_count' => 'Ընդհանուր քանակ',
             'created_at' => 'Created At',

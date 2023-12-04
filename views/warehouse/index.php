@@ -69,7 +69,6 @@ if ($have_access_update && $have_access_delete){
                 ['class' => 'yii\grid\SerialColumn'],
                     'name',
                     'location',
-                    'type',
                 [
                     'attribute' => 'Տեսակ',
                     'value' => function ($model) {

@@ -106,12 +106,22 @@ class OrdersController extends Controller
             $model->clients_id = $post['Orders']['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
             $model->total_count = $post['Orders']['total_count'];
+            $model->comment = $post['Orders']['comment'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
+            $model->save();
             for ($i = 0; $i < count($post['order_items']); $i++){
-                var_dump(-$post['count_'][$i]);
+                $product_write_out = new Products();
+                $product_write_out->warehouse_id = 1;
+                $product_write_out->nomenclature_id = $post['order_items'][$i];
+                $product_write_out->document_id = $model->id;
+                $product_write_out->type = 2;
+                $product_write_out->count = -intval($post['count_'][$i]);
+                $product_write_out->price = $post['price'][$i];
+                $product_write_out->created_at = date('Y-m-d H:i:s');
+                $product_write_out->updated_at = date('Y-m-d H:i:s');
+                $product_write_out->save();
             }
-//            $model->save();
                 for ($i = 0; $i < count($post['order_items']); $i++){
                     $order_items_create = new OrderItems();
                     $order_items_create->order_id = $model->id;
@@ -123,7 +133,7 @@ class OrdersController extends Controller
                     $order_items_create->price_before_discount = 1000;
                     $order_items_create->created_at = date('Y-m-d H:i:s');
                     $order_items_create->updated_at = date('Y-m-d H:i:s');
-//                    $order_items_create->save(false);
+                    $order_items_create->save(false);
                 }
                 return $this->redirect(['index', 'id' => $model->id]);
         } else {
@@ -167,6 +177,7 @@ class OrdersController extends Controller
             $model->clients_id = $post['Orders']['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
             $model->total_count = $post['Orders']['total_count'];
+            $model->comment = $post['Orders']['comment'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
             $items = $post['order_items'];
@@ -186,6 +197,16 @@ class OrdersController extends Controller
                     $quantity += $order_item->count;
                     $tot_price += $order_item->price;
                     $order_item->save(false);
+
+                    $product_write_out = Products::find()->select('products.*')
+                        ->where(['and',['document_id' => $model->id,'type' => 2,'nomenclature_id' => $post['nom_id'][$k]]])->one();
+                    $product_write_out->warehouse_id = 1;
+                    $product_write_out->nomenclature_id = $post['nom_id'][$k];
+                    $product_write_out->price = $post['price'][$k];
+                    $product_write_out->count = -intval($post['count_'][$k]);
+                    $product_write_out->type = 2;
+                    $product_write_out->updated_at = date('Y-m-d H:i:s');
+                    $product_write_out->save();
                 } else {
                     $order_item = new OrderItems();
                     $order_item->order_id = $id;
@@ -200,6 +221,17 @@ class OrdersController extends Controller
                     $quantity += $order_item->count;
                     $tot_price += $order_item->price;
                     $order_item->save(false);
+
+                    $product_write_out = new Products();
+                    $product_write_out->warehouse_id = 1;
+                    $product_write_out->nomenclature_id = $post['nom_id'][$k];
+                    $product_write_out->document_id = $model->id;
+                    $product_write_out->count = -intval($post['count_'][$k]);
+                    $product_write_out->price = $post['price'][$k];
+                    $product_write_out->type = 2;
+                    $product_write_out->created_at = date('Y-m-d H:i:s');
+                    $product_write_out->updated_at = date('Y-m-d H:i:s');
+                    $product_write_out->save(false);
                 }
             }
             $order = Orders::findOne($id);
@@ -213,7 +245,7 @@ class OrdersController extends Controller
             ->leftJoin('products','nomenclature.id = products.nomenclature_id')
             ->asArray()->all();
         $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price / order_items.count) as price,
-        (order_items.cost / order_items.count) as cost,order_items.discount,order_items.price_before_discount,nomenclature.name ')
+        (order_items.cost / order_items.count) as cost,order_items.discount,order_items.price_before_discount,nomenclature.name, (nomenclature.id) as nom_id')
             ->leftJoin('products','products.id = order_items.product_id')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['order_id' => $id])->asArray()->all();
@@ -252,10 +284,23 @@ class OrdersController extends Controller
 
     public function actionDeleteItems(){
         if ($this->request->isPost){
-            $id = intval($this->request->post('itemId'));
-            $delete_items = OrderItems::findOne($id)->delete();
-            if(isset($delete_items)){
-            return json_encode(true);
+            $total_count = $this->request->post('totalCount');
+            $total_price = $this->request->post('totalPrice');
+            $item_id = intval($this->request->post('itemId'));
+            $nom_id = intval($this->request->post('nomId'));
+            $orders_id = OrderItems::find()->select('order_id')->where(['id' => $item_id])->one();
+            $delete_items = OrderItems::findOne($item_id)->delete();
+            $delete_products = Products::findOne([
+                'document_id' => $orders_id->order_id,
+                'nomenclature_id' => $nom_id,
+                'type' => 2
+            ])->delete();
+            $update_orders = Orders::findOne($orders_id->order_id);
+            $update_orders->total_count = $total_count;
+            $update_orders->total_price = $total_price;
+            $update_orders->save(false);
+            if(isset($delete_items) && isset($delete_products)){
+                return json_encode(true);
             }else{
                 return json_encode(false);
             }

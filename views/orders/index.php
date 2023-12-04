@@ -86,6 +86,7 @@ if ($have_access_update && $have_access_delete){
                     }
                 }
             ],
+            'comment',
             'total_price',
             'total_count',
             ...$action_column,

@@ -24,10 +24,13 @@ use yii\widgets\ActiveForm;
                     <?= $form->field($model, 'clients_id')->dropDownList($clients) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalPrice">
-                    <?= $form->field($model, 'total_price')->textInput(['readonly'=> true]) ?>
+                    <?= $form->field($model, 'total_price')->textInput(['readonly'=> true, 'class' => 'form-control totalPrice']) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
-                    <?= $form->field($model, 'total_count')->textInput(['readonly'=> true]) ?>
+                    <?= $form->field($model, 'total_count')->textInput(['readonly'=> true,'class' => 'form-control totalCount']) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
+                    <?= $form->field($model, 'comment')->textarea() ?>
                 </div>
             </div>
             <div class="default-panel">
@@ -57,7 +60,10 @@ use yii\widgets\ActiveForm;
                                     $itemsArray[] = $item['product_id'];
                                     ?>
                                     <tr class="tableNomenclature">
-                                        <td><?=$keys + 1?><input class="orderItemsId" type="hidden" name="order_items[]" value="<?=$item['id']?>"><input type="hidden" name="product_id[]" value="<?=$item['product_id']?>"></td>
+                                        <td><?=$keys + 1?><input class="orderItemsId" type="hidden" name="order_items[]" value="<?=$item['id']?>">
+                                            <input type="hidden" name="product_id[]" value="<?=$item['product_id']?>">
+                                            <input class="nomId"  type="hidden" name="nom_id[]" value="<?=$item['nom_id']?>">
+                                        </td>
                                         <td class="name"><?=$item['name']?></td>
                                         <td class="count"><input type="number" name="count_[]" value="<?=$item['count']?>" class="form-control countProductForUpdate"></td>
                                         <td class="price"><?=$item['price']?><input type="hidden" name="price[]" value="<?=$item['price']?>"></td>
@@ -158,6 +164,9 @@ use yii\widgets\ActiveForm;
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'total_count')->textInput(['readonly'=> true]) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
+                    <?= $form->field($model, 'comment')->textarea() ?>
                 </div>
             </div>
             <div class="default-panel">

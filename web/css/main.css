@@ -323,3 +323,15 @@
 .userIcons{
     font-size: 45px;
 }
+.countDocuments{
+    min-width: 100px;
+}
+.PriceDocuments{
+    min-width: 100px;
+}
+.countProduct{
+    min-width: 100px;
+}
+.countProductForUpdate{
+    min-width: 100px;
+}

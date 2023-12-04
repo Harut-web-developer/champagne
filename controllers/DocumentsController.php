@@ -126,6 +126,8 @@ class DocumentsController extends Controller
                         $products = new Products();
                         $products->warehouse_id = $post['Documents']['warehouse_id'];
                         $products->nomenclature_id = $post['document_items'][$i];
+                        $products->document_id = $model->id;
+                        $products->type = 1;
                         $products->count = $post['count_'][$i];
                         $products->price = $post['price'][$i];
                         $products->created_at = date('Y-m-d H:i:s');
