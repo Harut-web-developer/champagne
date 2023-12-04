@@ -1,6 +1,8 @@
 <?php
 namespace app\controllers;
 
+use app\models\Clients;
+use app\models\Nomenclature;
 use yii;
 use yii\web\Controller;
 use app\models\Users;
@@ -29,22 +31,27 @@ class SearchController extends Controller{
         return $this->render('index');
     }
 
-//    public function actionSearching(){
-//        if (Yii::$app->request->isAjax && Yii::$app->request->post('option')) {
-//            $option = Yii::$app->request->post('option');
-//            $query_product = Product::find()
-//                ->select('id , name, description, keyword')
-//                ->orWhere(['like', 'name', $option])
-//                ->orWhere(['like', 'description' , $option])
-//                ->orWhere(['like', 'keyword', $option])
-//                ->asArray()->all();
-//            $query_category = Yii::$app->db->createCommand('SELECT id , name FROM category WHERE name LIKE :option')
-//                ->bindValue(':option', '%' . $option . '%')
-//                ->queryAll();
-//            $res = [];
-//            $res['query_product'] = $query_product;
-//            $res['query_category'] = $query_category;
-//            return json_encode($res);
-//        }
-//    }
+    public function actionSearching(){
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            $searchval =$post['searchval'];
+            $query_nomenclature = Nomenclature::find()
+                ->select('name')
+                ->Where(['like', 'name', $searchval])
+                ->asArray()->all();
+            $query_users = Users::find()
+                ->select('name')
+                ->Where(['like', 'name', $searchval])
+                ->asArray()->all();
+            $query_clients = Clients::find()
+                ->select('name')
+                ->Where(['like', 'name', $searchval])
+                ->asArray()->all();
+            $res = [];
+            $res['query_nomenclature'] = $query_nomenclature;
+            $res['query_users'] = $query_users;
+            $res['query_clients'] = $query_clients;
+            return json_encode($res);
+        }
+    }
 }
