@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\Clients $model */
+/** @var app\models\Documents $model */
 
 $this->title = 'Դաշտերի կարգավորում';
 $this->params['breadcrumbs'][] = ['label' => 'Documents', 'url' => ['index']];

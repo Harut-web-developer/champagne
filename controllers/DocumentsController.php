@@ -98,7 +98,6 @@ class DocumentsController extends Controller
         }
         $model = new Documents();
         if ($this->request->isPost) {
-
             $post = $this->request->post();
             date_default_timezone_set('Asia/Yerevan');
             $model->user_id = $post['Documents']['user_id'];
@@ -132,13 +131,19 @@ class DocumentsController extends Controller
                         $products->created_at = date('Y-m-d H:i:s');
                         $products->updated_at = date('Y-m-d H:i:s');
                         $products->save(false);
-                        }
+                    }
                 }
+                    $_POST['item_id'] = $model->id;
+                    if($post['newblocks'] || $post['new_fild_name']){
+                        Yii::$app->runAction('custom-fields/create-title',$post);
+                    }
+                    return $this->redirect(['create', 'id' => $model->id]);
 
-                return $this->redirect(['index', 'id' => $model->id]);
+//                return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
+
         $users = Users::find()->select('id,name')->asArray()->all();
         $users = ArrayHelper::map($users,'id','name');
         $warehouse = Warehouse::find()->select('id,name')->asArray()->all();
@@ -228,7 +233,12 @@ class DocumentsController extends Controller
                     $document_items_update->save();
                 }
             }
-            return $this->redirect(['index', 'id' => $model->id]);
+            $_POST['item_id'] = $model->id;
+            if($post['newblocks'] || $post['new_fild_name']){
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
+            return $this->redirect(['create', 'id' => $model->id]);
+//            return $this->redirect(['index', 'id' => $model->id]);
         }
         $users = Users::find()->select('id,name')->asArray()->all();
         $users = ArrayHelper::map($users,'id','name');
