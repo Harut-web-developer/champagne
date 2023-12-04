@@ -284,23 +284,23 @@ class OrdersController extends Controller
 
     public function actionDeleteItems(){
         if ($this->request->isPost){
-
+            $total_count = $this->request->post('totalCount');
+            $total_price = $this->request->post('totalPrice');
             $item_id = intval($this->request->post('itemId'));
             $nom_id = intval($this->request->post('nomId'));
             $orders_id = OrderItems::find()->select('order_id')->where(['id' => $item_id])->one();
-            $order_items_exists = OrderItems::find()->where(['order_id' => $orders_id->order_id])->count();
             $delete_items = OrderItems::findOne($item_id)->delete();
             $delete_products = Products::findOne([
                 'document_id' => $orders_id->order_id,
                 'nomenclature_id' => $nom_id,
                 'type' => 2
             ])->delete();
-            var_dump($order_items_exists);
-            if ($order_items_exists == 0){
-                $delete_order = Orders::findOne();
-            }
+            $update_orders = Orders::findOne($orders_id->order_id);
+            $update_orders->total_count = $total_count;
+            $update_orders->total_price = $total_price;
+            $update_orders->save(false);
             if(isset($delete_items) && isset($delete_products)){
-            return json_encode(true);
+                return json_encode(true);
             }else{
                 return json_encode(false);
             }

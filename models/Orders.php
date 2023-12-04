@@ -50,6 +50,7 @@ class Orders extends \yii\db\ActiveRecord
             'user_id' => 'Օգտատեր',
             'clients_id' => 'Հաճախորդ',
             'status' => 'Status',
+            'comment' => 'Մեկնաբանություն',
             'total_price' => 'Ընդհանուր գումար',
             'total_count' => 'Ընդհանուր քանակ',
             'created_at' => 'Created At',

@@ -24,10 +24,10 @@ use yii\widgets\ActiveForm;
                     <?= $form->field($model, 'clients_id')->dropDownList($clients) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalPrice">
-                    <?= $form->field($model, 'total_price')->textInput(['readonly'=> true]) ?>
+                    <?= $form->field($model, 'total_price')->textInput(['readonly'=> true, 'class' => 'form-control totalPrice']) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
-                    <?= $form->field($model, 'total_count')->textInput(['readonly'=> true]) ?>
+                    <?= $form->field($model, 'total_count')->textInput(['readonly'=> true,'class' => 'form-control totalCount']) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'comment')->textarea() ?>

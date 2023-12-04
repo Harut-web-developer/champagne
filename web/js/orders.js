@@ -129,31 +129,6 @@ $(document).ready(function () {
             alert('Տվյալ դաշտը չպետք է բացասական արժեք ունենա կամ դատարկ լինի։');
             $(this).val(1)
         }
-        // else if ($(this).val() < 1){
-            // alert('Քանակը չի կարող բացասական լինել։');
-            // $(this).val(1)
-            // var this_ = $(this);
-            // var itemId = this_.closest('.tableNomenclature').find('.orderItemsId').val();
-            // var nomId = this_.closest('.tableNomenclature').find('.nomId').val();
-            // var csrfToken = $('meta[name="csrf-token"]').attr("content");
-            // $.ajax({
-            //     url:'/orders/delete-items',
-            //     method:'post',
-            //     datatype:'json',
-            //     data:{
-            //         itemId:itemId,
-            //         nomId:nomId,
-            //         _csrf:csrfToken
-            //     },
-            //     success:function (data){
-            //         if (data === 'true'){
-            //             this_.closest('.tableNomenclature').remove();
-            //         }else {
-            //             alert('dont exist item or unsuccessfuly deleted');
-            //         }
-            //     }
-            // })
-        // }
             var totalSum = 0;
             var countSum = 0;
             $(this).closest('.tableNomenclature').find('.total').children('span').text(parseFloat($(this).val() * $(this).closest('.tableNomenclature').find('.price').children('input').val()).toFixed(2))
@@ -189,6 +164,8 @@ $(document).ready(function () {
             var this_ = $(this);
             var itemId = this_.closest('.tableNomenclature').find('.orderItemsId').val();
             var nomId = this_.closest('.tableNomenclature').find('.nomId').val();
+            var totalPrice = $('.totalPrice').val() - (this_.closest('tr').find('.price').find('input').val() * this_.closest('tr').find('.countProductForUpdate').val());
+            var totalCount = $('.totalCount').val() - (this_.closest('tr').find('.countProductForUpdate').val());
             var csrfToken = $('meta[name="csrf-token"]').attr("content");
             $.ajax({
                 url:'/orders/delete-items',
@@ -197,6 +174,8 @@ $(document).ready(function () {
                 data:{
                     itemId:itemId,
                     nomId:nomId,
+                    totalPrice:totalPrice,
+                    totalCount:totalCount,
                     _csrf:csrfToken
                 },
                 success:function (data){
