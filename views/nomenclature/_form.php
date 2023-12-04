@@ -29,6 +29,9 @@ if(isset($action__)){
                     <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
                 </div>
                 <div class="card-body formDesign">
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 nomenclatureImage">
+                        <?= $form->field($model, 'image')->fileInput(['required' => true]) ?>
+                    </div>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 nomenclatureName">
                         <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => true]) ?>
                     </div>

@@ -184,7 +184,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     <!-- Search -->
                     <div class="navbar-nav align-items-center">
                         <div class="nav-item d-flex align-items-center">
-                            <i class="bx bx-search fs-4 lh-0"></i>
+                            <i class="bx bx-search fs-4 lh-0 searchmain"></i>
                             <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2" placeholder="Փնտրել..." aria-label="Search...">
                         </div>
                     </div>

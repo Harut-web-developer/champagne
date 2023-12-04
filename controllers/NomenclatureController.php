@@ -10,6 +10,7 @@ use app\models\Users;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * NomenclatureController implements the CRUD actions for Nomenclature model.
@@ -98,17 +99,21 @@ class NomenclatureController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            $imageName = $_FILES['Nomenclature']['name']['image'];
+            $model->image = $imageName;
+            $model->image = UploadedFile::getInstance($model, 'image');
+            $model->image->saveAs('upload/'.$imageName );
             $model->name = $post['Nomenclature']['name'];
             $model->cost = intval($post['Nomenclature']['cost']);
             $model->price = intval($post['Nomenclature']['price']);
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
-            $model->save();
+            $model->save(false);
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
-            return $this->redirect(['create', 'id' => $model->id]);
+            return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -153,16 +158,20 @@ class NomenclatureController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            $imageName = $_FILES['Nomenclature']['name']['image'];
+            $model->image = $imageName;
+            $model->image = UploadedFile::getInstance($model, 'image');
+            $model->image->saveAs('upload/'.$imageName );
             $model->name = $post['Nomenclature']['name'];
             $model->cost = intval($post['Nomenclature']['cost']);
             $model->price = $post['Nomenclature']['price'];
             $model->updated_at = date('Y-m-d H:i:s');
-            $model->save();
+            $model->save(false);
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
-            return $this->redirect(['create', 'id' => $model->id]);
+            return $this->redirect(['index', 'id' => $model->id]);
         }
         return $this->render('update', [
             'model' => $model,

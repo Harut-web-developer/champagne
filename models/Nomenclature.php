@@ -8,6 +8,7 @@ use Yii;
  * This is the model class for table "nomenclature".
  *
  * @property int $id
+ * @property string|null $image
  * @property string $name
  * @property float $price
  * @property string $created_at
@@ -33,6 +34,7 @@ class Nomenclature extends \yii\db\ActiveRecord
             [['price','cost'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['name'], 'string', 'max' => 255],
+            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, xlsx'],
         ];
     }
 
@@ -43,6 +45,7 @@ class Nomenclature extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'image' => 'Նկար',
             'name' => 'Անուն',
             'cost' => 'Ինքնարժեք',
             'price' => 'Գին',

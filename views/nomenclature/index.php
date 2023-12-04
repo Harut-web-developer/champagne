@@ -66,6 +66,13 @@ if ($have_access_update && $have_access_delete){
             ]),
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
+                [
+                    'attribute' => 'image',
+                    'format' => 'raw',
+                    'value' => function($model) {
+                        return '<img src="/upload/' . $model->image . '"width="50">';
+                    }
+                ],
                 'name',
                 'price',
                 ...$action_column,

@@ -18,7 +18,7 @@ class NomenclatureSearch extends Nomenclature
     {
         return [
             [['id'], 'integer'],
-            [['name', 'created_at', 'updated_at'], 'safe'],
+            [['name', 'image', 'created_at', 'updated_at'], 'safe'],
             [['price'], 'number'],
         ];
     }
