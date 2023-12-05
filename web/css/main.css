@@ -338,3 +338,13 @@
 .countProductForUpdate{
     min-width: 100px;
 }
+.searchicon{
+    border: none;
+    background-color: white;
+}
+.inputstyle{
+    border: none;
+}
+.inputstyle {
+    outline: none;
+}

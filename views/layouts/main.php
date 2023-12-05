@@ -4,6 +4,8 @@
 /** @var string $content */
 
 use app\assets\AppAsset;
+//use yii\helpers\Html;
+use yii\widgets\ActiveForm;
 use app\widgets\Alert;
 use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
@@ -180,15 +182,35 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     </a>
                 </div>
 
-
                 <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
                     <!-- Search -->
                     <div class="navbar-nav align-items-center">
                         <div class="nav-item d-flex align-items-center">
-                            <i class="bx bx-search fs-4 lh-0 searchmain"></i>
-                            <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2" placeholder="Փնտրել..." aria-label="Search...">
+                            <?php
+                            $form = ActiveForm::begin([
+                                'action' => ['/search/index'],
+                                'method' => 'post',
+                                'options' => ['class' => 'form-inline'], // Add Bootstrap form-inline class
+                            ]);
+                            ?>
+
+                            <?= Html::csrfMetaTags() ?>
+
+                            <div class="input-group"> <!-- Use Bootstrap input-group class -->
+                                <?= Html::submitButton('', ['name' => 'submit', 'class' => 'bx bx-search fs-4 lh-0 searchicon']) ?>
+                                <?= Html::textInput('searchQuery', null, ['class' => 'inputstyle form-control border-0 shadow-none ps-1 ps-sm-2']) ?>
+                            </div>
+
+                            <?php ActiveForm::end(); ?>
+
                         </div>
                     </div>
+<!--                    <div class="navbar-nav align-items-center">-->
+<!--                        <div class="nav-item d-flex align-items-center">-->
+<!--                            <a href="--><?php //= Yii::$app->urlManager->createUrl(['search/index']) ?><!--" class="searchicone"><i class="bx bx-search fs-4 lh-0"></i></a>-->
+<!--                            <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2 searchmain" placeholder="Փնտրել..." aria-label="Search...">-->
+<!--                        </div>-->
+<!--                    </div>-->
                     <!-- /Search -->
 
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
