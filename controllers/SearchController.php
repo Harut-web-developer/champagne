@@ -28,7 +28,6 @@ class SearchController extends Controller{
         }
         return $this->render('index');
     }
-
 //    public function actionSearching(){
 //        if (Yii::$app->request->isAjax && Yii::$app->request->post('option')) {
 //            $option = Yii::$app->request->post('option');

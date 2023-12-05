@@ -153,6 +153,7 @@ $(document).ready(function() {
         $(this).closest('.panel-title').find('.edite-block-title-new').show();
         $(this).hide();
     });
+
     $('.searchmain').keyup(function () {
         if ($(this).val().length >= 3) {
             let search = $(this).val();
