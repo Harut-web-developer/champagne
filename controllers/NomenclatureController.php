@@ -118,7 +118,7 @@ class NomenclatureController extends Controller
             $model->loadDefaultValues();
         }
         $discounts = Discount::find()->select('id,discount')->asArray()->all();
-        return $this->render('create', [
+        return $this->render('index', [
             'model' => $model,
             'discounts' => $discounts
         ]);

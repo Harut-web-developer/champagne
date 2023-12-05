@@ -16,6 +16,9 @@
 .dashboardName > i{
     font-size: 1.3em;
 }
+.dashboardName > div > a{
+    color: #8C99A7;
+}
 .menu-item > a::before{
     display:none !important;
 }

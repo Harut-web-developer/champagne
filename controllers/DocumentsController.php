@@ -139,7 +139,7 @@ class DocumentsController extends Controller
                     if($post['newblocks'] || $post['new_fild_name']){
                         Yii::$app->runAction('custom-fields/create-title',$post);
                     }
-                    return $this->redirect(['create', 'id' => $model->id]);
+                    return $this->redirect(['index', 'id' => $model->id]);
 
 //                return $this->redirect(['index', 'id' => $model->id]);
         } else {
@@ -239,7 +239,7 @@ class DocumentsController extends Controller
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
-            return $this->redirect(['create', 'id' => $model->id]);
+            return $this->redirect(['index', 'id' => $model->id]);
 //            return $this->redirect(['index', 'id' => $model->id]);
         }
         $users = Users::find()->select('id,name')->asArray()->all();
@@ -294,6 +294,22 @@ class DocumentsController extends Controller
             if (isset($delete_items)){
                 return json_encode(true);
             }
+        }
+    }
+
+    public function actionSearch(){
+        if ($this->request->isPost){
+            $nom = $this->request->post('nomenclature');
+            $query = Nomenclature::find()
+                ->where(['like', 'name', $nom]);
+
+            $nomenclature = $query
+                ->asArray()
+                ->all();
+            $res = [];
+            $res['nomenclature'] = $nomenclature;
+            return json_encode($res);
+
         }
     }
     /**

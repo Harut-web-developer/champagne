@@ -7,6 +7,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use app\models\CustomfieldsBlocksInputValues;
 
 /** @var yii\web\View $this */
 /** @var app\models\WarehouseSearch $searchModel */
@@ -46,6 +47,16 @@ if ($have_access_update && $have_access_delete){
         }
     ];
 }
+$fields_arr = [];
+
+if(!empty($new_fields)){
+    for ($i = 0; $i < count($new_fields); $i++){
+        $fields_arr[$i]['attribute'] = $new_fields[$i]['attribute'];
+        $fields_arr[$i]['value'] = function ($model,$key, $index, $column) {
+            return CustomfieldsBlocksInputValues::getValue($model->id, $column->filterAttribute);
+        };
+    }
+}
 
 ?>
 <div class="warehouse-index">
@@ -79,6 +90,7 @@ if ($have_access_update && $have_access_delete){
                         }
                     }
                 ],
+                ...$fields_arr,
                     ...$action_column,
             ],
         ]); ?>

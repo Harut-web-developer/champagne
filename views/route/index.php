@@ -17,8 +17,18 @@ $this->params['breadcrumbs'][] = $this->title;
 $have_access_create = Users::checkPremission(49);
 $have_access_update = Users::checkPremission(50);
 $have_access_delete = Users::checkPremission(51);
+$have_access_view = Users::checkPremission(54);
 $action_column = [];
-if ($have_access_update && $have_access_delete){
+if ($have_access_update && $have_access_delete && $have_access_view){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{view} {update} {delete}',
+        'urlCreator' => function ($action, Route $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+} else if($have_access_update && $have_access_delete){
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
@@ -27,7 +37,34 @@ if ($have_access_update && $have_access_delete){
             return Url::toRoute([$action, 'id' => $model->id]);
         }
     ];
-} else if($have_access_update){
+}else if($have_access_view && $have_access_delete){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{view} {delete}',
+        'urlCreator' => function ($action, Route $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}else if($have_access_view && $have_access_update){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{view} {update}',
+        'urlCreator' => function ($action, Route $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}else if($have_access_view){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{view}',
+        'urlCreator' => function ($action, Route $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}else if($have_access_update){
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),

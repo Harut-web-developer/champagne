@@ -46,4 +46,13 @@ class CustomfieldsBlocksInputValues extends \yii\db\ActiveRecord
             'type' => 'Type',
         ];
     }
+    public static function getValue($item_id,$fild_name)
+    {
+        $input_id = CustomfieldsBlocksInputs::findOne(['label'=>$fild_name]);
+        $value = CustomfieldsBlocksInputValues::findOne(['input_id'=>$input_id,'item_id'=>$item_id]);
+        if(!empty($value)){
+            return $value->value_;
+        }
+        return '';
+    }
 }

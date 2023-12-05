@@ -58,6 +58,7 @@ class WarehouseController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'warehouse']);
 
         $searchModel = new WarehouseSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -65,6 +66,7 @@ class WarehouseController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'new_fields'=>$res
         ]);
     }
 
@@ -107,7 +109,7 @@ class WarehouseController extends Controller
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
-            return $this->redirect(['create', 'id' => $model->id]);
+            return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -163,7 +165,7 @@ class WarehouseController extends Controller
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
-            return $this->redirect(['create', 'id' => $model->id]);
+            return $this->redirect(['index']);
         }
 
         return $this->render('update', [

@@ -115,7 +115,7 @@ class ProductsController extends Controller
         $warehouse = ArrayHelper::map($warehouse,'id','name');
         $nomenclature = Nomenclature::find()->select('id,name')->asArray()->all();
         $nomenclature = ArrayHelper::map($nomenclature,'id','name');
-        return $this->render('create', [
+        return $this->render('index', [
             'model' => $model,
             'warehouse' => $warehouse,
             'nomenclature' => $nomenclature
@@ -169,7 +169,7 @@ class ProductsController extends Controller
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
-            return $this->redirect(['create', 'id' => $model->id]);
+            return $this->redirect(['index', 'id' => $model->id]);
         }
         $warehouse = Warehouse::find()->select('id,name')->asArray()->all();
         $warehouse = ArrayHelper::map($warehouse,'id','name');
