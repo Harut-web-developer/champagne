@@ -195,7 +195,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                             <?php
                             $form = ActiveForm::begin([
                                 'action' => ['/search/index'],
-                                'method' => 'post',
+                                'method' => 'get',
                                 'options' => ['class' => 'form-inline'], // Add Bootstrap form-inline class
                             ]);
                             ?>
@@ -211,14 +211,6 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 
                         </div>
                     </div>
-<!--                    <div class="navbar-nav align-items-center">-->
-<!--                        <div class="nav-item d-flex align-items-center">-->
-<!--                            <a href="--><?php //= Yii::$app->urlManager->createUrl(['search/index']) ?><!--" class="searchicone"><i class="bx bx-search fs-4 lh-0"></i></a>-->
-<!--                            <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2 searchmain" placeholder="Փնտրել..." aria-label="Search...">-->
-<!--                        </div>-->
-<!--                    </div>-->
-                    <!-- /Search -->
-
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
                         <!-- Place this tag where you want the button to render. -->
                         <li class="nav-item lh-1 me-3">

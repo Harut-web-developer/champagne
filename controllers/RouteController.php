@@ -32,6 +32,7 @@ class RouteController extends Controller
         if(!$session['username']){
             $this->redirect('/site/logout');
         }
+        $this->enableCsrfValidation = false;
         return parent::beforeAction($action);
     }
 //    public function behaviors()
