@@ -145,7 +145,7 @@ class UsersController extends Controller
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
-                return $this->redirect(['create', 'id' => $model->id]);
+                return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -219,7 +219,7 @@ class UsersController extends Controller
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
-            return $this->redirect(['create', 'id' => $model->id]);
+            return $this->redirect(['index', 'id' => $model->id]);
         }
         $roles = Roles::find()->select('id,name')->asArray()->all();
         $roles = ArrayHelper::map($roles,'id','name');

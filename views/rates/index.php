@@ -27,7 +27,7 @@ if ($have_access_update && $have_access_delete){
             return Url::toRoute([$action, 'id' => $model->id]);
         }
     ];
-} else if($have_access_update){
+}else if($have_access_update){
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),

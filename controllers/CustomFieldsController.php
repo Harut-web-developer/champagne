@@ -183,6 +183,18 @@ class CustomFieldsController extends Controller
      * @return Log the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
+    public function actionGetTableData($page)
+    {
+        $res = Yii::$app->db->createCommand('SELECT customfields_blocks_inputs.label as `attribute`,customfields_blocks_inputs.id FROM customfields_blocks_title 
+                                                 LEFT JOIN customfields_blocks_inputs ON customfields_blocks_inputs.iblock_id = customfields_blocks_title.id      
+                                                  WHERE page = "'.$page.'" ')->queryAll();
+        $fields_arr = [];
+        if(!empty($res)){
+            return $res;
+        }
+        return  $fields_arr;
+
+    }
     public function actionDeleteBlock()
     {
         if($this->request->isPost){

@@ -113,7 +113,7 @@ class NomenclatureController extends Controller
             $model->loadDefaultValues();
         }
         $discounts = Discount::find()->select('id,discount')->asArray()->all();
-        return $this->render('create', [
+        return $this->render('index', [
             'model' => $model,
             'discounts' => $discounts
         ]);
@@ -162,7 +162,7 @@ class NomenclatureController extends Controller
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
-            return $this->redirect(['create', 'id' => $model->id]);
+            return $this->redirect(['index', 'id' => $model->id]);
         }
         return $this->render('update', [
             'model' => $model,

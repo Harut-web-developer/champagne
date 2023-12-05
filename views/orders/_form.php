@@ -89,9 +89,10 @@ use yii\widgets\ActiveForm;
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
+                                <input class="form-control col-md-3 mb-3 searchForOrder" type="search" placeholder="Որոնել...">
                                 <div class="card">
                                     <div class="table-responsive text-nowrap">
-                                        <table class="table">
+                                        <table class="table resultSearch">
                                             <thead>
                                             <tr>
                                                 <th>#</th>
@@ -100,7 +101,7 @@ use yii\widgets\ActiveForm;
                                                 <th>Քանակ</th>
                                             </tr>
                                             </thead>
-                                            <tbody class="table-border-bottom-0">
+                                            <tbody class="table-border-bottom-0 tbody_">
                                             <?php
                                             foreach ($nomenclatures as $keys => $nomenclature){
                                                 if(in_array($nomenclature['id'],$itemsArray)){
@@ -206,6 +207,7 @@ use yii\widgets\ActiveForm;
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
+                                <input class="form-control col-md-3 mb-3 searchForOrder" type="search" placeholder="Որոնել...">
                                 <div class="card">
                                     <div class="table-responsive text-nowrap">
                                         <table class="table">
@@ -217,7 +219,7 @@ use yii\widgets\ActiveForm;
                                                 <th>Քանակ</th>
                                             </tr>
                                             </thead>
-                                            <tbody class="table-border-bottom-0">
+                                            <tbody class="table-border-bottom-0 tbody_">
                                             <?php
                                             foreach ($nomenclatures as $keys => $nomenclature){
                                                 ?>

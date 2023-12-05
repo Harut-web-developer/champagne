@@ -68,7 +68,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     <div class="dashboardName">
                         <img src="/img/logo.png">
 <!--                        <i class="menu-icon tf-icons bx bx-home-circle"></i>-->
-                        <div data-i18n="Dashboards">Dashboards</div>
+                        <div data-i18n="Dashboards"><a href="/dashboard">Dashboards</a></div>
                     </div>
 <!--                    <a href="javascript:void(0);" class="menu-link menu-toggle">-->
 <!---->
@@ -76,6 +76,12 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 <!--                    </a>-->
 
                     <ul class="menu-sub">
+                        <li class="menu-item ">
+                            <a href="/dashboard" class="menu-link">
+                                <i class='bx bx-bar-chart-alt-2'></i>
+                                <div data-i18n="Analytics">Վահանակ</div>
+                            </a>
+                        </li>
                         <li class="menu-item ">
                             <a href="/map" class="menu-link">
                                 <i class='bx bx-map-alt'></i>
@@ -136,12 +142,12 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                                 <div data-i18n="Analytics">Կարգավիճակ</div>
                             </a>
                         </li>
-                        <li class="menu-item ">
-                            <a href="/premissions" class="menu-link">
-                                <i class="bx bx-cog"></i>
-                                <div data-i18n="Analytics">Թույլտվություններ</div>
-                            </a>
-                        </li>
+<!--                        <li class="menu-item ">-->
+<!--                            <a href="/premissions" class="menu-link">-->
+<!--                                <i class="bx bx-cog"></i>-->
+<!--                                <div data-i18n="Analytics">Թույլտվություններ</div>-->
+<!--                            </a>-->
+<!--                        </li>-->
                         <li class="menu-item ">
                             <a href="/discount" class="menu-link">
                                 <i class='bx bxs-bank'></i>

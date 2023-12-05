@@ -306,6 +306,27 @@ class OrdersController extends Controller
             }
         }
     }
+
+    public function actionSearch(){
+        if ($this->request->isPost){
+            $nom = $this->request->post('nomenclature');
+            $query = Nomenclature::find()
+                ->select('nomenclature.*, products.id as products_id')
+                ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+                ->where(['like', 'name', $nom]);
+//            $query_two =$query->select('nomenclature.*, products.id as products_id')->leftJoin('products','nomenclature.id = products.nomenclature_id');
+//            if(isset($nom)){
+//                $query_two->where(['like', 'name', $nom]);
+//            }
+            $nomenclature = $query
+                ->asArray()
+                ->all();
+            $res = [];
+            $res['nomenclature'] = $nomenclature;
+            return json_encode($res);
+
+        }
+    }
     /**
      * Finds the Orders model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

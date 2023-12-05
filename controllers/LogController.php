@@ -132,7 +132,7 @@ class LogController extends Controller
         }
         $log = Users::find()->select('id,name')->asArray()->all();
         $log = ArrayHelper::map($log,'id','name');
-        return $this->render('update', [
+        return $this->render('index', [
             'model' => $model,
             'log' => $log,
         ]);

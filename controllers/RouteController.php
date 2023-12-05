@@ -77,6 +77,10 @@ class RouteController extends Controller
      */
     public function actionView($id)
     {
+        $have_access = Users::checkPremission(54);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $result = Clients::find()->select('id,name')->where(['=', 'route_id', intval($id)])->asArray()->all();
 
         return $this->render('view', [
@@ -126,7 +130,7 @@ class RouteController extends Controller
 
 //        $route = Route::find()->select('id, route')->asArray()->all();
 
-        return $this->render('create', [
+        return $this->render('index', [
             'model' => $model,
 //            'route' => $route,
         ]);
@@ -151,7 +155,7 @@ class RouteController extends Controller
             return $this->redirect('index');
         }
 
-        return $this->render('update', [
+        return $this->render('index', [
             'model' => $model,
         ]);
     }

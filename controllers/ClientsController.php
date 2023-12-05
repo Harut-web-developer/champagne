@@ -107,7 +107,7 @@ class ClientsController extends Controller
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
-                return $this->redirect(['create', 'id' => $model->id]);
+                return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -185,7 +185,7 @@ class ClientsController extends Controller
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
-            return $this->redirect(['create', 'id' => $model->id]);
+            return $this->redirect(['index', 'id' => $model->id]);
         }
         $route = Route::find()->select('id, route')->asArray()->all();
         return $this->render('update', [
