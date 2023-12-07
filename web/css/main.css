@@ -351,3 +351,45 @@
 .inputstyle {
     outline: none;
 }
+.notifications-container {
+    position: relative;
+    display: inline-block;
+    margin: 20px;
+}
+
+.bell-icon {
+    cursor: pointer;
+    font-size: 20px;
+}
+
+#notifications-dropdown {
+    display: none;
+    position: absolute;
+    bottom: -150px;
+    right: 0;
+    width: 300px;
+    background-color: #f9f9f9;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 5px;
+    overflow-y: auto;
+    max-height: 300px;
+}
+
+.notification-item {
+    margin-bottom: 10px;
+}
+#notification-dropdown .notification {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.bs-toast {
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin: 0.5rem;
+    max-width: 300px;
+    overflow: hidden;
+}

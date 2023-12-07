@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Notifications;
 use app\models\Users;
 use Yii;
 use yii\filters\AccessControl;
@@ -159,8 +160,24 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionAbout()
+    public function actionGetNotifications()
     {
-        return $this->render('about');
+        $notifications = Notifications::find()
+            ->select('title, message')
+            ->orderBy(['datetime' => SORT_DESC])
+            ->asArray()
+            ->all();
+        var_dump($notifications);
+        die;
+        return json_encode($notifications);
+    }
+
+    public function actionAddNotifications($message)
+    {
+        $notification = new Notification();
+        $notification->message = $message;
+        $notification->save();
+
+        return 'Notification added successfully!';
     }
 }

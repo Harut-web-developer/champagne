@@ -209,14 +209,39 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 
                             <?php ActiveForm::end(); ?>
 
+
                         </div>
                     </div>
+
+
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
                         <!-- Place this tag where you want the button to render. -->
-                        <li class="nav-item lh-1 me-3">
-                            <span></span>
+                        <li class="nav-item lh-1 me-3 ">
+                            <div class="notifications-container">
+                                <div class="bell-icon">&#128276;</div>
+                                <div id="notifications-dropdown"></div>
+                            </div>
                         </li>
 
+<!--                        <div class="bs-toast toast toast-placement-ex m-2 fade bg-primary top-0 end-0 show"-->
+<!--                             role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">-->
+<!--                            <div class="toast-header">-->
+<!--                                <i class="bx bx-bell me-2"></i>-->
+<!--                                <div class="me-auto fw-medium">Bootstrap</div>-->
+<!--                                <small>11 mins ago</small>-->
+<!--                                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>-->
+<!--                            </div>-->
+<!--                            <div class="toast-body">Fruitcake chocolate bar tootsie roll gummies gummies jelly beans cake.</div>-->
+<!--                        </div>-->
+                        <div class="bs-toast toast toast-placement-ex m-2 bg-primary bottom-0 end-0 fade show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+                            <div class="toast-header">
+                                <i class="bx bx-bell me-2"></i>
+                                <div class="me-auto fw-medium">Bootstrap</div>
+                                <small>11 mins ago</small>
+                                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body">Fruitcake chocolate bar tootsie roll gummies gummies jelly beans cake.</div>
+                        </div>
                         <!-- User -->
                         <li class="nav-item navbar-dropdown dropdown-user dropdown">
                             <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
@@ -303,7 +328,10 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <?php $this->endBody() ?>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </body>
 </html>
 <?php $this->endPage() ?>
+
+<div class="toast-body">Fruitcake chocolate bar tootsie roll gummies gummies jelly beans cake.</div>
+</div>
+

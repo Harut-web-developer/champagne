@@ -1,16 +1,10 @@
 $(document).ready(function() {
-    $('.js-example-basic-multiple').select2();
-
-
-        var pgurl = window.location.href.substr(window.location.href
-            .lastIndexOf("/")+1);
-        $(".menu-sub a ").each(function(){
-            if($(this).attr("href") == '/'+pgurl || $(this).attr("href") == '' )
-                $(this).parent().addClass("active");
-        })
-
-
-
+    var pgurl = window.location.href.substr(window.location.href
+        .lastIndexOf("/")+1);
+    $(".menu-sub a ").each(function(){
+        if($(this).attr("href") == '/'+pgurl || $(this).attr("href") == '' )
+            $(this).parent().addClass("active");
+    })
 
     $('body').on('click','.edite-block-title',function (){
         $(this).closest('.panel-title').find('.non-active').hide();
@@ -153,6 +147,105 @@ $(document).ready(function() {
         $(this).closest('.panel-title').find('.edite-block-title-new').show();
         $(this).hide();
     });
+
+    // let interval = 5000;
+    // setInterval(
+    //     function(){
+    //         $('body').on('click' , '.bell-icon' , function () {
+    //             $("#notifications-dropdown").toggle();
+    //             $.ajax({
+    //                 type: "GET",
+    //                 url: "site/get-notifications",
+    //                 dataType: "json",
+    //                 success: function (data) {
+    //                     $("#notifications-dropdown").empty();
+    //                     data.forEach(function (notification) {
+    //                         $("#notifications-dropdown").append('<div class="notification-item">' + notification.message + '</div>');
+    //                     });
+    //                 }
+    //             });
+    //         });
+    //     }, interval
+    // );
+    //
+    // function addNotification(message) {
+    //     var csrfToken = $('meta[name="csrf-token"]').attr("content");
+    //     $.ajax({
+    //         type: "POST",
+    //         url: "site/add-notifications",
+    //         data: {
+    //             message: message,
+    //             _csrf : csrfToken,
+    //         },
+    //         success: function () {
+    //             fetchNotifications();
+    //         }
+    //     });
+    // }
+    //
+    // // Example: Add a new notification after 3 seconds
+    // setTimeout(function () {
+    //     addNotification("New Notification!");
+    // }, 3000);
+    //
+    //
+    //
+    //
+
+
+        $(".bell-icon").click(function () {
+            $("#notifications-dropdown").toggle();
+            fetchNotifications();
+        });
+
+        let interval = 5000;
+        setInterval(
+            ()=>{
+            function fetchNotifications() {
+                $.ajax({
+                    type: "GET",
+                    url: "site/get-notifications",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log(data)
+                        displayNotifications(data);
+                    }
+                });
+            }
+
+            function displayNotifications(notifications) {
+                $("#notifications-dropdown").empty();
+
+                notifications.forEach(function (notification) {
+                    $("#notifications-dropdown").append('<div class="notification-item">' + notification.message + '</div>');
+                });
+            }
+
+            function addNotification(message) {
+                $.ajax({
+                    type: "POST",
+                    url: "site/add-notification",
+                    data: { message: message },
+                    success: function () {
+                        fetchNotifications();
+                    }
+                });
+            }
+
+            // Example: Add a new notification after 3 seconds
+            setTimeout(function () {
+                addNotification("New Notification!");
+            }, 3000);
+        }, interval
+    );
+
+
+
+
+
+
+
+    $('.js-example-basic-multiple').select2();
 });
 
 
