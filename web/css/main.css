@@ -397,9 +397,6 @@
     vertical-align: top;
     font-size: 2.7rem;
 }
-.bottom-0 {
-    bottom: -622px !important;
-}
 .notification-item {
     display: flex;
     justify-content: space-between;
@@ -418,4 +415,12 @@
 }
 .title-text {
     font-weight: bold;
+}
+.notification-ui_dd .notification-ui_dd-header {
+    border-bottom: 1px solid #ddd;
+    padding: 15px;
+}
+
+.notification-ui_dd .notification-ui_dd-header h3 {
+    margin-bottom: 0;
 }

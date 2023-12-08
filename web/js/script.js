@@ -157,7 +157,31 @@ $(document).ready(function() {
             dataType: "json",
             data: { _csrf: csrfToken },
             success: function (data) {
-                displayNotifications(data);
+                displayNotifications(data['notifications_today']);
+                $('body').on('click','#viweall',function () {
+                    // displayNotifications(data['notifications_all']);
+                    var notifications = data['notifications_all'];
+                    var notificationsDropdown = $("#notifications-dropdown");
+                    notificationsDropdown.empty();
+                    notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
+                        '<h3 class="text-center">Ծանուցումներ</h3>\n' +
+                        '</div>' +
+                        '<hr>'
+                    );
+                    notifications.forEach(function (notification) {
+                        notificationsDropdown.append('<div class="notification-item">' +
+                            '<p class="notification-title">' +
+                            '<span class="title-text">' + notification.title + '</span>' +
+                            '</br>' +
+                            notification.message +
+                            '<br>' +
+                            '<small style="font-size: 60%">' +
+                            notification.datetime +
+                            '</small>' +
+                            '</p>' +
+                            '</div>');
+                    });
+                })
             }
         });
     }
@@ -167,32 +191,40 @@ $(document).ready(function() {
             type: 'GET',
             dataType: 'json',
             success: function (data) {
-                if (data.success && data.notifications.length > 0) {
-                    displayNotificationtoast(data.notifications[0]);
+                if (data.success) {
+                    displayNotificationtoast(data.notifications);
                 }
             },
-            error: function (error) {
-                console.error('Error fetching notifications:', error);
-            }
         });
     }
     function displayNotifications(notifications) {
         var notificationsDropdown = $("#notifications-dropdown");
         notificationsDropdown.empty();
-
+        notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
+            '<h3 class="text-center">Ծանուցումներ</h3>\n' +
+            '</div>' +
+            '<hr>'
+        );
         notifications.forEach(function (notification) {
             notificationsDropdown.append('<div class="notification-item">' +
                 '<p class="notification-title">' +
                 '<span class="title-text">' + notification.title + '</span>' +
                 '</br>' +
                 notification.message +
+                '<br>' +
+                '<small style="font-size: 60%">' +
+                notification.datetime +
+                '</small>' +
                 '</p>' +
                 '</div>');
         });
+        notificationsDropdown.append('<div id="viweall" class="notification-ui_dd-footer">\n' +
+            '<a href="#!" class="btn bg-secondary text-white" style="display: block">Տեսնել բոլորը</a>\n' +
+            '</div>'
+        );
     }
     function displayNotificationtoast(notification) {
         $('.bs-toast .toast-header .me-auto').text(notification.title);
-        // $('.bs-toast .toast-header small').text(notification.datetime);
         $('.bs-toast .toast-body').text(notification.message);
         $('.bs-toast').toast('show');
     }
@@ -205,9 +237,16 @@ $(document).ready(function() {
     });
     fetchNotifications();
     fetchNotificationstoast();
-    setInterval(fetchNotificationstoast, 10000);
+    setInterval(fetchNotificationstoast, 400000);
 
-
+    $(document).mouseup(function(e)
+    {
+        var container = $("#notifications-dropdown");
+        if (!container.is(e.target) && container.has(e.target).length === 0)
+        {
+            container.hide();
+        }
+    });
 
     $('.js-example-basic-multiple').select2();
 });

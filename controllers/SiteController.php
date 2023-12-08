@@ -162,18 +162,27 @@ class SiteController extends Controller
      */
     public function actionGetNotifications()
     {
-        $notifications = Notifications::find()
-            ->select('title, message')
+        $notifications_today  = Notifications::find()
+            ->select(['title', 'message', 'datetime'])
+            ->andWhere(['>=', 'datetime', date('Y-m-d')])
             ->orderBy(['datetime' => SORT_DESC])
             ->asArray()
             ->all();
-        return json_encode($notifications);
+        $notifications_all  = Notifications::find()
+            ->select(['title', 'message', 'datetime'])
+            ->orderBy(['datetime' => SORT_DESC])
+            ->asArray()
+            ->all();
+        return json_encode(['notifications_today' => $notifications_today, 'notifications_all' => $notifications_all]);
     }
 
     public function actionCheckNotifications()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $notifications = Notifications::find()->orderBy(['datetime' => SORT_DESC])->all();
+        $notifications = Notifications::find()
+            ->andWhere(['>=', 'datetime', date('Y-m-d')])
+            ->orderBy(['datetime' => SORT_DESC])
+            ->one();
 
         return [
             'success' => true,
