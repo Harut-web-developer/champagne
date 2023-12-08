@@ -28,8 +28,6 @@ $this->params['sub_page'] = $sub_page;
                 </thead>
                 <tbody class="table-border-bottom-0">
                 <?php
-                $debet  = 0;
-                $chek = 0;
                 $debt_total = 0;
 //                echo '<pre>';
 //                var_dump($payments);
@@ -48,12 +46,11 @@ $this->params['sub_page'] = $sub_page;
                                 $balance_order =  intval($client_order['debt']) - $payments;
                                 $debt_total += intval($client_order['debt']) - $payments;
                                 $payments = 0;
-                                $chek++;
                             }
                         } else {
                             $debt_total += intval($client_order['debt']) - $payments;
                         } ?>
-                        <td><?= (@$debt_total && $chek++ > 1) ? $debt_total : @$balance_order ?></td>
+                        <td><?= (@$debt_total) ? $debt_total : @$balance_order ?></td>
                     </tr>
                     <?php
                 }
