@@ -51,7 +51,23 @@ $config = [
                 '<controller>/<action:\w+>' => '<controller>/<action>',
             ],
         ],
+//        'modules' => [
+//            'gridview' =>  [
+//                'class' => '\kartik\grid\Module',
+//                // other module settings
+//            ]
+//        ],
 
+
+    ],
+    'modules' => [
+        'gridview' =>  [
+            'class' => '\kartik\grid\Module',
+            // other module settings
+        ],
+        'admin' => [
+            'class' => 'app\modules\admin\Module',
+        ],
     ],
     'params' => $params,
 ];

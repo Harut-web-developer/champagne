@@ -2,6 +2,8 @@
 
 use app\models\Orders;
 use app\models\Users;
+use kartik\export\ExportMenu;
+use yii\bootstrap\Modal;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -50,19 +52,46 @@ if ($have_access_update && $have_access_delete){
 <div class="orders-index">
     <h1><?= Html::encode($this->title) ?></h1>
     <p>
-        <?php if($have_access_create){ ?>
+        <?php if ($have_access_create) { ?>
             <?= Html::a('Ստեղծել վաճառքներ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
         <?php } ?>
     </p>
+
+    <?php
+    Modal::begin([
+        'id' => 'modal',
+        'size' => 'modal-lg',
+    ]);
+    echo "<div id='modalContent'>";
+    echo "<h4>Վաճառքներ</h4>";
+    // ... Other modal content ...
+    echo "</div>";
+    Modal::end();
+    ?>
+
+    <?php
+    $gridColumns = [
+        'id' => 'ID',
+        'user_id' => 'Օգտատեր',
+        'clients_id' => 'Հաճախորդ',
+        'status' => 'Status',
+        'comment' => 'Մեկնաբանություն',
+        'total_price' => 'Ընդհանուր գումար',
+        'total_count' => 'Ընդհանուր քանակ',
+        'created_at' => 'Created At',
+        'updated_at' => 'Updated At',
+    ];
+    echo ExportMenu::widget([
+        'dataProvider' =>$dataProvider,
+        'columns' => $gridColumns,
+    ]);
+    ?>
     <div class="card">
     <?= GridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],
         'dataProvider' => new ActiveDataProvider([
             'query' => $dataProvider->query->andWhere(['status' => '1']),
-//                'pagination' => [
-//                    'pageSize' => 20,
-//                ],
         ]),
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
