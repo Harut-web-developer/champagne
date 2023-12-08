@@ -216,31 +216,21 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
                         <!-- Place this tag where you want the button to render. -->
-                        <li class="nav-item lh-1 me-3 ">
+                        <li class="nav-item lh-1 me-3">
                             <div class="notifications-container">
-                                <div class="bell-icon">&#128276;</div>
+                                <div class="bell-icon"><i id="notificationBell" class="bx bx-bell notificationIcon"></i></div>
                                 <div id="notifications-dropdown"></div>
                             </div>
                         </li>
 
-<!--                        <div class="bs-toast toast toast-placement-ex m-2 fade bg-primary top-0 end-0 show"-->
-<!--                             role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">-->
-<!--                            <div class="toast-header">-->
-<!--                                <i class="bx bx-bell me-2"></i>-->
-<!--                                <div class="me-auto fw-medium">Bootstrap</div>-->
-<!--                                <small>11 mins ago</small>-->
-<!--                                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>-->
-<!--                            </div>-->
-<!--                            <div class="toast-body">Fruitcake chocolate bar tootsie roll gummies gummies jelly beans cake.</div>-->
-<!--                        </div>-->
-                        <div class="bs-toast toast toast-placement-ex m-2 bg-primary bottom-0 end-0 fade show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+                        <div class="bs-toast toast toast-placement-ex m-2 bg-secondary bottom-0 end-0 fade hide" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
                             <div class="toast-header">
                                 <i class="bx bx-bell me-2"></i>
-                                <div class="me-auto fw-medium">Bootstrap</div>
-                                <small>11 mins ago</small>
+                                <div class="me-auto fw-medium"></div>
+                                <small></small>
                                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                             </div>
-                            <div class="toast-body">Fruitcake chocolate bar tootsie roll gummies gummies jelly beans cake.</div>
+                            <div class="toast-body"></div>
                         </div>
                         <!-- User -->
                         <li class="nav-item navbar-dropdown dropdown-user dropdown">

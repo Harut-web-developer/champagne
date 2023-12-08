@@ -167,17 +167,18 @@ class SiteController extends Controller
             ->orderBy(['datetime' => SORT_DESC])
             ->asArray()
             ->all();
-        var_dump($notifications);
-        die;
         return json_encode($notifications);
     }
 
-    public function actionAddNotifications($message)
+    public function actionCheckNotifications()
     {
-        $notification = new Notification();
-        $notification->message = $message;
-        $notification->save();
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $notifications = Notifications::find()->orderBy(['datetime' => SORT_DESC])->all();
 
-        return 'Notification added successfully!';
+        return [
+            'success' => true,
+            'notifications' => $notifications,
+        ];
     }
+
 }

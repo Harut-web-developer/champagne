@@ -351,31 +351,29 @@
 .inputstyle {
     outline: none;
 }
+/*notifications*/
 .notifications-container {
     position: relative;
     display: inline-block;
     margin: 20px;
 }
-
 .bell-icon {
     cursor: pointer;
     font-size: 20px;
 }
-
 #notifications-dropdown {
     display: none;
     position: absolute;
-    bottom: -150px;
-    right: 0;
+    bottom: -277px;
+    right: -37px;
     width: 300px;
     background-color: #f9f9f9;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     padding: 10px;
     border-radius: 5px;
-    overflow-y: auto;
-    max-height: 300px;
+    overflow-y: scroll;
+    max-height: 277px;
 }
-
 .notification-item {
     margin-bottom: 10px;
 }
@@ -384,12 +382,40 @@
     border-bottom: 1px solid #ccc;
     cursor: pointer;
 }
-
 .bs-toast {
     position: fixed;
-    top: 0;
+    bottom: 0;
     right: 0;
     margin: 0.5rem;
     max-width: 300px;
     overflow: hidden;
+    transform: translate(-15px, -15px); /* Adjust as needed */
+}
+.notificationIcon{
+    margin-top: 5px;
+    margin-right: -40px;
+    vertical-align: top;
+    font-size: 2.7rem;
+}
+.bottom-0 {
+    bottom: -622px !important;
+}
+.notification-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    margin: 0 25px;
+    border-bottom: 1px solid #ddd;
+}
+.lh-1 {
+    line-height: 1.3 !important;
+}
+.notification-title {
+    background-color: #8592a3;
+    color: #fff;
+    font-weight: 300;
+    padding: 10px;
+}
+.title-text {
+    font-weight: bold;
 }

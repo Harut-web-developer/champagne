@@ -148,100 +148,64 @@ $(document).ready(function() {
         $(this).hide();
     });
 
-    // let interval = 5000;
-    // setInterval(
-    //     function(){
-    //         $('body').on('click' , '.bell-icon' , function () {
-    //             $("#notifications-dropdown").toggle();
-    //             $.ajax({
-    //                 type: "GET",
-    //                 url: "site/get-notifications",
-    //                 dataType: "json",
-    //                 success: function (data) {
-    //                     $("#notifications-dropdown").empty();
-    //                     data.forEach(function (notification) {
-    //                         $("#notifications-dropdown").append('<div class="notification-item">' + notification.message + '</div>');
-    //                     });
-    //                 }
-    //             });
-    //         });
-    //     }, interval
-    // );
-    //
-    // function addNotification(message) {
-    //     var csrfToken = $('meta[name="csrf-token"]').attr("content");
-    //     $.ajax({
-    //         type: "POST",
-    //         url: "site/add-notifications",
-    //         data: {
-    //             message: message,
-    //             _csrf : csrfToken,
-    //         },
-    //         success: function () {
-    //             fetchNotifications();
-    //         }
-    //     });
-    // }
-    //
-    // // Example: Add a new notification after 3 seconds
-    // setTimeout(function () {
-    //     addNotification("New Notification!");
-    // }, 3000);
-    //
-    //
-    //
-    //
-
-
-        $(".bell-icon").click(function () {
-            $("#notifications-dropdown").toggle();
-            fetchNotifications();
+    //notifications
+    function fetchNotifications() {
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            type: "GET",
+            url: "site/get-notifications",
+            dataType: "json",
+            data: { _csrf: csrfToken },
+            success: function (data) {
+                displayNotifications(data);
+            }
         });
-
-        let interval = 5000;
-        setInterval(
-            ()=>{
-            function fetchNotifications() {
-                $.ajax({
-                    type: "GET",
-                    url: "site/get-notifications",
-                    dataType: "json",
-                    success: function (data) {
-                        console.log(data)
-                        displayNotifications(data);
-                    }
-                });
+    }
+    function fetchNotificationstoast() {
+        $.ajax({
+            url: 'site/check-notifications',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                if (data.success && data.notifications.length > 0) {
+                    displayNotificationtoast(data.notifications[0]);
+                }
+            },
+            error: function (error) {
+                console.error('Error fetching notifications:', error);
             }
+        });
+    }
+    function displayNotifications(notifications) {
+        var notificationsDropdown = $("#notifications-dropdown");
+        notificationsDropdown.empty();
 
-            function displayNotifications(notifications) {
-                $("#notifications-dropdown").empty();
-
-                notifications.forEach(function (notification) {
-                    $("#notifications-dropdown").append('<div class="notification-item">' + notification.message + '</div>');
-                });
-            }
-
-            function addNotification(message) {
-                $.ajax({
-                    type: "POST",
-                    url: "site/add-notification",
-                    data: { message: message },
-                    success: function () {
-                        fetchNotifications();
-                    }
-                });
-            }
-
-            // Example: Add a new notification after 3 seconds
-            setTimeout(function () {
-                addNotification("New Notification!");
-            }, 3000);
-        }, interval
-    );
-
-
-
-
+        notifications.forEach(function (notification) {
+            notificationsDropdown.append('<div class="notification-item">' +
+                '<p class="notification-title">' +
+                '<span class="title-text">' + notification.title + '</span>' +
+                '</br>' +
+                notification.message +
+                '</p>' +
+                '</div>');
+        });
+    }
+    function displayNotificationtoast(notification) {
+        $('.bs-toast .toast-header .me-auto').text(notification.title);
+        // $('.bs-toast .toast-header small').text(notification.datetime);
+        $('.bs-toast .toast-body').text(notification.message);
+        $('.bs-toast').toast('show');
+    }
+    $(".bell-icon").click(function () {
+        $("#notifications-dropdown").toggle();
+        fetchNotifications();
+    });
+    $('#notificationBell').click(function () {
+        fetchNotifications();
+    });
+    fetchNotifications();
+    fetchNotificationstoast();
+    setInterval(fetchNotificationstoast, 10000);
 
 
 
