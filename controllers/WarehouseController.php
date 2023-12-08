@@ -59,14 +59,21 @@ class WarehouseController extends Controller
             $this->redirect('/site/403');
         }
         $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'warehouse']);
+        $sub_page = [
+            ['name' => 'Փաստաթղթեր','address' => '/documents'],
+            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
+            ['name' => 'Ապրանք','address' => '/products'],
+            ['name' => 'Տեղեկամատյան','address' => '/log'],
 
+        ];
         $searchModel = new WarehouseSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'new_fields'=>$res
+            'new_fields'=>$res,
+            'sub_page' => $sub_page
         ]);
     }
 

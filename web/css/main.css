@@ -342,12 +342,22 @@
     min-width: 100px;
 }
 .searchicon{
-    border: none;
-    background-color: white;
+    border: none !important;
+    background-color: white !important;
 }
 .inputstyle{
-    border: none;
+    border: none !important;
 }
 .inputstyle {
-    outline: none;
+    outline: none !important;
+}
+.imageNom > img{
+    width:40px;
+    height:40px;
+}
+.ordersCountInput{
+    min-width:80px;
+}
+.documentsCountInput{
+    min-width:80px;
 }

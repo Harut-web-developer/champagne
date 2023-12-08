@@ -90,6 +90,7 @@ class SiteController extends Controller
     {
         $session = Yii::$app->session;
         $this->layout = 'loginLayout';
+//        $sub_page = [];
         if ($this->request->isPost) {
             $username = Yii::$app->request->post('username');
             $password = Yii::$app->request->post('password');
@@ -108,15 +109,19 @@ class SiteController extends Controller
                 $session->set('username',$identity->username);
                 $session->set('user_id',$identity->id);
                 $session->set('logged',true);
-                return $this->redirect('/warehouse');
+                return $this->redirect('/dashboard');
             } else {
                 return $this->redirect('');
             }
-        }else{
+        }
+        else{
             return $this->render('login', [
 //                'model' => $model,
             ]);
         }
+//        return $this->render('login',[
+//            'sub_page' => $sub_page
+//        ]);
     }
 
     /**

@@ -2,7 +2,7 @@
 /** @var string $content */
 
 use app\assets\AppAsset;
-
+//$sub_page = $this->params['sub_page'];
 
 AppAsset::register($this);
 

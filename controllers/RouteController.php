@@ -60,12 +60,14 @@ class RouteController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $searchModel = new RouteSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -130,7 +132,7 @@ class RouteController extends Controller
 
 //        $route = Route::find()->select('id, route')->asArray()->all();
 
-        return $this->render('index', [
+        return $this->render('create', [
             'model' => $model,
 //            'route' => $route,
         ]);
@@ -155,7 +157,7 @@ class RouteController extends Controller
             return $this->redirect('index');
         }
 
-        return $this->render('index', [
+        return $this->render('update', [
             'model' => $model,
         ]);
     }

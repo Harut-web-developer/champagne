@@ -8,6 +8,7 @@ use yii\helpers\Html;
 $this->title = 'Ստեղծել վաճառքներ';
 $this->params['breadcrumbs'][] = ['label' => 'Orders', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="orders-create">
 
@@ -17,7 +18,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'users' => $users,
         'clients' => $clients,
-        'nomenclatures' => $nomenclatures
+        'nomenclatures' => $nomenclatures,
+        'total' => $total,
+//        'pagination' => $pagination,
+//        'count' => $count,
     ]) ?>
 
 </div>

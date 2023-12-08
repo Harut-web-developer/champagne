@@ -63,12 +63,14 @@ class DocumentsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $searchModel = new DocumentsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -135,13 +137,9 @@ class DocumentsController extends Controller
                         $products->save(false);
                     }
                 }
-                    $_POST['item_id'] = $model->id;
-                    if($post['newblocks'] || $post['new_fild_name']){
-                        Yii::$app->runAction('custom-fields/create-title',$post);
-                    }
+
                     return $this->redirect(['index', 'id' => $model->id]);
 
-//                return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -152,16 +150,23 @@ class DocumentsController extends Controller
         $warehouse =  ArrayHelper::map($warehouse,'id','name');
         $rates = Rates::find()->select('id,name')->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
-        $nomenclatures = Nomenclature::find()->select('nomenclature.id,nomenclature.name,nomenclature.price,
+        $query = Nomenclature::find();
+        $countQuery = clone $query;
+        $total = $countQuery->count();
+        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
         nomenclature.cost,products.id as products_id,products.count,')
             ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+            ->offset(0)
+            ->groupBy('nomenclature.id')
+            ->limit(10)
             ->asArray()->all();
         return $this->render('create', [
             'model' => $model,
             'users' => $users,
             'warehouse' => $warehouse,
             'rates' => $rates,
-            'nomenclatures' => $nomenclatures
+            'nomenclatures' => $nomenclatures,
+            'total' => $total,
         ]);
     }
 
@@ -192,6 +197,38 @@ class DocumentsController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
+    public function actionGetNomiclature(){
+
+        $page = $_GET['paging'] ?? 1;
+        $search_name = $_GET['nomenclature'] ?? false;
+        $pageSize = 10;
+        $offset = ($page-1) * $pageSize;
+        $query = Nomenclature::find();
+        $countQuery = clone $query;
+        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
+        nomenclature.cost,products.id as products_id,products.count')
+            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+            ->groupBy('nomenclature.id');
+                if ($search_name){
+                    $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
+                        ->offset(0)
+                        ->limit(10);
+                    $total = $nomenclatures->count();
+                }else{
+                    $total = $countQuery->count();
+                    $nomenclatures->offset($offset)
+                        ->limit($pageSize);
+                }
+        $nomenclatures = $nomenclatures
+            ->asArray()
+            ->all();
+        return $this->renderAjax('get-nom', [
+            'nomenclatures' => $nomenclatures,
+            'total' => $total,
+            'search_name' => $search_name
+        ]);
+
+    }
     public function actionUpdate($id)
     {
         $have_access = Users::checkPremission(38);
@@ -235,10 +272,10 @@ class DocumentsController extends Controller
                     $document_items_update->save();
                 }
             }
-            $_POST['item_id'] = $model->id;
-            if($post['newblocks'] || $post['new_fild_name']){
-                Yii::$app->runAction('custom-fields/create-title',$post);
-            }
+//            $_POST['item_id'] = $model->id;
+//            if($post['newblocks'] || $post['new_fild_name']){
+//                Yii::$app->runAction('custom-fields/create-title',$post);
+//            }
             return $this->redirect(['index', 'id' => $model->id]);
 //            return $this->redirect(['index', 'id' => $model->id]);
         }
@@ -248,9 +285,15 @@ class DocumentsController extends Controller
         $warehouse =  ArrayHelper::map($warehouse,'id','name');
         $rates = Rates::find()->select('id,name')->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
-        $nomenclatures = Nomenclature::find()->select('nomenclature.id,nomenclature.name,nomenclature.price,
-        nomenclature.cost,products.count,')
+        $query = Nomenclature::find();
+        $countQuery = clone $query;
+        $total = $countQuery->count();
+        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
+        nomenclature.cost,products.id as products_id,products.count,')
             ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+            ->offset(0)
+            ->groupBy('nomenclature.id')
+            ->limit(10)
             ->asArray()->all();
         $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')
             ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
@@ -264,6 +307,7 @@ class DocumentsController extends Controller
             'rates' => $rates,
             'nomenclatures' => $nomenclatures,
             'document_items' => $document_items,
+            'total' => $total,
             'aah' => $aah
         ]);
     }
@@ -297,21 +341,21 @@ class DocumentsController extends Controller
         }
     }
 
-    public function actionSearch(){
-        if ($this->request->isPost){
-            $nom = $this->request->post('nomenclature');
-            $query = Nomenclature::find()
-                ->where(['like', 'name', $nom]);
-
-            $nomenclature = $query
-                ->asArray()
-                ->all();
-            $res = [];
-            $res['nomenclature'] = $nomenclature;
-            return json_encode($res);
-
-        }
-    }
+//    public function actionSearch(){
+//        if ($this->request->isPost){
+//            $nom = $this->request->post('nomenclature');
+//            $query = Nomenclature::find()
+//                ->where(['like', 'name', $nom]);
+//
+//            $nomenclature = $query
+//                ->asArray()
+//                ->all();
+//            $res = [];
+//            $res['nomenclature'] = $nomenclature;
+//            return json_encode($res);
+//
+//        }
+//    }
     /**
      * Finds the Documents model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

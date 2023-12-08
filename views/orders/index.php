@@ -14,6 +14,8 @@ use yii\grid\GridView;
 
 $this->title = 'Վաճառքներ';
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
+
 $have_access_create = Users::checkPremission(21);
 $have_access_update = Users::checkPremission(22);
 $have_access_delete = Users::checkPremission(23);
@@ -22,7 +24,15 @@ if ($have_access_update && $have_access_delete){
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
-        'template' => '{update} {delete}',
+        'template' => '{delivered} {update} {delete}',
+        'buttons' => [
+            'delivered' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<i class="bx bxs-check-circle" ></i>', $url, [
+                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                ]);
+            },
+        ],
         'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
             return Url::toRoute([$action, 'id' => $model->id]);
         }
@@ -87,6 +97,7 @@ if ($have_access_update && $have_access_delete){
                 }
             ],
             'comment',
+            'orders_date',
             'total_price',
             'total_count',
             ...$action_column,

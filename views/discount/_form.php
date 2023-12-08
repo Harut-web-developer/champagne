@@ -71,7 +71,7 @@ use yii\widgets\ActiveForm;
                     <?= $form->field($model, 'end_date')->input('date') ?>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="card-footer">
                 <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
             </div>
         <?php ActiveForm::end(); ?>

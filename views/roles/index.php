@@ -12,8 +12,9 @@ use yii\grid\GridView;
 /** @var app\models\RolesSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Դեր';
+$this->title = 'Կարգավիճակ';
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 $have_access_create = Users::checkPremission(29);
 $have_access_update = Users::checkPremission(30);
 $have_access_delete = Users::checkPremission(31);

@@ -1,4 +1,6 @@
-
+<?php
+$this->params['sub_page'] = $sub_page;
+?>
 <table class="table">
     <thead>
     <tr>

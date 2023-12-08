@@ -14,6 +14,7 @@ use yii\grid\GridView;
 
 $this->title = 'Փոխարժեք';
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 $have_access_create = Users::checkPremission(45);
 $have_access_update = Users::checkPremission(46);
 $have_access_delete = Users::checkPremission(47);

@@ -269,43 +269,25 @@ $(document).ready(function () {
 
     $('body').on('keyup', '.searchForOrder',function () {
         var nomenclature = $(this).val();
-        var csrfToken = $('meta[name="csrf-token"]').attr("content");
-        $.ajax({
-            url:'/orders/search',
-            method:'post',
-            datatype:'json',
-            data:{
-              nomenclature:nomenclature,
-                _csrf:csrfToken
-            },
-            success:function (data) {
-                let parse = JSON.parse(data);
-                $('.tbody_').html('');
-                var html_ = '';
-                parse.nomenclature.forEach(function (item) {
-                    html_ = `<tr class="addOrdersTableTr">
-                        <td>`+item.id+`</td>
-                        <td>
-                            <input data-id="`+item.id+`" type="checkbox">
-                            <input class="productIdInput" data-product="`+item.products_id+`" type="hidden">
-                        </td>
-                        <td class="nomenclatureName">`+item.name+`</td>
-                        <td class="ordersAddCount">
-                            <input type="number" class="form-control ordersCountInput">
-                            <input class="ordersPriceInput" type="hidden" value="`+item.price+`">
-                            <input class="ordersCostInput" type="hidden" value="`+item.cost+`">
-                        </td>
-                    </tr>`;
-                    $('.tbody_').append(html_);
-                })
-            }
-        })
+        let current_href = $('body').find('.active .by_ajax').data('href');
+        getNom( current_href+'&nomenclature='+nomenclature);
     })
 
+    $('body').on('click', '.by_ajax',function () {
+        var href_ = $(this).attr('data-href');
+        getNom(href_);
+    })
+    function getNom(href_) {
+        $.ajax({
+            url:href_,
+            method:'get',
+            datatype:'html',
+            success:function (data) {
+                $('#ajax_content').html(data);
+            }
+        })
 
-
-
-
+    }
 
 
 

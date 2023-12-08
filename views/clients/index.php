@@ -14,6 +14,7 @@ use yii\grid\GridView;
 
 $this->title = 'Հաճախորդներ';
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 $have_access_create = Users::checkPremission(5);
 $have_access_update = Users::checkPremission(6);
 $have_access_delete = Users::checkPremission(7);
@@ -22,7 +23,7 @@ if ($have_access_update && $have_access_delete){
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
-        'template' => '{update} {delete}',
+        'template' => '{view} {update} {delete}',
         'urlCreator' => function ($action, Clients $model, $key, $index, $column) {
             return Url::toRoute([$action, 'id' => $model->id]);
         }

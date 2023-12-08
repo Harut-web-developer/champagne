@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use app\widgets\CustomLinkPager;
 
 /** @var yii\web\View $this */
 /** @var app\models\Orders $model */
@@ -31,6 +32,9 @@ use yii\widgets\ActiveForm;
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'comment')->textarea() ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                    <?= $form->field($model, 'orders_date')->input('datetime-local') ?>
                 </div>
             </div>
             <div class="default-panel">
@@ -88,7 +92,7 @@ use yii\widgets\ActiveForm;
                                 <h5 class="modal-title" id="exampleModalLabel3">Ապրանքացուցակ</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body">
+                            <div class="modal-body" id="ajax_content">
                                 <input class="form-control col-md-3 mb-3 searchForOrder" type="search" placeholder="Որոնել...">
                                 <div class="card">
                                     <div class="table-responsive text-nowrap">
@@ -97,12 +101,15 @@ use yii\widgets\ActiveForm;
                                             <tr>
                                                 <th>#</th>
                                                 <th>Ընտրել</th>
+                                                <th>Նկար</th>
                                                 <th>Անուն</th>
                                                 <th>Քանակ</th>
                                             </tr>
                                             </thead>
                                             <tbody class="table-border-bottom-0 tbody_">
                                             <?php
+//                                            var_dump($nomenclatures);
+
                                             foreach ($nomenclatures as $keys => $nomenclature){
                                                 if(in_array($nomenclature['id'],$itemsArray)){
                                                     continue;
@@ -114,6 +121,7 @@ use yii\widgets\ActiveForm;
                                                         <input data-id="<?=$nomenclature['id']?>" type="checkbox">
                                                         <input class="productIdInput" data-product="<?=$nomenclature['products_id']?>" type="hidden">
                                                     </td>
+                                                    <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
                                                     <td class="nomenclatureName"><?=$nomenclature['name']?></td>
                                                     <td class="ordersAddCount">
                                                         <input type="number" class="form-control ordersCountInput">
@@ -130,6 +138,29 @@ use yii\widgets\ActiveForm;
                                         </table>
                                     </div>
                                 </div>
+                                <?php $page = $_GET['paging'] ?? 1;?>
+                                <?php  $count = intval(ceil($total/10)) ; ?>
+                                <nav aria-label="Page navigation example" class="pagination">
+                                    <ul class="pagination pagination-sm">
+                                        <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
+                                            <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
+                                        </li>
+                                        <?php for ($i = 1;$i <= $count; $i++){ ?>
+                                            <?php if($i > 0 && $i <= $count+1){ ?>
+                                                <li class="page-item <?= ($page==$i) ? 'active' : '' ?>">
+                                                    <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $i ?>"><?= $i ?>
+                                                    </a>
+                                                </li>
+                                            <?php } ?>
+                                        <?php } ?>
+<!--                                        /orders/update?id=--><?php //=$model->id?>
+                                        <?php if(intval($page) < $count){ ?>
+                                            <li class="page-item next">
+                                                <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
+                                            </li>
+                                        <?php } ?>
+                                    </ul>
+                                </nav>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn rounded-pill btn-secondary update" data-bs-dismiss="modal">Ավելացնել ցուցակում</button>
@@ -169,6 +200,9 @@ use yii\widgets\ActiveForm;
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'comment')->textarea() ?>
                 </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                    <?= $form->field($model, 'orders_date')->input('datetime-local') ?>
+                </div>
             </div>
             <div class="default-panel">
                 <div class="panel-title premission">
@@ -206,7 +240,7 @@ use yii\widgets\ActiveForm;
                                 <h5 class="modal-title" id="exampleModalLabel3">Ապրանքացուցակ</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body">
+                            <div class="modal-body" id="ajax_content">
                                 <input class="form-control col-md-3 mb-3 searchForOrder" type="search" placeholder="Որոնել...">
                                 <div class="card">
                                     <div class="table-responsive text-nowrap">
@@ -215,6 +249,7 @@ use yii\widgets\ActiveForm;
                                             <tr>
                                                 <th>#</th>
                                                 <th>Ընտրել</th>
+                                                <th>Նկար</th>
                                                 <th>Անուն</th>
                                                 <th>Քանակ</th>
                                             </tr>
@@ -229,6 +264,7 @@ use yii\widgets\ActiveForm;
                                                         <input data-id="<?=$nomenclature['id']?>" type="checkbox">
                                                         <input class="productIdInput" data-product="<?=$nomenclature['products_id']?>" type="hidden">
                                                     </td>
+                                                    <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
                                                     <td class="nomenclatureName"><?=$nomenclature['name']?></td>
                                                     <td class="ordersAddCount">
                                                         <input type="number" class="form-control ordersCountInput">
@@ -245,6 +281,31 @@ use yii\widgets\ActiveForm;
                                         </table>
                                     </div>
                                 </div>
+
+                                <?php $page = @$_GET['paging'] ?? 1; ?>
+                                <?php  $count = intval(ceil($total/10)) ; ?>
+                                 <nav aria-label="Page navigation example" class="pagination">
+                                    <ul class="pagination pagination-sm">
+                                        <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
+                                            <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
+                                        </li>
+                                        <?php for ($i = 1;$i <= $count; $i++){ ?>
+                                            <?php if($i > 0 && $i <= $count+1){ ?>
+                                            <li class="page-item <?= ($page==$i) ? 'active' : '' ?>">
+                                                <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $i ?>"><?= $i ?>
+                                                </a>
+                                            </li>
+                                            <?php } ?>
+                                        <?php } ?>
+
+                                        <?php if(intval($page) < $count){ ?>
+                                        <li class="page-item next">
+                                            <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
+                                        </li>
+                                        <?php } ?>
+                                    </ul>
+                                </nav>
+
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn rounded-pill btn-secondary create" data-bs-dismiss="modal">Ավելացնել ցուցակում</button>

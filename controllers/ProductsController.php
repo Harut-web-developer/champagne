@@ -59,12 +59,14 @@ class ProductsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $searchModel = new ProductsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -107,7 +109,7 @@ class ProductsController extends Controller
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
-                return $this->redirect(['create', 'id' => $model->id]);
+                return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -115,7 +117,7 @@ class ProductsController extends Controller
         $warehouse = ArrayHelper::map($warehouse,'id','name');
         $nomenclature = Nomenclature::find()->select('id,name')->asArray()->all();
         $nomenclature = ArrayHelper::map($nomenclature,'id','name');
-        return $this->render('index', [
+        return $this->render('create', [
             'model' => $model,
             'warehouse' => $warehouse,
             'nomenclature' => $nomenclature

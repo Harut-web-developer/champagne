@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = 'Update';
         'clients' => $clients,
         'nomenclatures' => $nomenclatures,
         'order_items' => $order_items,
-
+        'total' => $total,
     ]) ?>
 
 </div>

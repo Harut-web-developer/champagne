@@ -21,6 +21,9 @@ use yii\filters\VerbFilter;
 class DashboardController extends Controller
 {
     public function actionIndex(){
-        return $this->render('index');
+        $sub_page = [];
+        return $this->render('index',[
+            'sub_page' => $sub_page
+        ]);
     }
 }

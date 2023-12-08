@@ -63,12 +63,18 @@ class UsersController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [
+            ['name' => 'Կարգավիճակ','address' => '/roles'],
+            ['name' => 'Թույլտվություն','address' => '/premissions'],
+
+        ];
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'sub_page' => $sub_page
         ]);
     }
 

@@ -72,37 +72,50 @@ $(document).ready(function () {
 
     $('body').on('keyup', '.searchForDocument',function () {
         var nomenclature = $(this).val();
-        var csrfToken = $('meta[name="csrf-token"]').attr("content");
-        $.ajax({
-            url:'/documents/search',
-            method:'post',
-            datatype:'json',
-            data:{
-                nomenclature:nomenclature,
-                _csrf:csrfToken
-            },
-            success:function (data) {
-                let parse = JSON.parse(data);
-                $('.tbody_').html('');
-                var html_ = '';
-                parse.nomenclature.forEach(function (item) {
-                    html_ = `<tr class="documentsTableTr">
-                        <td>`+item.id+`</td>
-                        <td><input data-id="`+item.id+`" type="checkbox"></td>
-                        <td class="documentsName">`+item.name+`</td>
-                        <td class="documentsCount">
-                            <input type="number" class="form-control documentsCountInput">
-                            <input class="documentsPriceInput" type="hidden" value="`+item.price+`">
-                        </td>
-                    </tr>`;
-                    $('.tbody_').append(html_);
-                })
-            }
-        })
+        let current_href = $('body').find('.active .by_ajax').data('href');
+        getNomDocument( current_href+'&nomenclature='+nomenclature);
+        // $.ajax({
+        //     url:'/documents/search',
+        //     method:'post',
+        //     datatype:'json',
+        //     data:{
+        //         nomenclature:nomenclature,
+        //         _csrf:csrfToken
+        //     },
+        //     success:function (data) {
+        //         let parse = JSON.parse(data);
+        //         $('.tbody_').html('');
+        //         var html_ = '';
+        //         parse.nomenclature.forEach(function (item) {
+        //             html_ = `<tr class="documentsTableTr">
+        //                 <td>`+item.id+`</td>
+        //                 <td><input data-id="`+item.id+`" type="checkbox"></td>
+        //                 <td class="documentsName">`+item.name+`</td>
+        //                 <td class="documentsCount">
+        //                     <input type="number" class="form-control documentsCountInput">
+        //                     <input class="documentsPriceInput" type="hidden" value="`+item.price+`">
+        //                 </td>
+        //             </tr>`;
+        //             $('.tbody_').append(html_);
+        //         })
+        //     }
+        // })
     })
 
-
-
+    $('body').on('click', '.by_ajax',function () {
+        var href_ = $(this).attr('data-href');
+        getNomDocument(href_);
+    })
+    function getNomDocument(href_) {
+        $.ajax({
+            url:href_,
+            method:'get',
+            datatype:'html',
+            success:function (data) {
+                $('#ajax_content').html(data);
+            }
+        })
+    }
 
 
 

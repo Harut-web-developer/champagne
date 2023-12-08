@@ -32,7 +32,7 @@ if(isset($action__)){
                     <?= $form->field($model, 'name')->textInput(['required'=>$req]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseLocation">
-                    <?= $form->field($model, 'location')->textInput(['required'=>true]) ?>
+                    <?= $form->field($model, 'location')->textInput(['required'=>$req]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseType">
                     <?= $form->field($model, 'type')->dropDownList([ 'usual' => 'Սովորական', 'virtual' => 'Վիրտուալ', ], ['prompt' => 'Ընտրել տեսակը','options' => ['required' => $req,]]) ?>

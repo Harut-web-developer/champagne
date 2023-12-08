@@ -45,7 +45,7 @@ class Warehouse extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Անուն',
-            'location' => 'Գտնվելու վայրը',
+            'location' => 'Տեղադիրք',
             'type' => 'Տեսակ',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

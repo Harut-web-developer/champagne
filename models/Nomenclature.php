@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\data\Pagination;
 
 /**
  * This is the model class for table "nomenclature".
@@ -52,6 +53,31 @@ class Nomenclature extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+    public static function order_search($params){
+        $pageSize = 10;
+        $query = Nomenclature::find();
+        $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
+                            nomenclature.cost,products.id as products_id,products.count,')
+            ->leftJoin('products','nomenclature.id = products.nomenclature_id');
+        if(isset($params['paging'])){
+            $page = $params['paging'];
+        }
+        else{
+            $page = 1;
+        }
+
+        $offset = ($page-1) * $pageSize;
+        if($offset){
+            $query->offset($offset);
+        }
+        $query->limit($pageSize);
+
+        $query->asArray();
+        $query = $query->all();
+
+        return $query;
+
     }
     public function getDefaultTitle(){
         return CustomfieldsBlocksTitle::findOne(['id'=>2]);

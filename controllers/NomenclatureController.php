@@ -61,12 +61,14 @@ class NomenclatureController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $searchModel = new NomenclatureSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -118,7 +120,7 @@ class NomenclatureController extends Controller
             $model->loadDefaultValues();
         }
         $discounts = Discount::find()->select('id,discount')->asArray()->all();
-        return $this->render('index', [
+        return $this->render('create', [
             'model' => $model,
             'discounts' => $discounts
         ]);

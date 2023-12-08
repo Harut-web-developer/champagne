@@ -12,6 +12,10 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
     ],
     'components' => [
+        'websocket' => [
+            'class' => 'YourNamespace\WebSocketHandler',
+            'websocketServer' => 'ws://localhost:8080',
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'svsdfbaerbeaomo',
@@ -47,7 +51,7 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-//                '/' => 'site/login',
+                '/' => 'site/login',
                 '<controller>/<action:\w+>' => '<controller>/<action>',
             ],
         ],

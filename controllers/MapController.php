@@ -30,9 +30,11 @@ class MapController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $route = Route::find()->select('id, route')->asArray()->all();
         return $this->render('index', [
             'route' => $route,
+            'sub_page' => $sub_page
         ]);
     }
     public function actionLocationValue()
@@ -45,11 +47,11 @@ class MapController extends Controller
             $warehouse = Warehouse::find()->select('location')->where(['id' => 1])->asArray()->one();
             $formattedSelectedDate = Yii::$app->formatter->asDatetime($valuedate, 'yyyy-MM-dd');
             $locations = Orders::find()
-                ->select(["clients.location", 'DATE_FORMAT(orders.updated_at, "%Y-%m-%d") as updated_at'])
+                ->select(["clients.location", 'DATE_FORMAT(orders.orders_date, "%Y-%m-%d") as orders_date'])
                 ->leftJoin('clients','clients.id = orders.clients_id')
                 ->where(['route_id' => $value])
-                ->andWhere(['and',['>=','orders.updated_at', $formattedSelectedDate.' 00:00:00'],
-                    ['<','orders.updated_at', $formattedSelectedDate.' 23:59:59']])
+                ->andWhere(['and',['>=','orders.orders_date', $formattedSelectedDate.' 00:00:00'],
+                    ['<','orders.orders_date', $formattedSelectedDate.' 23:59:59']])
                 ->asArray()
                 ->orderBy('clients.sort_',SORT_DESC)
                 ->all();

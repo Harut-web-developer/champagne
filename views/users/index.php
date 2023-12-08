@@ -13,6 +13,7 @@ use yii\grid\GridView;
 
 $this->title = 'Օգտատեր';
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 $have_access_create = Users::checkPremission(13);
 $have_access_update = Users::checkPremission(14);
 $have_access_delete = Users::checkPremission(15);

@@ -21,6 +21,8 @@ $this->registerMetaTag(['name' => 'viewport', 'content' => 'width=device-width, 
 $this->registerMetaTag(['name' => 'description', 'content' => $this->params['meta_description'] ?? '']);
 $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_keywords'] ?? '']);
 $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii::getAlias('@web/favicon.ico')]);
+$sub_page = $this->params['sub_page'];
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -103,21 +105,9 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                             </a>
                         </li>
                         <li class="menu-item ">
-                            <a href="/nomenclature" class="menu-link">
-                                <i class='bx bx-notepad' ></i>
-                                <div data-i18n="Analytics">Անվանակարգ</div>
-                            </a>
-                        </li>
-                        <li class="menu-item ">
                             <a href="/users" class="menu-link">
                                 <i class='bx bx-male-female' ></i>
                                 <div data-i18n="Analytics">Օգտատեր</div>
-                            </a>
-                        </li>
-                        <li class="menu-item ">
-                            <a href="/products" class="menu-link">
-                                <i class='bx bx-cube-alt'></i>
-                                <div data-i18n="Analytics">Ապրանքներ</div>
                             </a>
                         </li>
                         <li class="menu-item ">
@@ -127,29 +117,11 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                             </a>
                         </li>
                         <li class="menu-item ">
-                            <a href="/documents" class="menu-link">
-                                <i class='bx bx-receipt'></i>
-                                <div data-i18n="Analytics">Փաստաթղթեր</div>
+                            <a href="/payments" class="menu-link">
+                                <i class="bx bx-money-withdraw"></i>
+                                <div data-i18n="Analytics">Վճարումներ</div>
                             </a>
                         </li>
-                        <li class="menu-item ">
-                            <a href="/log" class="menu-link">
-                                <i class='bx bxs-calendar-check' ></i>
-                                <div data-i18n="Analytics">Տեղեկամատյան</div>
-                            </a>
-                        </li>
-                        <li class="menu-item ">
-                            <a href="/roles" class="menu-link">
-                                <i class='bx bx-check-shield' ></i>
-                                <div data-i18n="Analytics">Կարգավիճակ</div>
-                            </a>
-                        </li>
-<!--                        <li class="menu-item ">-->
-<!--                            <a href="/premissions" class="menu-link">-->
-<!--                                <i class="bx bx-cog"></i>-->
-<!--                                <div data-i18n="Analytics">Թույլտվություններ</div>-->
-<!--                            </a>-->
-<!--                        </li>-->
                         <li class="menu-item ">
                             <a href="/discount" class="menu-link">
                                 <i class='bx bxs-bank'></i>
@@ -158,7 +130,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                         </li>
                         <li class="menu-item ">
                             <a href="/rates" class="menu-link">
-                                <i class='bx bx-money-withdraw'></i>
+                                <i class='bx bx-receipt'></i>
                                 <div data-i18n="Analytics">Փոխարժեք</div>
                             </a>
                         </li>
@@ -293,12 +265,36 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             <!-- Content wrapper -->
             <div class="content-wrapper">
                 <!-- Content -->
-
                 <div class="container-xxl flex-grow-1 container-p-y">
+                    <?php
+                        if (!empty($sub_page)){
+                            ?>
+                            <nav class="navbar navbar-expand-lg navbar-light bg-light mb-5">
+                                <div class="container-fluid">
+                                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                        <?php
+                                        foreach ($sub_page as $item){
+                                            ?>
+                                            <li class="nav-item">
+                                                <a class="nav-link" aria-current="page" href="<?=$item['address']?>"><?=$item['name']?></a>
+                                            </li>
+                                        <?php
+                                        }
+                                        ?>
+
+<!--                                        <li class="nav-item">-->
+<!--                                            <a class="nav-link" href="javascript:void(0)">Link</a>-->
+<!--                                        </li>-->
+                                    </ul>
+                                </div>
+                            </nav>
+                        <?php
+                            }
+                        ?>
+
                             <?= $content ?>
                 </div>
                 <!-- / Content -->
-
 
                 <div class="content-backdrop fade"></div>
             </div>

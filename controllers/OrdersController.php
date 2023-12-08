@@ -14,6 +14,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\data\Pagination;
 
 /**
  * OrdersController implements the CRUD actions for Orders model.
@@ -62,12 +63,14 @@ class OrdersController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $searchModel = new OrdersSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -107,6 +110,7 @@ class OrdersController extends Controller
             $model->total_price = $post['Orders']['total_price'];
             $model->total_count = $post['Orders']['total_count'];
             $model->comment = $post['Orders']['comment'];
+            $model->orders_date = $post['Orders']['orders_date'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
@@ -139,10 +143,25 @@ class OrdersController extends Controller
         } else {
             $model->loadDefaultValues();
         }
-        $nomenclatures = Nomenclature::find()->select('nomenclature.id,nomenclature.name,nomenclature.price,
-        nomenclature.cost,products.id as products_id,products.count,')
+
+//        $nomenclatures = Nomenclature::order_search($_GET);
+
+
+        $sub_page = [];
+
+        $query = Nomenclature::find();
+        $countQuery = clone $query;
+        $total = $countQuery->count();
+        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
+        nomenclature.cost,products.id as products_id,products.count')
             ->leftJoin('products','nomenclature.id = products.nomenclature_id')
-            ->asArray()->all();
+            ->offset(0)
+            ->groupBy('nomenclature.id')
+            ->limit(10)
+            ->asArray()
+            ->all();
+
+
         $clients = Clients::find()->select('id, name')->asArray()->all();
         $clients = ArrayHelper::map($clients,'id','name');
         $users = Users::find()->select('id, name')->asArray()->all();
@@ -151,7 +170,11 @@ class OrdersController extends Controller
             'model' => $model,
             'users' => $users,
             'clients' => $clients,
-            'nomenclatures' => $nomenclatures
+            'nomenclatures' => $nomenclatures,
+            'total' => $total,
+            'sub_page' => $sub_page
+//            'pagination' => $pagination,
+//            'count' => $count,
         ]);
     }
 
@@ -162,6 +185,37 @@ class OrdersController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
+    public function actionGetNomiclature(){
+
+        $page = $_GET['paging'] ?? 1;
+        $search_name = $_GET['nomenclature'] ?? false;
+        $pageSize = 10;
+        $offset = ($page-1) * $pageSize;
+        $query = Nomenclature::find();
+        $countQuery = clone $query;
+        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
+        nomenclature.cost,products.id as products_id,products.count')
+            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+            ->groupBy('nomenclature.id');
+        if ($search_name){
+            $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
+                ->offset(0)
+                ->limit(10);
+            $total = $nomenclatures->count();
+        }else{
+            $total = $countQuery->count();
+            $nomenclatures->offset($offset)
+            ->limit($pageSize);
+        }
+        $nomenclatures = $nomenclatures
+            ->asArray()
+            ->all();
+        return $this->renderAjax('get-nom', [
+            'nomenclatures' => $nomenclatures,
+            'total' => $total,
+            'search_name' => $search_name
+        ]);
+    }
     public function actionUpdate($id)
     {
 //        echo "<pre>";
@@ -178,6 +232,7 @@ class OrdersController extends Controller
             $model->total_price = $post['Orders']['total_price'];
             $model->total_count = $post['Orders']['total_count'];
             $model->comment = $post['Orders']['comment'];
+            $model->orders_date = $post['Orders']['orders_date'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
             $items = $post['order_items'];
@@ -240,10 +295,21 @@ class OrdersController extends Controller
             $order->save(false);
             return $this->redirect(['index', 'id' => $model->id]);
         }
-        $nomenclatures = Nomenclature::find()->select('nomenclature.id,nomenclature.name,nomenclature.price,
-        nomenclature.cost,products.id as products_id,products.count,')
+//        echo "<pre>";
+        $sub_page = [];
+        $query = Nomenclature::find();
+        $countQuery = clone $query;
+        $total = $countQuery->count();
+        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
+        nomenclature.cost,products.id as products_id,products.count')
             ->leftJoin('products','nomenclature.id = products.nomenclature_id')
-            ->asArray()->all();
+            ->offset(0)
+            ->groupBy('nomenclature.id')
+            ->limit(10)
+            ->asArray()
+            ->all();
+//var_dump($nomenclatures);exit();
+
         $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price / order_items.count) as price,
         (order_items.cost / order_items.count) as cost,order_items.discount,order_items.price_before_discount,nomenclature.name, (nomenclature.id) as nom_id')
             ->leftJoin('products','products.id = order_items.product_id')
@@ -259,7 +325,8 @@ class OrdersController extends Controller
             'clients' => $clients,
             'nomenclatures' => $nomenclatures,
             'order_items' => $order_items,
-
+            'total' => $total,
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -278,6 +345,18 @@ class OrdersController extends Controller
         }
         $orders = Orders::findOne($id);
         $orders->status = '0';
+        $orders->save();
+        return $this->redirect(['index']);
+    }
+    public function actionDelivered($id)
+    {
+        var_dump($id);
+//        $have_access = Users::checkPremission(23);
+//        if(!$have_access){
+//            $this->redirect('/site/403');
+//        }
+        $orders = Orders::findOne($id);
+        $orders->status = '2';
         $orders->save();
         return $this->redirect(['index']);
     }
@@ -307,26 +386,38 @@ class OrdersController extends Controller
         }
     }
 
-    public function actionSearch(){
-        if ($this->request->isPost){
-            $nom = $this->request->post('nomenclature');
-            $query = Nomenclature::find()
-                ->select('nomenclature.*, products.id as products_id')
-                ->leftJoin('products','nomenclature.id = products.nomenclature_id')
-                ->where(['like', 'name', $nom]);
-//            $query_two =$query->select('nomenclature.*, products.id as products_id')->leftJoin('products','nomenclature.id = products.nomenclature_id');
+//    public function actionSearch(){
+//        if ($this->request->isGet){
+//            $nom = $this->request->get('nomenclature');
+//            $query = Nomenclature::find();
+//
 //            if(isset($nom)){
-//                $query_two->where(['like', 'name', $nom]);
+//                $query->select('nomenclature.*, products.id as products_id')
+//                    ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+//                    ->where(['like', 'name', $nom]);
 //            }
-            $nomenclature = $query
-                ->asArray()
-                ->all();
-            $res = [];
-            $res['nomenclature'] = $nomenclature;
-            return json_encode($res);
-
-        }
-    }
+//            $countQuery = clone $query;
+//            $totalcount = $countQuery->count();
+//            if ($totalcount <= 10){
+//                $page = '';
+//            }else{
+//                $pagination = new Pagination([
+//                    'defaultPageSize' => 10,
+//                    'totalCount' => $totalcount,
+//                ]);
+//                $query->offset($pagination->offset)
+//                    ->limit($pagination->limit);
+//            }
+//            $nomenclature = $query
+//                ->asArray()
+//                ->all();
+//            $res = [];
+//            $res['nomenclature'] = $nomenclature;
+////            $res['pagination'] = $page;
+//            return json_encode($res);
+//
+//        }
+//    }
     /**
      * Finds the Orders model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

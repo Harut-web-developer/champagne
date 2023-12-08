@@ -21,6 +21,7 @@ $this->params['breadcrumbs'][] = 'Update';
         'rates' => $rates,
         'nomenclatures' => $nomenclatures,
         'document_items' => $document_items,
+        'total' => $total,
         'aah' => $aah
     ]) ?>
 

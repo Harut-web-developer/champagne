@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\Orders;
+use app\models\Payments;
 use Yii;
 use app\models\Clients;
 use app\models\Route;
@@ -59,12 +61,14 @@ class ClientsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $searchModel = new ClientsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -76,8 +80,24 @@ class ClientsController extends Controller
      */
     public function actionView($id)
     {
+        $sub_page = [];
+        $client_orders = Orders::find()
+            ->select(['orders.id', 'orders.total_price as debt'])
+            ->leftJoin('clients', 'orders.clients_id = clients.id')
+            ->where(['orders.clients_id' => $id])
+            ->groupBy('orders.id')
+            ->asArray()
+            ->all();
+        $payments = Payments::find()->select('SUM(payment_sum) as payments_total')->where(['client_id'=> $id])->asArray()->one();
+
+//        echo "<pre>";
+//        var_dump($client_orders);
+//        exit();
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page,
+            'client_orders' => $client_orders,
+            'payments' => $payments['payments_total'],
         ]);
     }
     /**
