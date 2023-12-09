@@ -49,77 +49,107 @@ if ($have_access_update && $have_access_delete){
     ];
 }
 ?>
-<div class="orders-index">
-    <h1><?= Html::encode($this->title) ?></h1>
-    <p>
-        <?php if ($have_access_create) { ?>
-            <?= Html::a('Ստեղծել վաճառքներ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
-        <?php } ?>
-    </p>
+<?php if(!isset($data_size)){ ?>
+    <div class="orders-index">
+        <h1><?= Html::encode($this->title) ?></h1>
+        <?php
+        $dataProvider->pagination->pageSize = 10;
+        ?>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <p>
+                <?php if ($have_access_create) { ?>
+                    <?= Html::a('Ստեղծել վաճառքներ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+                <?php } ?>
+            </p>
+            <select class="form-select" aria-label="Default select example" style="width: 18%; margin-left: auto;">
+                <option selected>Open this select menu</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+            </select>
+            <img class="downloadXLSX" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAC+klEQVR4nO2ZzWsTURDAFwW/kYre9CKKiB4ERT2of4AUveXqF1htZtaQ7rw0NDN9ehMUsTfxIggepPSioOJRz3rQg3gRqYI91I/Wg1rUykvzkk2atNl2d/uCHRjIMpnZ+c2b93Y28bxlWZZlmVf8gt4GJMNAMolKpheoU6DkJarBjJd68oo/LyLx2UqsUwMAkuFYk68oKLmcFsBkXAkvCQTGVPFyMRT3z24nudoxAEsCgTEDpA6BCQCkCoEJAaQGgQkCpAKRNICRZkdsbA+7NABaQsQxdsQFYEaSyBDEL5wBAMWPokIA8S9nAJJqvXnlvwEAxbetj9Z6BSh5V2+Xi9YOhcGzzgGgkimfSjuane9AMpbP59dW4FY1wqEjAKbKd6xfT5/egsQ/yjaSYggs52QL4Yz+xj69u+pLfBcUT+RyustcZ7XeYFbDZYBpVHLP+mb7S0eR5GYISJzdxFjtd/7jB3qP3czZAu81n6FY3Iwk35wHwBm93xgHSK4vJJa3JADE333fX10HoPhNJwFcmRWH+NScrafkJygeygZyOAiC9YtOfOEA/MmcNmXfoLQd+3mf3Q9I8qqF30f7vdglevUHz4cHMyC5Ya/9QE40qzwmlXxUAFD8OpPJrDR+ZhWQZNz8rtRbLG6qxiN53uAzlFjyUQEwkOM1P86HbAN1z4awT2HgUN39Auk2LQXEH8Lxkgcgfmp9zLyDSkarVSYZO631GmsHxQ+sLVvZL1WbSbwWdzQ1AF/xuUuBHDDa7EUdiEvWjsRnWh2T6MQxGkG9DgZ4DIpPdiLAX6AStHs/zz0Avhblfp5TAOUZSW9MFQAUT8QHIA/DsXM53QXEz0xbtTOmI/GTHq3XRQMgGYkLAJTcqqs21Y7TtjWQ7mgAfXqXGQliASAZCcfOFvVO01YRVnDcvGt7UeVCfmCreUlZbDuZfzvNU7puFZQcawuC5Asovd9zUZDkyFx/JoLir72BHPRcFmwB0RHJexVphOio5K1Uxu33qPhtOz3/DyrGtgq43BHiAAAAAElFTkSuQmCC">
+        </div>
+        <div class="card">
+            <?= GridView::widget([
+                'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
+                'summaryOptions' => ['class' => 'summary'],
+                'dataProvider' => new ActiveDataProvider([
+                    'query' => $dataProvider->query->andWhere(['status' => '1']),
+                ]),
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
+                    [
+                        'attribute' => 'Օգտատեր',
+                        'value' => function ($model) {
+                            if ($model->usersName) {
+                                return $model->usersName->name;
+                            } else {
+                                return 'Դատարկ';
+                            }
+                        }
+                    ],
+                    [
+                        'attribute' => 'Հաճախորդ',
+                        'value' => function ($model) {
+                            if ($model->clientsName) {
+                                return $model->clientsName->name;
+                            } else {
+                                return 'Դատարկ';
+                            }
+                        }
+                    ],
+                    'comment',
+                    'total_price',
+                    'total_count',
+                    ...$action_column,
+                ],
+            ]); ?>
+        </div>
 
-    <?php
-    Modal::begin([
-        'id' => 'modal',
-        'size' => 'modal-lg',
-    ]);
-    echo "<div id='modalContent'>";
-    echo "<h4>Վաճառքներ</h4>";
-    // ... Other modal content ...
-    echo "</div>";
-    Modal::end();
-    ?>
+<?php
+}
+else{ ?>
 
-    <?php
-    $gridColumns = [
-        'id' => 'ID',
-        'user_id' => 'Օգտատեր',
-        'clients_id' => 'Հաճախորդ',
-        'status' => 'Status',
-        'comment' => 'Մեկնաբանություն',
-        'total_price' => 'Ընդհանուր գումար',
-        'total_count' => 'Ընդհանուր քանակ',
-        'created_at' => 'Created At',
-        'updated_at' => 'Updated At',
-    ];
-    echo ExportMenu::widget([
-        'dataProvider' =>$dataProvider,
-        'columns' => $gridColumns,
-    ]);
-    ?>
-    <div class="card">
-    <?= GridView::widget([
-        'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
-        'summaryOptions' => ['class' => 'summary'],
-        'dataProvider' => new ActiveDataProvider([
-            'query' => $dataProvider->query->andWhere(['status' => '1']),
-        ]),
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            [
-                'attribute' => 'Օգտատեր',
-                'value' => function ($model) {
-                    if ($model->usersName) {
-                        return $model->usersName->name;
-                    } else {
-                        return 'Դատարկ';
-                    }
-                }
-            ],
-            [
-                'attribute' => 'Հաճախորդ',
-                'value' => function ($model) {
-                    if ($model->clientsName) {
-                        return $model->clientsName->name;
-                    } else {
-                        return 'Դատարկ';
-                    }
-                }
-            ],
-            'comment',
-            'total_price',
-            'total_count',
-            ...$action_column,
-        ],
-    ]); ?>
+        <?php $dataProvider->pagination = false; ?>
+            <?= GridView::widget([
+                'tableOptions' => [
+                    'class'=>'table chatgbti_',
+                ],
+                'options' => [
+                    'class' => 'summary deletesummary'
+                ],
+                'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
+                'summaryOptions' => ['class' => 'summary'],
+                'dataProvider' => new ActiveDataProvider([
+                    'query' => $dataProvider->query->andWhere(['status' => '1']),
+                ]),
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
+                    [
+                        'attribute' => 'Օգտատեր',
+                        'value' => function ($model) {
+                            if ($model->usersName) {
+                                return $model->usersName->name;
+                            } else {
+                                return 'Դատարկ';
+                            }
+                        }
+                    ],
+                    [
+                        'attribute' => 'Հաճախորդ',
+                        'value' => function ($model) {
+                            if ($model->clientsName) {
+                                return $model->clientsName->name;
+                            } else {
+                                return 'Դատարկ';
+                            }
+                        }
+                    ],
+                    'comment',
+                    'total_price',
+                    'total_count',
+                    ...$action_column,
+                ],
+            ]); ?>
+<?php } ?>
     </div>
-</div>

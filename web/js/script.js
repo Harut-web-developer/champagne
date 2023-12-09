@@ -237,7 +237,7 @@ $(document).ready(function() {
     });
     fetchNotifications();
     fetchNotificationstoast();
-    setInterval(fetchNotificationstoast, 400000);
+    setInterval(fetchNotificationstoast, 100000);
 
     $(document).mouseup(function(e)
     {
@@ -246,6 +246,77 @@ $(document).ready(function() {
         {
             container.hide();
         }
+    });
+
+    // downloadXLSX
+    $('.downloadXLSX').click(function () {
+        var excel = new ExcelJS.Workbook();
+        var tables = '';
+        var sheetNumber = 1;
+        var PromiseArray = [];
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url: '',
+            method: 'post',
+            data: {
+                _csrf: csrfToken,
+                // action: 'xls-alldata',
+            },
+            dataType: "html",
+            success: function(data) {
+                console.log(data)
+                $('body').append(data);
+                tables = document.getElementsByClassName("chatgbti_");
+                $(".chatgbti_").hide();
+                $(".deletesummary").hide();
+                for (var i = 0; i < tables.length; i++) {
+                    var table = tables[i];
+                    var sheet = excel.addWorksheet("Sheet " + sheetNumber);
+                    var headRow = table.querySelector("thead tr");
+                    if (headRow) {
+                        var headerData = [];
+                        var headerCells = headRow.querySelectorAll("th:not(:last-child)");
+                        headerCells.forEach(function (headerCell) {
+                            headerData.push(headerCell.textContent);
+                        });
+                        sheet.addRow(headerData);
+                    }
+                    var rows = table.querySelectorAll("tbody tr");
+                    rows.forEach(function (row) {
+                        var rowData = [];
+                        var cells = row.querySelectorAll("td:not(:last-child)");
+                        cells.forEach(function (cell) {
+                                rowData.push(cell.textContent);
+                        });
+                        if (rowData.length > 0) {
+                            sheet.addRow(rowData);
+                        }
+                    });
+
+                    sheetNumber++;
+                }
+                Promise.all(PromiseArray)
+                    .then(function () {
+                        return excel.xlsx.writeBuffer();
+                    })
+                    .then(function (buffer) {
+                        var blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        var tablename = Math.floor(Math.random() * (1000000 - 1000 + 1)) + 1000;
+                        a.download = tablename + "table_data.xlsx";
+                        a.style.display = 'none';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    })
+                    .catch(function (error) {
+                        console.error('Error:', error);
+                    });
+                $(".chatgbti_").removeClass();
+            },
+        });
     });
 
     $('.js-example-basic-multiple').select2();

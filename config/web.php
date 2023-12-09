@@ -59,21 +59,11 @@ $config = [
 //        ],
 
 
-    ],
-    'modules' => [
-        'gridview' =>  [
-            'class' => '\kartik\grid\Module',
-            // other module settings
-        ],
-        'admin' => [
-            'class' => 'app\modules\admin\Module',
-        ],
-    ],
-    'params' => $params,
+    ],    'params' => $params,
 ];
 
 if (YII_ENV_DEV) {
-    // configuration adjustments for 'dev' environment
+    // configurtion adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
