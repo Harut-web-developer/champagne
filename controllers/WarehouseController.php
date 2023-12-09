@@ -101,6 +101,7 @@ class WarehouseController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $model = new Warehouse();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -122,11 +123,21 @@ class WarehouseController extends Controller
         }
         return $this->render('create', [
             'model' => $model,
+            'sub_page' => $sub_page
+
         ]);
     }
 
     public function actionCreateFields()
     {
+        $sub_page = [
+            ['name' => 'Պահեստ','address' => '/warehouse'],
+            ['name' => 'Փաստաթղթեր','address' => '/documents'],
+            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
+            ['name' => 'Ապրանք','address' => '/products'],
+            ['name' => 'Տեղեկամատյան','address' => '/log'],
+
+        ];
         $model = new Warehouse();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -142,6 +153,7 @@ class WarehouseController extends Controller
 
         return $this->render('create-fields', [
             'model' => $model,
+            'sub_page' => $sub_page
         ]);
     }
     /**
@@ -158,7 +170,7 @@ class WarehouseController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
-
+        $sub_page = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -177,6 +189,7 @@ class WarehouseController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'sub_page' => $sub_page
         ]);
     }
 

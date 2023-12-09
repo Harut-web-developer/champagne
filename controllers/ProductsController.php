@@ -59,7 +59,12 @@ class ProductsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [];
+        $sub_page = [
+            ['name' => 'Պահեստ','address' => '/warehouse'],
+            ['name' => 'Փաստաթղթեր','address' => '/documents'],
+            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
+            ['name' => 'Տեղեկամատյան','address' => '/log'],
+        ];
         $searchModel = new ProductsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -94,6 +99,7 @@ class ProductsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $model = new Products();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
@@ -120,12 +126,20 @@ class ProductsController extends Controller
         return $this->render('create', [
             'model' => $model,
             'warehouse' => $warehouse,
-            'nomenclature' => $nomenclature
+            'nomenclature' => $nomenclature,
+            'sub_page' => $sub_page
         ]);
     }
 
     public function actionCreateFields()
     {
+        $sub_page = [
+            ['name' => 'Պահեստ','address' => '/warehouse'],
+            ['name' => 'Փաստաթղթեր','address' => '/documents'],
+            ['name' => 'Ապրանք','address' => '/products'],
+            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
+            ['name' => 'Տեղեկամատյան','address' => '/log'],
+        ];
         $model = new Products();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -141,6 +155,7 @@ class ProductsController extends Controller
 
         return $this->render('create-fields', [
             'model' => $model,
+            'sub_page' => $sub_page
         ]);
     }
     /**
@@ -157,7 +172,7 @@ class ProductsController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
-
+        $sub_page = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -180,7 +195,8 @@ class ProductsController extends Controller
         return $this->render('update', [
             'model' => $model,
             'warehouse' => $warehouse,
-            'nomenclature' => $nomenclature
+            'nomenclature' => $nomenclature,
+            'sub_page' => $sub_page
         ]);
     }
 

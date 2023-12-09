@@ -92,6 +92,7 @@ class RatesController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $model = new Rates();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -107,6 +108,7 @@ class RatesController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -124,7 +126,7 @@ class RatesController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
-
+        $sub_page = [];
         if ($this->request->isPost) {
             $post = $this->request->post();
             date_default_timezone_set('Asia/Yerevan');
@@ -136,6 +138,7 @@ class RatesController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'sub_page' => $sub_page
         ]);
     }
 

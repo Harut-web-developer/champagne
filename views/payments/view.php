@@ -9,6 +9,7 @@ use yii\widgets\DetailView;
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Payments', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="payments-view">

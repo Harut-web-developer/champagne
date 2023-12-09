@@ -61,7 +61,13 @@ class NomenclatureController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [];
+        $sub_page = [
+            ['name' => 'Պահեստ','address' => '/warehouse'],
+            ['name' => 'Փաստաթղթեր','address' => '/documents'],
+            ['name' => 'Ապրանք','address' => '/products'],
+            ['name' => 'Տեղեկամատյան','address' => '/log'],
+
+        ];
         $searchModel = new NomenclatureSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -97,7 +103,7 @@ class NomenclatureController extends Controller
             $this->redirect('/site/403');
         }
         $model = new Nomenclature();
-
+        $sub_page = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -122,12 +128,21 @@ class NomenclatureController extends Controller
         $discounts = Discount::find()->select('id,discount')->asArray()->all();
         return $this->render('create', [
             'model' => $model,
-            'discounts' => $discounts
+            'discounts' => $discounts,
+            'sub_page' => $sub_page
         ]);
     }
 
     public function actionCreateFields()
     {
+        $sub_page = [
+            ['name' => 'Պահեստ','address' => '/warehouse'],
+            ['name' => 'Փաստաթղթեր','address' => '/documents'],
+            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
+            ['name' => 'Ապրանք','address' => '/products'],
+            ['name' => 'Տեղեկամատյան','address' => '/log'],
+
+        ];
         $model = new Nomenclature();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -140,6 +155,7 @@ class NomenclatureController extends Controller
         }
         return $this->render('create-fields', [
             'model' => $model,
+            'sub_page' => $sub_page
         ]);
     }
     /**
@@ -156,7 +172,7 @@ class NomenclatureController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
-
+        $sub_page = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -177,6 +193,7 @@ class NomenclatureController extends Controller
         }
         return $this->render('update', [
             'model' => $model,
+            'sub_page' => $sub_page
         ]);
     }
 

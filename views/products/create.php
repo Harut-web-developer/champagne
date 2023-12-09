@@ -8,6 +8,7 @@ use yii\helpers\Html;
 $this->title = 'Ստեղծել ապրանքներ';
 $this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="products-create">
 

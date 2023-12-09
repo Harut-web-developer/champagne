@@ -8,6 +8,7 @@ use yii\helpers\Html;
 $this->title = 'Ստեղծել անվանակարգը';
 $this->params['breadcrumbs'][] = ['label' => 'Nomenclatures', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="nomenclature-create">
 

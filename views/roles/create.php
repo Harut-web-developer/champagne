@@ -5,9 +5,10 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Roles $model */
 
-$this->title = 'Ստեղծել դեր';
+$this->title = 'Ստեղծել կարգավիճակ';
 $this->params['breadcrumbs'][] = ['label' => 'Roles', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="roles-create">
 

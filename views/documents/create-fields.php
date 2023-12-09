@@ -5,9 +5,10 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Documents $model */
 
-$this->title = 'Դաշտերի կարգավորում';
+$this->title = 'Փաստաթղթի դաշտերի կարգավորում';
 $this->params['breadcrumbs'][] = ['label' => 'Documents', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="documents-create">
 

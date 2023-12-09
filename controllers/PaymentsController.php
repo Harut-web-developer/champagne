@@ -71,7 +71,7 @@ class PaymentsController extends Controller
             ->asArray()
             ->all();
         $sub_page = [
-            ['name' => 'Վիճակագրություն','address' => '/payments/statistics']
+            ['name' => 'Վճարումներ','address' => '/payments']
         ];
         return $this->render('statistics',[
             'sub_page' => $sub_page,
@@ -80,8 +80,12 @@ class PaymentsController extends Controller
     }
     public function actionView($id)
     {
+        $sub_page = [
+            ['name' => 'Վիճակագրություն','address' => '/payments/statistics']
+        ];
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page,
         ]);
     }
 

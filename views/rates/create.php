@@ -8,6 +8,7 @@ use yii\helpers\Html;
 $this->title = 'Ստեղծել փոխարժեք';
 $this->params['breadcrumbs'][] = ['label' => 'Rates', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="rates-create">
 

@@ -8,6 +8,7 @@ use yii\helpers\Html;
 $this->title = 'Ստեղծել թույլտվություն';
 $this->params['breadcrumbs'][] = ['label' => 'Premissions', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="premissions-create">
 

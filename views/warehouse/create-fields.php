@@ -5,9 +5,10 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Warehouse $model */
 
-$this->title = 'Դաշտերի կարգավորում';
+$this->title = 'Պահեստի դաշտերի կարգավորում';
 $this->params['breadcrumbs'][] = ['label' => 'Warehouse', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="warehouse-create">
 

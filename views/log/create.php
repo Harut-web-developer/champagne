@@ -8,6 +8,7 @@ use yii\helpers\Html;
 $this->title = 'Ստեղծել տեղեկամատյան';
 $this->params['breadcrumbs'][] = ['label' => 'Logs', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="log-create">
 

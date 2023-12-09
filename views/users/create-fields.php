@@ -5,9 +5,10 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Users $model */
 
-$this->title = 'Դաշտերի կարգավորում';
+$this->title = 'Օգտատիրոջ դաշտերի կարգավորում';
 $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="users-create">
 

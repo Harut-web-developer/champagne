@@ -8,6 +8,7 @@ use yii\helpers\Html;
 $this->title = 'Ավելացնել օգտատեր';
 $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="users-create">
 

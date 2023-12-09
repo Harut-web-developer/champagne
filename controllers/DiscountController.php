@@ -96,6 +96,7 @@ class DiscountController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
 //        echo "<pre>";
         $model = new Discount();
         if ($this->request->isPost) {
@@ -147,7 +148,9 @@ class DiscountController extends Controller
         return $this->render('create', [
             'model' => $model,
             'clients' => $clients,
-            'products' => $products
+            'products' => $products,
+            'sub_page' => $sub_page
+
         ]);
     }
 
@@ -164,6 +167,7 @@ class DiscountController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $model = $this->findModel($id);
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
@@ -236,6 +240,7 @@ class DiscountController extends Controller
             'products' => $products,
             'discount_clients_id' => $discount_clients_id,
             'discount_products_id' => $discount_products_id,
+            'sub_page' => $sub_page
 
         ]);
     }

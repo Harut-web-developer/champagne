@@ -13,7 +13,7 @@ $this->params['sub_page'] = $sub_page;
 ?>
 <div class="payments-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h5><?= Html::encode($this->title) ?></h5>
 
     <?= $this->render('_form', [
         'model' => $model,

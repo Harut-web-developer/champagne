@@ -8,6 +8,7 @@ use yii\helpers\Html;
 $this->title = 'Ստեղծել հաճախորդ';
 $this->params['breadcrumbs'][] = ['label' => 'Clients', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="clients-create">
 

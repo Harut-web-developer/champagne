@@ -8,6 +8,7 @@ use yii\helpers\Html;
 $this->title = 'Ստեղծել զեղչ';
 $this->params['breadcrumbs'][] = ['label' => 'Discounts', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="discount-create">
 

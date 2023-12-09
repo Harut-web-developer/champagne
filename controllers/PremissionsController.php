@@ -59,7 +59,10 @@ class PremissionsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [];
+        $sub_page = [
+            ['name' => 'Օգտատեր','address' => '/users'],
+            ['name' => 'Կարգավիճակ','address' => '/roles'],
+        ];
         $searchModel = new PremissionsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -95,7 +98,7 @@ class PremissionsController extends Controller
             $this->redirect('/site/403');
         }
         $model = new Premissions();
-
+        $sub_page = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -113,6 +116,7 @@ class PremissionsController extends Controller
         return $this->render('create', [
             'model' => $model,
             'roles' => $roles,
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -130,7 +134,7 @@ class PremissionsController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
-
+        $sub_page = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -145,6 +149,7 @@ class PremissionsController extends Controller
         return $this->render('update', [
             'model' => $model,
             'roles' => $roles,
+            'sub_page' => $sub_page
         ]);
     }
 

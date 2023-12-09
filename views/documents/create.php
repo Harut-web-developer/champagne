@@ -8,6 +8,7 @@ use yii\helpers\Html;
 $this->title = 'Ստեղծել փաստաթուղթ';
 $this->params['breadcrumbs'][] = ['label' => 'Documents', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="documents-create">
 

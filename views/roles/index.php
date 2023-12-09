@@ -52,7 +52,7 @@ if ($have_access_update && $have_access_delete){
     <h1><?= Html::encode($this->title) ?></h1>
     <p>
         <?php if($have_access_create){ ?>
-            <?= Html::a('Ստեղծել դեր', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+            <?= Html::a('Ստեղծել կարգավիճակ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
         <?php } ?>
     </p>
     <div class="card">

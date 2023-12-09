@@ -61,9 +61,9 @@ if ($have_access_update && $have_access_delete){
         'summaryOptions' => ['class' => 'summary'],
         'dataProvider' => new ActiveDataProvider([
             'query' => $dataProvider->query->andWhere(['status' => '1']),
-//                'pagination' => [
-//                    'pageSize' => 20,
-//                ],
+            //                'pagination' => [
+            //                    'pageSize' => 20,
+            //                ],
         ]),
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],

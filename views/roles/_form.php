@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
         <?php $form = ActiveForm::begin(); ?>
             <div class="default-panel">
                 <div class="panel-title premission">
-                    <span class="non-active">Դեր</span>
+                    <span class="non-active">Կարգավիճակ</span>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 clientName">
                     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>

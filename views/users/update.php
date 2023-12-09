@@ -9,10 +9,11 @@ $this->title = 'Փոփոխել: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
+$this->params['sub_page'] = $sub_page;
 
 ?>
 <div class="users-update">
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h5><?= Html::encode($this->title) ?></h5>
 
     <?= $this->render('_form', [
         'model' => $model,

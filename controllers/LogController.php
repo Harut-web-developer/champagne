@@ -62,7 +62,12 @@ class LogController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [];
+        $sub_page = [
+            ['name' => 'Պահեստ','address' => '/warehouse'],
+            ['name' => 'Փաստաթղթեր','address' => '/documents'],
+            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
+            ['name' => 'Ապրանք','address' => '/products'],
+        ];
         $searchModel = new LogSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -98,11 +103,14 @@ class LogController extends Controller
             $this->redirect('/site/403');
         }
         $model = new Log();
-
+        $sub_page = [];
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            date_default_timezone_set('Asia/Yerevan');
+            $post = $this->request->post();
+            $model->user_id = $post['Log']['user_id'];
+            $model->action = $post['Log']['action'];
+            $model->create_date = date('Y-m-d H:i:s');
                 return $this->redirect(['index', 'id' => $model->id]);
-            }
         } else {
             $model->loadDefaultValues();
         }
@@ -111,6 +119,7 @@ class LogController extends Controller
         return $this->render('create', [
             'model' => $model,
             'log' => $log,
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -128,15 +137,21 @@ class LogController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        $sub_page = [];
+        if ($this->request->isPost) {
+            date_default_timezone_set('Asia/Yerevan');
+            $post = $this->request->post();
+            $model->user_id = $post['Log']['user_id'];
+            $model->action = $post['Log']['action'];
+            $model->create_date = date('Y-m-d H:i:s');
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $log = Users::find()->select('id,name')->asArray()->all();
         $log = ArrayHelper::map($log,'id','name');
-        return $this->render('index', [
+        return $this->render('update', [
             'model' => $model,
             'log' => $log,
+            'sub_page' => $sub_page
         ]);
     }
 

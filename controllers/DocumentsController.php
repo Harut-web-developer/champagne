@@ -63,7 +63,13 @@ class DocumentsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [];
+        $sub_page = [
+            ['name' => 'Պահեստ','address' => '/warehouse'],
+            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
+            ['name' => 'Ապրանք','address' => '/products'],
+            ['name' => 'Տեղեկամատյան','address' => '/log'],
+
+        ];
         $searchModel = new DocumentsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -98,6 +104,7 @@ class DocumentsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $model = new Documents();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -167,11 +174,20 @@ class DocumentsController extends Controller
             'rates' => $rates,
             'nomenclatures' => $nomenclatures,
             'total' => $total,
+            'sub_page' => $sub_page
         ]);
     }
 
     public function actionCreateFields()
     {
+        $sub_page = [
+            ['name' => 'Պահեստ','address' => '/warehouse'],
+            ['name' => 'Փաստաթղթեր','address' => '/documents'],
+            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
+            ['name' => 'Ապրանք','address' => '/products'],
+            ['name' => 'Տեղեկամատյան','address' => '/log'],
+
+        ];
         $model = new Documents();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -187,6 +203,7 @@ class DocumentsController extends Controller
 
         return $this->render('create-fields', [
             'model' => $model,
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -237,7 +254,7 @@ class DocumentsController extends Controller
         }
 //        echo  "<pre>";
         $model = $this->findModel($id);
-
+        $sub_page = [];
         if ($this->request->isPost) {
             $post = $this->request->post();
             date_default_timezone_set('Asia/Yerevan');
@@ -308,7 +325,8 @@ class DocumentsController extends Controller
             'nomenclatures' => $nomenclatures,
             'document_items' => $document_items,
             'total' => $total,
-            'aah' => $aah
+            'aah' => $aah,
+            'sub_page' => $sub_page
         ]);
     }
 

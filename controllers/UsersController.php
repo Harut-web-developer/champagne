@@ -79,6 +79,7 @@ class UsersController extends Controller
     }
 
     public function actionProfile(){
+        $sub_page = [];
         $session = Yii::$app->session;
         $model = $this->findModel($session['user_id']);
         if($this->request->isPost){
@@ -95,6 +96,7 @@ class UsersController extends Controller
         }
         return $this->render('profile',[
             'model' => $model,
+            'sub_page' => $sub_page
         ] );
     }
 
@@ -123,6 +125,7 @@ class UsersController extends Controller
             $this->redirect('/site/403');
         }
 //        echo "<pre>";
+        $sub_page = [];
         $model = new Users();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
@@ -160,11 +163,17 @@ class UsersController extends Controller
         return $this->render('create', [
             'model' => $model,
             'roles' => $roles,
+            'sub_page' => $sub_page
         ]);
     }
 
     public function actionCreateFields()
     {
+        $sub_page = [
+            ['name' => 'Կարգավիճակ','address' => '/roles'],
+            ['name' => 'Թույլտվություն','address' => '/premissions'],
+            ['name' => 'Օգտատեր','address' => '/users'],
+        ];
         $model = new Users();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -180,6 +189,7 @@ class UsersController extends Controller
 
         return $this->render('create-fields', [
             'model' => $model,
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -197,7 +207,7 @@ class UsersController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
-
+        $sub_page = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -235,6 +245,7 @@ class UsersController extends Controller
             'model' => $model,
             'roles' => $roles,
             'user_premission_select' => $user_premission_select,
+            'sub_page' => $sub_page
         ]);
     }
 

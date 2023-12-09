@@ -5,9 +5,10 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Nomenclature $model */
 
-$this->title = 'Դաշտերի կարգավորում';
+$this->title = 'Անվանակարգի դաշտերի կարգավորում';
 $this->params['breadcrumbs'][] = ['label' => 'Nomenclature', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="nomenclature-create">
 

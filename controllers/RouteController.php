@@ -121,7 +121,7 @@ class RouteController extends Controller
             $this->redirect('/site/403');
         }
         $model = new Route();
-
+        $sub_page = [];
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect('index');
@@ -135,6 +135,7 @@ class RouteController extends Controller
         return $this->render('create', [
             'model' => $model,
 //            'route' => $route,
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -152,13 +153,14 @@ class RouteController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
-
+        $sub_page = [];
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect('index');
         }
 
         return $this->render('update', [
             'model' => $model,
+            'sub_page' => $sub_page
         ]);
     }
 

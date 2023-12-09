@@ -8,6 +8,7 @@ use yii\helpers\Html;
 $this->title = 'Ստեղծել երթուղի';
 $this->params['breadcrumbs'][] = ['label' => 'Routes', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 ?>
 <div class="route-create">
     <h1><?= Html::encode($this->title) ?></h1>

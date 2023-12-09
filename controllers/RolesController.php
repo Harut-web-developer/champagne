@@ -57,7 +57,10 @@ class RolesController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [];
+        $sub_page = [
+            ['name' => 'Օգտատեր','address' => '/users'],
+            ['name' => 'Թույլտվություն','address' => '/premissions'],
+        ];
         $searchModel = new RolesSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -93,7 +96,7 @@ class RolesController extends Controller
             $this->redirect('/site/403');
         }
         $model = new Roles();
-
+        $sub_page = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -109,6 +112,7 @@ class RolesController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -126,7 +130,7 @@ class RolesController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
-
+        $sub_page = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -139,6 +143,7 @@ class RolesController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'sub_page' => $sub_page
         ]);
     }
 

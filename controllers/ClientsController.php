@@ -112,6 +112,7 @@ class ClientsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $model = new Clients();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
@@ -135,6 +136,7 @@ class ClientsController extends Controller
         return $this->render('create', [
             'model' => $model,
             'route' => $route,
+            'sub_page' => $sub_page,
         ]);
     }
 
@@ -158,6 +160,7 @@ class ClientsController extends Controller
 
     public function actionCreateFields()
     {
+        $sub_page = [];
         $model = new Clients();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -173,6 +176,7 @@ class ClientsController extends Controller
 
         return $this->render('create-fields', [
             'model' => $model,
+            'sub_page' => $sub_page,
         ]);
     }
 
@@ -189,6 +193,7 @@ class ClientsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $model = $this->findModel($id);
         $route_value_update = Clients::find()->select('id, route_id')->where(['id' => $model->id])->one();
 //        $route_value_update = $route_value_update['route_id'];
@@ -212,6 +217,7 @@ class ClientsController extends Controller
             'model' => $model,
             'route' => $route,
             'route_value_update' => $route_value_update,
+            'sub_page' => $sub_page,
         ]);
     }
 
