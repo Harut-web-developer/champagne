@@ -318,6 +318,95 @@ $(document).ready(function() {
         });
     });
 
+    var tableToExcel =
+        (function() {
+            var uri = 'data:application/vnd.ms-excel;base64,'        , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>'
+                , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }        , format = function(s, c) {
+                return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; })    }
+                , downloadURI = function(uri, name) {        var link = document.createElement("a");
+                link.download = $('h1').text();        link.href = uri;
+                link.click();    }
+            return function(table, name, fileName) {
+                table = $('#' + table).clone();        table.find('.hidden-item').remove();
+                table.find('.action-column').remove();        table.find('#w0-filters').remove();
+                table.find('a').removeAttr("href");        var ctx = {worksheet: $('h1').text() || 'Worksheet', table: table.html()}
+                var resuri = uri + base64(format(template, ctx))
+                downloadURI(resuri, fileName);
+            }
+        });
+
+
+    /*// downloaUpdatedXLSX
+    $('.downloadUpdateXLSX').click(function () {
+        var excel = new ExcelJS.Workbook();
+        var tables = '';
+        var sheetNumber = 1;
+        var PromiseArray = [];
+        const search = window.location.search;
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url: 'view'+search,
+            method: 'post',
+            data: {
+                _csrf: csrfToken,
+                action: 'xls-alldata',
+            },
+            dataType: "html",
+            success: function(data) {
+                $('body').append(data);
+                tables = document.getElementsByClassName("chatgbti_");
+                $(".chatgbti_").hide();
+                $(".deletesummary").hide();
+                for (var i = 0; i < tables.length; i++) {
+                    var table = tables[i];
+                    var sheet = excel.addWorksheet("Sheet " + sheetNumber);
+                    var headRow = table.querySelector("thead tr");
+                    if (headRow) {
+                        var headerData = [];
+                        var headerCells = headRow.querySelectorAll("th:not(:last-child)");
+                        headerCells.forEach(function (headerCell) {
+                            headerData.push(headerCell.textContent);
+                        });
+                        sheet.addRow(headerData);
+                    }
+                    var rows = table.querySelectorAll("tbody tr");
+                    rows.forEach(function (row) {
+                        var rowData = [];
+                        var cells = row.querySelectorAll("td:not(:last-child)");
+                        cells.forEach(function (cell) {
+                            rowData.push(cell.textContent);
+                        });
+                        if (rowData.length > 0) {
+                            sheet.addRow(rowData);
+                        }
+                    });
+
+                    sheetNumber++;
+                }
+                Promise.all(PromiseArray)
+                    .then(function () {
+                        return excel.xlsx.writeBuffer();
+                    })
+                    .then(function (buffer) {
+                        var blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        var tablename = Math.floor(Math.random() * (1000000 - 1000 + 1)) + 1000;
+                        a.download = tablename + "table_data.xlsx";
+                        a.style.display = 'none';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    })
+                    .catch(function (error) {
+                        console.error('Error:', error);
+                    });
+                $(".chatgbti_").removeClass();
+            },
+        });
+    });
+*/
     $('.js-example-basic-multiple').select2();
 });
 

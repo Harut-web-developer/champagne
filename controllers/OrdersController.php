@@ -91,8 +91,11 @@ class OrdersController extends Controller
      */
     public function actionView($id)
     {
+        $sub_page = [];
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page,
+
         ]);
     }
 
@@ -181,7 +184,7 @@ class OrdersController extends Controller
             'clients' => $clients,
             'nomenclatures' => $nomenclatures,
             'total' => $total,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
 //            'pagination' => $pagination,
 //            'count' => $count,
         ]);
@@ -359,7 +362,6 @@ class OrdersController extends Controller
     }
     public function actionDelivered($id)
     {
-        var_dump($id);
 //        $have_access = Users::checkPremission(23);
 //        if(!$have_access){
 //            $this->redirect('/site/403');
@@ -441,5 +443,151 @@ class OrdersController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    public function actionReports($id){
+        $have_access = Users::checkPremission(22);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+        $model = $this->findModel($id);
+        $sub_page = [];
+        $query = Nomenclature::find();
+        $countQuery = clone $query;
+        $total = $countQuery->count();
+        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
+        nomenclature.cost,products.id as products_id,products.count')
+            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+            ->offset(0)
+            ->groupBy('nomenclature.id')
+            ->limit(10)
+            ->asArray()
+            ->all();
+        $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price / order_items.count) as price,
+        (order_items.cost / order_items.count) as cost,order_items.discount,order_items.price_before_discount,nomenclature.name, (nomenclature.id) as nom_id')
+            ->leftJoin('products','products.id = order_items.product_id')
+            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
+            ->where(['order_id' => $id])->asArray()->all();
+        $clients = Clients::find()->select('id, name')->asArray()->all();
+        $clients = ArrayHelper::map($clients,'id','name');
+        $users = Users::find()->select('id, name')->asArray()->all();
+        $users = ArrayHelper::map($users,'id','name');
+        return $this->renderAjax('report', [
+            'model' => $model,
+            'users' => $users,
+            'clients' => $clients,
+            'nomenclatures' => $nomenclatures,
+            'order_items' => $order_items,
+            'total' => $total,
+            'sub_page' => $sub_page
+        ]);
+
+
+        $have_access = Users::checkPremission(22);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+        $model = $this->findModel($id);
+        if ($this->request->isPost) {
+            date_default_timezone_set('Asia/Yerevan');
+            $post = $this->request->post();
+            $model->user_id = $post['Orders']['user_id'];
+            $model->clients_id = $post['Orders']['clients_id'];
+            $model->total_price = $post['Orders']['total_price'];
+            $model->total_count = $post['Orders']['total_count'];
+            $model->comment = $post['Orders']['comment'];
+            $model->orders_date = $post['Orders']['orders_date'];
+            $model->updated_at = date('Y-m-d H:i:s');
+            $model->save();
+            $items = $post['order_items'];
+            $quantity = 0;
+            $tot_price = 0;
+            foreach ($items as $k => $item){
+                if($item != 'null'){
+                    $order_item = OrderItems::findOne($item);
+                    $order_item->order_id = $id;
+                    $order_item->product_id = $post['product_id'][$k];
+                    $order_item->price = $post['price'][$k] *$post['count_'][$k];
+                    $order_item->count = $post['count_'][$k];
+                    $order_item->cost = $post['cost'][$k] * $post['count_'][$k];
+                    $order_item->discount = 0;
+                    $order_item->price_before_discount = 1500;
+                    $order_item->updated_at = date('Y-m-d H:i:s');
+                    $quantity += $order_item->count;
+                    $tot_price += $order_item->price;
+                    $order_item->save(false);
+
+                    $product_write_out = Products::find()->select('products.*')
+                        ->where(['and',['document_id' => $model->id,'type' => 2,'nomenclature_id' => $post['nom_id'][$k]]])->one();
+                    $product_write_out->warehouse_id = 1;
+                    $product_write_out->nomenclature_id = $post['nom_id'][$k];
+                    $product_write_out->price = $post['price'][$k];
+                    $product_write_out->count = -intval($post['count_'][$k]);
+                    $product_write_out->type = 2;
+                    $product_write_out->updated_at = date('Y-m-d H:i:s');
+                    $product_write_out->save();
+                } else {
+                    $order_item = new OrderItems();
+                    $order_item->order_id = $id;
+                    $order_item->product_id = $post['product_id'][$k];
+                    $order_item->price = $post['price'][$k] *$post['count_'][$k];
+                    $order_item->count = $post['count_'][$k];
+                    $order_item->cost = $post['cost'][$k] * $post['count_'][$k];
+                    $order_item->discount = 0;
+                    $order_item->price_before_discount = 1500;
+                    $order_item->created_at = date('Y-m-d H:i:s');
+                    $order_item->updated_at = date('Y-m-d H:i:s');
+                    $quantity += $order_item->count;
+                    $tot_price += $order_item->price;
+                    $order_item->save(false);
+
+                    $product_write_out = new Products();
+                    $product_write_out->warehouse_id = 1;
+                    $product_write_out->nomenclature_id = $post['nom_id'][$k];
+                    $product_write_out->document_id = $model->id;
+                    $product_write_out->count = -intval($post['count_'][$k]);
+                    $product_write_out->price = $post['price'][$k];
+                    $product_write_out->type = 2;
+                    $product_write_out->created_at = date('Y-m-d H:i:s');
+                    $product_write_out->updated_at = date('Y-m-d H:i:s');
+                    $product_write_out->save(false);
+                }
+            }
+            $order = Orders::findOne($id);
+            $order->total_price = $tot_price;
+            $order->total_count = $quantity;
+            $order->save(false);
+            return $this->redirect(['index', 'id' => $model->id]);
+        }
+        $sub_page = [];
+        $query = Nomenclature::find();
+        $countQuery = clone $query;
+        $total = $countQuery->count();
+        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
+        nomenclature.cost,products.id as products_id,products.count')
+            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+            ->offset(0)
+            ->groupBy('nomenclature.id')
+            ->limit(10)
+            ->asArray()
+            ->all();
+
+        $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price / order_items.count) as price,
+        (order_items.cost / order_items.count) as cost,order_items.discount,order_items.price_before_discount,nomenclature.name, (nomenclature.id) as nom_id')
+            ->leftJoin('products','products.id = order_items.product_id')
+            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
+            ->where(['order_id' => $id])->asArray()->all();
+        $clients = Clients::find()->select('id, name')->asArray()->all();
+        $clients = ArrayHelper::map($clients,'id','name');
+        $users = Users::find()->select('id, name')->asArray()->all();
+        $users = ArrayHelper::map($users,'id','name');
+        return $this->render('update', [
+            'model' => $model,
+            'users' => $users,
+            'clients' => $clients,
+            'nomenclatures' => $nomenclatures,
+            'order_items' => $order_items,
+            'total' => $total,
+            'sub_page' => $sub_page
+        ]);
     }
 }

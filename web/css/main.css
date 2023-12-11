@@ -439,3 +439,6 @@
     cursor: pointer;
     height: 40px;
 }
+.orders-update h5{
+    display: inline;
+}
