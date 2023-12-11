@@ -30,27 +30,28 @@ class SearchController extends Controller{
             $this->redirect('/site/403');
         }
         $sub_page = [];
-        if ($this->request->isPost) {
-            $searchval = $_POST['searchQuery'];
+        if (isset($_GET)) {
+            $searchval = $_GET['searchQuery'];
             $query_nomenclature = Nomenclature::find()
-                ->select('name')
+                ->select('id, name')
                 ->Where(['like', 'name', $searchval])
                 ->asArray()->all();
             $query_users = Users::find()
-                ->select('name')
+                ->select('id, name')
                 ->Where(['like', 'name', $searchval])
                 ->asArray()->all();
             $query_clients = Clients::find()
-                ->select('name')
+                ->select('id, name')
                 ->Where(['like', 'name', $searchval])
                 ->asArray()->all();
             $res['query_nomenclature'] = $query_nomenclature;
             $res['query_users'] = $query_users;
             $res['query_clients'] = $query_clients;
+            return $this->render('index',[
+                'res'=> $res,
+                'sub_page' => $sub_page
+                ]);
         }
-        return $this->render('index',[
-            'res'=> $res,
-            'sub_page' => $sub_page
-        ]);
+
     }
 }

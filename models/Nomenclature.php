@@ -50,8 +50,8 @@ class Nomenclature extends \yii\db\ActiveRecord
             'name' => 'Անուն',
             'cost' => 'Ինքնարժեք',
             'price' => 'Գին',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Ստեղծվել է',
+            'updated_at' => 'Թարմացվել է',
         ];
     }
     public static function order_search($params){

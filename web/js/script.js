@@ -1,16 +1,10 @@
 $(document).ready(function() {
-    $('.js-example-basic-multiple').select2();
-
-
-        var pgurl = window.location.href.substr(window.location.href
-            .lastIndexOf("/")+1);
-        $(".menu-sub a ").each(function(){
-            if($(this).attr("href") == '/'+pgurl || $(this).attr("href") == '' )
-                $(this).parent().addClass("active");
-        })
-
-
-
+    var pgurl = window.location.href.substr(window.location.href
+        .lastIndexOf("/")+1);
+    $(".menu-sub a ").each(function(){
+        if($(this).attr("href") == '/'+pgurl || $(this).attr("href") == '' )
+            $(this).parent().addClass("active");
+    })
 
     $('body').on('click','.edite-block-title',function (){
         $(this).closest('.panel-title').find('.non-active').hide();
@@ -153,6 +147,179 @@ $(document).ready(function() {
         $(this).closest('.panel-title').find('.edite-block-title-new').show();
         $(this).hide();
     });
+
+    //notifications
+    function fetchNotifications() {
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            type: "GET",
+            url: "site/get-notifications",
+            dataType: "json",
+            data: { _csrf: csrfToken },
+            success: function (data) {
+                displayNotifications(data['notifications_today']);
+                $('body').on('click','#viweall',function () {
+                    // displayNotifications(data['notifications_all']);
+                    var notifications = data['notifications_all'];
+                    var notificationsDropdown = $("#notifications-dropdown");
+                    notificationsDropdown.empty();
+                    notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
+                        '<h3 class="text-center">Ծանուցումներ</h3>\n' +
+                        '</div>' +
+                        '<hr>'
+                    );
+                    notifications.forEach(function (notification) {
+                        notificationsDropdown.append('<div class="notification-item">' +
+                            '<p class="notification-title">' +
+                            '<span class="title-text">' + notification.title + '</span>' +
+                            '</br>' +
+                            notification.message +
+                            '<br>' +
+                            '<small style="font-size: 60%">' +
+                            notification.datetime +
+                            '</small>' +
+                            '</p>' +
+                            '</div>');
+                    });
+                })
+            }
+        });
+    }
+    function fetchNotificationstoast() {
+        $.ajax({
+            url: 'site/check-notifications',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                if (data.success) {
+                    displayNotificationtoast(data.notifications);
+                }
+            },
+        });
+    }
+    function displayNotifications(notifications) {
+        var notificationsDropdown = $("#notifications-dropdown");
+        notificationsDropdown.empty();
+        notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
+            '<h3 class="text-center">Ծանուցումներ</h3>\n' +
+            '</div>' +
+            '<hr>'
+        );
+        notifications.forEach(function (notification) {
+            notificationsDropdown.append('<div class="notification-item">' +
+                '<p class="notification-title">' +
+                '<span class="title-text">' + notification.title + '</span>' +
+                '</br>' +
+                notification.message +
+                '<br>' +
+                '<small style="font-size: 60%">' +
+                notification.datetime +
+                '</small>' +
+                '</p>' +
+                '</div>');
+        });
+        notificationsDropdown.append('<div id="viweall" class="notification-ui_dd-footer">\n' +
+            '<a href="#!" class="btn bg-secondary text-white" style="display: block">Տեսնել բոլորը</a>\n' +
+            '</div>'
+        );
+    }
+    function displayNotificationtoast(notification) {
+        $('.bs-toast .toast-header .me-auto').text(notification.title);
+        $('.bs-toast .toast-body').text(notification.message);
+        $('.bs-toast').toast('show');
+    }
+    $(".bell-icon").click(function () {
+        $("#notifications-dropdown").toggle();
+        fetchNotifications();
+    });
+    $('#notificationBell').click(function () {
+        fetchNotifications();
+    });
+    fetchNotifications();
+    fetchNotificationstoast();
+    setInterval(fetchNotificationstoast, 100000);
+
+    $(document).mouseup(function(e)
+    {
+        var container = $("#notifications-dropdown");
+        if (!container.is(e.target) && container.has(e.target).length === 0)
+        {
+            container.hide();
+        }
+    });
+
+    // downloadXLSX
+    $('.downloadXLSX').click(function () {
+        var excel = new ExcelJS.Workbook();
+        var tables = '';
+        var sheetNumber = 1;
+        var PromiseArray = [];
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url: '',
+            method: 'post',
+            data: {
+                _csrf: csrfToken,
+                // action: 'xls-alldata',
+            },
+            dataType: "html",
+            success: function(data) {
+                console.log(data)
+                $('body').append(data);
+                tables = document.getElementsByClassName("chatgbti_");
+                $(".chatgbti_").hide();
+                $(".deletesummary").hide();
+                for (var i = 0; i < tables.length; i++) {
+                    var table = tables[i];
+                    var sheet = excel.addWorksheet("Sheet " + sheetNumber);
+                    var headRow = table.querySelector("thead tr");
+                    if (headRow) {
+                        var headerData = [];
+                        var headerCells = headRow.querySelectorAll("th:not(:last-child)");
+                        headerCells.forEach(function (headerCell) {
+                            headerData.push(headerCell.textContent);
+                        });
+                        sheet.addRow(headerData);
+                    }
+                    var rows = table.querySelectorAll("tbody tr");
+                    rows.forEach(function (row) {
+                        var rowData = [];
+                        var cells = row.querySelectorAll("td:not(:last-child)");
+                        cells.forEach(function (cell) {
+                                rowData.push(cell.textContent);
+                        });
+                        if (rowData.length > 0) {
+                            sheet.addRow(rowData);
+                        }
+                    });
+
+                    sheetNumber++;
+                }
+                Promise.all(PromiseArray)
+                    .then(function () {
+                        return excel.xlsx.writeBuffer();
+                    })
+                    .then(function (buffer) {
+                        var blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        var tablename = Math.floor(Math.random() * (1000000 - 1000 + 1)) + 1000;
+                        a.download = tablename + "table_data.xlsx";
+                        a.style.display = 'none';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    })
+                    .catch(function (error) {
+                        console.error('Error:', error);
+                    });
+                $(".chatgbti_").removeClass();
+            },
+        });
+    });
+
+    $('.js-example-basic-multiple').select2();
 });
 
 

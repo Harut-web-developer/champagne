@@ -34,6 +34,8 @@ class AppAsset extends AssetBundle
         '/js/perfect-scrollbar.js',
         '/js/popper.js',
         '/js/script.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.2.1/exceljs.min.js',
+
     ];
     public $depends = [
         'yii\web\YiiAsset',

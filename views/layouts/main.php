@@ -45,7 +45,15 @@ $sub_page = $this->params['sub_page'];
 </head>
 <body>
 <?php $this->beginBody() ?>
-
+<div class="bs-toast toast toast-placement-ex m-2 bg-secondary bottom-0 end-0 fade hide" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
+    <div class="toast-header">
+        <i class="bx bx-bell me-2"></i>
+        <div class="me-auto fw-medium"></div>
+        <small></small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body"></div>
+</div>
 <div class="layout-wrapper layout-content-navbar">
     <div class="layout-container">
         <!-- Menu -->
@@ -167,7 +175,7 @@ $sub_page = $this->params['sub_page'];
                             <?php
                             $form = ActiveForm::begin([
                                 'action' => ['/search/index'],
-                                'method' => 'post',
+                                'method' => 'get',
                                 'options' => ['class' => 'form-inline'], // Add Bootstrap form-inline class
                             ]);
                             ?>
@@ -181,20 +189,20 @@ $sub_page = $this->params['sub_page'];
 
                             <?php ActiveForm::end(); ?>
 
+
                         </div>
                     </div>
-<!--                    <div class="navbar-nav align-items-center">-->
-<!--                        <div class="nav-item d-flex align-items-center">-->
-<!--                            <a href="--><?php //= Yii::$app->urlManager->createUrl(['search/index']) ?><!--" class="searchicone"><i class="bx bx-search fs-4 lh-0"></i></a>-->
-<!--                            <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2 searchmain" placeholder="Փնտրել..." aria-label="Search...">-->
-<!--                        </div>-->
-<!--                    </div>-->
-                    <!-- /Search -->
+
 
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
                         <!-- Place this tag where you want the button to render. -->
                         <li class="nav-item lh-1 me-3">
-                            <span></span>
+                            <div class="notifications-container">
+                                <div class="bell-icon"><i id="notificationBell" class="bx bx-bell notificationIcon"></i></div>
+                                <div id="notifications-dropdown">
+
+                                </div>
+                            </div>
                         </li>
 
                         <!-- User -->
@@ -307,7 +315,8 @@ $sub_page = $this->params['sub_page'];
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <?php $this->endBody() ?>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </body>
 </html>
 <?php $this->endPage() ?>
+
+
