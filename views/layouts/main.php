@@ -43,7 +43,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 </head>
 <body>
 <?php $this->beginBody() ?>
-<div class="bs-toast toast toast-placement-ex m-2 bg-secondary bottom-0 end-0 fade hide" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
+<div class="bs-toast toast toast-placement-ex m-2 bg-secondary bottom-0 end-0 fade hide" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5 000">
     <div class="toast-header">
         <i class="bx bx-bell me-2"></i>
         <div class="me-auto fw-medium"></div>
@@ -228,7 +228,9 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                             <div class="notifications-container">
                                 <div class="bell-icon"><i id="notificationBell" class="bx bx-bell notificationIcon"></i></div>
                                 <div id="notifications-dropdown">
-
+                                    <div class="notification-ui_dd-header">
+                                        <h3 class="text-center">Notification</h3>
+                                    </div>
                                 </div>
                             </div>
                         </li>
