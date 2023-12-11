@@ -435,3 +435,7 @@
 .documentsCountInput{
     min-width:80px;
 }
+.downloadXLSX{
+    cursor: pointer;
+    height: 40px;
+}

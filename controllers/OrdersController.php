@@ -72,6 +72,7 @@ class OrdersController extends Controller
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
                 'data_size' => 'max',
+                'sub_page' => $sub_page,
             ]);
         }
 
@@ -134,20 +135,20 @@ class OrdersController extends Controller
                 $product_write_out->updated_at = date('Y-m-d H:i:s');
                 $product_write_out->save();
             }
-                for ($i = 0; $i < count($post['order_items']); $i++){
-                    $order_items_create = new OrderItems();
-                    $order_items_create->order_id = $model->id;
-                    $order_items_create->product_id = $post['product_id'][$i];
-                    $order_items_create->price = $post['price'][$i] * $post['count_'][$i];
-                    $order_items_create->count = $post['count_'][$i];
-                    $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
-                    $order_items_create->discount = 0;
-                    $order_items_create->price_before_discount = 1000;
-                    $order_items_create->created_at = date('Y-m-d H:i:s');
-                    $order_items_create->updated_at = date('Y-m-d H:i:s');
-                    $order_items_create->save(false);
-                }
-                return $this->redirect(['index', 'id' => $model->id]);
+            for ($i = 0; $i < count($post['order_items']); $i++){
+                $order_items_create = new OrderItems();
+                $order_items_create->order_id = $model->id;
+                $order_items_create->product_id = $post['product_id'][$i];
+                $order_items_create->price = $post['price'][$i] * $post['count_'][$i];
+                $order_items_create->count = $post['count_'][$i];
+                $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
+                $order_items_create->discount = 0;
+                $order_items_create->price_before_discount = 1000;
+                $order_items_create->created_at = date('Y-m-d H:i:s');
+                $order_items_create->updated_at = date('Y-m-d H:i:s');
+                $order_items_create->save(false);
+            }
+            return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -213,7 +214,7 @@ class OrdersController extends Controller
         }else{
             $total = $countQuery->count();
             $nomenclatures->offset($offset)
-            ->limit($pageSize);
+                ->limit($pageSize);
         }
         $nomenclatures = $nomenclatures
             ->asArray()
