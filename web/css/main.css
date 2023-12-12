@@ -439,6 +439,9 @@
     cursor: pointer;
     height: 40px;
 }
+.downloadUpdateXLSX{
+    cursor: pointer;
+}
 .orders-update h5{
-    display: inline;
+    display: inline-block;
 }
