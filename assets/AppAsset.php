@@ -30,11 +30,12 @@ class AppAsset extends AssetBundle
         '/js/apexcharts.js',
         '/js/dashboards-analytics.js',
         '/js/bootstrap.js',
-        '/js/jquery.js',
+//        '/js/jquery.js',
         '/js/perfect-scrollbar.js',
         '/js/popper.js',
         '/js/script.js',
         'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.2.1/exceljs.min.js',
+        '/js/select2.min.js'
 
     ];
     public $depends = [

@@ -435,3 +435,17 @@
 .documentsCountInput{
     min-width:80px;
 }
+.discountCheck{
+    display:flex !important;
+}
+.field-discount-discount_check{
+    display:flex !important;
+    flex-direction: column !important;
+}
+.discountBtn{
+    display: flex !important;
+    flex-wrap: wrap !important;
+}
+.btnHref{
+    margin-left:10px !important;
+}

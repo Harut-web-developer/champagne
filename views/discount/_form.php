@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
                     <span class="non-active">Զեղչ</span>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
-                    <?= $form->field($model, 'type')->dropDownList([ 'percent' => 'Percent', 'money' => 'Money', ], ['prompt' => '']) ?>
+                    <?= $form->field($model, 'type')->dropDownList([ 'percent' => 'Տոկոսով', 'money' => 'Գումարով', ], ['prompt' => '']) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discount">
                     <?= $form->field($model, 'discount')->input('number') ?>
@@ -46,7 +46,7 @@ use yii\widgets\ActiveForm;
                         <div class="form-group selGroup">
                             <div class="clientSelect">
                                 <label for="multipleClients">Հաճախորդ</label>
-                                <select id="multipleClients" class="js-example-basic-multiple form-control " name="clients[]" multiple="multiple">
+                                <select id="multipleClients" class="js-example-basic-multiple form-control" name="clients[]" multiple="multiple">
                                     <?php foreach ($clients as $client){ ?>
                                         <option value="<?=$client['id']?>"><?=$client['name']?></option>
                                     <?php } ?>
@@ -70,6 +70,10 @@ use yii\widgets\ActiveForm;
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountEndDate">
                     <?= $form->field($model, 'end_date')->input('date') ?>
                 </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 discountCheck">
+                    <?= $form->field($model, 'discount_check')->checkbox(['label' => 'Հաշվի առնել կիրառված զեղչերը'],false) ?>
+                </div>
+
             </div>
             <div class="card-footer">
                 <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
@@ -77,4 +81,6 @@ use yii\widgets\ActiveForm;
         <?php ActiveForm::end(); ?>
     </div>
 </div>
+
+
 

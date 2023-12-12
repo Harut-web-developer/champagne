@@ -134,29 +134,24 @@ class OrdersController extends Controller
                 $product_write_out->updated_at = date('Y-m-d H:i:s');
                 $product_write_out->save();
             }
-                for ($i = 0; $i < count($post['order_items']); $i++){
-                    $order_items_create = new OrderItems();
-                    $order_items_create->order_id = $model->id;
-                    $order_items_create->product_id = $post['product_id'][$i];
-                    $order_items_create->price = $post['price'][$i] * $post['count_'][$i];
-                    $order_items_create->count = $post['count_'][$i];
-                    $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
-                    $order_items_create->discount = 0;
-                    $order_items_create->price_before_discount = 1000;
-                    $order_items_create->created_at = date('Y-m-d H:i:s');
-                    $order_items_create->updated_at = date('Y-m-d H:i:s');
-                    $order_items_create->save(false);
-                }
+            for ($i = 0; $i < count($post['order_items']); $i++){
+                $order_items_create = new OrderItems();
+                $order_items_create->order_id = $model->id;
+                $order_items_create->product_id = $post['product_id'][$i];
+                $order_items_create->price = $post['price'][$i] * $post['count_'][$i];
+                $order_items_create->count = $post['count_'][$i];
+                $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
+                $order_items_create->discount = 0;
+                $order_items_create->price_before_discount = 1000;
+                $order_items_create->created_at = date('Y-m-d H:i:s');
+                $order_items_create->updated_at = date('Y-m-d H:i:s');
+                $order_items_create->save(false);
+            }
                 return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
-
-//        $nomenclatures = Nomenclature::order_search($_GET);
-
-
         $sub_page = [];
-
         $query = Nomenclature::find();
         $countQuery = clone $query;
         $total = $countQuery->count();
@@ -358,8 +353,7 @@ class OrdersController extends Controller
     }
     public function actionDelivered($id)
     {
-        var_dump($id);
-//        $have_access = Users::checkPremission(23);
+//        $have_access = Users::checkPremission(55);
 //        if(!$have_access){
 //            $this->redirect('/site/403');
 //        }
@@ -367,6 +361,33 @@ class OrdersController extends Controller
         $orders->status = '2';
         $orders->save();
         return $this->redirect(['index']);
+    }
+    public  function actionFilterStatus(){
+        if ($_GET){
+            $searchModel = new OrdersSearch();
+            $dataProvider = $searchModel->search($this->request->queryParams);
+            $sub_page = [];
+            $approved = null;
+            if ($_GET['numberVal'] == 2){
+                $approved = 2;
+            }elseif ($_GET['numberVal'] == 0){
+                $approved = 0;
+            }elseif ($_GET['numberVal'] == 3){
+                $approved = 3;
+            }elseif ($_GET['numberVal'] == 1){
+                $approved = 1;
+            }elseif ($_GET['numberVal'] == 4){
+                $approved = 4;
+            }
+            var_dump($approved);
+
+            return $this->renderAjax('widget', [
+                'sub_page' => $sub_page,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+                'approved' => $approved
+            ]);
+        }
     }
 
     public function actionDeleteItems(){
