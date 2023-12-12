@@ -50,6 +50,7 @@ class Discount extends \yii\db\ActiveRecord
             'discount' => 'Տոկոս',
             'start_date' => 'Զեղչի սկիզբը',
             'end_date' => 'Զեղչի ավարտ',
+            'discount_check' => 'Ստուգում',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

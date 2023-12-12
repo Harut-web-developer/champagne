@@ -1,3 +1,6 @@
+<?php
+$this->params['sub_page'] = $sub_page;
+?>
 <div class="container">
     <div class="row justify-content-center align-items-center">
         <ul class="sortable-ul list-group">

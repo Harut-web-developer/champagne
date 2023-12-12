@@ -335,6 +335,30 @@ $(document).ready(function() {
             }
         });
 
+    $('body').on('change', '.orderStatus', function () {
+        let numberVal = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/orders/filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                numberVal:numberVal,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+            }
+        })
+    })
+
+    $('body').on('click','.deleteBtn',function (event) {
+        event.preventDefault();
+        if(confirm('Are you sure you want to delete this item?')){
+            window.location.href = $(this).attr('href');
+        }
+    })
+
     $('.js-example-basic-multiple').select2();
 });
 

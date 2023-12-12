@@ -7,6 +7,7 @@ use app\models\Discount;
 use app\models\DiscountClients;
 use app\models\DiscountProducts;
 use app\models\DiscountSearch;
+use app\models\Nomenclature;
 use app\models\Products;
 use app\models\Users;
 use Yii;
@@ -64,12 +65,30 @@ class DiscountController extends Controller
         $sub_page = [];
         $searchModel = new DiscountSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        $discount_sortable = Discount::find()->where(['status' => 1])->orderBy(['discount_sortable'=> SORT_ASC])->asArray()->all();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'discount_sortable' => $discount_sortable
         ]);
+    }
+    public function actionSave()
+    {
+        if ($this->request->isPost) {
+            if (!empty($_POST['sort'])) {
+                foreach ($_POST['sort'] as $i => $row) {
+
+                    $discount = Discount::find()->where(['and',['status'=> 1],['id'=>intval($row)]])->one();
+                    $discount->discount_sortable = $i;
+                    $discount->save(false);
+                }
+            }
+            return 'success';
+        } else {
+            return 'error';
+        }
     }
 
     /**
@@ -114,6 +133,7 @@ class DiscountController extends Controller
             }else {
                 $model->end_date = $post["Discount"]['end_date'];
             }
+            $model->discount_check = $post["Discount"]['discount_check'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
@@ -142,9 +162,7 @@ class DiscountController extends Controller
             $model->loadDefaultValues();
         }
             $clients = Clients::find()->select('id,name')->asArray()->all();
-            $products = Products::find()->select('products.id,nomenclature.name')
-                ->leftJoin('nomenclature','products.nomenclature_id = nomenclature.id')
-                ->asArray()->all();
+            $products = Nomenclature::find()->select('id,name')->asArray()->all();
         return $this->render('create', [
             'model' => $model,
             'clients' => $clients,
@@ -184,6 +202,7 @@ class DiscountController extends Controller
             }else {
                 $model->end_date = $post["Discount"]['end_date'];
             }
+            $model->discount_check = $post["Discount"]['discount_check'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
             if(!empty($post['clients'])){
@@ -229,9 +248,7 @@ class DiscountController extends Controller
         $clients = Clients::find()->select('id,name')->asArray()->all();
         $discount_clients_id = DiscountClients::find()->select('client_id')->where(['discount_id' => $id])->asArray()->all();
         $discount_clients_id = array_column($discount_clients_id,'client_id');
-        $products = Products::find()->select('products.id,nomenclature.name')
-            ->leftJoin('nomenclature','products.nomenclature_id = nomenclature.id')
-            ->asArray()->all();
+        $products = Nomenclature::find()->select('id,name')->asArray()->all();
         $discount_products_id = DiscountProducts::find()->select('product_id')->where(['discount_id' => $id])->asArray()->all();
         $discount_products_id = array_column($discount_products_id,'product_id');
         return $this->render('update', [

@@ -109,6 +109,7 @@ class SiteController extends Controller
                 $session->set('name',$identity->name);
                 $session->set('username',$identity->username);
                 $session->set('user_id',$identity->id);
+                $session->set('role_id', $identity->role_id);
                 $session->set('logged',true);
                 return $this->redirect('/dashboard');
             } else {

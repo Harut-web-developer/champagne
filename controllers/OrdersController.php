@@ -151,16 +151,11 @@ class OrdersController extends Controller
                 $order_items_create->updated_at = date('Y-m-d H:i:s');
                 $order_items_create->save(false);
             }
-            return $this->redirect(['index', 'id' => $model->id]);
+                return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
-
-//        $nomenclatures = Nomenclature::order_search($_GET);
-
-
         $sub_page = [];
-
         $query = Nomenclature::find();
         $countQuery = clone $query;
         $total = $countQuery->count();
@@ -362,7 +357,7 @@ class OrdersController extends Controller
     }
     public function actionDelivered($id)
     {
-//        $have_access = Users::checkPremission(23);
+//        $have_access = Users::checkPremission(55);
 //        if(!$have_access){
 //            $this->redirect('/site/403');
 //        }
@@ -370,6 +365,33 @@ class OrdersController extends Controller
         $orders->status = '2';
         $orders->save();
         return $this->redirect(['index']);
+    }
+    public  function actionFilterStatus(){
+        if ($_GET){
+            $searchModel = new OrdersSearch();
+            $dataProvider = $searchModel->search($this->request->queryParams);
+            $sub_page = [];
+            $approved = null;
+            if ($_GET['numberVal'] == 2){
+                $approved = 2;
+            }elseif ($_GET['numberVal'] == 0){
+                $approved = 0;
+            }elseif ($_GET['numberVal'] == 3){
+                $approved = 3;
+            }elseif ($_GET['numberVal'] == 1){
+                $approved = 1;
+            }elseif ($_GET['numberVal'] == 4){
+                $approved = 4;
+            }
+            var_dump($approved);
+
+            return $this->renderAjax('widget', [
+                'sub_page' => $sub_page,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+                'approved' => $approved
+            ]);
+        }
     }
 
     public function actionDeleteItems(){

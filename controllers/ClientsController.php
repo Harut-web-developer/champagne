@@ -85,6 +85,7 @@ class ClientsController extends Controller
             ->select(['orders.id', 'orders.total_price as debt'])
             ->leftJoin('clients', 'orders.clients_id = clients.id')
             ->where(['orders.clients_id' => $id])
+            ->andWhere(['orders.status' => '2'])
             ->groupBy('orders.id')
             ->asArray()
             ->all();

@@ -84,11 +84,13 @@ class RouteController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
         $result = Clients::find()->select('id,name')->where(['=', 'route_id', intval($id)])->asArray()->all();
 
         return $this->render('view', [
             'model' => $this->findModel($id),
             'result' => $result,
+            'sub_page' => $sub_page,
 //            'alldata' => $alldata,
         ]);
     }

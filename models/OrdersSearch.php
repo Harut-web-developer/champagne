@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Orders;
@@ -41,13 +42,26 @@ class OrdersSearch extends Orders
      */
     public function search($params)
     {
+        $session = Yii::$app->session;
         $query = Orders::find();
-
-        // add conditions that should always apply here
+        if ($session['role_id'] == 1){
+            if(isset($params['numberVal']) && $params['numberVal'] != 3) {
+                $query->andWhere(['status' => $params['numberVal']]);
+            }elseif (isset($params['numberVal']) && $params['numberVal'] == 3){
+                $query->andWhere([]);
+            }
+        }else {
+            if (isset($params['numberVal']) && $params['numberVal'] != 4) {
+                $query->andWhere(['status' => $params['numberVal']]);
+            }elseif (isset($params['numberVal']) && $params['numberVal'] == 4){
+                $query->andWhere(['status' => '1']);
+            }
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
 
         $this->load($params);
 
