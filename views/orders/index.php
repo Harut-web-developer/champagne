@@ -38,7 +38,8 @@ if ($have_access_update && $have_access_delete && $have_access_delivered){
             'reports' => function ($url, $model, $key) {
                 // The content of the new template with your SVG icon
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'), // Add a title if needed
+                    'title' => Yii::t('yii', 'reports'),
+                    'target' => '_blank',
                 ]);
             },
         ],
