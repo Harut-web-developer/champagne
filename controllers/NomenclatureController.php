@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Discount;
+use app\models\Log;
 use Yii;
 use app\models\Nomenclature;
 use app\models\NomenclatureSearch;
@@ -103,6 +104,7 @@ class NomenclatureController extends Controller
             $this->redirect('/site/403');
         }
         $model = new Nomenclature();
+        $oldattributes = $model;
         $sub_page = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
@@ -116,6 +118,7 @@ class NomenclatureController extends Controller
             $model->price = intval($post['Nomenclature']['price']);
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
+            Log::afterSaves(true, $model, $oldattributes);
             $model->save(false);
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
@@ -172,18 +175,21 @@ class NomenclatureController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
+        $oldattributes = $model;
         $sub_page = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-            $imageName = $_FILES['Nomenclature']['name']['image'];
-            $model->image = $imageName;
-            $model->image = UploadedFile::getInstance($model, 'image');
-            $model->image->saveAs('upload/'.$imageName );
+            if(isset($_FILES['Nomenclature']['name']['image']) && !!$_FILES['Nomenclature']['name']['image']){
+                $imageName = $_FILES['Nomenclature']['name']['image'];
+                $model->image = $imageName;
+                $model->image = UploadedFile::getInstance($model, 'image');
+                $model->image->saveAs('upload/'.$imageName );
+            }
             $model->name = $post['Nomenclature']['name'];
             $model->cost = intval($post['Nomenclature']['cost']);
             $model->price = $post['Nomenclature']['price'];
-            $model->updated_at = date('Y-m-d H:i:s');
+            Log::afterSaves(true, $model, $oldattributes, $model);
             $model->save(false);
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
@@ -228,7 +234,7 @@ class NomenclatureController extends Controller
         if (($model = Nomenclature::findOne(['id' => $id])) !== null) {
             return $model;
         }
-
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }
