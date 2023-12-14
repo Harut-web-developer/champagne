@@ -151,7 +151,11 @@ class OrdersController extends Controller
                 $order_items_create->updated_at = date('Y-m-d H:i:s');
                 $order_items_create->save(false);
             }
+<<<<<<<<< Temporary merge branch 1
                 return $this->redirect(['index', 'id' => $model->id]);
+=========
+            return $this->redirect(['index', 'id' => $model->id]);
+>>>>>>>>> Temporary merge branch 2
         } else {
             $model->loadDefaultValues();
         }
@@ -357,7 +361,11 @@ class OrdersController extends Controller
     }
     public function actionDelivered($id)
     {
+<<<<<<<<< Temporary merge branch 1
 //        $have_access = Users::checkPremission(55);
+=========
+//        $have_access = Users::checkPremission(23);
+>>>>>>>>> Temporary merge branch 2
 //        if(!$have_access){
 //            $this->redirect('/site/403');
 //        }
