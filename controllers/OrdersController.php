@@ -3,6 +3,9 @@
 namespace app\controllers;
 
 use app\models\Clients;
+use app\models\Discount;
+use app\models\DiscountClients;
+use app\models\DiscountProducts;
 use app\models\Nomenclature;
 use app\models\OrderItems;
 use app\models\Orders;
@@ -125,37 +128,204 @@ class OrdersController extends Controller
             $model->orders_date = $post['Orders']['orders_date'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
-            $model->save();
+//            $model->save();
             for ($i = 0; $i < count($post['order_items']); $i++){
-                $product_write_out = new Products();
-                $product_write_out->warehouse_id = 1;
-                $product_write_out->nomenclature_id = $post['order_items'][$i];
-                $product_write_out->document_id = $model->id;
-                $product_write_out->type = 2;
-                $product_write_out->count = -intval($post['count_'][$i]);
-                $product_write_out->price = $post['price'][$i];
-                $product_write_out->created_at = date('Y-m-d H:i:s');
-                $product_write_out->updated_at = date('Y-m-d H:i:s');
-                $product_write_out->save();
+//                $product_write_out = new Products();
+//                $product_write_out->warehouse_id = 1;
+//                $product_write_out->nomenclature_id = $post['order_items'][$i];
+//                $product_write_out->document_id = $model->id;
+//                $product_write_out->type = 2;
+//                $product_write_out->count = -intval($post['count_'][$i]);
+//                $product_write_out->price = $post['price'][$i];
+//                $product_write_out->created_at = date('Y-m-d H:i:s');
+//                $product_write_out->updated_at = date('Y-m-d H:i:s');
+//                $product_write_out->save();
             }
+            echo "<pre>";
             for ($i = 0; $i < count($post['order_items']); $i++){
-                $order_items_create = new OrderItems();
-                $order_items_create->order_id = $model->id;
-                $order_items_create->product_id = $post['product_id'][$i];
-                $order_items_create->price = $post['price'][$i] * $post['count_'][$i];
-                $order_items_create->count = $post['count_'][$i];
-                $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
-                $order_items_create->discount = 0;
-                $order_items_create->price_before_discount = 1000;
-                $order_items_create->created_at = date('Y-m-d H:i:s');
-                $order_items_create->updated_at = date('Y-m-d H:i:s');
-                $order_items_create->save(false);
+                $total_exist = Discount::find()->select('discount.*,discount_products.*,discount_clients.*')
+                    ->leftJoin('discount_products','discount.id = discount_products.discount_id')
+                    ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
+                    ->where(['and',['discount_products.status' => 1,'discount.status' => 1,'discount_clients.status' => 1]])
+                    ->andWhere(['<=', 'discount.start_date', $post['Orders']['orders_date']])
+                    ->andWhere(['>=', 'discount.end_date', $post['Orders']['orders_date']])
+                    ->andWhere(['discount_products.product_id' => $post['order_items'][$i]])
+                    ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                    ->exists();
+                $nomenclatures_exist = Discount::find()->select('discount.*,discount_products.*')
+                    ->leftJoin('discount_products','discount.id = discount_products.discount_id')
+                    ->where(['and',['discount_products.status' => 1,'discount.status' => 1]])
+                    ->andWhere(['<=', 'discount.start_date', $post['Orders']['orders_date']])
+                    ->andWhere(['>=', 'discount.end_date', $post['Orders']['orders_date']])
+                    ->andWhere(['discount_products.product_id' => $post['order_items'][$i]])
+                    ->exists();
+                $clients_exist = Discount::find()->select('discount.*,discount_clients.*')
+                    ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
+                    ->where(['and',['discount_clients.status' => 1,'discount.status' => 1]])
+                    ->andWhere(['<=', 'discount.start_date', $post['Orders']['orders_date']])
+                    ->andWhere(['>=', 'discount.end_date', $post['Orders']['orders_date']])
+                    ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                    ->exists();
+                if ($total_exist){
+                    $discount = Discount::find()->select('discount.*,discount_products.*,discount_clients.*')
+                        ->leftJoin('discount_products','discount.id = discount_products.discount_id')
+                        ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
+                        ->where(['and',['discount_products.status' => 1,'discount.status' => 1,'discount_clients.status' => 1]])
+                        ->andWhere(['<=', 'discount.start_date', $post['Orders']['orders_date']])
+                        ->andWhere(['>=', 'discount.end_date', $post['Orders']['orders_date']])
+                        ->andWhere(['discount_products.product_id' => $post['order_items'][$i]])
+                        ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                        ->orderBy(['discount.discount_sortable' => SORT_ASC])
+                        ->asArray()
+                        ->all();
+                    $count = 0;
+                    $count_discount_id = '';
+                    $price = intval($post['price'][$i]);
+                        for ($j = 0; $j < count($discount); $j++){
+                            if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                $count++;
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }elseif ($discount[$j]['discount_check'] == 1){
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }
+                        }
+//                $order_items_create = new OrderItems();
+//                $order_items_create->order_id = $model->id;
+//                $order_items_create->product_id = $post['product_id'][$i];
+//                $order_items_create->price = number_format($price * $post['count_'][$i],2);
+//                $order_items_create->count = $post['count_'][$i];
+//                $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
+//                $order_items_create->discount = (intval($post['price'][$i]) - $price) * $post['count_'][$i];
+//                $order_items_create->price_before_discount = number_format(intval($post['price'][$i]) * $post['count_'][$i]);
+//                $order_items_create->created_at = date('Y-m-d H:i:s');
+//                $order_items_create->updated_at = date('Y-m-d H:i:s');
+//                $order_items_create->save(false);
+
+
+                }elseif ($nomenclatures_exist){
+                    $discount = Discount::find()->select('discount.*,discount_products.*')
+                        ->leftJoin('discount_products','discount.id = discount_products.discount_id')
+                        ->where(['and',['discount_products.status' => 1,'discount.status' => 1]])
+                        ->andWhere(['<=', 'discount.start_date', $post['Orders']['orders_date']])
+                        ->andWhere(['>=', 'discount.end_date', $post['Orders']['orders_date']])
+                        ->andWhere(['discount_products.product_id' => $post['order_items'][$i]])
+                        ->orderBy(['discount.discount_sortable' => SORT_ASC])
+                        ->asArray()
+                        ->all();
+                    $count = 0;
+                    $count_discount_id = '';
+                    $price = intval($post['price'][$i]);
+                    for ($j = 0; $j < count($discount); $j++){
+                        if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                            $count++;
+                            if ($discount[$j]['type'] == 'percent'){
+                                $count_discount_id .= $discount[$j]['discount_id'].',';
+                                $price =  $price - ($price * $discount[$j]['discount'])/100;
+                            }else{
+                                $count_discount_id .= $discount[$j]['discount_id'].',';
+                                $price = $price - $discount[$j]['discount'];
+                            }
+                        }elseif ($discount[$j]['discount_check'] == 1){
+                            if ($discount[$j]['type'] == 'percent'){
+                                $count_discount_id .= $discount[$j]['discount_id'].',';
+                                $price =  $price - ($price * $discount[$j]['discount'])/100;
+                            }else{
+                                $count_discount_id .= $discount[$j]['discount_id'].',';
+                                $price = $price - $discount[$j]['discount'];
+                            }
+                        }
+                    }
+//                $order_items_create = new OrderItems();
+//                $order_items_create->order_id = $model->id;
+//                $order_items_create->product_id = $post['product_id'][$i];
+//                $order_items_create->price = number_format($price * $post['count_'][$i],2);
+//                $order_items_create->count = $post['count_'][$i];
+//                $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
+//                $order_items_create->discount = (intval($post['price'][$i]) - $price) * $post['count_'][$i];
+//                $order_items_create->price_before_discount = number_format(intval($post['price'][$i]) * $post['count_'][$i]);
+//                $order_items_create->created_at = date('Y-m-d H:i:s');
+//                $order_items_create->updated_at = date('Y-m-d H:i:s');
+//                $order_items_create->save(false);
+
+                }elseif ($clients_exist){
+                    $discount = Discount::find()->select('discount.*,discount_clients.*')
+                        ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
+                        ->where(['and',['discount_clients.status' => 1,'discount.status' => 1]])
+                        ->andWhere(['<=', 'discount.start_date', $post['Orders']['orders_date']])
+                        ->andWhere(['>=', 'discount.end_date', $post['Orders']['orders_date']])
+                        ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                        ->orderBy(['discount.discount_sortable' => SORT_ASC])
+                        ->asArray()
+                        ->all();
+                    $count = 0;
+                    $count_discount_id = '';
+                    $price = intval($post['price'][$i]);
+                    for ($j = 0; $j < count($discount); $j++){
+                        if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                            $count++;
+                            if ($discount[$j]['type'] == 'percent'){
+                                $count_discount_id .= $discount[$j]['discount_id'].',';
+                                $price =  $price - ($price * $discount[$j]['discount'])/100;
+                            }else{
+                                $count_discount_id .= $discount[$j]['discount_id'].',';
+                                $price = $price - $discount[$j]['discount'];
+                            }
+                        }elseif ($discount[$j]['discount_check'] == 1){
+                            if ($discount[$j]['type'] == 'percent'){
+                                $count_discount_id .= $discount[$j]['discount_id'].',';
+                                $price =  $price - ($price * $discount[$j]['discount'])/100;
+                            }else{
+                                $count_discount_id .= $discount[$j]['discount_id'].',';  // else chmoranal
+                                $price = $price - $discount[$j]['discount'];
+                            }
+                        }
+                    }
+//                $order_items_create = new OrderItems();
+//                $order_items_create->order_id = $model->id;
+//                $order_items_create->product_id = $post['product_id'][$i];
+//                $order_items_create->price = number_format($price * $post['count_'][$i],2);
+//                $order_items_create->count = $post['count_'][$i];
+//                $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
+//                $order_items_create->discount = (intval($post['price'][$i]) - $price) * $post['count_'][$i];
+//                $order_items_create->price_before_discount = number_format(intval($post['price'][$i]) * $post['count_'][$i]);
+//                $order_items_create->created_at = date('Y-m-d H:i:s');
+//                $order_items_create->updated_at = date('Y-m-d H:i:s');
+//                $order_items_create->save(false);
+
+                }else{
+//                $order_items_create = new OrderItems();
+//                $order_items_create->order_id = $model->id;
+//                $order_items_create->product_id = $post['product_id'][$i];
+//                $order_items_create->price = $post['price'][$i] * $post['count_'][$i];
+//                $order_items_create->count = $post['count_'][$i];
+//                $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
+//                $order_items_create->discount = 0;
+//                $order_items_create->price_before_discount = $post['price'][$i] * $post['count_'][$i]
+//                $order_items_create->created_at = date('Y-m-d H:i:s');
+//                $order_items_create->updated_at = date('Y-m-d H:i:s');
+//                $order_items_create->save(false);
+                    var_dump(16);
+
+                }
+
+
+
+
             }
-<<<<<<<<< Temporary merge branch 1
+            exit();
                 return $this->redirect(['index', 'id' => $model->id]);
-=========
-            return $this->redirect(['index', 'id' => $model->id]);
->>>>>>>>> Temporary merge branch 2
         } else {
             $model->loadDefaultValues();
         }
@@ -254,7 +424,7 @@ class OrdersController extends Controller
                     $order_item = OrderItems::findOne($item);
                     $order_item->order_id = $id;
                     $order_item->product_id = $post['product_id'][$k];
-                    $order_item->price = $post['price'][$k] *$post['count_'][$k];
+                    $order_item->price = $post['price'][$k] * $post['count_'][$k];
                     $order_item->count = $post['count_'][$k];
                     $order_item->cost = $post['cost'][$k] * $post['count_'][$k];
                     $order_item->discount = 0;
@@ -277,7 +447,7 @@ class OrdersController extends Controller
                     $order_item = new OrderItems();
                     $order_item->order_id = $id;
                     $order_item->product_id = $post['product_id'][$k];
-                    $order_item->price = $post['price'][$k] *$post['count_'][$k];
+                    $order_item->price = $post['price'][$k] * $post['count_'][$k];
                     $order_item->count = $post['count_'][$k];
                     $order_item->cost = $post['cost'][$k] * $post['count_'][$k];
                     $order_item->discount = 0;
@@ -361,11 +531,7 @@ class OrdersController extends Controller
     }
     public function actionDelivered($id)
     {
-<<<<<<<<< Temporary merge branch 1
 //        $have_access = Users::checkPremission(55);
-=========
-//        $have_access = Users::checkPremission(23);
->>>>>>>>> Temporary merge branch 2
 //        if(!$have_access){
 //            $this->redirect('/site/403');
 //        }
