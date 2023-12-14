@@ -435,6 +435,17 @@
 .documentsCountInput{
     min-width:80px;
 }
+.downloadXLSX{
+    cursor: pointer;
+    height: 40px;
+}
+.downloadUpdateXLSX{
+    cursor: pointer;
+}
+.orders-update h5{
+    display: inline-block;
+}
+
 .discountCheck{
     display:flex !important;
 }

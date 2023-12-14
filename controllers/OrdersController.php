@@ -3,6 +3,9 @@
 namespace app\controllers;
 
 use app\models\Clients;
+use app\models\Discount;
+use app\models\DiscountClients;
+use app\models\DiscountProducts;
 use app\models\Nomenclature;
 use app\models\OrderItems;
 use app\models\Orders;
@@ -72,6 +75,7 @@ class OrdersController extends Controller
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
                 'data_size' => 'max',
+                'sub_page' => $sub_page,
             ]);
         }
 
@@ -90,8 +94,11 @@ class OrdersController extends Controller
      */
     public function actionView($id)
     {
+        $sub_page = [];
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page,
+
         ]);
     }
 
@@ -121,32 +128,203 @@ class OrdersController extends Controller
             $model->orders_date = $post['Orders']['orders_date'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
-            $model->save();
+//            $model->save();
             for ($i = 0; $i < count($post['order_items']); $i++){
-                $product_write_out = new Products();
-                $product_write_out->warehouse_id = 1;
-                $product_write_out->nomenclature_id = $post['order_items'][$i];
-                $product_write_out->document_id = $model->id;
-                $product_write_out->type = 2;
-                $product_write_out->count = -intval($post['count_'][$i]);
-                $product_write_out->price = $post['price'][$i];
-                $product_write_out->created_at = date('Y-m-d H:i:s');
-                $product_write_out->updated_at = date('Y-m-d H:i:s');
-                $product_write_out->save();
+//                $product_write_out = new Products();
+//                $product_write_out->warehouse_id = 1;
+//                $product_write_out->nomenclature_id = $post['order_items'][$i];
+//                $product_write_out->document_id = $model->id;
+//                $product_write_out->type = 2;
+//                $product_write_out->count = -intval($post['count_'][$i]);
+//                $product_write_out->price = $post['price'][$i];
+//                $product_write_out->created_at = date('Y-m-d H:i:s');
+//                $product_write_out->updated_at = date('Y-m-d H:i:s');
+//                $product_write_out->save();
             }
+            echo "<pre>";
             for ($i = 0; $i < count($post['order_items']); $i++){
-                $order_items_create = new OrderItems();
-                $order_items_create->order_id = $model->id;
-                $order_items_create->product_id = $post['product_id'][$i];
-                $order_items_create->price = $post['price'][$i] * $post['count_'][$i];
-                $order_items_create->count = $post['count_'][$i];
-                $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
-                $order_items_create->discount = 0;
-                $order_items_create->price_before_discount = 1000;
-                $order_items_create->created_at = date('Y-m-d H:i:s');
-                $order_items_create->updated_at = date('Y-m-d H:i:s');
-                $order_items_create->save(false);
+                $total_exist = Discount::find()->select('discount.*,discount_products.*,discount_clients.*')
+                    ->leftJoin('discount_products','discount.id = discount_products.discount_id')
+                    ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
+                    ->where(['and',['discount_products.status' => 1,'discount.status' => 1,'discount_clients.status' => 1]])
+                    ->andWhere(['<=', 'discount.start_date', $post['Orders']['orders_date']])
+                    ->andWhere(['>=', 'discount.end_date', $post['Orders']['orders_date']])
+                    ->andWhere(['discount_products.product_id' => $post['order_items'][$i]])
+                    ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                    ->exists();
+                $nomenclatures_exist = Discount::find()->select('discount.*,discount_products.*')
+                    ->leftJoin('discount_products','discount.id = discount_products.discount_id')
+                    ->where(['and',['discount_products.status' => 1,'discount.status' => 1]])
+                    ->andWhere(['<=', 'discount.start_date', $post['Orders']['orders_date']])
+                    ->andWhere(['>=', 'discount.end_date', $post['Orders']['orders_date']])
+                    ->andWhere(['discount_products.product_id' => $post['order_items'][$i]])
+                    ->exists();
+                $clients_exist = Discount::find()->select('discount.*,discount_clients.*')
+                    ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
+                    ->where(['and',['discount_clients.status' => 1,'discount.status' => 1]])
+                    ->andWhere(['<=', 'discount.start_date', $post['Orders']['orders_date']])
+                    ->andWhere(['>=', 'discount.end_date', $post['Orders']['orders_date']])
+                    ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                    ->exists();
+                if ($total_exist){
+                    $discount = Discount::find()->select('discount.*,discount_products.*,discount_clients.*')
+                        ->leftJoin('discount_products','discount.id = discount_products.discount_id')
+                        ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
+                        ->where(['and',['discount_products.status' => 1,'discount.status' => 1,'discount_clients.status' => 1]])
+                        ->andWhere(['<=', 'discount.start_date', $post['Orders']['orders_date']])
+                        ->andWhere(['>=', 'discount.end_date', $post['Orders']['orders_date']])
+                        ->andWhere(['discount_products.product_id' => $post['order_items'][$i]])
+                        ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                        ->orderBy(['discount.discount_sortable' => SORT_ASC])
+                        ->asArray()
+                        ->all();
+                    $count = 0;
+                    $count_discount_id = '';
+                    $price = intval($post['price'][$i]);
+                        for ($j = 0; $j < count($discount); $j++){
+                            if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                $count++;
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }elseif ($discount[$j]['discount_check'] == 1){
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }
+                        }
+//                $order_items_create = new OrderItems();
+//                $order_items_create->order_id = $model->id;
+//                $order_items_create->product_id = $post['product_id'][$i];
+//                $order_items_create->price = number_format($price * $post['count_'][$i],2);
+//                $order_items_create->count = $post['count_'][$i];
+//                $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
+//                $order_items_create->discount = (intval($post['price'][$i]) - $price) * $post['count_'][$i];
+//                $order_items_create->price_before_discount = number_format(intval($post['price'][$i]) * $post['count_'][$i]);
+//                $order_items_create->created_at = date('Y-m-d H:i:s');
+//                $order_items_create->updated_at = date('Y-m-d H:i:s');
+//                $order_items_create->save(false);
+
+
+                }elseif ($nomenclatures_exist){
+                    $discount = Discount::find()->select('discount.*,discount_products.*')
+                        ->leftJoin('discount_products','discount.id = discount_products.discount_id')
+                        ->where(['and',['discount_products.status' => 1,'discount.status' => 1]])
+                        ->andWhere(['<=', 'discount.start_date', $post['Orders']['orders_date']])
+                        ->andWhere(['>=', 'discount.end_date', $post['Orders']['orders_date']])
+                        ->andWhere(['discount_products.product_id' => $post['order_items'][$i]])
+                        ->orderBy(['discount.discount_sortable' => SORT_ASC])
+                        ->asArray()
+                        ->all();
+                    $count = 0;
+                    $count_discount_id = '';
+                    $price = intval($post['price'][$i]);
+                    for ($j = 0; $j < count($discount); $j++){
+                        if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                            $count++;
+                            if ($discount[$j]['type'] == 'percent'){
+                                $count_discount_id .= $discount[$j]['discount_id'].',';
+                                $price =  $price - ($price * $discount[$j]['discount'])/100;
+                            }else{
+                                $count_discount_id .= $discount[$j]['discount_id'].',';
+                                $price = $price - $discount[$j]['discount'];
+                            }
+                        }elseif ($discount[$j]['discount_check'] == 1){
+                            if ($discount[$j]['type'] == 'percent'){
+                                $count_discount_id .= $discount[$j]['discount_id'].',';
+                                $price =  $price - ($price * $discount[$j]['discount'])/100;
+                            }else{
+                                $count_discount_id .= $discount[$j]['discount_id'].',';
+                                $price = $price - $discount[$j]['discount'];
+                            }
+                        }
+                    }
+//                $order_items_create = new OrderItems();
+//                $order_items_create->order_id = $model->id;
+//                $order_items_create->product_id = $post['product_id'][$i];
+//                $order_items_create->price = number_format($price * $post['count_'][$i],2);
+//                $order_items_create->count = $post['count_'][$i];
+//                $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
+//                $order_items_create->discount = (intval($post['price'][$i]) - $price) * $post['count_'][$i];
+//                $order_items_create->price_before_discount = number_format(intval($post['price'][$i]) * $post['count_'][$i]);
+//                $order_items_create->created_at = date('Y-m-d H:i:s');
+//                $order_items_create->updated_at = date('Y-m-d H:i:s');
+//                $order_items_create->save(false);
+
+                }elseif ($clients_exist){
+                    $discount = Discount::find()->select('discount.*,discount_clients.*')
+                        ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
+                        ->where(['and',['discount_clients.status' => 1,'discount.status' => 1]])
+                        ->andWhere(['<=', 'discount.start_date', $post['Orders']['orders_date']])
+                        ->andWhere(['>=', 'discount.end_date', $post['Orders']['orders_date']])
+                        ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                        ->orderBy(['discount.discount_sortable' => SORT_ASC])
+                        ->asArray()
+                        ->all();
+                    $count = 0;
+                    $count_discount_id = '';
+                    $price = intval($post['price'][$i]);
+                    for ($j = 0; $j < count($discount); $j++){
+                        if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                            $count++;
+                            if ($discount[$j]['type'] == 'percent'){
+                                $count_discount_id .= $discount[$j]['discount_id'].',';
+                                $price =  $price - ($price * $discount[$j]['discount'])/100;
+                            }else{
+                                $count_discount_id .= $discount[$j]['discount_id'].',';
+                                $price = $price - $discount[$j]['discount'];
+                            }
+                        }elseif ($discount[$j]['discount_check'] == 1){
+                            if ($discount[$j]['type'] == 'percent'){
+                                $count_discount_id .= $discount[$j]['discount_id'].',';
+                                $price =  $price - ($price * $discount[$j]['discount'])/100;
+                            }else{
+                                $count_discount_id .= $discount[$j]['discount_id'].',';  // else chmoranal
+                                $price = $price - $discount[$j]['discount'];
+                            }
+                        }
+                    }
+//                $order_items_create = new OrderItems();
+//                $order_items_create->order_id = $model->id;
+//                $order_items_create->product_id = $post['product_id'][$i];
+//                $order_items_create->price = number_format($price * $post['count_'][$i],2);
+//                $order_items_create->count = $post['count_'][$i];
+//                $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
+//                $order_items_create->discount = (intval($post['price'][$i]) - $price) * $post['count_'][$i];
+//                $order_items_create->price_before_discount = number_format(intval($post['price'][$i]) * $post['count_'][$i]);
+//                $order_items_create->created_at = date('Y-m-d H:i:s');
+//                $order_items_create->updated_at = date('Y-m-d H:i:s');
+//                $order_items_create->save(false);
+
+                }else{
+//                $order_items_create = new OrderItems();
+//                $order_items_create->order_id = $model->id;
+//                $order_items_create->product_id = $post['product_id'][$i];
+//                $order_items_create->price = $post['price'][$i] * $post['count_'][$i];
+//                $order_items_create->count = $post['count_'][$i];
+//                $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
+//                $order_items_create->discount = 0;
+//                $order_items_create->price_before_discount = $post['price'][$i] * $post['count_'][$i]
+//                $order_items_create->created_at = date('Y-m-d H:i:s');
+//                $order_items_create->updated_at = date('Y-m-d H:i:s');
+//                $order_items_create->save(false);
+                    var_dump(16);
+
+                }
+
+
+
+
             }
+            exit();
                 return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
@@ -175,7 +353,7 @@ class OrdersController extends Controller
             'clients' => $clients,
             'nomenclatures' => $nomenclatures,
             'total' => $total,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
 //            'pagination' => $pagination,
 //            'count' => $count,
         ]);
@@ -208,7 +386,7 @@ class OrdersController extends Controller
         }else{
             $total = $countQuery->count();
             $nomenclatures->offset($offset)
-            ->limit($pageSize);
+                ->limit($pageSize);
         }
         $nomenclatures = $nomenclatures
             ->asArray()
@@ -246,7 +424,7 @@ class OrdersController extends Controller
                     $order_item = OrderItems::findOne($item);
                     $order_item->order_id = $id;
                     $order_item->product_id = $post['product_id'][$k];
-                    $order_item->price = $post['price'][$k] *$post['count_'][$k];
+                    $order_item->price = $post['price'][$k] * $post['count_'][$k];
                     $order_item->count = $post['count_'][$k];
                     $order_item->cost = $post['cost'][$k] * $post['count_'][$k];
                     $order_item->discount = 0;
@@ -269,7 +447,7 @@ class OrdersController extends Controller
                     $order_item = new OrderItems();
                     $order_item->order_id = $id;
                     $order_item->product_id = $post['product_id'][$k];
-                    $order_item->price = $post['price'][$k] *$post['count_'][$k];
+                    $order_item->price = $post['price'][$k] * $post['count_'][$k];
                     $order_item->count = $post['count_'][$k];
                     $order_item->cost = $post['cost'][$k] * $post['count_'][$k];
                     $order_item->discount = 0;
@@ -461,5 +639,42 @@ class OrdersController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    public function actionReports($id){
+        $have_access = Users::checkPremission(22);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+        $model = $this->findModel($id);
+        $sub_page = [];
+        $query = Nomenclature::find();
+        $countQuery = clone $query;
+        $total = $countQuery->count();
+        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
+        nomenclature.cost,products.id as products_id,products.count')
+            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+            ->offset(0)
+            ->groupBy('nomenclature.id')
+            ->limit(10)
+            ->asArray()
+            ->all();
+        $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price / order_items.count) as price,
+        (order_items.cost / order_items.count) as cost,order_items.discount,order_items.price_before_discount,nomenclature.name, (nomenclature.id) as nom_id')
+            ->leftJoin('products','products.id = order_items.product_id')
+            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
+            ->where(['order_id' => $id])->asArray()->all();
+        $clients = Clients::find()->select('id, name')->asArray()->all();
+        $clients = ArrayHelper::map($clients,'id','name');
+        $users = Users::find()->select('id, name')->asArray()->all();
+        $users = ArrayHelper::map($users,'id','name');
+        return $this->renderAjax('report', [
+            'model' => $model,
+            'users' => $users,
+            'clients' => $clients,
+            'nomenclatures' => $nomenclatures,
+            'order_items' => $order_items,
+            'total' => $total,
+            'sub_page' => $sub_page
+        ]);
     }
 }

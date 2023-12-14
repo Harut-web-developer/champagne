@@ -104,7 +104,7 @@ else if($have_access_update && $have_access_delete){
     ];
 }
 ?>
-<!--<div  data-status="--><?php //= $_GET['numberVal'] ?><!--">-->
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
