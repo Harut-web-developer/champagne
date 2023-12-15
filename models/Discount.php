@@ -32,10 +32,10 @@ class Discount extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'discount'], 'required'],
-            [['type', 'status'], 'string'],
-            [['discount'], 'integer'],
-            [['start_date', 'end_date', 'created_at', 'updated_at'], 'safe'],
+            [['type', 'discount','discount_option'], 'required'],
+            [['type', 'status','discount_filter_type'], 'string'],
+            [['discount','min','max'], 'integer'],
+            [['start_date', 'end_date','discount_option', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -51,6 +51,8 @@ class Discount extends \yii\db\ActiveRecord
             'start_date' => 'Զեղչի սկիզբը',
             'end_date' => 'Զեղչի ավարտ',
             'discount_check' => 'Ստուգում',
+            'discount_option' => 'Զեղչի ձև',
+            'discount_filter_type' => 'Ֆիլտրել',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

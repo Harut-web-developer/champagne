@@ -16,6 +16,9 @@ use yii\widgets\ActiveForm;
                     <span class="non-active">Զեղչ</span>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
+                    <?= $form->field($model, 'discount_option')->dropDownList([ '1' => 'Մեկ անգամյա', '2' => 'Բազմակի', ], ['prompt' => '']) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
                     <?= $form->field($model, 'type')->dropDownList([ 'percent' => 'Տոկոսով', 'money' => 'Գումարով', ], ['prompt' => '']) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discount">
@@ -70,8 +73,21 @@ use yii\widgets\ActiveForm;
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountEndDate">
                     <?= $form->field($model, 'end_date')->input('date') ?>
                 </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 discountEndDate">
+                    <div class="price-range-block">
+                        <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
+                            <?= $form->field($model, 'discount_filter_type')->dropDownList([ 'count' => 'Ըստ քանակի', 'price' => 'Ըստ գնի', ], ['prompt' => 'Ընտրել տեսակը'])?>
+                        </div>
+                        <div id="slider-range" class="price-filter-range" name="rangeInput"></div>
+                        <div>
+                            <input type="number" name="min" min=0 max="9900" oninput="validity.valid||(value='2200');" id="min_price" class="price-range-field" />
+                            <input type="number" name="max" min=0 max="10000" oninput="validity.valid||(value='10000');" id="max_price" class="price-range-field" />
+                        </div>
+<!--                        <div id="searchResults" class="search-results-block"></div>-->
+                    </div>
+                </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountCheck">
-                    <?= $form->field($model, 'discount_check')->checkbox(['label' => 'Հաշվի առնել կիրառված զեղչերը'],false) ?>
+                    <?= $form->field($model, 'discount_check')->checkbox(['label' => 'Կիրառել մյուս զեղչերի հետ'],false) ?>
                 </div>
 
             </div>

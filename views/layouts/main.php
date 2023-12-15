@@ -40,12 +40,14 @@ $sub_page = $this->params['sub_page'];
     <link rel="stylesheet" href="/css/demo.css">
     <link rel="stylesheet" href="/css/perfect-scrollbar.css">
     <link rel="stylesheet" href="/css/apex-charts.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="/css/price_range_style.css">
     <link rel="stylesheet" href="/css/main.css">
     <?= Html::csrfMetaTags() ?>
 </head>
 <body>
 <?php $this->beginBody() ?>
-<div class="bs-toast toast toast-placement-ex m-2 bg-secondary bottom-0 end-0 fade hide" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5 000">
+<div class="bs-toast toast toast-placement-ex m-2 bg-secondary bottom-0 end-0 fade hide" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
     <div class="toast-header">
         <i class="bx bx-bell me-2"></i>
         <div class="me-auto fw-medium"></div>

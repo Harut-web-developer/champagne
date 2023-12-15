@@ -121,10 +121,13 @@ class DiscountController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            $model->discount_option = $post["Discount"]['discount_option'];
             $model->type = $post["Discount"]['type'];
             $model->discount = $post["Discount"]['discount'];
-            if (empty($post["Discount"]['start_date'])){
+            if (empty($post["Discount"]['start_date']) && empty($post["Discount"]['end_date'])){
                 $model->start_date = null;
+            }elseif (empty($post["Discount"]['start_date'])){
+                $model->start_date = date('Y-m-d');
             }else{
                 $model->start_date = $post["Discount"]['start_date'];
             }
@@ -134,8 +137,14 @@ class DiscountController extends Controller
                 $model->end_date = $post["Discount"]['end_date'];
             }
             $model->discount_check = $post["Discount"]['discount_check'];
+            if (!empty($post['Discount']['discount_filter_type'])){
+                $model->discount_filter_type = $post['Discount']['discount_filter_type'];
+                $model->min = $post['min'];
+                $model->max = $post['max'];
+            }
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
+
             $model->save();
             if(!empty($post['clients'])){
                 for ($i = 0; $i < count($post['clients']);$i++){

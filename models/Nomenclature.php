@@ -66,7 +66,6 @@ class Nomenclature extends \yii\db\ActiveRecord
         else{
             $page = 1;
         }
-
         $offset = ($page-1) * $pageSize;
         if($offset){
             $query->offset($offset);

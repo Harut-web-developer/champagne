@@ -35,6 +35,7 @@ class AppAsset extends AssetBundle
         '/js/popper.js',
         '/js/script.js',
         'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.2.1/exceljs.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js',
         '/js/select2.min.js'
 
     ];
