@@ -49,8 +49,7 @@ class Log extends ActiveRecord
         ];
     }
 
-    public static function afterSaves($isset_model, $newattributes, $oldattributes, $model){
-        $viewRenderer = Yii::$app->getView();
+    public static function afterSaves($isset_model, $newattributes, $oldattributes){
         echo "<pre>";
         $log=new Log();
         $sub_page = [];
@@ -58,17 +57,23 @@ class Log extends ActiveRecord
             foreach ($newattributes as $name => $value) {
                 if (!empty($oldattributes)) {
                     $old = $oldattributes[$name];
+
                 } else {
                     $old = '';
+
                 }
                 if ($value != $old) {
-                    //$changes = $name . ' ('.$old.') => ('.$value.'), ';
+                    $changes = $name . ' ('.$old.') => ('.$value.'), ';
                     $log->user_id = $_SESSION['user_id'];
                     $log->action = 'CHANGE';
                     $log->create_date = date('Y-m-d H:i:s');
+                    var_dump($changes);
+                    var_dump($_SESSION['user_id']);
                 }
             }
             $log->save();
+            die;
+
         } else {
             $log=new Log();
             $log->user_id = $_SESSION['user_id'];
@@ -77,12 +82,8 @@ class Log extends ActiveRecord
             $log->create_date= date('Y-m-d H:i:s');
             $log->save();
         }
-        return $viewRenderer->render('@app/views/log/create', [
-            'model' => $model,
-            'log' => $log,
-            'sub_page' => $sub_page
-        ]);
-
+        exit();
+        return $log;
     }
 
 }

@@ -121,6 +121,7 @@ class LogController extends Controller
 //            'log' => $log,
 //            'sub_page' => $sub_page
 //        ]);
+
     }
 
     /**

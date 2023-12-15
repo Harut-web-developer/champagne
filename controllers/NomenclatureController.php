@@ -118,8 +118,8 @@ class NomenclatureController extends Controller
             $model->price = intval($post['Nomenclature']['price']);
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
-            Log::afterSaves(true, $model, $oldattributes);
             $model->save(false);
+            Log::afterSaves(true, $model, $oldattributes);
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
