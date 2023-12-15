@@ -108,8 +108,10 @@ class UsersController extends Controller
      */
     public function actionView($id)
     {
+        $sub_page = [];
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page
         ]);
     }
 
