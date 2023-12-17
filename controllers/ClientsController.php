@@ -2,9 +2,14 @@
 
 namespace app\controllers;
 
+use app\models\Log;
+use app\models\Nomenclature;
 use app\models\Orders;
 use app\models\Payments;
+use app\models\Premissions;
+use Psy\Command\EditCommand;
 use Yii;
+use yii\helpers\Url;
 use app\models\Clients;
 use app\models\Route;
 use app\models\ClientsSearch;
@@ -90,10 +95,6 @@ class ClientsController extends Controller
             ->asArray()
             ->all();
         $payments = Payments::find()->select('SUM(payment_sum) as payments_total')->where(['client_id'=> $id])->asArray()->one();
-
-//        echo "<pre>";
-//        var_dump($client_orders);
-//        exit();
         return $this->render('view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
@@ -108,14 +109,21 @@ class ClientsController extends Controller
      */
     public function actionCreate()
     {
-//        var_dump(coords);
         $have_access = Users::checkPremission(5);
         if(!$have_access){
             $this->redirect('/site/403');
         }
         $sub_page = [];
         $model = new Clients();
+        $url = Url::to('', 'http');
+        $url = str_replace('create', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 5])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
+
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
             $model->name = $post['Clients']['name'];
@@ -124,7 +132,9 @@ class ClientsController extends Controller
             $model->phone = $post['Clients']['phone'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
+            $model = Clients::getDefVals($model);
             $model->save();
+            Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
@@ -196,8 +206,18 @@ class ClientsController extends Controller
         }
         $sub_page = [];
         $model = $this->findModel($id);
+        $url = Url::to('', 'http');
+        $oldattributes = Clients::find()
+            ->select('*')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 6])
+            ->asArray()
+            ->one();
         $route_value_update = Clients::find()->select('id, route_id')->where(['id' => $model->id])->one();
-//        $route_value_update = $route_value_update['route_id'];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -207,6 +227,7 @@ class ClientsController extends Controller
             $model->phone = $post['Clients']['phone'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
+            Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
@@ -235,9 +256,21 @@ class ClientsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $oldattributes = Clients::find()
+            ->select('name')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 7])
+            ->asArray()
+            ->one();
         $clients = Clients::findOne($id);
         $clients->status = '0';
-        $clients->save();
+        $clients->save(false);
+        Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }
 

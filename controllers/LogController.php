@@ -170,7 +170,6 @@ class LogController extends Controller
             $this->redirect('/site/403');
         }
         $log = Log::findOne($id);
-        $log->status = '0';
         $log->save();
         return $this->redirect(['index']);
     }

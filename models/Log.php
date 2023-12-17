@@ -10,6 +10,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property int $user_id
+ * @property string $description
  * @property string $action
  * @property string $create_date
  */
@@ -32,7 +33,7 @@ class Log extends ActiveRecord
             [['user_id', 'action', 'create_date'], 'required'],
             [['user_id'], 'integer'],
             [['create_date'], 'safe'],
-            [['action'], 'string', 'max' => 255],
+            [['action', 'description'], 'string', 'max' => 255],
         ];
     }
 
@@ -44,16 +45,15 @@ class Log extends ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'Օգտագործող',
+            'description' => 'Նկարագրություն',
             'action' => 'Գործողություն',
             'create_date' => 'Ստեղծման ամսաթիվ',
         ];
     }
-
-    public static function afterSaves($isset_model, $newattributes, $oldattributes){
-        echo "<pre>";
-        $log=new Log();
-        $sub_page = [];
-        if ($isset_model) {
+    public static function afterSaves($isset_model, $newattributes, $oldattributes, $url, $premission){
+        $old = 0;
+        $changes = "";
+        if ($isset_model == 'Update') {
             foreach ($newattributes as $name => $value) {
                 if (!empty($oldattributes)) {
                     $old = $oldattributes[$name];
@@ -63,27 +63,44 @@ class Log extends ActiveRecord
 
                 }
                 if ($value != $old) {
-                    $changes = $name . ' ('.$old.') => ('.$value.'), ';
-                    $log->user_id = $_SESSION['user_id'];
-                    $log->action = 'CHANGE';
-                    $log->create_date = date('Y-m-d H:i:s');
-                    var_dump($changes);
-                    var_dump($_SESSION['user_id']);
+
+                    $changes = $changes . $name . ' ('.$old.') => ('.$value.'), ' . "\n";
                 }
             }
-            $log->save();
-            die;
-
-        } else {
+            $changes = $premission['name'] . "\n" . $changes;
             $log=new Log();
             $log->user_id = $_SESSION['user_id'];
-            $log->action = 'CREATE';
-            $log->status = 1;
-            $log->create_date= date('Y-m-d H:i:s');
-            $log->save();
+            $log->action = $url;
+            $log->description = $changes;
+            $log->create_date = date('Y-m-d H:i:s');
+            $log->save(false);
         }
-        exit();
-        return $log;
+        else if ($isset_model == 'Create'){
+            foreach ($newattributes as $name => $value) {
+
+                $changes .=  ' ('.$name.') => ('.$value.'), ' . "\n";
+            }
+            $changes = $premission['name'] . "\n" . $changes;
+            $log=new Log();
+            $log->user_id = $_SESSION['user_id'];
+            $log->action = $url;
+            $log->description = $changes;
+            $log->create_date= date('Y-m-d H:i:s');
+            $log->save(false);
+        } else if ($isset_model == 'Delete'){
+            $log=new Log();
+            $log->user_id = $_SESSION['user_id'];
+            $log->action = $url;
+            $log->description = $premission['name']  . "\n" . '('.'Անուն'.') => '  . $oldattributes;
+            $log->create_date= date('Y-m-d H:i:s');
+//            var_dump($log);
+//            die;
+            $log->save(false);
+        }
+    }
+
+    public function getUserName(){
+        return $this->hasOne(Users::className(),['id' => 'user_id']);
     }
 
 }
