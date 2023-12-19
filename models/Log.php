@@ -93,8 +93,6 @@ class Log extends ActiveRecord
             $log->action = $url;
             $log->description = $premission['name']  . "\n" . '('.'Անուն'.') => '  . $oldattributes;
             $log->create_date= date('Y-m-d H:i:s');
-//            var_dump($log);
-//            die;
             $log->save(false);
         }
     }

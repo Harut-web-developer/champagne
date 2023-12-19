@@ -91,6 +91,12 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
         return $this->authKey === $authKey;
     }
 
+    public static function getDefVals($model){
+        if(is_null($model->status)){
+            $model->status = '1';
+        }
+        return $model;
+    }
     /**
      * Validates password
      *

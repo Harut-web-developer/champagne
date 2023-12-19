@@ -2,10 +2,13 @@
 
 namespace app\controllers;
 
+use app\models\Log;
+use app\models\Premissions;
 use app\models\Rates;
 use app\models\RatesSearch;
 use app\models\Users;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -76,8 +79,10 @@ class RatesController extends Controller
      */
     public function actionView($id)
     {
+        $sub_page = [];
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -94,13 +99,22 @@ class RatesController extends Controller
         }
         $sub_page = [];
         $model = new Rates();
+        $url = Url::to('', 'http');
+        $url = str_replace('create', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 45])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
             date_default_timezone_set('Asia/Yerevan');
             $model->name = $post['Rates']['name'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
+            $model = Rates::getDefVals($model);
             $model->save();
+            Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
@@ -127,12 +141,24 @@ class RatesController extends Controller
         }
         $model = $this->findModel($id);
         $sub_page = [];
+        $url = Url::to('', 'http');
+        $oldattributes = Rates::find()
+            ->select('*')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 46])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
             date_default_timezone_set('Asia/Yerevan');
             $model->name = $post['Rates']['name'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
+            Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
 
@@ -155,9 +181,21 @@ class RatesController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $oldattributes = Rates::find()
+            ->select('name')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 47])
+            ->asArray()
+            ->one();
         $rates = Rates::findOne($id);
         $rates->status = '0';
         $rates->save();
+        Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }
 

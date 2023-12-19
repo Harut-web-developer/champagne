@@ -2,9 +2,13 @@
 
 namespace app\controllers;
 
+use app\models\Clients;
+use app\models\Log;
+use app\models\Premissions;
 use app\models\Users;
 use app\models\Warehouse;
 use app\models\WarehouseSearch;
+use yii\helpers\Url;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -85,8 +89,10 @@ class WarehouseController extends Controller
      */
     public function actionView($id)
     {
+        $sub_page = [];
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page,
         ]);
     }
 
@@ -103,6 +109,13 @@ class WarehouseController extends Controller
         }
         $sub_page = [];
         $model = new Warehouse();
+        $url = Url::to('', 'http');
+        $url = str_replace('create', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 1])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
             date_default_timezone_set('Asia/Yerevan');
@@ -112,7 +125,9 @@ class WarehouseController extends Controller
             $model->type = $post['Warehouse']['type'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
+            $model = Warehouse::getDefVals($model);
             $model->save();
+            Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
@@ -124,7 +139,6 @@ class WarehouseController extends Controller
         return $this->render('create', [
             'model' => $model,
             'sub_page' => $sub_page
-
         ]);
     }
 
@@ -171,6 +185,17 @@ class WarehouseController extends Controller
         }
         $model = $this->findModel($id);
         $sub_page = [];
+        $url = Url::to('', 'http');
+        $oldattributes = Warehouse::find()
+            ->select('*')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 2])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -179,6 +204,7 @@ class WarehouseController extends Controller
             $model->type = $post['Warehouse']['type'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
+            Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             $_POST['item_id'] = $model->id;
 
             if($post['newblocks'] || $post['new_fild_name']){
@@ -206,9 +232,21 @@ class WarehouseController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $oldattributes = Warehouse::find()
+            ->select('name')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 3])
+            ->asArray()
+            ->one();
         $warehouse = Warehouse::findOne($id);
         $warehouse->status = '0';
         $warehouse->save();
+        Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }
 

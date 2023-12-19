@@ -49,12 +49,13 @@ class Clients extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'route_id' => 'Երթուղի',
+            'sort_' => 'Երթուղու համար',
             'name' => 'Անուն',
             'location' => 'Տեղադիրք',
             'phone' => 'Հեռախոսահամար',
             'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Ստեղծվել է',
+            'updated_at' => 'Թարմացվել է',
         ];
     }
     public function getDefaultTitle(){

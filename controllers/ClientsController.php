@@ -83,8 +83,18 @@ class ClientsController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView()
     {
+        $id = Yii::$app->request->get('id');
+        $sub_page = [];
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+            'sub_page' => $sub_page,
+        ]);
+    }
+    public function actionClientsDebt()
+    {
+        $id = Yii::$app->request->get('id');
         $sub_page = [];
         $client_orders = Orders::find()
             ->select(['orders.id', 'orders.total_price as debt'])
@@ -95,7 +105,7 @@ class ClientsController extends Controller
             ->asArray()
             ->all();
         $payments = Payments::find()->select('SUM(payment_sum) as payments_total')->where(['client_id'=> $id])->asArray()->one();
-        return $this->render('view', [
+        return $this->render('clients_debt', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
             'client_orders' => $client_orders,
@@ -123,7 +133,6 @@ class ClientsController extends Controller
             ->asArray()
             ->one();
         if ($this->request->isPost) {
-
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
             $model->name = $post['Clients']['name'];

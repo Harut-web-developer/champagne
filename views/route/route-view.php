@@ -4,15 +4,15 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\Warehouse $model */
+/** @var app\models\Route $model */
 
-$this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Warehouses', 'url' => ['index']];
+$this->title = $model->route;
+$this->params['breadcrumbs'][] = ['label' => 'Roles', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="warehouse-view">
+<div class="roles-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -31,9 +31,8 @@ $this->params['sub_page'] = $sub_page;
         'model' => $model,
         'attributes' => [
             'id',
-            'name',
-            'location',
-            'type',
+            'route',
+//            'status',
             'created_at',
             'updated_at',
         ],
