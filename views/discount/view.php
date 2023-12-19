@@ -15,7 +15,7 @@ if ($model->id){
     if ($model->discount_check == '1'){
         $value_check = 'Կիրառել մյուս զեղչերի հետ';
     }elseif ($model->discount_check == '0'){
-        $value_check = 'Կիրառել չէ մյուս զեղչերի հետ';
+        $value_check = 'Կիրառելի չէ մյուս զեղչերի հետ';
     }else{
         $value_check = '';
     }
