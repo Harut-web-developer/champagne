@@ -64,4 +64,10 @@ class Orders extends \yii\db\ActiveRecord
     public function getClientsName(){
         return $this->hasOne(Clients::className(),['id' => 'clients_id']);
     }
+    public static function getDefVals($model){
+        if(is_null($model->status)){
+            $model->status = '1';
+        }
+        return $model;
+    }
 }

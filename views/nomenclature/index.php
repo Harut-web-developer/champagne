@@ -76,6 +76,7 @@ if ($have_access_update && $have_access_delete){
                 ],
                 'name',
                 'price',
+                'cost',
                 ...$action_column,
             ],
         ]); ?>

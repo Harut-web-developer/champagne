@@ -11,6 +11,8 @@ use Yii;
  * @property int $user_id
  * @property int $warehouse_id
  * @property int $rate_id
+ * @property int $rate_value
+ * @property int $document_type
  * @property string $comment
  * @property string $date
  * @property string $status
@@ -51,14 +53,20 @@ class Documents extends \yii\db\ActiveRecord
             'user_id' => 'Օգտատեր',
             'warehouse_id' => 'Պահեստ',
             'rate_id' => 'Փոխարժեք',
-            'rate_value' => 'Փոխարժեք',
+            'rate_value' => 'Տոկոսադրույքի արժեքը',
             'document_type' => 'Փաստաթղթի տեսակը',
             'comment' => 'Մեկնաբանություն',
             'date' => 'Ստեղծման ժամանակը',
             'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Ստեղծվել է',
+            'updated_at' => 'Թարմացվել է',
         ];
+    }
+    public static function getDefVals($model){
+        if(is_null($model->status)){
+            $model->status = '1';
+        }
+        return $model;
     }
     public function getDefaultTitle(){
         return CustomfieldsBlocksTitle::findOne(['id'=>41]);

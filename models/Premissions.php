@@ -48,11 +48,17 @@ class Premissions extends \yii\db\ActiveRecord
             'role_id' => 'Դեր',
             'name' => 'Անուն',
             'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Ստեղծվել է',
+            'updated_at' => 'Թարմացվել է',
         ];
     }
     public function getRoleName(){
         return $this->hasOne(Roles::className(), ['id'=>'role_id']);
+    }
+    public static function getDefVals($model){
+        if(is_null($model->status)){
+            $model->status = '1';
+        }
+        return $model;
     }
 }

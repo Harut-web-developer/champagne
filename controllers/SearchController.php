@@ -44,14 +44,15 @@ class SearchController extends Controller{
                 ->select('id, name')
                 ->Where(['like', 'name', $searchval])
                 ->asArray()->all();
+
             $res['query_nomenclature'] = $query_nomenclature;
             $res['query_users'] = $query_users;
             $res['query_clients'] = $query_clients;
             return $this->render('index',[
                 'res'=> $res,
                 'sub_page' => $sub_page
-                ]);
+            ]);
         }
-
+        return $this->render('index');
     }
 }

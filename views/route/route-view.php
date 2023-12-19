@@ -4,19 +4,19 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\Nomenclature $model */
+/** @var app\models\Route $model */
 
-$this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Nomenclatures', 'url' => ['index']];
+$this->title = $model->route;
+$this->params['breadcrumbs'][] = ['label' => 'Roles', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="nomenclature-view">
+<div class="roles-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
+<!--    <p>-->
 <!--        --><?php //= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
 <!--        --><?php //= Html::a('Delete', ['delete', 'id' => $model->id], [
 //            'class' => 'btn btn-danger',
@@ -25,25 +25,14 @@ $this->params['sub_page'] = $sub_page;
 //                'method' => 'post',
 //            ],
 //        ]) ?>
-    </p>
+<!--    </p>-->
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'id',
-            [
-                'attribute' => 'image',
-                'format' => 'raw',
-                'value' => function($model){
-                    return Html::img(Yii::getAlias('/upload/'). $model->image,[
-                        'alt'=>'yii2 - картинка в gridview',
-                        'style' => 'width:130px;'
-                    ]);
-                },
-            ],
-            'name',
-            'price',
-            'cost',
+            'route',
+//            'status',
             'created_at',
             'updated_at',
         ],

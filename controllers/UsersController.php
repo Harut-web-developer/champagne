@@ -3,6 +3,8 @@
 namespace app\controllers;
 
 
+use app\models\Log;
+use app\models\Premissions;
 use app\models\User;
 use app\models\UserPremissions;
 use Yii;
@@ -10,6 +12,7 @@ use app\models\Users;
 use app\models\UsersSearch;
 use app\models\Roles;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -108,8 +111,10 @@ class UsersController extends Controller
      */
     public function actionView($id)
     {
+        $sub_page = [];
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -127,6 +132,13 @@ class UsersController extends Controller
 //        echo "<pre>";
         $sub_page = [];
         $model = new Users();
+        $url = Url::to('', 'http');
+        $url = str_replace('create', 'view', $url);
+        $premission_users = Premissions::find()
+            ->select('name')
+            ->where(['id' => 13])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -139,6 +151,7 @@ class UsersController extends Controller
             $model->phone = $post['Users']['phone'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
+            $model = User::getDefVals($model);
             $model->save(false);
             if(!empty($post['premission'])){
                 for ($i = 0; $i < count($post['premission']);$i++){
@@ -154,6 +167,7 @@ class UsersController extends Controller
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
+                Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission_users);
                 return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
@@ -208,6 +222,17 @@ class UsersController extends Controller
         }
         $model = $this->findModel($id);
         $sub_page = [];
+        $url = Url::to('', 'http');
+        $oldattributes = Users::find()
+            ->select('*')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+        $premission_users = Premissions::find()
+            ->select('name')
+            ->where(['id' => 14])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -231,6 +256,7 @@ class UsersController extends Controller
                     $premission->save(false);
                 }
             }
+            Log::afterSaves('Update', $model, $oldattributes, $url, $premission_users);
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
@@ -262,9 +288,21 @@ class UsersController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $oldattributes = Users::find()
+            ->select('name')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 15])
+            ->asArray()
+            ->one();
         $users = Users::findOne($id);
         $users->status = '0';
         $users->save();
+        Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }
 
