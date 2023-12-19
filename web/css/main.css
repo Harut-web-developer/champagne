@@ -326,8 +326,12 @@
     height: 150vh !important;
     overflow-y: auto !important;
 }
-.userIcons{
-    font-size: 45px;
+.userIcons {
+    font-size: 23px;
+}
+.avatar {
+    width: 1.75rem;
+    height: 1.375rem;
 }
 .countDocuments{
     min-width: 100px;
@@ -399,7 +403,7 @@
     margin-top: 5px;
     margin-right: -40px;
     vertical-align: top;
-    font-size: 2.7rem;
+    font-size: 1.6rem;
 }
 .notification-item {
     display: flex;

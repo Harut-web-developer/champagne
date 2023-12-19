@@ -7,10 +7,13 @@ use app\models\Discount;
 use app\models\DiscountClients;
 use app\models\DiscountProducts;
 use app\models\DiscountSearch;
+use app\models\Log;
 use app\models\Nomenclature;
+use app\models\Premissions;
 use app\models\Products;
 use app\models\Users;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -99,8 +102,10 @@ class DiscountController extends Controller
      */
     public function actionView($id)
     {
+        $sub_page = [];
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page,
         ]);
     }
 
@@ -116,8 +121,14 @@ class DiscountController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
-//        echo "<pre>";
         $model = new Discount();
+        $url = Url::to('', 'http');
+        $url = str_replace('create', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 41])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -144,7 +155,7 @@ class DiscountController extends Controller
             }
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
-
+            $model = Discount::getDefVals($model);
             $model->save();
             if(!empty($post['clients'])){
                 for ($i = 0; $i < count($post['clients']);$i++){
@@ -166,6 +177,7 @@ class DiscountController extends Controller
                     $discount_products->save(false);
                 }
             }
+            Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
                 return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
@@ -196,6 +208,17 @@ class DiscountController extends Controller
         }
         $sub_page = [];
         $model = $this->findModel($id);
+        $url = Url::to('', 'http');
+        $oldattributes = Discount::find()
+            ->select('*')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 42])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -252,6 +275,7 @@ class DiscountController extends Controller
                     DiscountProducts::deleteAll(['discount_id' => $id]);
                 }
             }
+            Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $clients = Clients::find()->select('id,name')->asArray()->all();
@@ -284,9 +308,21 @@ class DiscountController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $oldattributes = Discount::find()
+            ->select('discount')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 43])
+            ->asArray()
+            ->one();
         $discount = Discount::findOne($id);
         $discount->status = '0';
         $discount->save();
+        Log::afterSaves('Delete', '', $oldattributes['discount'], '#', $premission);
         return $this->redirect(['index']);
     }
 

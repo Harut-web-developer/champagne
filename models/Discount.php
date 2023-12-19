@@ -48,14 +48,26 @@ class Discount extends \yii\db\ActiveRecord
             'id' => 'ID',
             'type' => 'Տեսակ',
             'discount' => 'Տոկոս',
-            'start_date' => 'Զեղչի սկիզբը',
+            'start_date' => 'Զեղչի սկիզբ',
             'end_date' => 'Զեղչի ավարտ',
             'discount_check' => 'Ստուգում',
+            'discount_sortable' => 'Զեղչի տեսակավորում',
             'discount_option' => 'Զեղչի ձև',
             'discount_filter_type' => 'Ֆիլտրել',
+            'min' => 'Նվազագույն',
+            'max' => 'Առավելագույն',
             'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Ստեղծվել է',
+            'updated_at' => 'Թարմացվել է',
         ];
+    }
+    public static function getDefVals($model){
+        if(is_null($model->discount_sortable	)){
+            $model->discount_sortable = 0;
+        }
+        if(is_null($model->status)){
+            $model->status = '1';
+        }
+        return $model;
     }
 }
