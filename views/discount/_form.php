@@ -47,6 +47,9 @@ use yii\widgets\ActiveForm;
                     </div>
                     <?php }else{ ?>
                         <div class="form-group selGroup">
+                            <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
+                                <?= $form->field($model, 'discount_filter_type')->dropDownList([ 'count' => 'Ըստ քանակի', 'price' => 'Ըստ գնի', ], ['prompt' => 'Ընտրել տեսակը'])?>
+                            </div>
                             <div class="clientSelect">
                                 <label for="multipleClients">Հաճախորդ</label>
                                 <select id="multipleClients" class="js-example-basic-multiple form-control" name="clients[]" multiple="multiple">
