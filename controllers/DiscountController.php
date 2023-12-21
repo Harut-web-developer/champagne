@@ -3,10 +3,12 @@
 namespace app\controllers;
 
 use app\models\Clients;
+use app\models\ClientsGroups;
 use app\models\Discount;
 use app\models\DiscountClients;
 use app\models\DiscountProducts;
 use app\models\DiscountSearch;
+use app\models\GroupsName;
 use app\models\Log;
 use app\models\Nomenclature;
 use app\models\Premissions;
@@ -130,8 +132,11 @@ class DiscountController extends Controller
             ->asArray()
             ->one();
         if ($this->request->isPost) {
+//            echo "<pre>";
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+//            var_dump($post['clients']);
+//            exit();
             $model->discount_option = $post["Discount"]['discount_option'];
             $model->type = $post["Discount"]['type'];
             $model->discount = $post["Discount"]['discount'];
@@ -158,10 +163,38 @@ class DiscountController extends Controller
             $model = Discount::getDefVals($model);
             $model->save();
             if(!empty($post['clients'])){
-                for ($i = 0; $i < count($post['clients']);$i++){
+                $client_groups_id = [];
+                $index = 0;
+                foreach ($post['clients'] as $value) {
+                    if (preg_match('/groups\[\'id\'\] = (\d+)/', $value, $matches)) {
+                        $number = $matches[1];
+                        $client_groups_id[$index] = intval($number);
+                        $index++;
+                    }
+                }
+                $all_client_groups_id = [];
+                for ($t=0; $t < count($client_groups_id); $t++)
+                {
+                    $all_client_groups_id[$t] = ClientsGroups::find()
+                        ->select('clients_id')
+                        ->where(['groups_id' => $client_groups_id[$t]])
+                        ->asArray()
+                        ->all();
+                }
+                $all_client_groups_ids = [];
+                for ($k=0; $k < count($all_client_groups_id); $k++){
+                    for ($s=0; $s < count($all_client_groups_id[$k]); $s++)
+                    array_push($all_client_groups_ids, intval($all_client_groups_id[$k][$s]['clients_id']));
+                }
+                foreach ($post['clients'] as $value) {
+                    if (!(preg_match('/groups\[\'id\'\] = (\d+)/', $value, $matches))) {
+                        array_push($all_client_groups_ids, intval($value));
+                    }
+                }
+                for ($i = 0; $i < count($all_client_groups_ids);$i++){
                     $discount_clients = new DiscountClients();
                     $discount_clients->discount_id = $model->id;
-                    $discount_clients->client_id = $post['clients'][$i];
+                    $discount_clients->client_id = $all_client_groups_ids[$i];
                     $discount_clients->created_at = date('Y-m-d H:i:s');
                     $discount_clients->updated_at = date('Y-m-d H:i:s');
                     $discount_clients->save(false);
@@ -184,10 +217,12 @@ class DiscountController extends Controller
         }
             $clients = Clients::find()->select('id,name')->asArray()->all();
             $products = Nomenclature::find()->select('id,name')->asArray()->all();
+            $discount_client_groups = GroupsName::find()->select('*')->asArray()->all();
         return $this->render('create', [
             'model' => $model,
             'clients' => $clients,
             'products' => $products,
+            'discount_client_groups' => $discount_client_groups,
             'sub_page' => $sub_page
 
         ]);
