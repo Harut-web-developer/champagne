@@ -377,7 +377,7 @@ $(document).ready(function() {
         orientation:"horizontal",
         min: 0,
         max: 10000,
-        values: [0, 10000],
+        values: [0, 1000000],
         step: 100,
         slide:function (event, ui) {
             if (ui.values[0] == ui.values[1]) {
@@ -387,6 +387,62 @@ $(document).ready(function() {
             $("#max_price").val(ui.values[1]);
         }
     });
+
+    $('body').on('change', '#discount-start_date, #discount-end_date', function (){
+        let start = $('#discount-start_date').val();
+        let end = $('#discount-end_date').val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/discount/check-date',
+            method:'post',
+            datatype:'json',
+            data:{
+                start:start,
+                end:end,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                let pars = JSON.parse(data);
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based, so we add 1
+                const day = String(today.getDate()).padStart(2, '0');
+                if(pars == 'later'){
+                    alert('Զեղչի սկիզբը չի կարող ավելի շուտ լինել քան այսօրը:')
+                    $('#discount-start_date').val(`${year}-${month}-${day}`);
+                }else if (pars == 'more'){
+                    alert('Ընտրեք ճիշտ ամսաթվեր:');
+                    $('#discount-start_date').val(`${year}-${month}-${day}`);
+                    $('#discount-end_date').val('');
+                }
+            }
+        })
+    })
+    $('body').on('keyup', '.min-value, .max-value', function (){
+        let min = $('.min-value').val();
+        let max = $('.max-value').val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/discount/check-filter-value',
+            method:'post',
+            datatype:'json',
+            data:{
+                min:min,
+                max:max,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                let pars = JSON.parse(data);
+
+                if(pars == 'maxMoreThanMin'){
+                    alert('Թվերը գրել ճիշտ:')
+                    $('.min-value').val('');
+                    $('.max-value').val('');
+                }
+            }
+        })
+    })
+
 
 });
 

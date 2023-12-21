@@ -121,6 +121,7 @@ class DiscountController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            $model->name = $post["Discount"]['name'];
             $model->discount_option = $post["Discount"]['discount_option'];
             $model->type = $post["Discount"]['type'];
             $model->discount = $post["Discount"]['discount'];
@@ -142,6 +143,7 @@ class DiscountController extends Controller
                 $model->min = $post['min'];
                 $model->max = $post['max'];
             }
+            $model->comment = $post["Discount"]['comment'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
 
@@ -190,6 +192,7 @@ class DiscountController extends Controller
      */
     public function actionUpdate($id)
     {
+//        echo "<pre>";
         $have_access = Users::checkPremission(42);
         if(!$have_access){
             $this->redirect('/site/403');
@@ -199,10 +202,14 @@ class DiscountController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            $model->name = $post["Discount"]['name'];
+            $model->discount_option = $post["Discount"]['discount_option'];
             $model->type = $post["Discount"]['type'];
             $model->discount = $post["Discount"]['discount'];
-            if (empty($post["Discount"]['start_date'])){
+            if (empty($post["Discount"]['start_date']) && empty($post["Discount"]['end_date'])){
                 $model->start_date = null;
+            }elseif (empty($post["Discount"]['start_date'])){
+                $model->start_date = date('Y-m-d');
             }else{
                 $model->start_date = $post["Discount"]['start_date'];
             }
@@ -212,6 +219,12 @@ class DiscountController extends Controller
                 $model->end_date = $post["Discount"]['end_date'];
             }
             $model->discount_check = $post["Discount"]['discount_check'];
+            if (!empty($post['Discount']['discount_filter_type'])){
+                $model->discount_filter_type = $post['Discount']['discount_filter_type'];
+                $model->min = $post['min'];
+                $model->max = $post['max'];
+            }
+            $model->comment = $post["Discount"]['comment'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
             if(!empty($post['clients'])){
@@ -260,13 +273,17 @@ class DiscountController extends Controller
         $products = Nomenclature::find()->select('id,name')->asArray()->all();
         $discount_products_id = DiscountProducts::find()->select('product_id')->where(['discount_id' => $id])->asArray()->all();
         $discount_products_id = array_column($discount_products_id,'product_id');
+        $min = Discount::find()->select('min')->where(['id' => $id])->asArray()->one();
+        $max = Discount::find()->select('max')->where(['id' => $id])->asArray()->one();
         return $this->render('update', [
             'model' => $model,
             'clients' => $clients,
             'products' => $products,
             'discount_clients_id' => $discount_clients_id,
             'discount_products_id' => $discount_products_id,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'min' => $min,
+            'max' => $max
 
         ]);
     }
@@ -288,6 +305,29 @@ class DiscountController extends Controller
         $discount->status = '0';
         $discount->save();
         return $this->redirect(['index']);
+    }
+    public function actionCheckDate(){
+        if ($this->request->isPost){
+            $post = $this->request->post();
+            if (!empty($post['start']) && empty($post['end']) && $post['start'] < date('Y-m-d')){
+                return json_encode('later');
+            }elseif (!empty($post['start']) && !empty($post['end']) && $post['start'] > $post['end']){
+                return json_encode('more');
+            }elseif (!empty($post['start']) && !empty($post['end']) && $post['start'] < date('Y-m-d')){
+                return json_encode('later');
+            }else{
+                return json_encode('exist');
+            }
+        }
+    }
+
+    public function actionCheckFilterValue(){
+        if ($this->request->isPost){
+            $post = $this->request->post();
+            if (!empty($post['min']) && !empty($post['max']) && $post['min'] > $post['max']){
+                return json_encode('maxMoreThanMin');
+            }
+        }
     }
 
     /**

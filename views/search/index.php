@@ -1,6 +1,9 @@
 <?php
 $this->params['sub_page'] = $sub_page;
 ?>
+<div class="titleAndPrevPage">
+    <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
+</div>
 <table class="table">
     <thead>
     <tr>

@@ -60,7 +60,10 @@ class RatesController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [];
+        $sub_page = [
+            ['name' => 'Վիճակագրություն','address' => '/payments/statistics'],
+            ['name' => 'Վճարումներ','address' => '/payments'],
+        ];
         $searchModel = new RatesSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 

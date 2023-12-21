@@ -20,7 +20,7 @@
                     <td><?=$keys + 1?></td>
                     <td>
                         <input data-id="<?=$nomenclature['id']?>" type="checkbox">
-                        <input class="productIdInput" data-product="<?=$nomenclature['products_id']?>" type="hidden">
+                        <input class="productIdInput" data-product="<?=$nomenclature['nomenclature_id']?>" type="hidden">
                     </td>
                     <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
                     <td class="nomenclatureName"><?=$nomenclature['name']?></td>

@@ -128,9 +128,10 @@ if ($have_access_update && $have_access_delete && $have_access_view){
 }
 ?>
 <div class="route-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
+    <div class="titleAndPrevPage">
+        <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
+        <h3><?= Html::encode($this->title) ?></h3>
+    </div>
     <p>
         <?php if($have_access_create){ ?>
             <?= Html::a('Ստեղծել երթուղի', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>

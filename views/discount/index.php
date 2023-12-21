@@ -49,7 +49,10 @@ if ($have_access_update && $have_access_delete){
 }
 ?>
 <div class="discount-index">
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="titleAndPrevPage">
+        <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
+        <h3><?= Html::encode($this->title) ?></h3>
+    </div>
         <p>
             <?php if($have_access_create){ ?>
                 <?= Html::a('Ստեղծել զեղչ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
@@ -63,6 +66,7 @@ if ($have_access_update && $have_access_delete){
                 <thead>
                 <tr>
                     <th>#</th>
+                    <th>Անուն</th>
                     <th>Տեսակ</th>
                     <th>Տոկոս</th>
                     <th>Զեղչի սկիզբ</th>
@@ -77,6 +81,14 @@ if ($have_access_update && $have_access_delete){
                         <td>
                             <input type="hidden" name="sort[]" value="<?=$item['id']?>">
                             <span class="fw-medium"><?=$keys + 1?></span>
+                        </td>
+                        <td>
+                            <?php
+                            if ($item['name'] == ''){
+                                echo 'Դատարկ';
+                            }else{
+                                echo $item['name'];
+                            }?>
                         </td>
                         <td>
                             <?php

@@ -12,7 +12,10 @@ $this->params['sub_page'] = $sub_page;
 ?>
 <div class="nomenclature-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="titleAndPrevPage">
+        <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
+        <h3><?= Html::encode($this->title) ?></h3>
+    </div>
 
     <?= $this->render('_form_fields', [
         'model' => $model,

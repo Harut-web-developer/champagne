@@ -18,7 +18,10 @@ $this->params['sub_page'] = $sub_page;
 
 ?>
 <div class="payments-index">
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="titleAndPrevPage">
+        <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
+        <h3><?= Html::encode($this->title) ?></h3>
+    </div>
     <p>
         <?= Html::a('Կատարել վճար', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
     </p>

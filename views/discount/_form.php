@@ -16,6 +16,9 @@ use yii\widgets\ActiveForm;
                     <span class="non-active">Զեղչ</span>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
+                    <?= $form->field($model, 'name')->input('text') ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
                     <?= $form->field($model, 'discount_option')->dropDownList([ '1' => 'Մեկ անգամյա', '2' => 'Բազմակի', ], ['prompt' => '']) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
@@ -45,6 +48,19 @@ use yii\widgets\ActiveForm;
                             <?php } ?>
                         </select>
                     </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 discountEndDate">
+                        <div class="price-range-block">
+                            <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
+                                <?= $form->field($model, 'discount_filter_type')->dropDownList([ 'count' => 'Ըստ քանակի', 'price' => 'Ըստ գնի', ], ['prompt' => 'Ընտրել տեսակը'])?>
+                            </div>
+                            <div id="slider-range" class="price-filter-range" name="rangeInput"></div>
+                            <div>
+                                <input type="number" name="min" min=0 max="500000" value="<?=$min['min']?>" oninput="validity.valid||(value='0');" id="min_price" class="price-range-field min-value" />
+                                <input type="number" name="max" min=0 max="1000000" value="<?=$max['max']?>" oninput="validity.valid||(value='1000000');" id="max_price" class="price-range-field max-value" />
+                            </div>
+                            <!--                        <div id="searchResults" class="search-results-block"></div>-->
+                        </div>
+                    </div>
                     <?php }else{ ?>
                         <div class="form-group selGroup">
                             <div class="clientSelect">
@@ -64,28 +80,32 @@ use yii\widgets\ActiveForm;
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group col-md-12 col-lg-12 col-sm-12 discountEndDate">
+                            <div class="price-range-block">
+                                <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
+                                    <?= $form->field($model, 'discount_filter_type')->dropDownList([ 'count' => 'Ըստ քանակի', 'price' => 'Ըստ գնի', ], ['prompt' => 'Ընտրել տեսակը'])?>
+                                </div>
+                                <div id="slider-range" class="price-filter-range" name="rangeInput"></div>
+                                <div>
+                                    <input type="number" name="min" min=0 max="500000" oninput="validity.valid||(value='0');" id="min_price" class="price-range-field min-value" />
+                                    <input type="number" name="max" min=0 max="1000000" oninput="validity.valid||(value='1000000');" id="max_price" class="price-range-field max-value" />
+                                </div>
+                                <!--                        <div id="searchResults" class="search-results-block"></div>-->
+                            </div>
+                        </div>
 
                     <?php } ?>
 
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountStartDate">
-                    <?= $form->field($model, 'start_date')->input('date') ?>
+                    <?= $form->field($model, 'start_date')->input('date',['value' => date('Y-m-d')]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountEndDate">
                     <?= $form->field($model, 'end_date')->input('date') ?>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 discountEndDate">
-                    <div class="price-range-block">
-                        <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
-                            <?= $form->field($model, 'discount_filter_type')->dropDownList([ 'count' => 'Ըստ քանակի', 'price' => 'Ըստ գնի', ], ['prompt' => 'Ընտրել տեսակը'])?>
-                        </div>
-                        <div id="slider-range" class="price-filter-range" name="rangeInput"></div>
-                        <div>
-                            <input type="number" name="min" min=0 max="9900" oninput="validity.valid||(value='2200');" id="min_price" class="price-range-field" />
-                            <input type="number" name="max" min=0 max="10000" oninput="validity.valid||(value='10000');" id="max_price" class="price-range-field" />
-                        </div>
-<!--                        <div id="searchResults" class="search-results-block"></div>-->
-                    </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
+                    <?= $form->field($model, 'comment')->textarea(['rows' => '4']) ?>
                 </div>
+
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountCheck">
                     <?= $form->field($model, 'discount_check')->checkbox(['label' => 'Կիրառել մյուս զեղչերի հետ'],false) ?>
                 </div>

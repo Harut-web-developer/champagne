@@ -21,6 +21,8 @@ $this->params['sub_page'] = $sub_page;
         'products' => $products,
         'discount_clients_id' => $discount_clients_id,
         'discount_products_id' => $discount_products_id,
+        'min' => $min,
+        'max' => $max
     ]) ?>
 
 </div>

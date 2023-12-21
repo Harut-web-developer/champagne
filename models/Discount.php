@@ -46,6 +46,7 @@ class Discount extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'name' => 'Անուն',
             'type' => 'Տեսակ',
             'discount' => 'Տոկոս',
             'start_date' => 'Զեղչի սկիզբը',
@@ -53,6 +54,7 @@ class Discount extends \yii\db\ActiveRecord
             'discount_check' => 'Ստուգում',
             'discount_option' => 'Զեղչի ձև',
             'discount_filter_type' => 'Ֆիլտրել',
+            'comment' => 'Մեկնաբանություն',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

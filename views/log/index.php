@@ -19,37 +19,40 @@ $have_access_create = Users::checkPremission(25);
 $have_access_update = Users::checkPremission(26);
 $have_access_delete = Users::checkPremission(27);
 $action_column = [];
-//if ($have_access_update && $have_access_delete){
-//    $action_column[] = [
-//        'header' => 'Գործողություն',
-//        'class' => ActionColumn::className(),
-//        'template' => '{update} {delete}',
-//        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
-//            return Url::toRoute([$action, 'id' => $model->id]);
-//        }
-//    ];
-//} else if($have_access_update){
-//    $action_column[] = [
-//        'header' => 'Գործողություն',
-//        'class' => ActionColumn::className(),
-//        'template' => '{update}',
-//        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
-//            return Url::toRoute([$action, 'id' => $model->id]);
-//        }
-//    ];
-//}else if($have_access_delete){
-//    $action_column[] = [
-//        'header' => 'Գործողություն',
-//        'class' => ActionColumn::className(),
-//        'template' => '{delete}',
-//        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
-//            return Url::toRoute([$action, 'id' => $model->id]);
-//        }
-//    ];
-//}
+if ($have_access_update && $have_access_delete){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{update} {delete}',
+        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+} else if($have_access_update){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{update}',
+        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}else if($have_access_delete){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{delete}',
+        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}
 ?>
 <div class="log-index">
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="titleAndPrevPage">
+        <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
+        <h3><?= Html::encode($this->title) ?></h3>
+    </div>
     <p>
 <!--        --><?php //if($have_access_create){ ?>
 <!--            --><?php //= Html::a('Ստեղծել տեղեկամատյան', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>

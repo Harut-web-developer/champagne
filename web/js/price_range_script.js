@@ -48,8 +48,8 @@ $(document).ready(function(){
 			range: true,
 			orientation: "horizontal",
 			min: 0,
-			max: 10000,
-			values: [2200, 2000],
+			max: 1000000,
+			values: [0, 1000000],
 			step: 100,
 
 			slide: function (event, ui) {

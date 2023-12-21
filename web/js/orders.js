@@ -7,22 +7,18 @@ $(document).ready(function () {
         $('.addOrdersTableTr').each(function () {
             if ($(this).find("input:checkbox").is(':checked')) {
                 let id = $(this).find("input:checkbox").attr('data-id');
-                let product_id = $(this).find('.productIdInput').data('product');
+                let nomenclature_id = $(this).find('.productIdInput').data('product');
                 let name = $(this).children(".nomenclatureName").text();
                 let count = parseFloat($(this).children('.ordersAddCount').find('.ordersCountInput').val());
                 let price = +parseFloat($(this).children('.ordersAddCount').find('.ordersPriceInput').val()).toFixed(2);
                 let cost = $(this).children('.ordersAddCount').find('.ordersCostInput').val();
-                let discount = $(this).children('.ordersAddCount').find('.ordersDiscountInput').val();
-                let priceBeforeDiscount = $(this).children('.ordersAddCount').find('.ordersPriceBrforeDiscount').val();
                 let total = +parseFloat(price * count).toFixed(2);
                 addOrdersTableBody +=`<tr class="tableNomenclature">
-                                        <th>`+id+` <input type="hidden" name="order_items[]" value="`+id+`"><input type="hidden" name="product_id[]" value="`+product_id+`"></th>
+                                        <th>`+id+` <input type="hidden" name="order_items[]" value="`+id+`"><input type="hidden" name="nomenclature_id[]" value="`+nomenclature_id+`"></th>
                                         <td class="name">`+name+`</td>
                                         <td class="count"><input type="number" name="count_[]" value="`+count+`" class="form-control countProduct"></td>
                                         <td class="price">`+price+` <input type="hidden" name="price[]" value="`+price+`"></td>
                                         <td class="cost">`+cost+` <input type="hidden" name="cost[]" value="`+cost+`"></td>
-<!--                                        <td class="discount">`+discount+` <input type="hidden" name="discount[]" value="`+discount+`"></td>-->
-<!--                                        <td class="priceBeforeDiscount">`+priceBeforeDiscount+` <input type="hidden" name="priceBeforeDiscount[]" value="`+priceBeforeDiscount+`"></td>-->
                                         <td class="total"><span>`+total+`</span><input type="hidden" name="total[]" value="`+total+`"></td>
                                         <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                      </tr>`;
@@ -92,25 +88,21 @@ $(document).ready(function () {
         $('.addOrdersTableTr').each(function () {
             if ($(this).find("input:checkbox").is(':checked')) {
                 let id = $(this).find("input:checkbox").attr('data-id');
-                let product_id = $(this).find('.productIdInput').data('product');
+                let nomenclature_id = $(this).find('.productIdInput').data('product');
                 let name = $(this).children(".nomenclatureName").text();
                 let count = parseFloat($(this).children('.ordersAddCount').find('.ordersCountInput').val());
                 let price = +parseFloat($(this).children('.ordersAddCount').find('.ordersPriceInput').val()).toFixed(2);
                 let cost = $(this).children('.ordersAddCount').find('.ordersCostInput').val();
-                let discount = $(this).children('.ordersAddCount').find('.ordersDiscountInput').val();
-                let priceBeforeDiscount = $(this).children('.ordersAddCount').find('.ordersPriceBrforeDiscount').val();
                 let total = +parseFloat(price * count).toFixed(2);
                 addOrdersTableBody +=`<tr class="tableNomenclature">
-                                        <th>`+id+` <input type="hidden" name="order_items[]" value="null">
-                                            <input type="hidden" name="product_id[]" value="`+product_id+`">
-                                            <input type="hidden" name="nom_id[]" value="`+id+`">
-                                        </th>
+                                        <td>`+nomenclature_id+` <input type="hidden" name="order_items[]" value="null">
+                                            <input type="hidden" name="product_id[]" value="`+id+`">
+                                            <input type="hidden" name="nom_id[]" value="`+nomenclature_id+`">
+                                        </td>
                                         <td class="name">`+name+`</td>
                                         <td class="count"><input type="number" name="count_[]" value="`+count+`" class="form-control countProduct"></td>
                                         <td class="price">`+price+` <input type="hidden" name="price[]" value="`+price+`"></td>
                                         <td class="cost">`+cost+` <input type="hidden" name="cost[]" value="`+cost+`"></td>
-<!--                                        // <td class="discount">`+discount+` <input type="hidden" name="discount[]" value="`+discount+`"></td>-->
-<!--                                        // <td class="priceBeforeDiscount">`+priceBeforeDiscount+` <input type="hidden" name="priceBeforeDiscount[]" value="`+priceBeforeDiscount+`"></td>-->
                                         <td class="total"><span>`+total+`</span><input type="hidden" name="total[]" value="`+total+`"></td>
                                         <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                      </tr>`;

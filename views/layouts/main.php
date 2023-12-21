@@ -84,12 +84,9 @@ $sub_page = $this->params['sub_page'];
 <!--                        <i class="menu-icon tf-icons bx bx-home-circle"></i>-->
                         <div data-i18n="Dashboards"><a href="/dashboard">Dashboards</a></div>
                     </div>
-<!--                    <a href="javascript:void(0);" class="menu-link menu-toggle">-->
-<!---->
-<!--                      <div class="badge bg-danger rounded-pill ms-auto">5</div>-->
-<!--                    </a>-->
-
-                    <ul class="menu-sub">
+                </li>
+                <li class="menu-item open">
+                    <ul class="menu-sub main_menu">
                         <li class="menu-item ">
                             <a href="/dashboard" class="menu-link">
                                 <i class='bx bx-bar-chart-alt-2'></i>
@@ -102,11 +99,39 @@ $sub_page = $this->params['sub_page'];
                                 <div data-i18n="Analytics">Քարտեզ</div>
                             </a>
                         </li>
-                        <li class="menu-item ">
-                            <a href="/warehouse" class="menu-link">
-                                <i class='bx bx-building' ></i>
-                                <div data-i18n="Analytics">Պահեստներ</div>
+                        <li class="menu-item" style="">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-building"></i>
+                                <div data-i18n="warehouse">Պահեստներ</div>
                             </a>
+
+                            <ul class="menu-sub sub_menu_sub">
+                                <li class="menu-item">
+                                    <a href="/documents" class="menu-link">
+                                        <div data-i18n="documents">Փաստաթուղթ</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="/nomenclature" class="menu-link">
+                                        <div data-i18n="nomenclature">Անվանակարգ</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="/products" class="menu-link">
+                                        <div data-i18n="products">Ապրանքներ</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="/log" class="menu-link">
+                                        <div data-i18n="log">Տեղեկամատյան</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="/warehouse" class="menu-link">
+                                        <div data-i18n="Blank">Պահեստներ</div>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="menu-item ">
                             <a href="/clients" class="menu-link">
@@ -114,34 +139,66 @@ $sub_page = $this->params['sub_page'];
                                 <div data-i18n="Analytics">Հաճախորդներ</div>
                             </a>
                         </li>
-                        <li class="menu-item ">
-                            <a href="/users" class="menu-link">
-                                <i class='bx bx-male-female' ></i>
-                                <div data-i18n="Analytics">Օգտատեր</div>
+                        <li class="menu-item" style="">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-male-female"></i>
+                                <div data-i18n="users">Օգտատեր</div>
                             </a>
+
+                            <ul class="menu-sub sub_menu_sub">
+                                <li class="menu-item">
+                                    <a href="/roles" class="menu-link">
+                                        <div data-i18n="roles">Կարգավիճակ</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="/premissions" class="menu-link">
+                                        <div data-i18n="premissions">Թույլտվություններ</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="/users" class="menu-link">
+                                        <div data-i18n="users">Օգտատեր</div>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
+
+
                         <li class="menu-item ">
                             <a href="/orders" class="menu-link">
                                 <i class='bx bx-cart-add' ></i>
                                 <div data-i18n="Analytics">Վաճառքներ</div>
                             </a>
                         </li>
-                        <li class="menu-item ">
-                            <a href="/payments" class="menu-link">
-                                <i class="bx bx-money-withdraw"></i>
-                                <div data-i18n="Analytics">Վճարումներ</div>
+                        <li class="menu-item" style="">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-money-withdraw"></i>
+                                <div data-i18n="users">Վճարումներ</div>
                             </a>
+
+                            <ul class="menu-sub sub_menu_sub">
+                                <li class="menu-item">
+                                    <a href="/payments" class="menu-link">
+                                        <div data-i18n="roles">Վճարումներ</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="/payments/statistics" class="menu-link">
+                                        <div data-i18n="premissions">Վիճակագրություն</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="/rates" class="menu-link">
+                                        <div data-i18n="users">Փոխարժեք</div>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="menu-item ">
                             <a href="/discount" class="menu-link">
                                 <i class='bx bxs-bank'></i>
-                                <div data-i18n="Analytics">Զեղչ</div>
-                            </a>
-                        </li>
-                        <li class="menu-item ">
-                            <a href="/rates" class="menu-link">
-                                <i class='bx bx-receipt'></i>
-                                <div data-i18n="Analytics">Փոխարժեք</div>
+                                <div data-i18n="Analytics">Զեղչեր</div>
                             </a>
                         </li>
                         <li class="menu-item ">
