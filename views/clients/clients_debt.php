@@ -26,7 +26,7 @@ $this->params['sub_page'] = $sub_page;
                     <th>Balance</th>
                 </tr>
                 </thead>
-                <tbody class="table-border-bottom-0">
+                <tbody class="table-border-bottom-0 debtPaymentBody">
                 <?php
                 $debt_total = 0;
                 //                echo '<pre>';

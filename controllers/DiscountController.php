@@ -3,14 +3,19 @@
 namespace app\controllers;
 
 use app\models\Clients;
+use app\models\ClientsGroups;
 use app\models\Discount;
 use app\models\DiscountClients;
 use app\models\DiscountProducts;
 use app\models\DiscountSearch;
+use app\models\GroupsName;
+use app\models\Log;
 use app\models\Nomenclature;
+use app\models\Premissions;
 use app\models\Products;
 use app\models\Users;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -58,14 +63,26 @@ class DiscountController extends Controller
      */
     public function actionIndex()
     {
+//        echo "<pre>";
         $have_access = Users::checkPremission(44);
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [];
+        $sub_page = [
+            ['name' => 'Ոչ ակտիվ զեղչեր','address' => '/discount/inactive'],
+
+        ];
         $searchModel = new DiscountSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $discount_sortable = Discount::find()->where(['status' => 1])->orderBy(['discount_sortable'=> SORT_ASC])->asArray()->all();
+        $discount_overdue = Discount::find()->where(['status' => 1])->all();
+
+        foreach ($discount_overdue as $key => $value){
+            if (!empty($value['end_date']) && $value['end_date'] < date('Y-m-d')){
+                $value->status = '2';
+                $value->save(false);
+            }
+        }
+        $discount_sortable = Discount::find()->where(['status' => 1])->orderBy(['end_date'=> SORT_ASC])->asArray()->all();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -90,7 +107,17 @@ class DiscountController extends Controller
             return 'error';
         }
     }
-
+    public function actionInactive(){
+//        echo "<pre>";
+        $sub_page = [
+            ['name' => 'Ակտիվ զեղչեր','address' => '/discount'],
+        ];
+        $discount_sortable = Discount::find()->where(['or',['status' => '0'],['status' => '2']])->asArray()->all();
+        return $this->render('inactive', [
+            'sub_page' => $sub_page,
+            'discount_sortable' => $discount_sortable
+        ]);
+    }
     /**
      * Displays a single Discount model.
      * @param int $id ID
@@ -99,8 +126,10 @@ class DiscountController extends Controller
      */
     public function actionView($id)
     {
+        $sub_page = [];
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page,
         ]);
     }
 
@@ -116,8 +145,14 @@ class DiscountController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
-//        echo "<pre>";
         $model = new Discount();
+        $url = Url::to('', 'http');
+        $url = str_replace('create', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 41])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -146,13 +181,41 @@ class DiscountController extends Controller
             $model->comment = $post["Discount"]['comment'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
-
+            $model = Discount::getDefVals($model);
             $model->save();
             if(!empty($post['clients'])){
-                for ($i = 0; $i < count($post['clients']);$i++){
+                $client_groups_id = [];
+                $index = 0;
+                foreach ($post['clients'] as $value) {
+                    if (preg_match('/groups\[\'id\'\] = (\d+)/', $value, $matches)) {
+                        $number = $matches[1];
+                        $client_groups_id[$index] = intval($number);
+                        $index++;
+                    }
+                }
+                $all_client_groups_id = [];
+                for ($t=0; $t < count($client_groups_id); $t++)
+                {
+                    $all_client_groups_id[$t] = ClientsGroups::find()
+                        ->select('clients_id')
+                        ->where(['groups_id' => $client_groups_id[$t]])
+                        ->asArray()
+                        ->all();
+                }
+                $all_client_groups_ids = [];
+                for ($k=0; $k < count($all_client_groups_id); $k++){
+                    for ($s=0; $s < count($all_client_groups_id[$k]); $s++)
+                    array_push($all_client_groups_ids, intval($all_client_groups_id[$k][$s]['clients_id']));
+                }
+                foreach ($post['clients'] as $value) {
+                    if (!(preg_match('/groups\[\'id\'\] = (\d+)/', $value, $matches))) {
+                        array_push($all_client_groups_ids, intval($value));
+                    }
+                }
+                for ($i = 0; $i < count($all_client_groups_ids);$i++){
                     $discount_clients = new DiscountClients();
                     $discount_clients->discount_id = $model->id;
-                    $discount_clients->client_id = $post['clients'][$i];
+                    $discount_clients->client_id = $all_client_groups_ids[$i];
                     $discount_clients->created_at = date('Y-m-d H:i:s');
                     $discount_clients->updated_at = date('Y-m-d H:i:s');
                     $discount_clients->save(false);
@@ -168,16 +231,19 @@ class DiscountController extends Controller
                     $discount_products->save(false);
                 }
             }
+            Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
                 return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
             $clients = Clients::find()->select('id,name')->asArray()->all();
             $products = Nomenclature::find()->select('id,name')->asArray()->all();
+            $discount_client_groups = GroupsName::find()->select('*')->asArray()->all();
         return $this->render('create', [
             'model' => $model,
             'clients' => $clients,
             'products' => $products,
+            'discount_client_groups' => $discount_client_groups,
             'sub_page' => $sub_page
 
         ]);
@@ -192,13 +258,23 @@ class DiscountController extends Controller
      */
     public function actionUpdate($id)
     {
-//        echo "<pre>";
         $have_access = Users::checkPremission(42);
         if(!$have_access){
             $this->redirect('/site/403');
         }
         $sub_page = [];
         $model = $this->findModel($id);
+        $url = Url::to('', 'http');
+        $oldattributes = Discount::find()
+            ->select('*')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 42])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -265,6 +341,7 @@ class DiscountController extends Controller
                     DiscountProducts::deleteAll(['discount_id' => $id]);
                 }
             }
+            Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $clients = Clients::find()->select('id,name')->asArray()->all();
@@ -301,9 +378,21 @@ class DiscountController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $oldattributes = Discount::find()
+            ->select('discount')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 43])
+            ->asArray()
+            ->one();
         $discount = Discount::findOne($id);
         $discount->status = '0';
         $discount->save();
+        Log::afterSaves('Delete', '', $oldattributes['discount'], '#', $premission);
         return $this->redirect(['index']);
     }
     public function actionCheckDate(){

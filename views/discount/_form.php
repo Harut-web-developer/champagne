@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
                     <?= $form->field($model, 'discount_option')->dropDownList([ '1' => 'Մեկ անգամյա', '2' => 'Բազմակի', ], ['prompt' => '']) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
-                    <?= $form->field($model, 'type')->dropDownList([ 'percent' => 'Տոկոսով', 'money' => 'Գումարով', ], ['prompt' => '']) ?>
+                        <?= $form->field($model, 'type')->dropDownList([ 'percent' => 'Տոկոսով', 'money' => 'Գումարով', ], ['prompt' => '']) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discount">
                     <?= $form->field($model, 'discount')->input('number') ?>
@@ -64,10 +64,13 @@ use yii\widgets\ActiveForm;
                     <?php }else{ ?>
                         <div class="form-group selGroup">
                             <div class="clientSelect">
-                                <label for="multipleClients">Հաճախորդ</label>
+                                <label for="multipleClients">Հաճախորդ և խմբեր</label>
                                 <select id="multipleClients" class="js-example-basic-multiple form-control" name="clients[]" multiple="multiple">
                                     <?php foreach ($clients as $client){ ?>
                                         <option value="<?=$client['id']?>"><?=$client['name']?></option>
+                                    <?php } ?>
+                                    <?php foreach ($discount_client_groups as $index => $client_groups ){ ?>
+                                        <option value="<?= "groups['id'] = " . $client_groups['id'] ?>"><?= $client_groups['groups_name'] ?></option>
                                     <?php } ?>
                                 </select>
                             </div>

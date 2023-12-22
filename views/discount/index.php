@@ -71,6 +71,12 @@ if ($have_access_update && $have_access_delete){
                     <th>Տոկոս</th>
                     <th>Զեղչի սկիզբ</th>
                     <th>Զեղչի ավարտ</th>
+                    <th>Ստուգում</th>
+                    <th>Զեղչի տեսակավորում</th>
+                    <th>Զեղչի ձև</th>
+                    <th>Զեղչի տեսակ</th>
+                    <th>Նվազագույն</th>
+                    <th>Առավելագույն</th>
                     <th>Գործողուրյուն</th>
                 </tr>
                 </thead>
@@ -114,6 +120,54 @@ if ($have_access_update && $have_access_delete){
                             }else{
                                 echo $item['end_date'];
                             }?>
+                        </td>
+                        <td>
+                            <?php
+                            if ($item['discount_check'] == '1'){
+                                echo 'Կիրառել մյուս զեղչերի հետ';
+                            }elseif ($item['discount_check'] == '0'){
+                                echo 'Կիրառելի չէ մյուս զեղչերի հետ';
+                            }
+                            ?>
+                        </td>
+                        <td><?=$item['discount_sortable']?></td>
+                        <td>
+                            <?php
+                            if ($item['discount_option'] == '1'){
+                                echo 'Մեկ անգամյա';
+                            }elseif ($item['discount_option'] == '2'){
+                                echo 'Բազմակի';
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            if ($item['discount_filter_type'] == 'count'){
+                                echo 'Ըստ քանակի';
+                            }elseif ($item['discount_filter_type'] == 'price'){
+                                echo 'Ըստ գնի';
+                            }else{
+                                echo 'Դատարկ';
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            if (empty($item['min'])){
+                                echo 'Դատարկ';
+                            }else{
+                                echo $item['min'];
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            if (empty($item['max'])){
+                                echo 'Դատարկ';
+                            }else{
+                                echo $item['max'];
+                            }
+                            ?>
                         </td>
                         <td>
                             <a href="/discount/update?id=<?=$item['id']?>">

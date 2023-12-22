@@ -442,7 +442,12 @@ $(document).ready(function() {
             }
         })
     })
-
+    $(window).on('load', function (){
+        // console.log('asasas')
+        $('.debtPaymentBody tr').each(function (index, element) {
+            console.log(element)
+        })
+    })
 
 });
 

@@ -66,7 +66,10 @@ class ClientsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [];
+        $sub_page = [
+            ['name' => 'Խմբեր','address' => '/groups-name'],
+
+        ];
         $searchModel = new ClientsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -94,7 +97,7 @@ class ClientsController extends Controller
     }
     public function actionClientsDebt()
     {
-        $id = Yii::$app->request->get('id');
+        $id = intval(Yii::$app->request->get('id'));
         $sub_page = [];
         $client_orders = Orders::find()
             ->select(['orders.id', 'orders.total_price as debt'])
@@ -104,7 +107,9 @@ class ClientsController extends Controller
             ->groupBy('orders.id')
             ->asArray()
             ->all();
+
         $payments = Payments::find()->select('SUM(payment_sum) as payments_total')->where(['client_id'=> $id])->asArray()->one();
+
         return $this->render('clients_debt', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,

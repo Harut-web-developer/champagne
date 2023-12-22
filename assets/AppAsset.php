@@ -23,20 +23,19 @@ class AppAsset extends AssetBundle
         'css/site.css',
     ];
     public $js = [
-        '/js/helpers.js',
-        '/js/config.js',
-        '/js/menu.js',
-        '/js/main.js',
-        '/js/apexcharts.js',
-        '/js/dashboards-analytics.js',
-        '/js/bootstrap.js',
-//        '/js/jquery.js',
-        '/js/perfect-scrollbar.js',
         '/js/popper.js',
+        '/js/bootstrap.js',
+        '/js/perfect-scrollbar.js',
+        '/js/menu.js',
+        '/js/apexcharts.js',
+        '/js/main.js',
+        '/js/charts.js',
+        '/js/dashboards-analytics.js',
+//        '/js/jquery.js',
         '/js/script.js',
         'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.2.1/exceljs.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js',
-        '/js/select2.min.js'
+        '/js/select2.min.js',
 
     ];
     public $depends = [

@@ -43,6 +43,8 @@ $sub_page = $this->params['sub_page'];
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css" type="text/css" media="all" />
     <link rel="stylesheet" href="/css/price_range_style.css">
     <link rel="stylesheet" href="/css/main.css">
+    <script src="/js/helpers.js""></script>
+    <script src="/js/config.js""></script>
     <?= Html::csrfMetaTags() ?>
 </head>
 <body>
@@ -99,6 +101,12 @@ $sub_page = $this->params['sub_page'];
                                 <div data-i18n="Analytics">Քարտեզ</div>
                             </a>
                         </li>
+                        <li class="menu-item ">
+                            <a href="/orders" class="menu-link">
+                                <i class='bx bx-cart-add' ></i>
+                                <div data-i18n="Analytics">Վաճառքներ</div>
+                            </a>
+                        </li>
                         <li class="menu-item" style="">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-building"></i>
@@ -133,11 +141,23 @@ $sub_page = $this->params['sub_page'];
                                 </li>
                             </ul>
                         </li>
-                        <li class="menu-item ">
-                            <a href="/clients" class="menu-link">
-                                <i class='bx bx-store-alt'></i>
-                                <div data-i18n="Analytics">Հաճախորդներ</div>
+                        <li class="menu-item" style="">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon bx bx-store-alt"></i>
+                                <div data-i18n="clients">Հաճախորդներ</div>
                             </a>
+                            <ul class="menu-sub sub_menu_sub">
+                                <li class="menu-item">
+                                    <a href="/clients" class="menu-link">
+                                        <div data-i18n="clients">Հաճախորդներ</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="/groups-name" class="menu-link">
+                                        <div data-i18n="groups-name">Խմբեր</div>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="menu-item" style="">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -163,14 +183,6 @@ $sub_page = $this->params['sub_page'];
                                 </li>
                             </ul>
                         </li>
-
-
-                        <li class="menu-item ">
-                            <a href="/orders" class="menu-link">
-                                <i class='bx bx-cart-add' ></i>
-                                <div data-i18n="Analytics">Վաճառքներ</div>
-                            </a>
-                        </li>
                         <li class="menu-item" style="">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-money-withdraw"></i>
@@ -195,11 +207,23 @@ $sub_page = $this->params['sub_page'];
                                 </li>
                             </ul>
                         </li>
-                        <li class="menu-item ">
-                            <a href="/discount" class="menu-link">
-                                <i class='bx bxs-bank'></i>
-                                <div data-i18n="Analytics">Զեղչեր</div>
+                        <li class="menu-item" style="">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bxs-bank"></i>
+                                <div data-i18n="users">Զեղչեր</div>
                             </a>
+                            <ul class="menu-sub sub_menu_sub">
+                                <li class="menu-item">
+                                    <a href="/discount" class="menu-link">
+                                        <div data-i18n="discount">Ակտիվ զեղչեր</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="/discount/inactive" class="menu-link">
+                                        <div data-i18n="discount">Ոչ ակտիվ զեղչեր</div>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="menu-item ">
                             <a href="/route" class="menu-link">

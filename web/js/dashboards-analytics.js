@@ -4,7 +4,10 @@
 
 'use strict';
 
+
+
 (function () {
+
   let cardColor, headingColor, axisColor, shadeColor, borderColor;
 
   cardColor = config.colors.cardColor;

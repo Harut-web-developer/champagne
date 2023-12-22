@@ -54,8 +54,8 @@ class Orders extends \yii\db\ActiveRecord
             'total_price' => 'Ընդհանուր գումար',
             'total_count' => 'Ընդհանուր քանակ',
             'orders_date' => 'Պատվերի ամսաթիվ',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Ստեղծվել է',
+            'updated_at' => 'Թարմացվել է',
         ];
     }
      public function getUsersName(){

@@ -6,14 +6,17 @@ use app\models\Clients;
 use app\models\Discount;
 use app\models\DiscountClients;
 use app\models\DiscountProducts;
+use app\models\Log;
 use app\models\Nomenclature;
 use app\models\OrderItems;
 use app\models\Orders;
 use app\models\OrdersSearch;
+use app\models\Premissions;
 use app\models\Products;
 use app\models\Users;
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -116,7 +119,13 @@ class OrdersController extends Controller
             $this->redirect('/site/403');
         }
         $model = new Orders();
-
+        $url = Url::to('', 'http');
+        $url = str_replace('create', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 21])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -203,8 +212,6 @@ class OrdersController extends Controller
                         ->orderBy(['discount.discount_sortable' => SORT_ASC])
                         ->asArray()
                         ->all();
-//                    var_dump($discount);
-//                    var_dump(33333);
 //                    var_dump($discount);
                     $arr = [];
                     $count = 0;
@@ -438,8 +445,6 @@ class OrdersController extends Controller
                         ->orderBy(['discount.discount_sortable' => SORT_ASC])
                         ->asArray()
                         ->all();
-//                    var_dump($discount);
-//                    var_dump(22222);
                     $arr = [];
                     $count = 0;
                     $count_discount_id = '';
@@ -670,8 +675,6 @@ class OrdersController extends Controller
                         ->orderBy(['discount.discount_sortable' => SORT_ASC])
                         ->asArray()
                         ->all();
-//                    var_dump($discount);
-//                    var_dump(111111);
                     $arr = [];
                     $count = 0;
                     $count_discount_id = '';
@@ -886,7 +889,6 @@ class OrdersController extends Controller
                     $order_items_create->updated_at = date('Y-m-d H:i:s');
                     $order_items_create->save(false);
                 }else{
-//                    var_dump(000);
                     $order_items_create = new OrderItems();
                     $order_items_create->order_id = $model->id;
                     $order_items_create->product_id = $post['order_items'][$i];
@@ -906,7 +908,9 @@ class OrdersController extends Controller
             $orders_total_debt = Orders::findOne($model->id);
             $orders_total_debt->total_price = $total_debt;
             $orders_total_debt->save(false);
-            return $this->redirect(['index', 'id' => $model->id]);
+            $model = Orders::getDefVals($model);
+            Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
+                return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -985,6 +989,17 @@ class OrdersController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
+        $url = Url::to('', 'http');
+        $oldattributes = Orders::find()
+            ->select('*')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 22])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -1800,6 +1815,7 @@ class OrdersController extends Controller
             $order->total_price = $total_debt;
             $order->total_count = $quantity;
             $order->save(false);
+            Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $sub_page = [];
@@ -1848,9 +1864,21 @@ class OrdersController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $oldattributes = Orders::find()
+            ->select(['clients.id', 'clients.name'])
+            ->leftJoin('clients', 'clients.id = orders.user_id')
+            ->where(['orders.id' => $id])
+            ->asArray()
+            ->one();
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 23])
+            ->asArray()
+            ->one();
         $orders = Orders::findOne($id);
         $orders->status = '0';
         $orders->save();
+        Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }
     public function actionDelivered($id)
