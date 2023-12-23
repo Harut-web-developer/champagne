@@ -459,6 +459,7 @@ class OrdersController extends Controller
                                 }
                             }
                         }
+
                     }
                 $row_price = $price * $post['count_'][$i];
                 $total_debt += $row_price;
