@@ -49,28 +49,57 @@ if ($have_access_update && $have_access_delete){
 }
 ?>
 <div class="log-index">
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="titleAndPrevPage">
+        <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
+        <h3><?= Html::encode($this->title) ?></h3>
+    </div>
     <p>
-        <?php if($have_access_create){ ?>
-            <?= Html::a('Ստեղծել տեղեկամատյան', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
-        <?php } ?>
+<!--        --><?php //if($have_access_create){ ?>
+<!--            --><?php //= Html::a('Ստեղծել տեղեկամատյան', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+<!--        --><?php //} ?>
     </p>
     <div class="card">
     <?= GridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],
         'dataProvider' => new ActiveDataProvider([
-            'query' => $dataProvider->query->andWhere(['status' => '1']),
+            'query' => $dataProvider->query,
             //                'pagination' => [
             //                    'pageSize' => 20,
             //                ],
         ]),
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'user_id',
-            'action',
+            [
+                'attribute' => 'Օգտագործող',
+                'value' => function ($model) {
+                    if ($model->userName) {
+                        return $model->userName->name;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
+            [
+                'attribute' => 'action',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    if ($model->action) {
+                        return Html::a('Դիտել', $model->action);
+                    } else {
+                        return Html::a('Դիտել', '#');
+                    }
+                }
+            ],
+            [
+                'attribute' => 'description',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return nl2br(htmlspecialchars($model->description));
+                }
+            ],
             'create_date',
-            ...$action_column,
+//            ...$action_column,
         ],
     ]); ?>
 

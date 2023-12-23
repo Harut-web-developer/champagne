@@ -2,7 +2,11 @@
 
 namespace app\controllers;
 
+use app\models\Clients;
 use app\models\Discount;
+use app\models\Log;
+use app\models\Premissions;
+use yii\helpers\Url;
 use Yii;
 use app\models\Nomenclature;
 use app\models\NomenclatureSearch;
@@ -14,6 +18,7 @@ use yii\web\UploadedFile;
 
 /**
  * NomenclatureController implements the CRUD actions for Nomenclature model.
+ * @method getAction()
  */
 class NomenclatureController extends Controller
 {
@@ -86,8 +91,10 @@ class NomenclatureController extends Controller
      */
     public function actionView($id)
     {
+        $sub_page = [];
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -103,6 +110,13 @@ class NomenclatureController extends Controller
             $this->redirect('/site/403');
         }
         $model = new Nomenclature();
+        $url = Url::to('', 'http');
+        $url = str_replace('create', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 9])
+            ->asArray()
+            ->one();
         $sub_page = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
@@ -116,7 +130,9 @@ class NomenclatureController extends Controller
             $model->price = intval($post['Nomenclature']['price']);
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
+            $model = Nomenclature::getDefVals($model);
             $model->save(false);
+            Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
@@ -168,23 +184,38 @@ class NomenclatureController extends Controller
     public function actionUpdate($id)
     {
         $have_access = Users::checkPremission(10);
+
         if(!$have_access){
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
+        $url = Url::to('', 'http');
+        $oldattributes = Nomenclature::find()
+            ->select('*')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 10])
+            ->asArray()
+            ->one();
         $sub_page = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-            $imageName = $_FILES['Nomenclature']['name']['image'];
-            $model->image = $imageName;
-            $model->image = UploadedFile::getInstance($model, 'image');
-            $model->image->saveAs('upload/'.$imageName );
+            if(isset($_FILES['Nomenclature']['name']['image']) && !!$_FILES['Nomenclature']['name']['image']){
+                $imageName = $_FILES['Nomenclature']['name']['image'];
+                $model->image = $imageName;
+                $model->image = UploadedFile::getInstance($model, 'image');
+                $model->image->saveAs('upload/'.$imageName );
+            }
             $model->name = $post['Nomenclature']['name'];
             $model->cost = intval($post['Nomenclature']['cost']);
             $model->price = $post['Nomenclature']['price'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
+            Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
@@ -210,9 +241,21 @@ class NomenclatureController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $oldattributes = Nomenclature::find()
+            ->select('name')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 11])
+            ->asArray()
+            ->one();
         $nomenclature = Nomenclature::findOne($id);
         $nomenclature->status = '0';
         $nomenclature->save();
+        Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }
 
@@ -228,7 +271,7 @@ class NomenclatureController extends Controller
         if (($model = Nomenclature::findOne(['id' => $id])) !== null) {
             return $model;
         }
-
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }

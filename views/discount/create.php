@@ -17,7 +17,9 @@ $this->params['sub_page'] = $sub_page;
     <?= $this->render('_form', [
         'model' => $model,
         'clients' => $clients,
-        'products' => $products
+        'products' => $products,
+        'discount_client_groups' => $discount_client_groups,
+
     ]) ?>
 
 </div>

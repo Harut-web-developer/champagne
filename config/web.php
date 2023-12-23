@@ -53,6 +53,10 @@ $config = [
             'rules' => [
                 '/' => 'site/login',
                 '<controller>/<action:\w+>' => '<controller>/<action>',
+                'clients-view/<id:\d+>' => 'ClientsController/actionView',
+                'clients-debt/<id:\d+>' => 'ClientsController/actionClientsDebt',
+                'route-view/<id:\d+>' => 'RouteController/actionRouteView',
+                'route-sort/<id:\d+>' => 'RouteController/actionRouteSort',
             ],
         ],
 //        'modules' => [

@@ -9,6 +9,7 @@ $this->title = 'Ստեղծել տեղեկամատյան';
 $this->params['breadcrumbs'][] = ['label' => 'Logs', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
+require_once 'models/Log.php';
 ?>
 <div class="log-create">
 
@@ -17,6 +18,7 @@ $this->params['sub_page'] = $sub_page;
     <?= $this->render('_form', [
         'model' => $model,
         'log' => $log,
+        'sub_page' => $sub_page
     ]) ?>
 
 </div>

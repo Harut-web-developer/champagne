@@ -149,6 +149,7 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                             ['id' => 53, 'name' => 'Ստեղծել քարտեզ', 'label_id' => 'premission53'],
                             ['id' => 54, 'name' => 'Տեսնել երթուղու դասավորություն', 'label_id' => 'premission54'],
                             ['id' => 55, 'name' => 'Հաստատել առաքումը', 'label_id' => 'premission55'],
+                            ['id' => 56, 'name' => 'Հասանելիություն ֆայլերին', 'label_id' => 'premission56'],
 
                         ];
 
@@ -396,6 +397,10 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                         <div class="premission-content-items">
                             <label for="premission55" class="items-title">Հաստատել առաքումը</label>
                             <input id="premission55" type="checkbox" value="55" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission56" class="items-title">Հասանելիություն ֆայլերին</label>
+                            <input id="premission56" type="checkbox" value="56" name="premission[]">
                         </div>
                     </div>
                 </div>

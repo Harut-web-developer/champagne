@@ -42,7 +42,8 @@ class PaymentsController extends Controller
     public function actionIndex()
     {
         $sub_page = [
-            ['name' => 'Վիճակագրություն','address' => '/payments/statistics']
+            ['name' => 'Վիճակագրություն','address' => '/payments/statistics'],
+            ['name' => 'Փոխարժեք','address' => '/rates']
         ];
         $searchModel = new PaymentsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -71,7 +72,8 @@ class PaymentsController extends Controller
             ->asArray()
             ->all();
         $sub_page = [
-            ['name' => 'Վճարումներ','address' => '/payments']
+            ['name' => 'Վճարումներ','address' => '/payments'],
+            ['name' => 'Փոխարժեք','address' => '/rates']
         ];
         return $this->render('statistics',[
             'sub_page' => $sub_page,

@@ -13,6 +13,8 @@ use yii\web\IdentityInterface;
  * @property string $name
  * @property string $username
  * @property string $password
+ * @property string $email
+ * @property string $phone
  * @property int $role_id
  * @property string $auth_key
  * @property string $created_at
@@ -55,8 +57,9 @@ class Users extends ActiveRecord implements IdentityInterface
             'auth_key' => 'Auth Key',
             'email' => 'Էլ.փոստ',
             'phone' => 'Հեռախոսահամար',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'status' => 'status',
+            'created_at' => 'Ստեղծվել է',
+            'updated_at' => 'Թարմացվել է',
         ];
     }
     /**

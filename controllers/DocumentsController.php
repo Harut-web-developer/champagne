@@ -6,6 +6,9 @@ use app\models\DocumentItems;
 use app\models\Documents;
 use app\models\DocumentsSearch;
 use app\models\Nomenclature;
+use app\models\Log;
+use app\models\Premissions;
+use yii\helpers\Url;
 use app\models\Products;
 use app\models\Rates;
 use app\models\Users;
@@ -88,8 +91,10 @@ class DocumentsController extends Controller
      */
     public function actionView($id)
     {
+        $sub_page = [];
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page
         ]);
     }
 
@@ -106,6 +111,13 @@ class DocumentsController extends Controller
         }
         $sub_page = [];
         $model = new Documents();
+        $url = Url::to('', 'http');
+        $url = str_replace('create', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 37])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
             date_default_timezone_set('Asia/Yerevan');
@@ -118,6 +130,7 @@ class DocumentsController extends Controller
             $model->date = $post['Documents']['date'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
+            $model = Documents::getDefVals($model);
             $model->save(false);
                 for ($i = 0; $i < count($post['document_items']); $i++){
                     $document_items = new DocumentItems();
@@ -144,8 +157,15 @@ class DocumentsController extends Controller
                         $products->save(false);
                     }
                 }
-
-                    return $this->redirect(['index', 'id' => $model->id]);
+                $model_new = [];
+                foreach ($document_items as $name => $value) {
+                    $model_new[$name] = $value;
+                }
+                foreach ($model as $name => $value) {
+                    $model_new[$name] = $value;
+                }
+                Log::afterSaves('Create', $model_new, '', $url.'?'.'id'.'='.$model->id, $premission);
+                return $this->redirect(['index', 'id' => $model->id]);
 
         } else {
             $model->loadDefaultValues();
@@ -255,6 +275,17 @@ class DocumentsController extends Controller
 //        echo  "<pre>";
         $model = $this->findModel($id);
         $sub_page = [];
+        $url = Url::to('', 'http');
+        $oldattributes = Documents::find()
+            ->select('*')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 38])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
             date_default_timezone_set('Asia/Yerevan');
@@ -266,6 +297,7 @@ class DocumentsController extends Controller
             $model->date = $post['Documents']['date'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
+            Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             $items = $post['document_items'];
             foreach ($items as $j => $item){
                 if ($item != 'null'){
@@ -293,6 +325,14 @@ class DocumentsController extends Controller
 //            if($post['newblocks'] || $post['new_fild_name']){
 //                Yii::$app->runAction('custom-fields/create-title',$post);
 //            }
+            $model_new = [];
+            foreach ($document_items_update as $name => $value) {
+                $model_new[$name] = $value;
+            }
+            foreach ($model as $name => $value) {
+                $model_new[$name] = $value;
+            }
+            Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
 //            return $this->redirect(['index', 'id' => $model->id]);
         }
@@ -342,10 +382,23 @@ class DocumentsController extends Controller
         $have_access = Users::checkPremission(39);
         if(!$have_access){
             $this->redirect('/site/403');
-        }
+        } 
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 39])
+            ->asArray()
+            ->one();
+        echo "<pre>";
+        $oldattributes = Documents::find()
+            ->select(['users.id', 'users.name', 'users.username'])
+            ->leftJoin('users', 'users.id = documents.user_id')
+            ->where(['documents.id' => $id])
+            ->asArray()
+            ->one();
         $documents = Documents::findOne($id);
         $documents->status = '0';
         $documents->save();
+        Log::afterSaves('Delete', '', $oldattributes['name'] . ' ' . $oldattributes['username'], '#', $premission);
         return $this->redirect(['index']);
     }
 

@@ -52,8 +52,8 @@ class Products extends \yii\db\ActiveRecord
             'count' => 'Քանակ',
             'price' => 'Գին',
             'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Ստեղծվել է',
+            'updated_at' => 'Թարմացվել է',
         ];
     }
     public function getWarehouseName(){

@@ -76,7 +76,12 @@ class Nomenclature extends \yii\db\ActiveRecord
         $query = $query->all();
 
         return $query;
-
+    }
+    public static function getDefVals($model){
+        if(is_null($model->status)){
+            $model->status = '1';
+        }
+        return $model;
     }
     public function getDefaultTitle(){
         return CustomfieldsBlocksTitle::findOne(['id'=>2]);

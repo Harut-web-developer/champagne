@@ -26,4 +26,11 @@ class DashboardController extends Controller
             'sub_page' => $sub_page
         ]);
     }
+
+    public function actionMiniChart(){
+        if ($this->request->isPost){
+            $post = $this->request->post();
+            var_dump($post);
+        }
+    }
 }

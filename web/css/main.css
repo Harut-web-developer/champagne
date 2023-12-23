@@ -19,8 +19,14 @@
 .dashboardName > div > a{
     color: #8C99A7;
 }
-.menu-item > a::before{
+.main_menu  > li > a::before{
     display:none !important;
+}
+.sub_menu_sub  > li > a::before{
+    left: -10px !important;
+}
+.sub_menu_sub  > li > a{
+    left: 40px !important;
 }
 .menu-link{
     padding-left: 1rem !important;
@@ -276,9 +282,7 @@
     margin: 0px 10px 10px;
 }
 .right-btn{
-    margin-top:25px;
-    float: right;
-    color:gray !important;
+    color:grey;
     font-size:25px;
 }
 .addOrders{
@@ -326,8 +330,12 @@
     height: 150vh !important;
     overflow-y: auto !important;
 }
-.userIcons{
-    font-size: 45px;
+.userIcons {
+    font-size: 23px;
+}
+.avatar {
+    width: 1.75rem;
+    height: 1.375rem;
 }
 .countDocuments{
     min-width: 100px;
@@ -399,7 +407,7 @@
     margin-top: 5px;
     margin-right: -40px;
     vertical-align: top;
-    font-size: 2.7rem;
+    font-size: 1.6rem;
 }
 .notification-item {
     display: flex;
@@ -462,4 +470,40 @@
 }
 .price-range-block{
     margin: 10px 0px !important;
+}
+.sub_menu_sub > li{
+    /*left:25px !important;*/
+}
+.titleAndPrevPage{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+.filterAndPrevPage{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+}
+.titleAndPrev{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.iconPrevPage{
+    margin-right:10px;
+    font-size:1.5em;
+}
+.iconPrevPage:hover{
+    cursor:pointer;
+}
+.titleAndConfig{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+.byDate{
+    max-width:8%;
 }

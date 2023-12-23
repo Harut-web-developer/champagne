@@ -9,7 +9,11 @@ $this->params['sub_page'] = $sub_page;
 ?>
 
 <div class="profile-form">
+
     <div class="card card-primary">
+        <div class="titleAndPrevPage">
+            <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
+        </div>
         <?php $form = ActiveForm::begin(); ?>
         <div class="default-panel">
             <div class="panel-title premission">

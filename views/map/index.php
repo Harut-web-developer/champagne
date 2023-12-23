@@ -4,7 +4,9 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 $this->params['sub_page'] = $sub_page;
 ?>
-
+<div class="titleAndPrevPage">
+    <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
+</div>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=e243c296-f6a7-46b7-950a-bd42eb4b2684" type="text/javascript"></script>

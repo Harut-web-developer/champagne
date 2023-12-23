@@ -22,8 +22,9 @@ $have_access_create = Users::checkPremission(21);
 $have_access_update = Users::checkPremission(22);
 $have_access_delete = Users::checkPremission(23);
 $have_access_delivered = Users::checkPremission(55);
+$have_access_available = Users::checkPremission(56);
 $action_column = [];
-if ($have_access_update && $have_access_delete && $have_access_delivered){
+if ($have_access_update && $have_access_delete && $have_access_delivered && $have_access_available){
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
@@ -47,26 +48,107 @@ if ($have_access_update && $have_access_delete && $have_access_delivered){
             return Url::toRoute([$action, 'id' => $model->id]);
         }
     ];
-} else if($have_access_update && $have_access_delivered){
+} else if($have_access_update && $have_access_delivered && $have_access_delete){
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
-        'template' => '{delivered} {update}',
+        'template' => '{delivered} {update} {delete}',
+        'buttons' => [
+            'delivered' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
+                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                ]);
+            },
+        ],
         'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
             return Url::toRoute([$action, 'id' => $model->id]);
         }
     ];
-}else if($have_access_delete && $have_access_delivered){
+}else if($have_access_update && $have_access_delivered && $have_access_available){
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
-        'template' => '{delivered} {delete}',
+        'template' => '{update} {delivered} {reports}',
+        'buttons' => [
+            'delivered' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
+                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                ]);
+            },
+            'reports' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
+                    'title' => Yii::t('yii', 'reports'),
+                    'target' => '_blank',
+                ]);
+            },
+        ],
         'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
             return Url::toRoute([$action, 'id' => $model->id]);
         }
     ];
-}
-else if($have_access_update && $have_access_delete){
+}else if($have_access_update && $have_access_delete && $have_access_available){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{update} {reports} {delete}',
+        'buttons' => [
+            'reports' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
+                    'title' => Yii::t('yii', 'reports'),
+                    'target' => '_blank',
+                ]);
+            },
+        ],
+        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}else if($have_access_delivered && $have_access_delete && $have_access_available){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{reports} {delivered} {delete}',
+        'buttons' => [
+            'delivered' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
+                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                ]);
+            },
+            'reports' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
+                    'title' => Yii::t('yii', 'reports'),
+                    'target' => '_blank',
+                ]);
+            },
+        ],
+        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}else if($have_access_update && $have_access_delivered){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{update} {delivered}',
+        'buttons' => [
+            'delivered' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
+                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                ]);
+            },
+        ],
+        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}else if($have_access_update && $have_access_delete){
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
@@ -75,11 +157,79 @@ else if($have_access_update && $have_access_delete){
             return Url::toRoute([$action, 'id' => $model->id]);
         }
     ];
-}else if($have_access_delete){
+}else if($have_access_update && $have_access_available){
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
-        'template' => '{delete}',
+        'template' => ' {reports} {update}',
+        'buttons' => [
+            'reports' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
+                    'title' => Yii::t('yii', 'reports'),
+                    'target' => '_blank',
+                ]);
+            },
+        ],
+        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}else if($have_access_delivered && $have_access_delete){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{delivered} {delete}',
+        'buttons' => [
+            'delivered' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
+                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                ]);
+            },
+        ],
+        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}else if($have_access_delivered && $have_access_available){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{delivered} {reports}',
+        'buttons' => [
+            'delivered' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
+                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                ]);
+            },
+            'reports' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
+                    'title' => Yii::t('yii', 'reports'),
+                    'target' => '_blank',
+                ]);
+            },
+        ],
+        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}else if($have_access_available && $have_access_delete){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{reports} {delete}',
+        'buttons' => [
+            'reports' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
+                    'title' => Yii::t('yii', 'reports'),
+                    'target' => '_blank',
+                ]);
+            },
+        ],
         'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
             return Url::toRoute([$action, 'id' => $model->id]);
         }
@@ -93,11 +243,46 @@ else if($have_access_update && $have_access_delete){
             return Url::toRoute([$action, 'id' => $model->id]);
         }
     ];
+}else if($have_access_available){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{reports}',
+        'buttons' => [
+            'reports' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
+                    'title' => Yii::t('yii', 'reports'),
+                    'target' => '_blank',
+                ]);
+            },
+        ],
+        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}else if($have_access_delete){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{delete}',
+        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
 }else if($have_access_delivered){
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => '{delivered}',
+        'buttons' => [
+            'delivered' => function ($url, $model, $key) {
+                // The content of the new template with your SVG icon
+                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
+                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                ]);
+            },
+        ],
         'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
             return Url::toRoute([$action, 'id' => $model->id]);
         }
@@ -106,7 +291,10 @@ else if($have_access_update && $have_access_delete){
 ?>
 <?php if(!isset($data_size)){ ?>
     <div class="orders-index">
-        <h1><?= Html::encode($this->title) ?></h1>
+        <div class="titleAndPrevPage">
+            <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
+            <h3><?= Html::encode($this->title) ?></h3>
+        </div>
 <!--        --><?php
 //        $dataProvider->pagination->pageSize = 10;
 //        ?>

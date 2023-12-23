@@ -9,6 +9,7 @@ use yii\widgets\DetailView;
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Nomenclatures', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['sub_page'] = $sub_page;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="nomenclature-view">
@@ -42,6 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'name',
             'price',
+            'cost',
             'created_at',
             'updated_at',
         ],

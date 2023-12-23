@@ -49,7 +49,13 @@ if ($have_access_update && $have_access_delete){
 }
 ?>
 <div class="nomenclature-index">
-    <h1><?= Html::encode($this->title) ?> <?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h1>
+    <div class="titleAndPrev">
+        <div class="titleAndConfig">
+            <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
+            <h3><?= Html::encode($this->title) ?></h3>
+        </div>
+        <h3><?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h3>
+    </div>
     <p>
         <?php if($have_access_create){ ?>
             <?= Html::a('Ստեղծել անվանակարգ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
@@ -76,6 +82,7 @@ if ($have_access_update && $have_access_delete){
                 ],
                 'name',
                 'price',
+                'cost',
                 ...$action_column,
             ],
         ]); ?>

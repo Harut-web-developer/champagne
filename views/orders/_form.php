@@ -52,8 +52,6 @@ use app\widgets\CustomLinkPager;
                                 <th>Քանակ</th>
                                 <th>Գին</th>
                                 <th>Ինքնարժեք</th>
-<!--                                <th>Discount</th>-->
-<!--                                <th>Before discounting</th>-->
                                 <th>Ընդհանուր գումար</th>
                                 <th>Գործողություն</th>
                             </tr>
@@ -65,7 +63,7 @@ use app\widgets\CustomLinkPager;
                                     $itemsArray[] = $item['product_id'];
                                     ?>
                                     <tr class="tableNomenclature">
-                                        <td><?=$keys + 1?><input class="orderItemsId" type="hidden" name="order_items[]" value="<?=$item['id']?>">
+                                        <td><?=$item['nom_id']?><input class="orderItemsId" type="hidden" name="order_items[]" value="<?=$item['id']?>">
                                             <input type="hidden" name="product_id[]" value="<?=$item['product_id']?>">
                                             <input class="nomId"  type="hidden" name="nom_id[]" value="<?=$item['nom_id']?>">
                                         </td>
@@ -73,8 +71,6 @@ use app\widgets\CustomLinkPager;
                                         <td class="count"><input type="number" name="count_[]" value="<?=$item['count']?>" class="form-control countProductForUpdate"></td>
                                         <td class="price"><?=$item['price']?><input type="hidden" name="price[]" value="<?=$item['price']?>"></td>
                                         <td class="cost"><?=$item['cost']?><input type="hidden" name="cost[]" value="<?=$item['cost']?>"></td>
-<!--                                        <td class="discount">--><?php //=$item['discount']?><!--<input type="hidden" name="discount[]" value="--><?php //=$item['discount']?><!--"></td>-->
-<!--                                        <td class="priceBeforeDiscount">--><?php //=$item['price_before_discount']?><!--<input type="hidden" name="priceBeforeDiscount[]" value="--><?php //=$item['price_before_discount']?><!--"></td>-->
                                         <td class="total"><span><?=$item['count'] * $item['price']?></span><input type="hidden" name="total[]" value="<?=$item['count'] * $item['price']?>"></td>
                                         <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsFromDB">Ջնջել</button></td>
                                     </tr>
@@ -120,7 +116,7 @@ use app\widgets\CustomLinkPager;
                                                     <td><?=$keys + 1?></td>
                                                     <td>
                                                         <input data-id="<?=$nomenclature['id']?>" type="checkbox">
-                                                        <input class="productIdInput" data-product="<?=$nomenclature['products_id']?>" type="hidden">
+                                                        <input class="productIdInput" data-product="<?=$nomenclature['nom_id']?>" type="hidden">
                                                     </td>
                                                     <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
                                                     <td class="nomenclatureName"><?=$nomenclature['name']?></td>
@@ -263,7 +259,7 @@ use app\widgets\CustomLinkPager;
                                                     <td><?=$keys + 1?></td>
                                                     <td>
                                                         <input data-id="<?=$nomenclature['id']?>" type="checkbox">
-                                                        <input class="productIdInput" data-product="<?=$nomenclature['products_id']?>" type="hidden">
+                                                        <input class="productIdInput" data-product="<?=$nomenclature['nomenclature_id']?>" type="hidden">
                                                     </td>
                                                     <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
                                                     <td class="nomenclatureName"><?=$nomenclature['name']?></td>

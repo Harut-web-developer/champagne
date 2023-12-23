@@ -48,7 +48,7 @@ class OrdersSearch extends Orders
             if(isset($params['numberVal']) && $params['numberVal'] != 3) {
                 $query->andWhere(['status' => $params['numberVal']]);
             }elseif (isset($params['numberVal']) && $params['numberVal'] == 3){
-                $query->andWhere([]);
+                $query->andWhere(['status' => '1']);
             }
         }else {
             if (isset($params['numberVal']) && $params['numberVal'] != 4) {
