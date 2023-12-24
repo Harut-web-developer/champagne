@@ -103,7 +103,7 @@ class ClientsController extends Controller
             ->select(['orders.id', 'orders.total_price as debt'])
             ->leftJoin('clients', 'orders.clients_id = clients.id')
             ->where(['orders.clients_id' => $id])
-            ->andWhere(['orders.status' => '2'])
+            ->andWhere(['or',['orders.status' => '2'],['orders.status' => '3']])
             ->groupBy('orders.id')
             ->asArray()
             ->all();
@@ -288,6 +288,15 @@ class ClientsController extends Controller
         return $this->redirect(['index']);
     }
 
+    public function actionGetOrderId(){
+        if ($this->request->isPost){
+//            $post = intval($this->request->post('id'));
+//            $orders = Orders::findOne($post);
+//            $orders->status = '3';
+//            $orders->save(false);
+
+        }
+    }
     /**
      * Finds the Clients model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

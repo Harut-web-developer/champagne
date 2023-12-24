@@ -35,7 +35,7 @@ $this->params['sub_page'] = $sub_page;
                 foreach ($client_orders as $keys => $client_order){ ?>
                     <tr>
                         <td><?= $keys + 1 ?></td>
-                        <td><?= $client_order['id'] ?></td>
+                        <td class="orderIdDebt"><?= $client_order['id'] ?></td>
                         <td><?= $client_order['debt'] ?></td>
                         <td><?= $payments; ?></td>
                         <?php if($payments){
@@ -50,7 +50,7 @@ $this->params['sub_page'] = $sub_page;
                         } else {
                             $debt_total += intval($client_order['debt']) - $payments;
                         } ?>
-                        <td><?= (@$debt_total) ? $debt_total : @$balance_order ?></td>
+                        <td class="balance"><?= (@$debt_total) ? $debt_total : @$balance_order ?></td>
                     </tr>
                     <?php
                 }

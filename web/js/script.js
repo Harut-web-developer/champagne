@@ -445,7 +445,21 @@ $(document).ready(function() {
     $(window).on('load', function (){
         // console.log('asasas')
         $('.debtPaymentBody tr').each(function (index, element) {
-            console.log(element)
+            $(element).find('.balance').each(function (x,el) {
+                if ($(el).text() == 0){
+                    let id = $(el).closest('tr').find('.orderIdDebt').text();
+                    let csrfToken = $('meta[name="csrf-token"]').attr("content");
+                    $.ajax({
+                        url:'/clients/get-order-id',
+                        method:'post',
+                        data:{
+                            id:id,
+                            _csrf:csrfToken
+                        }
+                    })
+                }
+
+            })
         })
     })
 
