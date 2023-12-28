@@ -140,14 +140,18 @@ class GroupsNameController extends Controller
                 ->where(['groups_name' => $post['GroupsName']['groups_name']])
                 ->asArray()
                 ->one();
+//            echo "<pre>";
+
             if(!empty($post['clients'])){
                 for ($i = 0; $i < count($post['clients']);$i++){
                     $model_clients_groups = new ClientsGroups();
                     $model_clients_groups->groups_id = $client_id['id'];
                     $model_clients_groups->clients_id = intval($post['clients'][$i]);
                     $model_clients_groups->save(false);
+//                    var_dump($model_clients_groups);
                 }
             }
+//            die;
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $clients_groups = ClientsGroups::find()

@@ -19,6 +19,7 @@ use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use function React\Promise\all;
 
 /**
  * DiscountController implements the CRUD actions for Discount model.
@@ -63,7 +64,6 @@ class DiscountController extends Controller
      */
     public function actionIndex()
     {
-//        echo "<pre>";
         $have_access = Users::checkPremission(44);
         if(!$have_access){
             $this->redirect('/site/403');
@@ -108,7 +108,6 @@ class DiscountController extends Controller
         }
     }
     public function actionInactive(){
-//        echo "<pre>";
         $sub_page = [
             ['name' => 'Ակտիվ զեղչեր','address' => '/discount'],
         ];
@@ -205,22 +204,40 @@ class DiscountController extends Controller
                 $all_client_groups_ids = [];
                 for ($k=0; $k < count($all_client_groups_id); $k++){
                     for ($s=0; $s < count($all_client_groups_id[$k]); $s++)
-                    array_push($all_client_groups_ids, intval($all_client_groups_id[$k][$s]['clients_id']));
+                    array_push($all_client_groups_ids, ($all_client_groups_id[$k][$s]['clients_id'] . ', ' . $client_groups_id[$k]));
                 }
                 foreach ($post['clients'] as $value) {
                     if (!(preg_match('/groups\[\'id\'\] = (\d+)/', $value, $matches))) {
-                        array_push($all_client_groups_ids, intval($value));
+                        array_push($all_client_groups_ids, $value);
                     }
                 }
-                for ($i = 0; $i < count($all_client_groups_ids);$i++){
+                $leftValues = array_map(function ($item) {
+                    $parts = explode(', ', $item);
+                    return isset($parts[0]) ? $parts[0] : null;
+                }, $all_client_groups_ids);
+                $rigthValues = array_map(function ($item) {
+                    $parts = explode(', ', $item);
+                    return isset($parts[1]) ? $parts[1] : null;
+                }, $all_client_groups_ids);
+
+                for ($i = 0; $i < count($leftValues);$i++){
                     $discount_clients = new DiscountClients();
                     $discount_clients->discount_id = $model->id;
-                    $discount_clients->client_id = $all_client_groups_ids[$i];
+                    $discount_clients->client_id = intval($leftValues[$i]);
+                    if ($rigthValues[$i] != 'NULL')
+                    {
+                        $discount_clients->group_id = intval($rigthValues[$i]);
+                    }
+                    else
+                    {
+                        $discount_clients->group_id = 0;
+                    }
                     $discount_clients->created_at = date('Y-m-d H:i:s');
                     $discount_clients->updated_at = date('Y-m-d H:i:s');
                     $discount_clients->save(false);
                 }
             }
+
             if(!empty($post['products'])) {
                 for ($j = 0; $j < count($post['products']);$j++){
                     $discount_products = new DiscountProducts();
@@ -239,6 +256,7 @@ class DiscountController extends Controller
             $clients = Clients::find()->select('id,name')->asArray()->all();
             $products = Nomenclature::find()->select('id,name')->asArray()->all();
             $discount_client_groups = GroupsName::find()->select('*')->asArray()->all();
+
         return $this->render('create', [
             'model' => $model,
             'clients' => $clients,
@@ -304,14 +322,58 @@ class DiscountController extends Controller
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
             if(!empty($post['clients'])){
+                $client_groups_id = [];
+                $index = 0;
+                foreach ($post['clients'] as $value) {
+                    if (preg_match('/groups\[\'id\'\] = (\d+)/', $value, $matches)) {
+                        $number = $matches[1];
+                        $client_groups_id[$index] = intval($number);
+                        $index++;
+                    }
+                }
+                $all_client_groups_id = [];
+                for ($t=0; $t < count($client_groups_id); $t++)
+                {
+                    $all_client_groups_id[$t] = ClientsGroups::find()
+                        ->select('clients_id')
+                        ->where(['groups_id' => $client_groups_id[$t]])
+                        ->asArray()
+                        ->all();
+                }
+                $all_client_groups_ids = [];
+                for ($k=0; $k < count($all_client_groups_id); $k++){
+                    for ($s=0; $s < count($all_client_groups_id[$k]); $s++)
+                        array_push($all_client_groups_ids, ($all_client_groups_id[$k][$s]['clients_id'] . ', ' . $client_groups_id[$k]));
+                }
+                foreach ($post['clients'] as $value) {
+                    if (!(preg_match('/groups\[\'id\'\] = (\d+)/', $value, $matches))) {
+                        array_push($all_client_groups_ids, $value);
+                    }
+                }
+                $leftValues = array_map(function ($item) {
+                    $parts = explode(', ', $item);
+                    return isset($parts[0]) ? $parts[0] : null;
+                }, $all_client_groups_ids);
+                $rigthValues = array_map(function ($item) {
+                    $parts = explode(', ', $item);
+                    return isset($parts[1]) ? $parts[1] : null;
+                }, $all_client_groups_ids);
                 $discount_clients_check = DiscountClients::find()->where(['discount_id' => $id])->exists();
                 if ($discount_clients_check){
                     DiscountClients::deleteAll(['discount_id' => $id]);
                 }
-                for ($i = 0; $i < count($post['clients']);$i++){
+                for ($i = 0; $i < count($leftValues);$i++){
                     $discount_clients = new DiscountClients();
                     $discount_clients->discount_id = $model->id;
-                    $discount_clients->client_id = $post['clients'][$i];
+                    $discount_clients->client_id = intval($leftValues[$i]);
+                    if ($rigthValues[$i] != 'NULL')
+                    {
+                        $discount_clients->group_id = intval($rigthValues[$i]);
+                    }
+                    else
+                    {
+                        $discount_clients->group_id = 0;
+                    }
                     $discount_clients->created_at = date('Y-m-d H:i:s');
                     $discount_clients->updated_at = date('Y-m-d H:i:s');
                     $discount_clients->save(false);
@@ -345,23 +407,44 @@ class DiscountController extends Controller
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $clients = Clients::find()->select('id,name')->asArray()->all();
-        $discount_clients_id = DiscountClients::find()->select('client_id')->where(['discount_id' => $id])->asArray()->all();
+        $discount_clients_id = DiscountClients::find()->select('client_id')->where(['discount_id' => $id, 'group_id' => 0])->asArray()->all();
         $discount_clients_id = array_column($discount_clients_id,'client_id');
         $products = Nomenclature::find()->select('id,name')->asArray()->all();
         $discount_products_id = DiscountProducts::find()->select('product_id')->where(['discount_id' => $id])->asArray()->all();
         $discount_products_id = array_column($discount_products_id,'product_id');
         $min = Discount::find()->select('min')->where(['id' => $id])->asArray()->one();
         $max = Discount::find()->select('max')->where(['id' => $id])->asArray()->one();
+        $discount_client_groups = GroupsName::find()->select('*')->asArray()->all();
+        $discount_client_groups_name = GroupsName::find()
+            ->select('groups_name')
+            ->leftJoin('discount_clients', 'discount_clients.group_id = groups_name.id')
+            ->where(['discount_clients.discount_id' => $id])
+            ->asArray()
+            ->all();
+        $uniqueArray = array_unique($discount_client_groups_name, SORT_REGULAR);
+        $discount_client_groups_name = array_values($uniqueArray);
+        $discount_client_groups_name = array_column($discount_client_groups_name, 'groups_name');
+
+        $discount_client_groups_id = DiscountClients::find()
+            ->select('client_id, group_id')
+            ->where(['discount_id' => $id])
+            ->andWhere(['<>','group_id', 0])
+            ->asArray()
+            ->all();
+        $discount_client_groups_id = array_column($discount_client_groups_id, 'client_id');
+
         return $this->render('update', [
             'model' => $model,
             'clients' => $clients,
             'products' => $products,
             'discount_clients_id' => $discount_clients_id,
+            'discount_client_groups_id' => $discount_client_groups_id,
+            'discount_client_groups_name' => $discount_client_groups_name,
             'discount_products_id' => $discount_products_id,
             'sub_page' => $sub_page,
             'min' => $min,
-            'max' => $max
-
+            'max' => $max,
+            'discount_client_groups' => $discount_client_groups,
         ]);
     }
 

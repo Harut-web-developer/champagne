@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property int $discount_id
  * @property int $client_id
+ * @property int $group_id
  * @property string $status
  * @property string $created_at
  * @property string $updated_at
@@ -32,7 +33,7 @@ class DiscountClients extends \yii\db\ActiveRecord
     {
         return [
             [['discount_id', 'client_id',], 'required'],
-            [['discount_id', 'client_id'], 'integer'],
+            [['discount_id', 'client_id', 'group_id'], 'integer'],
             [['status'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
         ];
@@ -47,6 +48,7 @@ class DiscountClients extends \yii\db\ActiveRecord
             'id' => 'ID',
             'discount_id' => 'Discount ID',
             'client_id' => 'Client ID',
+            'group_id' => 'Group id',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

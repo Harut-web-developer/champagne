@@ -20,7 +20,10 @@ $this->params['sub_page'] = $sub_page;
         'clients' => $clients,
         'products' => $products,
         'discount_clients_id' => $discount_clients_id,
+        'discount_client_groups_name' => $discount_client_groups_name,
+        'discount_client_groups_id' => $discount_client_groups_id,
         'discount_products_id' => $discount_products_id,
+        'discount_client_groups' => $discount_client_groups,
         'min' => $min,
         'max' => $max
     ]) ?>

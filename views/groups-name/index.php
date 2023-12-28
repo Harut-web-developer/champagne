@@ -22,7 +22,7 @@ $this->params['sub_page'] = $sub_page;
         <h3><?= Html::encode($this->title) ?></h3>
     </div>
     <p>
-        <?= Html::a('Ստեղծել հաճախորդ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+        <?= Html::a('Ստեղծել խումբ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>

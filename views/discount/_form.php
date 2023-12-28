@@ -6,6 +6,13 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var app\models\Discount $model */
 /** @var yii\widgets\ActiveForm $form */
+//echo "<pre>";
+//var_dump($clients);
+//var_dump($discount_client_groups);
+//var_dump($discount_clients_id);
+//var_dump($discount_client_groups_name);
+//var_dump($discount_client_groups_id);
+//die;
 ?>
 
 <div class="discount-form">
@@ -28,14 +35,20 @@ use yii\widgets\ActiveForm;
                     <?= $form->field($model, 'discount')->input('number') ?>
                 </div>
                 <?php if ($model->id){ ?>
-                    <div class="form-group col-md-12 col-lg-12 col-sm-12 discount">
-                        <label for="multipleClients">Հաճախորդ</label>
+                    <div class="clientSelect">
+                        <label for="multipleClients">Հաճախորդ և խմբեր</label>
                         <select id="multipleClients" class="js-example-basic-multiple form-control" name="clients[]" multiple="multiple">
                             <?php foreach ($clients as $client){
                                 $isSelected = in_array($client['id'], $discount_clients_id);
                                 ?>
                                 <option <?= $isSelected ? 'selected' : '' ?> value="<?= $client['id'] ?>"><?= $client['name'] ?></option>
                             <?php } ?>
+                            <?php foreach ($discount_client_groups as $client_groups) {
+                                $isSelected = in_array($client_groups['groups_name'], $discount_client_groups_name);
+                                ?>
+                                <option <?= $isSelected ? 'selected' : '' ?> value="<?= "groups['id'] = " . $client_groups['id'] ?>"><?= $client_groups['groups_name'] ?></option>
+                            <?php } ?>
+
                         </select>
                     </div>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 discount">
