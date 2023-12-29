@@ -16,25 +16,33 @@ $this->params['sub_page'] = $sub_page;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+<!--    <p>-->
+<!--        --><?php //= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+<!--        --><?php //= Html::a('Delete', ['delete', 'id' => $model->id], [
+//            'class' => 'btn btn-danger',
+//            'data' => [
+//                'confirm' => 'Are you sure you want to delete this item?',
+//                'method' => 'post',
+//            ],
+//        ]) ?>
+<!--    </p>-->
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'id',
-            'client_id',
-            'payment_sum',
+            [
+                'attribute' => 'Հաճախորդ',
+                'value' => function ($model) {
+                    if ($model->clientName) {
+                        return $model->clientName->name;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],            'payment_sum',
             'pay_date',
-            'status',
+//            'status',
             'created_at',
             'updated_at',
         ],
