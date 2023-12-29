@@ -132,6 +132,10 @@ class GroupsNameController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            $clients_groups = ClientsGroups::find()->where(['groups_id' => $id])->exists();
+            if ($clients_groups){
+                ClientsGroups::deleteAll(['groups_id' => $id]);
+            }
             $model->groups_name = $post['GroupsName']['groups_name'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
@@ -140,7 +144,6 @@ class GroupsNameController extends Controller
                 ->where(['groups_name' => $post['GroupsName']['groups_name']])
                 ->asArray()
                 ->one();
-//            echo "<pre>";
 
             if(!empty($post['clients'])){
                 for ($i = 0; $i < count($post['clients']);$i++){
@@ -148,10 +151,14 @@ class GroupsNameController extends Controller
                     $model_clients_groups->groups_id = $client_id['id'];
                     $model_clients_groups->clients_id = intval($post['clients'][$i]);
                     $model_clients_groups->save(false);
-//                    var_dump($model_clients_groups);
                 }
             }
-//            die;
+            else{
+                $discount_clients_check = DiscountClients::find()->where(['discount_id' => $id])->exists();
+                if ($discount_clients_check){
+                    DiscountClients::deleteAll(['discount_id' => $id]);
+                }
+            }
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $clients_groups = ClientsGroups::find()
