@@ -9,6 +9,8 @@ $this->title = 'Ստեղծել թույլտվություն';
 $this->params['breadcrumbs'][] = ['label' => 'Premissions', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
+
 ?>
 <div class="premissions-create">
 

@@ -10,6 +10,7 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Clients', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="clients-view">
@@ -20,10 +21,10 @@ $this->params['sub_page'] = $sub_page;
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>order number</th>
-                    <th>order debt</th>
-                    <th>payment sum</th>
-                    <th>Balance</th>
+                    <th>Պատվերի համարը</th>
+                    <th>Պարտք</th>
+                    <th>Վճարված գումար</th>
+                    <th>Մնացորդ</th>
                 </tr>
                 </thead>
                 <tbody class="table-border-bottom-0 debtPaymentBody">

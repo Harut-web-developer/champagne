@@ -61,13 +61,17 @@ class RolesController extends Controller
             ['name' => 'Օգտատեր','address' => '/users'],
             ['name' => 'Թույլտվություն','address' => '/premissions'],
         ];
+        $date_tab = [];
+
         $searchModel = new RolesSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -97,6 +101,8 @@ class RolesController extends Controller
         }
         $model = new Roles();
         $sub_page = [];
+        $date_tab = [];
+
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -112,7 +118,9 @@ class RolesController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -131,6 +139,8 @@ class RolesController extends Controller
         }
         $model = $this->findModel($id);
         $sub_page = [];
+        $date_tab = [];
+
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -143,7 +153,9 @@ class RolesController extends Controller
 
         return $this->render('update', [
             'model' => $model,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 

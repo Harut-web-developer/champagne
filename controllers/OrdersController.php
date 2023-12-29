@@ -70,6 +70,8 @@ class OrdersController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        $date_tab = [];
+
         $searchModel = new OrdersSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -79,13 +81,17 @@ class OrdersController extends Controller
                 'dataProvider' => $dataProvider,
                 'data_size' => 'max',
                 'sub_page' => $sub_page,
+                'date_tab' => $date_tab,
+
             ]);
         }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -98,9 +104,13 @@ class OrdersController extends Controller
     public function actionView($id)
     {
         $sub_page = [];
+        $date_tab = [];
+
         return $this->render('view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
 
         ]);
     }
@@ -419,6 +429,7 @@ class OrdersController extends Controller
                     $order_items_create = new OrderItems();
                     $order_items_create->order_id = $model->id;
                     $order_items_create->product_id = $post['order_items'][$i];
+                    $order_items_create->nom_id_for_name = intval($post['nomenclature_id'][$i]);
                     $order_items_create->price = $format_number;
                     $order_items_create->count = $post['count_'][$i];
                     $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
@@ -649,6 +660,7 @@ class OrdersController extends Controller
                     $order_items_create = new OrderItems();
                     $order_items_create->order_id = $model->id;
                     $order_items_create->product_id = $post['order_items'][$i];
+                    $order_items_create->nom_id_for_name = intval($post['nomenclature_id'][$i]);
                     $order_items_create->price = $format_number;
                     $order_items_create->count = $post['count_'][$i];
                     $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
@@ -880,6 +892,7 @@ class OrdersController extends Controller
                     $order_items_create = new OrderItems();
                     $order_items_create->order_id = $model->id;
                     $order_items_create->product_id = $post['order_items'][$i];
+                    $order_items_create->nom_id_for_name = intval($post['nomenclature_id'][$i]);
                     $order_items_create->price = $format_number;
                     $order_items_create->count = $post['count_'][$i];
                     $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
@@ -893,6 +906,7 @@ class OrdersController extends Controller
                     $order_items_create = new OrderItems();
                     $order_items_create->order_id = $model->id;
                     $order_items_create->product_id = $post['order_items'][$i];
+                    $order_items_create->nom_id_for_name = intval($post['nomenclature_id'][$i]);
                     $order_items_create->price = $post['price'][$i] * $post['count_'][$i];
                     $order_items_create->count = $post['count_'][$i];
                     $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
@@ -916,6 +930,8 @@ class OrdersController extends Controller
             $model->loadDefaultValues();
         }
         $sub_page = [];
+        $date_tab = [];
+
         $query = Products::find();
         $countQuery = clone $query;
         $total = $countQuery->where(['and',['products.status' => 1,'products.type' => 1]])->groupBy('products.nomenclature_id')->count();
@@ -938,6 +954,8 @@ class OrdersController extends Controller
             'nomenclatures' => $nomenclatures,
             'total' => $total,
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
 //            'pagination' => $pagination,
 //            'count' => $count,
         ]);
@@ -1020,6 +1038,7 @@ class OrdersController extends Controller
                     $order_item = OrderItems::findOne($item);
                     $order_item->order_id = $id;
                     $order_item->product_id = $post['product_id'][$k];
+                    $order_item->nom_id_for_name = intval($post['nom_id'][$k]);
                     $order_item->price = ($order_item->price / $order_item->count) * $post['count_'][$k];
                     $order_item->cost = $post['cost'][$k] * $post['count_'][$k];
                     $order_item->discount = ($order_item->discount / $order_item->count) * $post['count_'][$k];
@@ -1306,6 +1325,7 @@ class OrdersController extends Controller
                         $order_items_create = new OrderItems();
                         $order_items_create->order_id = $model->id;
                         $order_items_create->product_id = $post['product_id'][$k];
+                        $order_items_create->nom_id_for_name = intval($post['nom_id'][$k]);
                         $order_items_create->price = $format_number;
                         $order_items_create->count = $post['count_'][$k];
                         $order_items_create->cost = $post['cost'][$k] * $post['count_'][$k];
@@ -1539,6 +1559,7 @@ class OrdersController extends Controller
                         $order_items_create = new OrderItems();
                         $order_items_create->order_id = $model->id;
                         $order_items_create->product_id = $post['product_id'][$k];
+                        $order_items_create->nom_id_for_name = intval($post['nom_id'][$k]);
                         $order_items_create->price = $format_number;
                         $order_items_create->count = $post['count_'][$k];
                         $order_items_create->cost = $post['cost'][$k] * $post['count_'][$k];
@@ -1772,6 +1793,7 @@ class OrdersController extends Controller
                         $order_items_create = new OrderItems();
                         $order_items_create->order_id = $model->id;
                         $order_items_create->product_id = $post['product_id'][$k];
+                        $order_items_create->nom_id_for_name = intval($post['nom_id'][$k]);
                         $order_items_create->price = $format_number;
                         $order_items_create->count = $post['count_'][$k];
                         $order_items_create->cost = $post['cost'][$k] * $post['count_'][$k];
@@ -1786,6 +1808,7 @@ class OrdersController extends Controller
                         $order_items_create = new OrderItems();
                         $order_items_create->order_id = $model->id;
                         $order_items_create->product_id = $post['product_id'][$k];
+                        $order_items_create->nom_id_for_name = intval($post['nom_id'][$k]);
                         $order_items_create->price = $post['price'][$k] * $post['count_'][$k];
                         $order_items_create->count = $post['count_'][$k];
                         $order_items_create->cost = $post['cost'][$k] * $post['count_'][$k];
@@ -1820,6 +1843,8 @@ class OrdersController extends Controller
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $sub_page = [];
+        $date_tab = [];
+
         $query = Products::find();
         $countQuery = clone $query;
         $total = $countQuery->where(['and',['products.status' => 1,'products.type' => 1]])->groupBy('products.nomenclature_id')->count();
@@ -1848,7 +1873,9 @@ class OrdersController extends Controller
             'nomenclatures' => $nomenclatures,
             'order_items' => $order_items,
             'total' => $total,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -1898,6 +1925,8 @@ class OrdersController extends Controller
             $searchModel = new OrdersSearch();
             $dataProvider = $searchModel->search($this->request->queryParams);
             $sub_page = [];
+            $date_tab = [];
+
             $approved = null;
             if ($_GET['numberVal'] == 2){
                 $approved = 2;
@@ -1911,6 +1940,8 @@ class OrdersController extends Controller
 
             return $this->renderAjax('widget', [
                 'sub_page' => $sub_page,
+                'date_tab' => $date_tab,
+
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
                 'approved' => $approved
@@ -1966,6 +1997,8 @@ class OrdersController extends Controller
         }
         $model = $this->findModel($id);
         $sub_page = [];
+        $date_tab = [];
+
         $query = Nomenclature::find();
         $countQuery = clone $query;
         $total = $countQuery->count();
@@ -1993,7 +2026,9 @@ class OrdersController extends Controller
             'nomenclatures' => $nomenclatures,
             'order_items' => $order_items,
             'total' => $total,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 }

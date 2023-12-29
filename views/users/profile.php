@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
+
 /** @var yii\web\View $this */
 /** @var app\models\Roles $model */
 /** @var yii\widgets\ActiveForm $form */

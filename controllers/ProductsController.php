@@ -65,13 +65,17 @@ class ProductsController extends Controller
             ['name' => 'Անվանակարգ','address' => '/nomenclature'],
             ['name' => 'Տեղեկամատյան','address' => '/log'],
         ];
+        $date_tab = [];
+
         $searchModel = new ProductsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -84,9 +88,13 @@ class ProductsController extends Controller
     public function actionView($id)
     {
         $sub_page = [];
+        $date_tab = [];
+
         return $this->render('view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -102,6 +110,8 @@ class ProductsController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        $date_tab = [];
+
         $model = new Products();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
@@ -129,7 +139,9 @@ class ProductsController extends Controller
             'model' => $model,
             'warehouse' => $warehouse,
             'nomenclature' => $nomenclature,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -142,6 +154,8 @@ class ProductsController extends Controller
             ['name' => 'Անվանակարգ','address' => '/nomenclature'],
             ['name' => 'Տեղեկամատյան','address' => '/log'],
         ];
+        $date_tab = [];
+
         $model = new Products();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -157,7 +171,9 @@ class ProductsController extends Controller
 
         return $this->render('create-fields', [
             'model' => $model,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
     /**
@@ -175,6 +191,8 @@ class ProductsController extends Controller
         }
         $model = $this->findModel($id);
         $sub_page = [];
+        $date_tab = [];
+
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -198,7 +216,9 @@ class ProductsController extends Controller
             'model' => $model,
             'warehouse' => $warehouse,
             'nomenclature' => $nomenclature,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 

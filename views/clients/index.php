@@ -15,6 +15,8 @@ use yii\grid\GridView;
 $this->title = 'Հաճախորդներ';
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
+
 $have_access_create = Users::checkPremission(5);
 $have_access_update = Users::checkPremission(6);
 $have_access_delete = Users::checkPremission(7);

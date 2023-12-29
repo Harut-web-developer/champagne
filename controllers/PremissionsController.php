@@ -65,13 +65,17 @@ class PremissionsController extends Controller
             ['name' => 'Օգտատեր','address' => '/users'],
             ['name' => 'Կարգավիճակ','address' => '/roles'],
         ];
+        $date_tab = [];
+
         $searchModel = new PremissionsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -84,9 +88,13 @@ class PremissionsController extends Controller
     public function actionView($id)
     {
         $sub_page = [];
+        $date_tab = [];
+
         return $this->render('view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -103,6 +111,8 @@ class PremissionsController extends Controller
         }
         $model = new Premissions();
         $sub_page = [];
+        $date_tab = [];
+
         $url = Url::to('', 'http');
         $url = str_replace('create', 'view', $url);
         $premission = Premissions::find()
@@ -129,7 +139,9 @@ class PremissionsController extends Controller
         return $this->render('create', [
             'model' => $model,
             'roles' => $roles,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -148,6 +160,8 @@ class PremissionsController extends Controller
         }
         $model = $this->findModel($id);
         $sub_page = [];
+        $date_tab = [];
+
         $url = Url::to('', 'http');
         $oldattributes = Premissions::find()
             ->select('*')
@@ -174,7 +188,9 @@ class PremissionsController extends Controller
         return $this->render('update', [
             'model' => $model,
             'roles' => $roles,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 

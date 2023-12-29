@@ -45,11 +45,14 @@ class GroupsNameController extends Controller
         $sub_page = [
             ['name' => 'Հաճախորդներ','address' => '/clients'],
         ];
+        $date_tab = [];
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -62,6 +65,8 @@ class GroupsNameController extends Controller
     public function actionView($id)
     {
         $sub_page = [];
+        $date_tab = [];
+
         $clients_groups = ClientsGroups::find()
             ->select('clients.id, clients.name')
             ->leftJoin('clients', 'clients.id = clients_groups.clients_id')
@@ -72,6 +77,8 @@ class GroupsNameController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
             'clients_groups' => $clients_groups,
         ]);
     }
@@ -85,6 +92,8 @@ class GroupsNameController extends Controller
     {
         $model = new GroupsName();
         $sub_page = [];
+        $date_tab = [];
+
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -114,7 +123,9 @@ class GroupsNameController extends Controller
         return $this->render('create', [
             'model' => $model,
             'clients' => $clients,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -129,6 +140,8 @@ class GroupsNameController extends Controller
     {
         $model = $this->findModel($id);
         $sub_page = [];
+        $date_tab = [];
+
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -164,6 +177,8 @@ class GroupsNameController extends Controller
             'clients' => $clients,
             'clients_groups' => $clients_groups,
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 

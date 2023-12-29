@@ -496,7 +496,15 @@
     margin-right:10px;
     font-size:1.5em;
 }
+.iconPrev{
+    padding: 10px 0px;
+    margin-right:10px;
+    font-size:1.5em;
+}
 .iconPrevPage:hover{
+    cursor:pointer;
+}
+.iconPrev:hover{
     cursor:pointer;
 }
 .titleAndConfig{
@@ -506,4 +514,24 @@
 }
 .byDate{
     max-width:8%;
+}
+.customBtn{
+    padding-left: 0px;
+    padding-right: 10px;
+}
+.customUl > li{
+    margin: 10px;
+}
+.customIcon{
+    font-size: 25px;
+}
+.customIcon:hover{
+    cursor:pointer;
+}
+.iconBtn{
+    text-align: center;
+}
+.customBtnIcon{
+    border:none;
+    background:none;
 }

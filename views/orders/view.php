@@ -10,6 +10,8 @@ $this->title = $model->clientsName->name;
 $this->params['breadcrumbs'][] = ['label' => 'Orders', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
+
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="orders-view">

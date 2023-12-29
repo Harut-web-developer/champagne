@@ -65,13 +65,17 @@ class RouteController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        $date_tab = [];
+
         $searchModel = new RouteSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -89,9 +93,13 @@ class RouteController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        $date_tab = [];
+
         return $this->render('route-view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
     public function actionRouteSort()
@@ -102,6 +110,8 @@ class RouteController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        $date_tab = [];
+
         $result = Clients::find()
             ->select('id,name')
             ->where(['=', 'route_id', intval($id)])
@@ -114,6 +124,8 @@ class RouteController extends Controller
             'model' => $this->findModel($id),
             'result' => $result,
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
 //            'alldata' => $alldata,
         ]);
     }
@@ -149,6 +161,8 @@ class RouteController extends Controller
         }
         $model = new Route();
         $sub_page = [];
+        $date_tab = [];
+
         $url = Url::to('', 'http');
         $url = str_replace('create', 'view', $url);
         $premission = Premissions::find()
@@ -173,7 +187,9 @@ class RouteController extends Controller
         return $this->render('create', [
             'model' => $model,
 //            'route' => $route,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -192,6 +208,8 @@ class RouteController extends Controller
         }
         $model = $this->findModel($id);
         $sub_page = [];
+        $date_tab = [];
+
         $url = Url::to('', 'http');
         $oldattributes = Route::find()
             ->select('*')
@@ -215,7 +233,9 @@ class RouteController extends Controller
 
         return $this->render('update', [
             'model' => $model,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 

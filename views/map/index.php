@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
+
 ?>
 <div class="titleAndPrevPage">
     <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>

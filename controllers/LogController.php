@@ -68,13 +68,17 @@ class LogController extends Controller
             ['name' => 'Անվանակարգ','address' => '/nomenclature'],
             ['name' => 'Ապրանք','address' => '/products'],
         ];
+        $date_tab = [];
+
         $searchModel = new LogSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -104,6 +108,8 @@ class LogController extends Controller
 //        }
 //        $model = new Log();
 //        $sub_page = [];
+//        $date_tab = [];
+
 ////        if ($this->request->isPost) {
 ////            date_default_timezone_set('Asia/Yerevan');
 ////            $post = $this->request->post();
@@ -119,7 +125,9 @@ class LogController extends Controller
 //        return $this->render('create', [
 //            'model' => $model,
 //            'log' => $log,
-//            'sub_page' => $sub_page
+//            'sub_page' => $sub_page,
+//            'date_tab' => $date_tab,
+
 //        ]);
 
     }
@@ -139,6 +147,8 @@ class LogController extends Controller
         }
         $model = $this->findModel($id);
         $sub_page = [];
+        $date_tab = [];
+
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -152,7 +162,9 @@ class LogController extends Controller
         return $this->render('update', [
             'model' => $model,
             'log' => $log,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 

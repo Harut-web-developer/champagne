@@ -71,15 +71,18 @@ class NomenclatureController extends Controller
             ['name' => 'Փաստաթղթեր','address' => '/documents'],
             ['name' => 'Ապրանք','address' => '/products'],
             ['name' => 'Տեղեկամատյան','address' => '/log'],
-
         ];
+        $date_tab = [];
+
         $searchModel = new NomenclatureSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -92,9 +95,13 @@ class NomenclatureController extends Controller
     public function actionView($id)
     {
         $sub_page = [];
+        $date_tab = [];
+
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -118,6 +125,8 @@ class NomenclatureController extends Controller
             ->asArray()
             ->one();
         $sub_page = [];
+        $date_tab = [];
+
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -145,7 +154,9 @@ class NomenclatureController extends Controller
         return $this->render('create', [
             'model' => $model,
             'discounts' => $discounts,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -157,8 +168,9 @@ class NomenclatureController extends Controller
             ['name' => 'Անվանակարգ','address' => '/nomenclature'],
             ['name' => 'Ապրանք','address' => '/products'],
             ['name' => 'Տեղեկամատյան','address' => '/log'],
-
         ];
+        $date_tab = [];
+
         $model = new Nomenclature();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -171,7 +183,9 @@ class NomenclatureController extends Controller
         }
         return $this->render('create-fields', [
             'model' => $model,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
     /**
@@ -201,6 +215,8 @@ class NomenclatureController extends Controller
             ->asArray()
             ->one();
         $sub_page = [];
+        $date_tab = [];
+
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -224,7 +240,9 @@ class NomenclatureController extends Controller
         }
         return $this->render('update', [
             'model' => $model,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 

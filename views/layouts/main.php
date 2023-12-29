@@ -22,6 +22,8 @@ $this->registerMetaTag(['name' => 'description', 'content' => $this->params['met
 $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_keywords'] ?? '']);
 $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii::getAlias('@web/favicon.ico')]);
 $sub_page = $this->params['sub_page'];
+$date_tab = $this->params['date_tab'];
+
 
 ?>
 <?php $this->beginPage() ?>
@@ -374,16 +376,51 @@ $sub_page = $this->params['sub_page'];
                                         <?php
                                         }
                                         ?>
-
-<!--                                        <li class="nav-item">-->
-<!--                                            <a class="nav-link" href="javascript:void(0)">Link</a>-->
-<!--                                        </li>-->
                                     </ul>
                                 </div>
                             </nav>
                         <?php
                             }
+                        if (!empty($date_tab)){
                         ?>
+                        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-5">
+                            <div class="container-fluid">
+                                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                    <li class="nav-item">
+                                        <i class='bx bxs-log-out iconPrev' onclick="window.location = document.referrer"></i>
+                                    </li>
+                                    <li class="nav-item">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn dropdown-toggle hide-arrow customBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                                custom
+                                            </button>
+                                            <form method="get" action="/dashboard/index">
+                                                <ul class="dropdown-menu customUl" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 41px);" data-popper-placement="bottom-start">
+                                                    <li><input name="start_date" type="date" class="start_date form-control"></li>
+                                                    <li><input name="end_date" type="date" class="end_date form-control"></li>
+                                                    <li>
+                                                        <hr class="dropdown-divider">
+                                                    </li>
+                                                    <li class="iconBtn"><button class="customBtnIcon" type="submit"><i class='bx bx-search-alt-2 customIcon'></i></button></li>
+                                                </ul>
+                                            </form>
+                                        </div>
+                                    </li>
+                                    <?php
+                                    foreach ($date_tab as $item){
+                                        ?>
+                                        <li class="nav-item">
+                                            <a class="nav-link" aria-current="page" href="<?=$item['address']?>"><?=$item['name']?></a>
+                                        </li>
+                                        <?php
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
+                        </nav>
+                        <?php
+                                }
+                            ?>
 
                             <?= $content ?>
                 </div>

@@ -71,15 +71,18 @@ class DocumentsController extends Controller
             ['name' => 'Անվանակարգ','address' => '/nomenclature'],
             ['name' => 'Ապրանք','address' => '/products'],
             ['name' => 'Տեղեկամատյան','address' => '/log'],
-
         ];
+        $date_tab = [];
+
         $searchModel = new DocumentsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -92,9 +95,13 @@ class DocumentsController extends Controller
     public function actionView($id)
     {
         $sub_page = [];
+        $date_tab = [];
+
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -110,6 +117,8 @@ class DocumentsController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        $date_tab = [];
+
         $model = new Documents();
         $url = Url::to('', 'http');
         $url = str_replace('create', 'view', $url);
@@ -194,7 +203,9 @@ class DocumentsController extends Controller
             'rates' => $rates,
             'nomenclatures' => $nomenclatures,
             'total' => $total,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -206,8 +217,9 @@ class DocumentsController extends Controller
             ['name' => 'Անվանակարգ','address' => '/nomenclature'],
             ['name' => 'Ապրանք','address' => '/products'],
             ['name' => 'Տեղեկամատյան','address' => '/log'],
-
         ];
+        $date_tab = [];
+
         $model = new Documents();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -223,7 +235,9 @@ class DocumentsController extends Controller
 
         return $this->render('create-fields', [
             'model' => $model,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -275,6 +289,8 @@ class DocumentsController extends Controller
 //        echo  "<pre>";
         $model = $this->findModel($id);
         $sub_page = [];
+        $date_tab = [];
+
         $url = Url::to('', 'http');
         $oldattributes = Documents::find()
             ->select('*')
@@ -366,7 +382,9 @@ class DocumentsController extends Controller
             'document_items' => $document_items,
             'total' => $total,
             'aah' => $aah,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 

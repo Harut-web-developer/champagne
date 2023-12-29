@@ -30,6 +30,8 @@ class SearchController extends Controller{
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        $date_tab = [];
+
         if (isset($_GET)) {
             $searchval = $_GET['searchQuery'];
             $query_nomenclature = Nomenclature::find()
@@ -50,7 +52,9 @@ class SearchController extends Controller{
             $res['query_clients'] = $query_clients;
             return $this->render('index',[
                 'res'=> $res,
-                'sub_page' => $sub_page
+                'sub_page' => $sub_page,
+                'date_tab' => $date_tab,
+
             ]);
         }
         return $this->render('index');
