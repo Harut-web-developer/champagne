@@ -6,6 +6,7 @@ use app\models\Clients;
 use app\models\ClientsGroups;
 use app\models\GroupsName;
 use app\models\GroupsNameSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -18,6 +19,19 @@ class GroupsNameController extends Controller
     /**
      * @inheritDoc
      */
+    public function beforeAction($action)
+    {
+        $session = Yii::$app->session;
+        if ($action->id !== 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->redirect(['site/login']);
+        } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->actionLogin();
+        }
+        if(!$session['username']){
+            $this->redirect('/site/logout');
+        }
+        return parent::beforeAction($action);
+    }
     public function behaviors()
     {
         return array_merge(

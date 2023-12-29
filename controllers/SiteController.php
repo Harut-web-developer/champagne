@@ -25,7 +25,7 @@ class SiteController extends Controller
         } else if($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])){
             return $this->actionLogin();
         } else if($action->id == 'login') {
-            return $this->redirect('/warehouse');
+            return $this->redirect('/dashboard');
         }
 //        else if ($action->id === 'forgot-password'){
 //            return  $this->redirect('site/forgot-password');
@@ -97,7 +97,7 @@ class SiteController extends Controller
             $password = Yii::$app->request->post('password');
             $remember = Yii::$app->request->post('remember');
             $identity = Users::findOne(['username' => $username]);
-            if ($identity && $identity->password === $password) {
+            if ($identity && $identity->password === $password && $identity->username === $username) {
                 if (isset($remember)){
                     $session->set('remember',true);
                     setcookie('username',$username, time()+60 * 60 * 24 * 30, '/');

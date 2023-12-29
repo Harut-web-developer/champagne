@@ -30,12 +30,10 @@ class CustomFieldsController extends Controller
         } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
             return $this->actionLogin();
         }
-
         if(!$session['username']){
             $this->redirect('/site/logout');
         }
         return parent::beforeAction($action);
-
     }
 
     /**

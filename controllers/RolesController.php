@@ -2,10 +2,13 @@
 
 namespace app\controllers;
 
+use app\models\Log;
+use app\models\Premissions;
 use app\models\Roles;
 use app\models\RolesSearch;
 use app\models\Users;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -79,8 +82,10 @@ class RolesController extends Controller
      */
     public function actionView($id)
     {
+        $sub_page = [];
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page,
         ]);
     }
 
@@ -97,6 +102,13 @@ class RolesController extends Controller
         }
         $model = new Roles();
         $sub_page = [];
+        $url = Url::to('', 'http');
+        $url = str_replace('create', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 29])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -104,7 +116,9 @@ class RolesController extends Controller
             $model->access = intval($post['Roles']['access']);
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
+            $model = Roles::getDefVals($model);
             $model->save();
+            Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
                 return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
@@ -131,6 +145,17 @@ class RolesController extends Controller
         }
         $model = $this->findModel($id);
         $sub_page = [];
+        $url = Url::to('', 'http');
+        $oldattributes = Roles::find()
+            ->select('*')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 30])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -138,6 +163,7 @@ class RolesController extends Controller
             $model->access = intval($post['Roles']['access']);
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
+            Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
 
@@ -160,9 +186,21 @@ class RolesController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $oldattributes = Roles::find()
+            ->select('name')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 31])
+            ->asArray()
+            ->one();
         $roles = Roles::findOne($id);
         $roles->status = '0';
         $roles->save();
+        Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }
 

@@ -6,6 +6,7 @@ use app\models\Clients;
 use app\models\Payments;
 use app\models\PaymentsSearch;
 use app\models\Rates;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -19,6 +20,19 @@ class PaymentsController extends Controller
     /**
      * @inheritDoc
      */
+    public function beforeAction($action)
+    {
+        $session = Yii::$app->session;
+        if ($action->id !== 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->redirect(['site/login']);
+        } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->actionLogin();
+        }
+        if(!$session['username']){
+            $this->redirect('/site/logout');
+        }
+        return parent::beforeAction($action);
+    }
 //    public function behaviors()
 //    {
 //        return array_merge(

@@ -68,7 +68,6 @@ class ClientsController extends Controller
         }
         $sub_page = [
             ['name' => 'Խմբեր','address' => '/groups-name'],
-
         ];
         $searchModel = new ClientsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
