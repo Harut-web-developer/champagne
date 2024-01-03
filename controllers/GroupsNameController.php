@@ -6,6 +6,7 @@ use app\models\Clients;
 use app\models\ClientsGroups;
 use app\models\GroupsName;
 use app\models\GroupsNameSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -18,6 +19,19 @@ class GroupsNameController extends Controller
     /**
      * @inheritDoc
      */
+    public function beforeAction($action)
+    {
+        $session = Yii::$app->session;
+        if ($action->id !== 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->redirect(['site/login']);
+        } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
+            return $this->actionLogin();
+        }
+        if(!$session['username']){
+            $this->redirect('/site/logout');
+        }
+        return parent::beforeAction($action);
+    }
     public function behaviors()
     {
         return array_merge(
@@ -145,6 +159,10 @@ class GroupsNameController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            $clients_groups = ClientsGroups::find()->where(['groups_id' => $id])->exists();
+            if ($clients_groups){
+                ClientsGroups::deleteAll(['groups_id' => $id]);
+            }
             $model->groups_name = $post['GroupsName']['groups_name'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
@@ -153,12 +171,19 @@ class GroupsNameController extends Controller
                 ->where(['groups_name' => $post['GroupsName']['groups_name']])
                 ->asArray()
                 ->one();
+
             if(!empty($post['clients'])){
                 for ($i = 0; $i < count($post['clients']);$i++){
                     $model_clients_groups = new ClientsGroups();
                     $model_clients_groups->groups_id = $client_id['id'];
                     $model_clients_groups->clients_id = intval($post['clients'][$i]);
                     $model_clients_groups->save(false);
+                }
+            }
+            else{
+                $discount_clients_check = DiscountClients::find()->where(['discount_id' => $id])->exists();
+                if ($discount_clients_check){
+                    DiscountClients::deleteAll(['discount_id' => $id]);
                 }
             }
             return $this->redirect(['index', 'id' => $model->id]);

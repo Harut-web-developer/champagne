@@ -27,9 +27,6 @@ class LogController extends Controller
         } else if ($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])) {
             return $this->actionLogin();
         }
-//        else if ($action->id == 'forgot-password'){
-//            return  $this->redirect('site/forgot-password');
-//        }
         if(!$session['username']){
             $this->redirect('/site/logout');
         }

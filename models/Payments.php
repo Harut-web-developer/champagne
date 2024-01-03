@@ -51,8 +51,8 @@ class Payments extends \yii\db\ActiveRecord
             'rate_id' => 'Փոխարժեք',
             'rate_value' => 'Փոխարժեքի չափ',
             'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Ստեղծվել է',
+            'updated_at' => 'Թարմացվել է',
         ];
     }
     public function getClientName(){

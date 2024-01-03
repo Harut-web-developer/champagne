@@ -48,8 +48,14 @@ class Roles extends \yii\db\ActiveRecord
             'name' => 'Անուն',
             'access' => 'Մուտք',
             'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'created_at' => 'Ստեղծվել է',
+            'updated_at' => 'Թարմացվել է',
         ];
+    }
+    public static function getDefVals($model){
+        if(is_null($model->status)){
+            $model->status = '1';
+        }
+        return $model;
     }
 }
