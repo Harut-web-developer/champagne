@@ -9,6 +9,8 @@ $this->title = 'Օգտատիրոջ դաշտերի կարգավորում';
 $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
+
 ?>
 <div class="users-create">
 

@@ -4,6 +4,8 @@ $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/colresizable/1.6.0
     'position' => \yii\web\View::POS_END,
 ]);
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
+
 ?>
 
 <div id="events">

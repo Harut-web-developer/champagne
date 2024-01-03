@@ -10,6 +10,8 @@ $this->title = $model->route;
 $this->params['breadcrumbs'][] = ['label' => 'Roles', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
+
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="roles-view">

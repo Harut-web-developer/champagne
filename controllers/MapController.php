@@ -31,10 +31,14 @@ class MapController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        $date_tab = [];
+
         $route = Route::find()->select('id, route')->asArray()->all();
         return $this->render('index', [
             'route' => $route,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
     public function actionLocationValue()

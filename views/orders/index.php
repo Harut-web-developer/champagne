@@ -17,6 +17,8 @@ use yii\grid\GridView;
 $this->title = 'Վաճառքներ';
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
+
 
 $have_access_create = Users::checkPremission(21);
 $have_access_update = Users::checkPremission(22);

@@ -9,6 +9,7 @@ use yii\widgets\DetailView;
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['date_tab'] = $date_tab;
 $this->params['sub_page'] = $sub_page;
 \yii\web\YiiAsset::register($this);
 ?>

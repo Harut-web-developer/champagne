@@ -64,13 +64,17 @@ class RatesController extends Controller
             ['name' => 'Վիճակագրություն','address' => '/payments/statistics'],
             ['name' => 'Վճարումներ','address' => '/payments'],
         ];
+        $date_tab = [];
+
         $searchModel = new RatesSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -83,9 +87,13 @@ class RatesController extends Controller
     public function actionView($id)
     {
         $sub_page = [];
+        $date_tab = [];
+
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -101,6 +109,8 @@ class RatesController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        $date_tab = [];
+
         $model = new Rates();
         $url = Url::to('', 'http');
         $url = str_replace('create', 'view', $url);
@@ -125,7 +135,9 @@ class RatesController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -144,6 +156,8 @@ class RatesController extends Controller
         }
         $model = $this->findModel($id);
         $sub_page = [];
+        $date_tab = [];
+
         $url = Url::to('', 'http');
         $oldattributes = Rates::find()
             ->select('*')
@@ -167,7 +181,9 @@ class RatesController extends Controller
 
         return $this->render('update', [
             'model' => $model,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 

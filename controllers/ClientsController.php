@@ -69,13 +69,15 @@ class ClientsController extends Controller
         $sub_page = [
             ['name' => 'Խմբեր','address' => '/groups-name'],
         ];
+        $date_tab = [];
         $searchModel = new ClientsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
         ]);
     }
 
@@ -89,15 +91,21 @@ class ClientsController extends Controller
     {
         $id = Yii::$app->request->get('id');
         $sub_page = [];
+        $date_tab = [];
+
         return $this->render('view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
     public function actionClientsDebt()
     {
         $id = intval(Yii::$app->request->get('id'));
         $sub_page = [];
+        $date_tab = [];
+
         $client_orders = Orders::find()
             ->select(['orders.id', 'orders.total_price as debt'])
             ->leftJoin('clients', 'orders.clients_id = clients.id')
@@ -112,6 +120,8 @@ class ClientsController extends Controller
         return $this->render('clients_debt', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
             'client_orders' => $client_orders,
             'payments' => $payments['payments_total'],
         ]);
@@ -128,6 +138,8 @@ class ClientsController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        $date_tab = [];
+
         $model = new Clients();
         $url = Url::to('', 'http');
         $url = str_replace('create', 'view', $url);
@@ -161,6 +173,8 @@ class ClientsController extends Controller
             'model' => $model,
             'route' => $route,
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -185,6 +199,8 @@ class ClientsController extends Controller
     public function actionCreateFields()
     {
         $sub_page = [];
+        $date_tab = [];
+
         $model = new Clients();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -201,6 +217,8 @@ class ClientsController extends Controller
         return $this->render('create-fields', [
             'model' => $model,
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -218,6 +236,8 @@ class ClientsController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        $date_tab = [];
+
         $model = $this->findModel($id);
         $url = Url::to('', 'http');
         $oldattributes = Clients::find()
@@ -253,6 +273,8 @@ class ClientsController extends Controller
             'route' => $route,
             'route_value_update' => $route_value_update,
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -289,10 +311,10 @@ class ClientsController extends Controller
 
     public function actionGetOrderId(){
         if ($this->request->isPost){
-//            $post = intval($this->request->post('id'));
-//            $orders = Orders::findOne($post);
-//            $orders->status = '3';
-//            $orders->save(false);
+            $post = intval($this->request->post('id'));
+            $orders = Orders::findOne($post);
+            $orders->status = '3';
+            $orders->save(false);
 
         }
     }

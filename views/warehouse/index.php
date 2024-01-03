@@ -16,6 +16,8 @@ use app\models\CustomfieldsBlocksInputValues;
 $this->title = 'Պահեստներ';
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
+
 $have_access_create = Users::checkPremission(1);
 $have_access_update = Users::checkPremission(2);
 $have_access_delete = Users::checkPremission(3);

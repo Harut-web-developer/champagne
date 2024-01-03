@@ -59,13 +59,17 @@ class PaymentsController extends Controller
             ['name' => 'Վիճակագրություն','address' => '/payments/statistics'],
             ['name' => 'Փոխարժեք','address' => '/rates']
         ];
+        $date_tab = [];
+
         $searchModel = new PaymentsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -89,8 +93,12 @@ class PaymentsController extends Controller
             ['name' => 'Վճարումներ','address' => '/payments'],
             ['name' => 'Փոխարժեք','address' => '/rates']
         ];
+        $date_tab = [];
+
         return $this->render('statistics',[
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
             'statistics' => $statistics
         ]);
     }
@@ -99,9 +107,13 @@ class PaymentsController extends Controller
         $sub_page = [
             ['name' => 'Վիճակագրություն','address' => '/payments/statistics']
         ];
+        $date_tab = [];
+
         return $this->render('view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -132,6 +144,8 @@ class PaymentsController extends Controller
         $sub_page = [
             ['name' => 'Վիճակագրություն','address' => '/payments/statistics']
         ];
+        $date_tab = [];
+
 //        echo "<pre>";
         $client = Clients::find()->select('id,name')->asArray()->all();
         $client = ArrayHelper::map($client,'id','name');
@@ -142,7 +156,9 @@ class PaymentsController extends Controller
             'model' => $model,
             'client' => $client,
             'rates' => $rates,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -173,6 +189,8 @@ class PaymentsController extends Controller
         $sub_page = [
             ['name' => 'Վիճակագրություն','address' => '/payments/statistics']
         ];
+        $date_tab = [];
+
         $rates = Rates::find()->select('id,name')->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
         $client = Clients::find()->select('id,name')->asArray()->all();
@@ -181,7 +199,9 @@ class PaymentsController extends Controller
             'model' => $model,
             'client' => $client,
             'rates' => $rates,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
 
         ]);
     }

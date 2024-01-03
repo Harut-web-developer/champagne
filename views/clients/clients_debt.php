@@ -10,6 +10,7 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Clients', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
 \yii\web\YiiAsset::register($this);
 ?>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -22,10 +23,17 @@ $this->params['sub_page'] = $sub_page;
                 <thead>
                 <tr>
                     <th>#</th>
+<<<<<<< HEAD
                     <th>Պատվերի Համար</th>
                     <th>պատվԵՐԻ ԱՐԺԵՔ</th>
                     <th>ՎՃԱՐված ԳՈՒՄԱՐ</th>
                     <th>հաշվեկշիռ</th>
+=======
+                    <th>Պատվերի համարը</th>
+                    <th>Պարտք</th>
+                    <th>Վճարված գումար</th>
+                    <th>Մնացորդ</th>
+>>>>>>> 0ec53869d06adb78158e4006af602b7cebb9586e
                 </tr>
                 </thead>
                 <tbody class="table-border-bottom-0 debtPaymentBody">

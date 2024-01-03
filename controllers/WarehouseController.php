@@ -70,6 +70,8 @@ class WarehouseController extends Controller
             ['name' => 'Տեղեկամատյան','address' => '/log'],
 
         ];
+        $date_tab = [];
+
         $searchModel = new WarehouseSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -77,7 +79,9 @@ class WarehouseController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'new_fields'=>$res,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -90,9 +94,13 @@ class WarehouseController extends Controller
     public function actionView($id)
     {
         $sub_page = [];
+        $date_tab = [];
+
         return $this->render('view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -108,6 +116,8 @@ class WarehouseController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        $date_tab = [];
+
         $model = new Warehouse();
         $url = Url::to('', 'http');
         $url = str_replace('create', 'view', $url);
@@ -138,7 +148,9 @@ class WarehouseController extends Controller
         }
         return $this->render('create', [
             'model' => $model,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -152,6 +164,8 @@ class WarehouseController extends Controller
             ['name' => 'Տեղեկամատյան','address' => '/log'],
 
         ];
+        $date_tab = [];
+
         $model = new Warehouse();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -167,7 +181,9 @@ class WarehouseController extends Controller
 
         return $this->render('create-fields', [
             'model' => $model,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
     /**
@@ -185,6 +201,8 @@ class WarehouseController extends Controller
         }
         $model = $this->findModel($id);
         $sub_page = [];
+        $date_tab = [];
+
         $url = Url::to('', 'http');
         $oldattributes = Warehouse::find()
             ->select('*')
@@ -215,7 +233,9 @@ class WarehouseController extends Controller
 
         return $this->render('update', [
             'model' => $model,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 

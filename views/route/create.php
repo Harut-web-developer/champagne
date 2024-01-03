@@ -9,6 +9,8 @@ $this->title = 'Ստեղծել երթուղի';
 $this->params['breadcrumbs'][] = ['label' => 'Routes', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
+
 ?>
 <div class="route-create">
     <h1><?= Html::encode($this->title) ?></h1>

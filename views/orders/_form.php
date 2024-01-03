@@ -267,8 +267,6 @@ use app\widgets\CustomLinkPager;
                                                         <input type="number" class="form-control ordersCountInput">
                                                         <input class="ordersPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
                                                         <input class="ordersCostInput" type="hidden" value="<?=$nomenclature['cost']?>">
-<!--                                                        <input class="ordersPriceBrforeDiscount" type="hidden" value="--><?php //=$nomenclature['price_before_discount']?><!--">-->
-<!--                                                        <input class="ordersDiscountInput" type="hidden" value="--><?php //=$nomenclature['discount_id']?><!--">-->
                                                     </td>
                                                 </tr>
                                                 <?php

@@ -9,6 +9,8 @@ $this->title = 'Հաճախորդի դաշտերի կարգավորում';
 $this->params['breadcrumbs'][] = ['label' => 'Clients', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
+
 ?>
 <div class="clients-create">
 

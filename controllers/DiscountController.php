@@ -70,8 +70,9 @@ class DiscountController extends Controller
         }
         $sub_page = [
             ['name' => 'Ոչ ակտիվ զեղչեր','address' => '/discount/inactive'],
-
         ];
+        $date_tab = [];
+
         $searchModel = new DiscountSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
         $discount_overdue = Discount::find()->where(['status' => 1])->all();
@@ -88,6 +89,8 @@ class DiscountController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
             'discount_sortable' => $discount_sortable
         ]);
     }
@@ -111,8 +114,11 @@ class DiscountController extends Controller
         $sub_page = [
             ['name' => 'Ակտիվ զեղչեր','address' => '/discount'],
         ];
+        $date_tab = [];
+
         $discount_sortable = Discount::find()->where(['or',['status' => '0'],['status' => '2']])->asArray()->all();
         return $this->render('inactive', [
+            'date_tab' => $date_tab,
             'sub_page' => $sub_page,
             'discount_sortable' => $discount_sortable
         ]);
@@ -126,8 +132,11 @@ class DiscountController extends Controller
     public function actionView($id)
     {
         $sub_page = [];
+        $date_tab = [];
+
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'date_tab' => $date_tab,
             'sub_page' => $sub_page,
         ]);
     }
@@ -144,6 +153,8 @@ class DiscountController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        $date_tab = [];
+
         $model = new Discount();
         $url = Url::to('', 'http');
         $url = str_replace('create', 'view', $url);
@@ -262,7 +273,9 @@ class DiscountController extends Controller
             'clients' => $clients,
             'products' => $products,
             'discount_client_groups' => $discount_client_groups,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
 
         ]);
     }
@@ -281,6 +294,8 @@ class DiscountController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        $date_tab = [];
+
         $model = $this->findModel($id);
         $url = Url::to('', 'http');
         $oldattributes = Discount::find()
@@ -442,6 +457,7 @@ class DiscountController extends Controller
             'discount_client_groups_name' => $discount_client_groups_name,
             'discount_products_id' => $discount_products_id,
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
             'min' => $min,
             'max' => $max,
             'discount_client_groups' => $discount_client_groups,

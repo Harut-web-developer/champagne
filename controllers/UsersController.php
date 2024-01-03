@@ -71,18 +71,24 @@ class UsersController extends Controller
             ['name' => 'Թույլտվություն','address' => '/premissions'],
 
         ];
+        $date_tab = [];
+
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
     public function actionProfile(){
         $sub_page = [];
+        $date_tab = [];
+
         $session = Yii::$app->session;
         $model = $this->findModel($session['user_id']);
         if($this->request->isPost){
@@ -99,7 +105,9 @@ class UsersController extends Controller
         }
         return $this->render('profile',[
             'model' => $model,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ] );
     }
 
@@ -112,9 +120,13 @@ class UsersController extends Controller
     public function actionView($id)
     {
         $sub_page = [];
+        $date_tab = [];
+
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -131,6 +143,8 @@ class UsersController extends Controller
         }
 //        echo "<pre>";
         $sub_page = [];
+        $date_tab = [];
+
         $model = new Users();
         $url = Url::to('', 'http');
         $url = str_replace('create', 'view', $url);
@@ -177,7 +191,9 @@ class UsersController extends Controller
         return $this->render('create', [
             'model' => $model,
             'roles' => $roles,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -188,6 +204,8 @@ class UsersController extends Controller
             ['name' => 'Թույլտվություն','address' => '/premissions'],
             ['name' => 'Օգտատեր','address' => '/users'],
         ];
+        $date_tab = [];
+
         $model = new Users();
         if ($this->request->isPost) {
             $post = $this->request->post();
@@ -203,7 +221,9 @@ class UsersController extends Controller
 
         return $this->render('create-fields', [
             'model' => $model,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -222,6 +242,8 @@ class UsersController extends Controller
         }
         $model = $this->findModel($id);
         $sub_page = [];
+        $date_tab = [];
+
         $url = Url::to('', 'http');
         $oldattributes = Users::find()
             ->select('*')
@@ -271,7 +293,9 @@ class UsersController extends Controller
             'model' => $model,
             'roles' => $roles,
             'user_premission_select' => $user_premission_select,
-            'sub_page' => $sub_page
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
