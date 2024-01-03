@@ -106,7 +106,6 @@ class RolesController extends Controller
         }
         $model = new Roles();
         $sub_page = [];
-<<<<<<< HEAD
         $url = Url::to('', 'http');
         $url = str_replace('create', 'view', $url);
         $premission = Premissions::find()
@@ -114,10 +113,8 @@ class RolesController extends Controller
             ->where(['id' => 29])
             ->asArray()
             ->one();
-=======
         $date_tab = [];
 
->>>>>>> 0ec53869d06adb78158e4006af602b7cebb9586e
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
