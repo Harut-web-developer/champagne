@@ -21,6 +21,11 @@ use yii\filters\VerbFilter;
  */
 class DashboardController extends Controller
 {
+    public function init()
+    {
+        parent::init();
+        Yii::$app->language = 'hy';
+    }
     public function beforeAction($action)
     {
         $session = Yii::$app->session;

@@ -24,6 +24,12 @@ use yii\filters\VerbFilter;
  */
 class DocumentsController extends Controller
 {
+    public function init()
+    {
+        parent::init();
+        Yii::$app->language = 'hy';
+    }
+
     /**
      * @inheritDoc
      */

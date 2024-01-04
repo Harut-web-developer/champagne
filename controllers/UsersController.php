@@ -25,6 +25,11 @@ class UsersController extends Controller
     /**
      * @inheritDoc
      */
+    public function init()
+    {
+        parent::init();
+        Yii::$app->language = 'hy';
+    }
     public function beforeAction($action)
     {
         $session = Yii::$app->session;

@@ -23,17 +23,10 @@ $this->params['date_tab'] = $date_tab;
                 <thead>
                 <tr>
                     <th>#</th>
-<<<<<<< HEAD
                     <th>Պատվերի Համար</th>
                     <th>պատվԵՐԻ ԱՐԺԵՔ</th>
                     <th>ՎՃԱՐված ԳՈՒՄԱՐ</th>
                     <th>հաշվեկշիռ</th>
-=======
-                    <th>Պատվերի համարը</th>
-                    <th>Պարտք</th>
-                    <th>Վճարված գումար</th>
-                    <th>Մնացորդ</th>
->>>>>>> 0ec53869d06adb78158e4006af602b7cebb9586e
                 </tr>
                 </thead>
                 <tbody class="table-border-bottom-0 debtPaymentBody">
@@ -44,18 +37,18 @@ $this->params['date_tab'] = $date_tab;
                         <td><?= $keys + 1 ?></td>
                         <td class="orderIdDebt"><?= $client_order['id'] ?></td>
                         <td><?= $client_order['debt'] ?></td>
-                        <td id="payments"><?= $payments; ?></td>
+                        <td id="payments . <?= $keys ?>"><?= $payments; ?></td>
                         <?php
                         if ($payments) {
                             if ($payments >= intval($client_order['debt'])) {
                                 $balance_order = 0;
                                 $payments -= intval($client_order['debt']);
-                                $view_payments = intval($client_order['debt']);
+                                $view_payments = $client_order['debt'];
                                 ?>
                                 <script>
                                     $(document).ready(function () {
                                         $("table").find("#payments").empty();
-                                        document.getElementById("payments").innerHTML = <?= $view_payments; ?>;
+                                        document.getElementById("payments . <?= $keys ?>").innerHTML = <?= $view_payments; ?>;
                                     });
                                 </script>
                                 <?php
@@ -68,6 +61,12 @@ $this->params['date_tab'] = $date_tab;
                             $debt_total += intval($client_order['debt']) - $payments;
                         }
                         ?>
+                        <script>
+                            if (!document.getElementById("payments . <?= $keys ?>").innerHTML)
+                            {
+                                document.getElementById("payments . <?= $keys ?>").innerHTML = '0';
+                            }
+                        </script>
 
 <!--                        <td>--><?php //= $view_payments; ?><!--</td>-->
                         <td class="balance"><?= (@$debt_total) ? $debt_total : @$balance_order ?></td>
@@ -79,31 +78,4 @@ $this->params['date_tab'] = $date_tab;
             </table>
         </div>
     </div>
-    <!--    <h1>--><?php //= Html::encode($this->title) ?><!--</h1>-->
-    <!---->
-    <!--    <p>-->
-    <!--        --><?php //= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-    <!--        --><?php //= Html::a('Delete', ['delete', 'id' => $model->id], [
-    //            'class' => 'btn btn-danger',
-    //            'data' => [
-    //                'confirm' => 'Are you sure you want to delete this item?',
-    //                'method' => 'post',
-    //            ],
-    //        ]) ?>
-    <!--    </p>-->
-    <!---->
-    <!--    --><?php //= DetailView::widget([
-    //        'model' => $model,
-    //        'attributes' => [
-    //            'id',
-    //            'route_id',
-    //            'name',
-    //            'location',
-    //            'phone',
-    //            'status',
-    //            'created_at',
-    //            'updated_at',
-    //        ],
-    //    ]) ?>
-
 </div>
