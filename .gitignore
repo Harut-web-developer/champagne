@@ -15,6 +15,9 @@ Thumbs.db
 # composer vendor dir
 /vendor
 
+/config/db.php
+.htaccess
+
 # composer itself is not needed
 composer.phar
 
