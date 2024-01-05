@@ -1,69 +1,23 @@
 $(document).ready(function() {
-    // var pgurl = window.location.href.substr(window.location.href
-    //     .lastIndexOf("/")+1);
-    // console.log(pgurl.indexOf("update") !== -1)
-    // var pgurl = window.location.href.substr(window.location.href.lastIndexOf("/")+1);
-    // $(".menu-sub a ").each(function(){
-    //     if($(this).attr("href") == '/'+pgurl || $(this).attr("href") == '' ) {
-    //         $(this).parent().addClass("active");
-    //     }
-    // })
-
-    // var pgurl = window.location.href.substr(window.location.href
-    //     .lastIndexOf("/")+1);
-    // var x = "/"+window.location.href.split("/")[3];
-    // var y = "/"+window.location.href.split("/")[4];
-    // var checkDone = false;
-    // // console.log(y)
-    // // console.log(x)
-    // var pgurl = window.location.href.substr(window.location.href.lastIndexOf("/")+1);
-    // $(".menu-sub a ").each(function(){
-    //     if($(this).attr("href") == '/'+pgurl) {
-    //         $(this).parent().addClass("active");
-    //     }
-    //     var parentHref = $(this).attr("href");
-    //     // console.log(parentHref)
-    //     // console.log(parentHref.indexOf(x) !== -1)
-    //         if (parentHref.indexOf(x) !== -1 && !checkDone) {
-    //             $(this).parent().addClass("active");
-    //             // console.log($(this).parent())
-    //             checkDone = true;
-    //         }
-    //     if (parentHref.indexOf(y) !== -1){
-    //         // console.log($(this).parent().children())
-    //         $(this).parent().addClass("active");
-    //     }
-    // })
-
     var x = "/" + window.location.href.split("/")[3];
     var y = "/" + window.location.href.split("/")[4];
-    var parentHref = $(this).attr("href");
-    console.log(x)
-    console.log(y)
-    var z = 0;
     var t = 0;
-    var a = 0;
-    $(".menu-sub a").each(function () {
-        var currentHref = $(this).attr("href");
-        if (currentHref.indexOf(x) !== -1 && (y === '/undefined') && z == 0) {
-            $(this).parent().addClass("active");
-            console.log($(this).parent())
-            z++;
-        }
-        if (currentHref.indexOf(x) !== -1 && t == 0) {
-            if (y !== '/undefined') {
-                $(this).parent().addClass("active");
-                t++;
-            }
-        }
-        if (currentHref.indexOf(x) !== -1 && a == 0) {
-            if (y === '/undefined') {
-                $(this).parent().addClass("active");
-                a++;
-            }
-        }
-    });
 
+    $(".menu-sub a").on("click", function() {
+        $(".menu-sub .menu-item").removeClass("active");
+        $(this).parent().addClass("active");
+        $(".menu-sub a").each(function () {
+            var currentHref = $(this).attr("href");
+
+            if ((currentHref === x && y === '/undefined') || currentHref === x + y) {
+                $(this).parent().addClass("active");
+            } else if (currentHref.indexOf(x) !== -1 && t === 0) {
+                if (y !== '/undefined') {
+                    $(this).parent().addClass("active");
+                    t++;
+                }
+            }
+        });    });
 
 
     $('body').on('click','.edite-block-title',function (){
