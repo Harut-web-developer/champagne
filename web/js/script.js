@@ -2,10 +2,6 @@ $(document).ready(function() {
     var x = "/" + window.location.href.split("/")[3];
     var y = "/" + window.location.href.split("/")[4];
     var t = 0;
-
-    $(".menu-sub a").on("click", function() {
-        $(".menu-sub .menu-item").removeClass("active");
-        $(this).parent().addClass("active");
         $(".menu-sub a").each(function () {
             var currentHref = $(this).attr("href");
 
@@ -17,7 +13,14 @@ $(document).ready(function() {
                     t++;
                 }
             }
-        });    });
+        });
+
+    // var pgurl = window.location.href.substr(window.location.href
+    //     .lastIndexOf("/")+1);
+    // $(".menu-sub a ").each(function(){
+    //     if($(this).attr("href") == '/'+pgurl || $(this).attr("href") == '' )
+    //         $(this).parent().addClass("active");
+    // })
 
 
     $('body').on('click','.edite-block-title',function (){
