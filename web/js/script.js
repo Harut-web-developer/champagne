@@ -2,22 +2,18 @@ $(document).ready(function() {
     var x = "/" + window.location.href.split("/")[3];
     var y = "/" + window.location.href.split("/")[4];
     var t = 0;
+    $(".menu-sub a").each(function () {
+        var currentHref = $(this).attr("href");
 
-    $(".menu-sub a").on("click", function() {
-        $(".menu-sub .menu-item").removeClass("active");
-        $(this).parent().addClass("active");
-        $(".menu-sub a").each(function () {
-            var currentHref = $(this).attr("href");
-
-            if ((currentHref === x && y === '/undefined') || currentHref === x + y) {
+        if ((currentHref === x && y === '/undefined') || currentHref === x + y) {
+            $(this).parent().addClass("active");
+        } else if (currentHref.indexOf(x) !== -1 && t === 0) {
+            if (y !== '/undefined') {
                 $(this).parent().addClass("active");
-            } else if (currentHref.indexOf(x) !== -1 && t === 0) {
-                if (y !== '/undefined') {
-                    $(this).parent().addClass("active");
-                    t++;
-                }
+                t++;
             }
-        });    });
+        }
+    });
 
 
     $('body').on('click','.edite-block-title',function (){
