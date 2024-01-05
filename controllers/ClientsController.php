@@ -97,12 +97,13 @@ class ClientsController extends Controller
         $id = Yii::$app->request->get('id');
         $sub_page = [];
         $date_tab = [];
-
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         return $this->render('view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
         ]);
     }
     public function actionClientsDebt()
@@ -242,7 +243,9 @@ class ClientsController extends Controller
         }
         $sub_page = [];
         $date_tab = [];
-
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         $model = $this->findModel($id);
         $url = Url::to('', 'http');
         $oldattributes = Clients::find()
