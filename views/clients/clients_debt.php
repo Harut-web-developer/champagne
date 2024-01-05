@@ -37,7 +37,7 @@ $this->params['date_tab'] = $date_tab;
                         <td><?= $keys + 1 ?></td>
                         <td class="orderIdDebt"><?= $client_order['id'] ?></td>
                         <td><?= $client_order['debt'] ?></td>
-                        <td id="payments"><?= $payments; ?></td>
+                        <td id="payments . <?= $keys ?>"><?= $payments; ?></td>
                         <?php
                         if ($payments) {
                             if ($payments >= intval($client_order['debt'])) {
@@ -48,7 +48,7 @@ $this->params['date_tab'] = $date_tab;
                                 <script>
                                     $(document).ready(function () {
                                         $("table").find("#payments").empty();
-                                        document.getElementById("payments").innerHTML = <?= $view_payments; ?>;
+                                        document.getElementById("payments . <?= $keys ?>").innerHTML = <?= $view_payments; ?>;
                                     });
                                 </script>
                                 <?php
@@ -62,6 +62,12 @@ $this->params['date_tab'] = $date_tab;
                         }
                         ?>
 
+                        <script>
+                            if (!document.getElementById("payments . <?= $keys ?>").innerHTML)
+                            {
+                                document.getElementById("payments . <?= $keys ?>").innerHTML = '0';
+                            }
+                        </script>
 <!--                        <td>--><?php //= $view_payments; ?><!--</td>-->
                         <td class="balance"><?= (@$debt_total) ? $debt_total : @$balance_order ?></td>
                     </tr>
@@ -72,31 +78,4 @@ $this->params['date_tab'] = $date_tab;
             </table>
         </div>
     </div>
-    <!--    <h1>--><?php //= Html::encode($this->title) ?><!--</h1>-->
-    <!---->
-    <!--    <p>-->
-    <!--        --><?php //= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-    <!--        --><?php //= Html::a('Delete', ['delete', 'id' => $model->id], [
-    //            'class' => 'btn btn-danger',
-    //            'data' => [
-    //                'confirm' => 'Are you sure you want to delete this item?',
-    //                'method' => 'post',
-    //            ],
-    //        ]) ?>
-    <!--    </p>-->
-    <!---->
-    <!--    --><?php //= DetailView::widget([
-    //        'model' => $model,
-    //        'attributes' => [
-    //            'id',
-    //            'route_id',
-    //            'name',
-    //            'location',
-    //            'phone',
-    //            'status',
-    //            'created_at',
-    //            'updated_at',
-    //        ],
-    //    ]) ?>
-
 </div>
