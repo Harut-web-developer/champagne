@@ -392,7 +392,7 @@ $date_tab = $this->params['date_tab'];
                                     <li class="nav-item">
                                         <div class="btn-group">
                                             <button type="button" class="btn dropdown-toggle hide-arrow customBtn" data-bs-toggle="dropdown" aria-expanded="false">
-                                                custom
+                                                Ընտրել
                                             </button>
                                             <form method="get" action="/dashboard/index">
                                                 <ul class="dropdown-menu customUl" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 41px);" data-popper-placement="bottom-start">

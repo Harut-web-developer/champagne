@@ -68,6 +68,12 @@ $this->params['date_tab'] = $date_tab;
                             }
                         </script>
 
+                        <script>
+                            if (!document.getElementById("payments . <?= $keys ?>").innerHTML)
+                            {
+                                document.getElementById("payments . <?= $keys ?>").innerHTML = '0';
+                            }
+                        </script>
 <!--                        <td>--><?php //= $view_payments; ?><!--</td>-->
                         <td class="balance"><?= (@$debt_total) ? $debt_total : @$balance_order ?></td>
                     </tr>

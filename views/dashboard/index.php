@@ -33,7 +33,7 @@ $this->params['date_tab'] = $date_tab;
                                             <!--                                    <small class="text-muted">կիսաչոր</small>-->
                                         </div>
                                         <div class="user-progress">
-                                            <small class="fw-medium"><?=$item['price']?></small>
+                                            <small class="fw-medium"><?=number_format($item['price']) . ' դր.'?></small>
                                         </div>
                                     </div>
                                 </li>
@@ -68,8 +68,8 @@ $this->params['date_tab'] = $date_tab;
                                             <small class="text-muted d-block mb-1">Վճարված</small>
                                         </div>
                                         <div class="user-progress d-flex align-items-center gap-1">
-                                            <h6 class="mb-0"><?=$item['total_price']?></h6>
-                                            <span class="text-muted">դր.</span>
+                                            <h6 class="mb-0"><?=number_format($item['total_price']) . ' դր.'?></h6>
+<!--                                            <span class="text-muted">դր.</span>-->
                                         </div>
                                     </div>
                                 </li>
@@ -96,7 +96,7 @@ $this->params['date_tab'] = $date_tab;
                             </div>
                         </div>
                         <span class="fw-medium d-block mb-1">Շահույթ</span>
-                        <h4 style="font-size: 15px" class="card-title mb-2 orders_profit"><?=$cost?></h4>
+                        <h4 style="font-size: 15px" class="card-title mb-2 orders_profit"><?=number_format($cost) . ' դր.'?></h4>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-12 col-6 mb-4">
@@ -107,7 +107,7 @@ $this->params['date_tab'] = $date_tab;
                             </div>
                         </div>
                         <span class="fw-medium d-block mb-1">Վաճառք</span>
-                        <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_sale"><?=$sale?></h4>
+                        <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_sale"><?=number_format($sale) . ' դր.'?></h4>
                     </div>
                 </div>
             </div>
@@ -120,7 +120,7 @@ $this->params['date_tab'] = $date_tab;
                             </div>
                         </div>
                         <span class="fw-medium d-block mb-1">Վճարումներ</span>
-                        <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_pay"><?=$payment?></h4>
+                        <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_pay"><?=number_format($payment) . ' դր.'?></h4>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-12 col-6 mb-4">
@@ -131,7 +131,7 @@ $this->params['date_tab'] = $date_tab;
                             </div>
                         </div>
                         <span class="fw-medium d-block mb-1">Գործարքներ</span>
-                        <h4 style="font-size: 15px" class="card-title mb-2 orders_deal"><?=$deal?></h4>
+                        <h4 style="font-size: 15px" class="card-title mb-2 orders_deal"><?=number_format($deal) . ' դր.'?></h4>
                     </div>
                 </div>
             </div>
