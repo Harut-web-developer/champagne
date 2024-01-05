@@ -11,6 +11,11 @@ use yii\web\Controller;
 
 class MapController extends Controller
 {
+    public function init()
+    {
+        parent::init();
+        Yii::$app->language = 'hy';
+    }
     public function beforeAction($action)
     {
         $session = Yii::$app->session;

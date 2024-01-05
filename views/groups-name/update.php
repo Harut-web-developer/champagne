@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\GroupsName $model */
 
-$this->title = 'Update Groups Name: ' . $model->id;
+$this->title = 'Փոփոխել խումբը: ' . $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Groups Names', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';

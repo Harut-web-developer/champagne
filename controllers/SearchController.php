@@ -8,6 +8,11 @@ use yii\web\Controller;
 use app\models\Users;
 
 class SearchController extends Controller{
+    public function init()
+    {
+        parent::init();
+        Yii::$app->language = 'hy';
+    }
     public function beforeAction($action)
     {
         $session = Yii::$app->session;
@@ -36,15 +41,19 @@ class SearchController extends Controller{
             $searchval = $_GET['searchQuery'];
             $query_nomenclature = Nomenclature::find()
                 ->select('id, name')
-                ->Where(['like', 'name', $searchval])
-                ->asArray()->all();
+                ->where(['like', 'name', $searchval])
+                ->andWhere(['status' => '1'])
+                ->asArray()
+                ->all();
             $query_users = Users::find()
                 ->select('id, name')
-                ->Where(['like', 'name', $searchval])
+                ->where(['like', 'name', $searchval])
+                ->andWhere(['status' => '1'])
                 ->asArray()->all();
             $query_clients = Clients::find()
                 ->select('id, name')
-                ->Where(['like', 'name', $searchval])
+                ->where(['like', 'name', $searchval])
+                ->andWhere(['status' => '1'])
                 ->asArray()->all();
 
             $res['query_nomenclature'] = $query_nomenclature;

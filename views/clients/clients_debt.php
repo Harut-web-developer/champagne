@@ -43,7 +43,7 @@ $this->params['date_tab'] = $date_tab;
                             if ($payments >= intval($client_order['debt'])) {
                                 $balance_order = 0;
                                 $payments -= intval($client_order['debt']);
-                                $view_payments = intval($client_order['debt']);
+                                $view_payments = $client_order['debt'];
                                 ?>
                                 <script>
                                     $(document).ready(function () {
@@ -61,6 +61,12 @@ $this->params['date_tab'] = $date_tab;
                             $debt_total += intval($client_order['debt']) - $payments;
                         }
                         ?>
+                        <script>
+                            if (!document.getElementById("payments . <?= $keys ?>").innerHTML)
+                            {
+                                document.getElementById("payments . <?= $keys ?>").innerHTML = '0';
+                            }
+                        </script>
 
                         <script>
                             if (!document.getElementById("payments . <?= $keys ?>").innerHTML)

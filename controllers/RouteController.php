@@ -24,6 +24,11 @@ class RouteController extends Controller
     /**
      * @inheritDoc
      */
+    public function init()
+    {
+        parent::init();
+        Yii::$app->language = 'hy';
+    }
     public function beforeAction($action)
     {
         $session = Yii::$app->session;
@@ -94,7 +99,9 @@ class RouteController extends Controller
         }
         $sub_page = [];
         $date_tab = [];
-
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         return $this->render('route-view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
@@ -209,7 +216,9 @@ class RouteController extends Controller
         $model = $this->findModel($id);
         $sub_page = [];
         $date_tab = [];
-
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         $url = Url::to('', 'http');
         $oldattributes = Route::find()
             ->select('*')

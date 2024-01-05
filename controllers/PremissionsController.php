@@ -22,6 +22,11 @@ class PremissionsController extends Controller
     /**
      * @inheritDoc
      */
+    public function init()
+    {
+        parent::init();
+        Yii::$app->language = 'hy';
+    }
     public function beforeAction($action)
     {
         $session = Yii::$app->session;
@@ -89,7 +94,9 @@ class PremissionsController extends Controller
     {
         $sub_page = [];
         $date_tab = [];
-
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         return $this->render('view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
@@ -157,6 +164,9 @@ class PremissionsController extends Controller
         $have_access = Users::checkPremission(34);
         if(!$have_access){
             $this->redirect('/site/403');
+        }
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
         }
         $model = $this->findModel($id);
         $sub_page = [];

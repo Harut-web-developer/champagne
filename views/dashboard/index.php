@@ -47,7 +47,7 @@ $this->params['date_tab'] = $date_tab;
             </div>
         </div>
         <!-- Transactions -->
-        <div class="col-md-6 col-lg-4 order-2 mb-4">
+        <div class="col-md-6 col-lg-4 order-1 mb-4">
             <div class="card h-100">
                 <div class="card-header d-flex align-items-center justify-content-between">
                     <h5 class="card-title m-0 me-2">Վճարումներ</h5>
@@ -86,64 +86,52 @@ $this->params['date_tab'] = $date_tab;
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 col-md-4 order-1">
+        <div class="col-md-4 col-lg-4 order-2">
             <div class="row">
                 <div class="col-lg-6 col-md-12 col-6 mb-4">
                     <div class="card">
-                        <div class="card-body">
-                            <div class="card-title d-flex align-items-start justify-content-between">
-                                <div class="avatar flex-shrink-0">
-                                    <img src="/img/icons/unicons/chart-success.png" alt="chart success" class="rounded">
-                                </div>
+                        <div class="card-title d-flex align-items-start justify-content-between">
+                            <div class="avatar flex-shrink-0">
+                                <img src="/img/icons/unicons/chart-success.png" alt="chart success" class="rounded">
                             </div>
-                            <span class="fw-medium d-block mb-1">Շահույթ</span>
-                            <h4 class="card-title mb-2 orders_profit"><?=$cost?></h4>
-<!--                            <small class="text-danger fw-medium"><i class="bx bx-down-arrow-alt"></i> +72.80%</small>-->
                         </div>
+                        <span class="fw-medium d-block mb-1">Շահույթ</span>
+                        <h4 style="font-size: 15px" class="card-title mb-2 orders_profit"><?=$cost?></h4>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-12 col-6 mb-4">
                     <div class="card">
-                        <div class="card-body">
-                            <div class="card-title d-flex align-items-start justify-content-between">
-                                <div class="avatar flex-shrink-0">
-                                    <img src="/img/icons/unicons/wallet-info.png" alt="Credit Card" class="rounded">
-                                </div>
+                        <div class="card-title d-flex align-items-start justify-content-between">
+                            <div class="avatar flex-shrink-0">
+                                <img src="/img/icons/unicons/wallet-info.png" alt="Credit Card" class="rounded">
                             </div>
-                            <span>Վաճառք</span>
-                            <h4 class="card-title text-nowrap mb-1 orders_sale"><?=$sale?></h4>
-<!--                            <small class="text-success fw-medium"><i class="bx bx-up-arrow-alt"></i> +28.42%</small>-->
                         </div>
+                        <span class="fw-medium d-block mb-1">Վաճառք</span>
+                        <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_sale"><?=$sale?></h4>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-6 mb-4">
+                <div class="col-lg-6 col-md-12 col-6 mb-4">
                     <div class="card">
-                        <div class="card-body">
-                            <div class="card-title d-flex align-items-start justify-content-between">
-                                <div class="avatar flex-shrink-0">
-                                    <img src="/img/icons/unicons/paypal.png" alt="Credit Card" class="rounded">
-                                </div>
+                        <div class="card-title d-flex align-items-start justify-content-between">
+                            <div class="avatar flex-shrink-0">
+                                <img src="/img/icons/unicons/paypal.png" alt="Credit Card" class="rounded">
                             </div>
-                            <span class="d-block mb-1">Վճարումներ</span>
-                            <h4 class="card-title text-nowrap mb-2 orders_pay"><?=$payment?></h4>
-<!--                            <small class="text-danger fw-medium"><i class="bx bx-down-arrow-alt"></i> -14.82%</small>-->
                         </div>
+                        <span class="fw-medium d-block mb-1">Վճարումներ</span>
+                        <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_pay"><?=$payment?></h4>
                     </div>
                 </div>
-                <div class="col-6 mb-4">
+                <div class="col-lg-6 col-md-12 col-6 mb-4">
                     <div class="card">
-                        <div class="card-body">
-                            <div class="card-title d-flex align-items-start justify-content-between">
-                                <div class="avatar flex-shrink-0">
-                                    <img src="/img/icons/unicons/cc-primary.png" alt="Credit Card" class="rounded">
-                                </div>
+                        <div class="card-title d-flex align-items-start justify-content-between">
+                            <div class="avatar flex-shrink-0">
+                                <img src="/img/icons/unicons/cc-primary.png" alt="Credit Card" class="rounded">
                             </div>
-                            <span class="fw-medium d-block mb-1">Գործարքներ</span>
-                            <h4 class="card-title mb-2 orders_deal"><?=$deal?></h4>
-<!--                            <small class="text-success fw-medium"><i class="bx bx-up-arrow-alt"></i> +28.14%</small>-->
                         </div>
+                        <span class="fw-medium d-block mb-1">Գործարքներ</span>
+                        <h4 style="font-size: 15px" class="card-title mb-2 orders_deal"><?=$deal?></h4>
                     </div>
                 </div>
             </div>

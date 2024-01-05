@@ -29,6 +29,11 @@ class DiscountController extends Controller
     /**
      * @inheritDoc
      */
+    public function init()
+    {
+        parent::init();
+        Yii::$app->language = 'hy';
+    }
     public function beforeAction($action)
     {
         $session = Yii::$app->session;
@@ -133,7 +138,9 @@ class DiscountController extends Controller
     {
         $sub_page = [];
         $date_tab = [];
-
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         return $this->render('view', [
             'model' => $this->findModel($id),
             'date_tab' => $date_tab,
@@ -295,7 +302,9 @@ class DiscountController extends Controller
         }
         $sub_page = [];
         $date_tab = [];
-
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         $model = $this->findModel($id);
         $url = Url::to('', 'http');
         $oldattributes = Discount::find()

@@ -39,7 +39,7 @@ if(isset($action__)){
                 </div>
                 <?php if (empty($model->id)){ ?>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 route">
-                        <label for="multipleClients">Routes</label>
+                        <label for="multipleClients">Երթուղիներ</label>
                         <select class="form-select form-control" aria-label="Default select example" name="Clients[route]">
                             <?php foreach ($route as $index => $rout) { ?>
                                 <option value="<?= $rout['id'] ?>" <?= $rout['id'] ? 'selected' : '' ?> ><?= $rout['route'] ?></option>
@@ -48,7 +48,7 @@ if(isset($action__)){
                     </div>
                 <?php } else { ?>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 route">
-                        <label for="multipleClients">Routes</label>
+                        <label for="multipleClients">Երթուղիներ</label>
                         <select class="form-select form-control" aria-label="Default select example" name="Clients[route]">
                             <?php foreach ($route as $index => $rout) { ?>
                                 <option value="<?= $rout['id'] ?>" <?= ($rout['id'] == $route_value_update['route_id']) ? 'selected' : '' ?> ><?= $rout['route']?></option>
@@ -84,19 +84,20 @@ if(isset($action__)){
                         <?php } ?>
                         <div class="actions">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Create Fild
-                                </button>
-                                <ul class="dropdown-menu" style="">
-                                    <li data-type="number">NUMBER <br><span>Lorem ipsum dolor sit amet.</span>
-                                    </li>
-                                    <li data-type="varchar">TEXT (255 Simbols) <br><span>Lorem ipsum dolor sit amet.</span></li>
-                                    <li data-type="list">LIST <br><span>Lorem ipsum dolor sit amet.</span></li>
-                                    <li data-type="file">FILE <br><span>Lorem ipsum dolor sit amet.</span></li>
-                                    <li data-type="text">TEXTAREA <br><span>Lorem ipsum dolor sit amet.</span></li>
-                                    <li data-type="date">DATE <br><span>Lorem ipsum dolor sit amet.</span></li>
-                                    <li data-type="datetime">DATETIME <br><span>Lorem ipsum dolor sit amet.</span></li>
-                                </ul>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Ստեղծել դաշտ
+                                    </button>
+                                    <ul class="dropdown-menu custom_field_menu" style="">
+                                        <li data-type="number">NUMBER <br><span>Թվային արժեք ավելացնելու դաշտ:</span></li>
+                                        <li data-type="varchar">TEXT (255 Simbols) <br><span>Տեքստ ավելացնելու դաշտ:</span></li>
+                                        <li data-type="list">LIST <br><span>Ցուցակներ լրացնելու դաշտ:</span></li>
+                                        <li data-type="file">FILE <br><span>Նկար ավելացնելու դաշտ:</span></li>
+                                        <li data-type="text">TEXTAREA <br><span>Մեշ ծավալով տեքստ ավելացնելու դաշտ:</span></li>
+                                        <li data-type="date">DATE <br><span>Ամսաթիվ ավելացնելու դաշտ:</span></li>
+                                        <li data-type="datetime">DATETIME <br><span>Ժամ և ամսաթիվ ավելացնելու դաշտ:</span></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
