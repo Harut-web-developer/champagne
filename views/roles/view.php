@@ -11,6 +11,8 @@ $this->params['breadcrumbs'][] = ['label' => 'Roles', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 $this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
+
 ?>
 <div class="roles-view">
 

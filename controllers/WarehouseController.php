@@ -100,7 +100,9 @@ class WarehouseController extends Controller
     {
         $sub_page = [];
         $date_tab = [];
-
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         return $this->render('view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
@@ -207,7 +209,9 @@ class WarehouseController extends Controller
         $model = $this->findModel($id);
         $sub_page = [];
         $date_tab = [];
-
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         $url = Url::to('', 'http');
         $oldattributes = Warehouse::find()
             ->select('*')

@@ -100,7 +100,9 @@ class NomenclatureController extends Controller
     {
         $sub_page = [];
         $date_tab = [];
-
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         return $this->render('view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
@@ -205,6 +207,9 @@ class NomenclatureController extends Controller
 
         if(!$have_access){
             $this->redirect('/site/403');
+        }
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
         }
         $model = $this->findModel($id);
         $url = Url::to('', 'http');

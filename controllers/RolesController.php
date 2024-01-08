@@ -92,9 +92,16 @@ class RolesController extends Controller
     public function actionView($id)
     {
         $sub_page = [];
+        $date_tab = [];
+
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         return $this->render('view', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
         ]);
     }
 
@@ -156,6 +163,9 @@ class RolesController extends Controller
         $have_access = Users::checkPremission(30);
         if(!$have_access){
             $this->redirect('/site/403');
+        }
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
         }
         $model = $this->findModel($id);
         $sub_page = [];

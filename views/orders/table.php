@@ -6,9 +6,8 @@ use app\widgets\CustomLinkPager;
 /** @var app\models\Orders $model */
 /** @var yii\widgets\ActiveForm $form */
 
+$this->registerCssFile('@web/css/bootstrap.min.css');
 ?>
-
-<link href="/assets/d8c33cc9/dist/css/bootstrap.css" rel="stylesheet">
 <!-- Basic Bootstrap Table -->
 <div id="print">
     <div class="card">
