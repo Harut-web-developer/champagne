@@ -188,7 +188,7 @@ class DocumentsController extends Controller
             $model->loadDefaultValues();
         }
 
-        $users = Users::find()->select('id,name')->asArray()->all();
+        $users = Users::find()->select('id,name')->where(['=','role_id',4])->asArray()->all();
         $users = ArrayHelper::map($users,'id','name');
         $warehouse = Warehouse::find()->select('id,name')->asArray()->all();
         $warehouse =  ArrayHelper::map($warehouse,'id','name');
@@ -258,6 +258,7 @@ class DocumentsController extends Controller
      */
     public function actionGetNomiclature(){
 
+        $document_id = $_GET['id'] ?? false;
         $page = $_GET['paging'] ?? 1;
         $search_name = $_GET['nomenclature'] ?? false;
         $pageSize = 10;
@@ -281,10 +282,13 @@ class DocumentsController extends Controller
         $nomenclatures = $nomenclatures
             ->asArray()
             ->all();
+        $itemsArray = DocumentItems::find()->select('document_items.nomenclature_id')->where(['=','document_id',$document_id])->asArray()->all();
+        $itemsArray = array_column($itemsArray,'nomenclature_id');
         return $this->renderAjax('get-nom', [
             'nomenclatures' => $nomenclatures,
             'total' => $total,
-            'search_name' => $search_name
+            'search_name' => $search_name,
+            'itemsArray' => $itemsArray,
         ]);
 
     }

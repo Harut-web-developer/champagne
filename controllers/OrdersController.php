@@ -147,7 +147,7 @@ class OrdersController extends Controller
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
             $model->user_id = $post['Orders']['user_id'];
-            $model->clients_id = $post['Orders']['clients_id'];
+            $model->clients_id = $post['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
             $model->total_count = $post['Orders']['total_count'];
             $model->comment = $post['Orders']['comment'];
@@ -182,7 +182,7 @@ class OrdersController extends Controller
                         ['discount.end_date' => null]
                     ])
                     ->andWhere(['discount_products.product_id' => $post['nomenclature_id'][$i]])
-                    ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                    ->andWhere(['discount_clients.client_id' => $post['clients_id']])
                     ->exists();
                 $nomenclatures_exist = Discount::find()->select('discount.*,discount_products.*')
                     ->leftJoin('discount_products','discount.id = discount_products.discount_id')
@@ -209,7 +209,7 @@ class OrdersController extends Controller
                         ['>=', 'discount.end_date', $post['Orders']['orders_date']],
                         ['discount.end_date' => null]
                     ])
-                    ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                    ->andWhere(['discount_clients.client_id' => $post['clients_id']])
                     ->exists();
                 if ($total_exist){
                     $discount = Discount::find()->select('discount.*,discount_products.*,discount_clients.*')
@@ -225,11 +225,10 @@ class OrdersController extends Controller
                             ['discount.end_date' => null]
                         ])
                         ->andWhere(['discount_products.product_id' => $post['nomenclature_id'][$i]])
-                        ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                        ->andWhere(['discount_clients.client_id' => $post['clients_id']])
                         ->orderBy(['discount.discount_sortable' => SORT_ASC])
                         ->asArray()
                         ->all();
-//                    var_dump($discount);
                     $arr = [];
                     $count = 0;
                     $count_discount_id = '';
@@ -239,7 +238,7 @@ class OrdersController extends Controller
                             $check_client_id = Discount::findOne($discount[$j]['discount_id']);
                             if(!empty($check_client_id['discount_option_check_client_id'])){
                                 $arr = explode(',', $check_client_id['discount_option_check_client_id']);
-                                if (!in_array($post['Orders']['clients_id'],$arr)){
+                                if (!in_array($post['clients_id'],$arr)){
                                     if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0){
                                             $count++;
@@ -298,7 +297,7 @@ class OrdersController extends Controller
                                             }
                                         }
                                     }
-                                    array_push($arr,$post['Orders']['clients_id']);
+                                    array_push($arr,$post['clients_id']);
 
                                 }
                             }else{
@@ -360,7 +359,7 @@ class OrdersController extends Controller
                                         }
                                     }
                                 }
-                                array_push($arr,$post['Orders']['clients_id']);
+                                array_push($arr,$post['clients_id']);
                             }
 
                             $string_row = implode(',', $arr);
@@ -472,7 +471,7 @@ class OrdersController extends Controller
                             $check_client_id = Discount::findOne($discount[$j]['discount_id']);
                             if(!empty($check_client_id['discount_option_check_client_id'])){
                                 $arr = explode(',', $check_client_id['discount_option_check_client_id']);
-                                if (!in_array($post['Orders']['clients_id'],$arr)){
+                                if (!in_array($post['clients_id'],$arr)){
                                     if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0){
                                             $count++;
@@ -531,7 +530,7 @@ class OrdersController extends Controller
                                             }
                                         }
                                     }
-                                    array_push($arr,$post['Orders']['clients_id']);
+                                    array_push($arr,$post['clients_id']);
                                 }
                             }else{
                                 if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
@@ -592,7 +591,7 @@ class OrdersController extends Controller
                                         }
                                     }
                                 }
-                                array_push($arr,$post['Orders']['clients_id']);
+                                array_push($arr,$post['clients_id']);
                             }
                             $string_row = implode(',', $arr);
                             $discount_client_string = Discount::findOne($discount[$j]['discount_id']);
@@ -689,7 +688,7 @@ class OrdersController extends Controller
                             ['>=', 'discount.end_date', $post['Orders']['orders_date']],
                             ['discount.end_date' => null]
                         ])
-                        ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                        ->andWhere(['discount_clients.client_id' => $post['clients_id']])
                         ->groupBy('discount.id')
                         ->orderBy(['discount.discount_sortable' => SORT_ASC])
                         ->asArray()
@@ -703,7 +702,7 @@ class OrdersController extends Controller
                             $check_client_id = Discount::findOne($discount[$j]['discount_id']);
                             if(!empty($check_client_id['discount_option_check_client_id'])){
                                 $arr = explode(',', $check_client_id['discount_option_check_client_id']);
-                                if (!in_array($post['Orders']['clients_id'],$arr)){
+                                if (!in_array($post['clients_id'],$arr)){
                                     if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0){
                                             $count++;
@@ -762,7 +761,7 @@ class OrdersController extends Controller
                                             }
                                         }
                                     }
-                                    array_push($arr,$post['Orders']['clients_id']);
+                                    array_push($arr,$post['clients_id']);
                                 }
                             }else{
                                 if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
@@ -823,7 +822,7 @@ class OrdersController extends Controller
                                         }
                                     }
                                 }
-                                array_push($arr,$post['Orders']['clients_id']);
+                                array_push($arr,$post['clients_id']);
                             }
                             $string_row = implode(',', $arr);
                             $discount_client_string = Discount::findOne($discount[$j]['discount_id']);
@@ -926,7 +925,6 @@ class OrdersController extends Controller
                     $total_debt += $post['price'][$i] * $post['count_'][$i];
                 }
             }
-//            exit;
             $orders_total_debt = Orders::findOne($model->id);
             $orders_total_debt->total_price = $total_debt;
             $orders_total_debt->save(false);
@@ -950,10 +948,15 @@ class OrdersController extends Controller
             ->limit(10)
             ->asArray()
             ->all();
-        $clients = Clients::find()->select('id, name')->asArray()->all();
-        $clients = ArrayHelper::map($clients,'id','name');
-        $users = Users::find()->select('id, name')->asArray()->all();
-        $users = ArrayHelper::map($users,'id','name');
+        $clients = Clients::find()->select('id, name')->where(['=','status',1])->asArray()->all();
+        $session = Yii::$app->session;
+        if($session['role_id'] == 1){
+            $users = Users::find()->select('id, name')->where(['=','role_id',2])->andWhere(['=','status',1])->asArray()->all();
+            $users = ArrayHelper::map($users,'id','name');
+        }elseif ($session['role_id'] == 2){
+            $users = Users::find()->select('id, name')->where(['=','id',$session['user_id']])->andWhere(['=','status',1])->asArray()->all();
+            $users = ArrayHelper::map($users,'id','name');
+        }
         return $this->render('create', [
             'model' => $model,
             'users' => $users,
@@ -1033,12 +1036,15 @@ class OrdersController extends Controller
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
             $model->user_id = $post['Orders']['user_id'];
-            $model->clients_id = $post['Orders']['clients_id'];
+            $model->clients_id = $post['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
             $model->total_count = $post['Orders']['total_count'];
             $model->comment = $post['Orders']['comment'];
             $model->orders_date = $post['Orders']['orders_date'];
             $model->updated_at = date('Y-m-d H:i:s');
+//            echo "<pre>";
+//            var_dump($post);
+//            exit();
             $model->save();
             $items = $post['order_items'];
             $quantity = 0;
@@ -1082,7 +1088,7 @@ class OrdersController extends Controller
                             ['discount.end_date' => null]
                         ])
                         ->andWhere(['discount_products.product_id' => $post['nom_id'][$k]])
-                        ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                        ->andWhere(['discount_clients.client_id' => $post['clients_id']])
                         ->exists();
                     $nomenclatures_exist = Discount::find()->select('discount.*,discount_products.*')
                         ->leftJoin('discount_products','discount.id = discount_products.discount_id')
@@ -1108,7 +1114,7 @@ class OrdersController extends Controller
                             ['>=', 'discount.end_date', $post['Orders']['orders_date']],
                             ['discount.end_date' => null]
                         ])
-                        ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                        ->andWhere(['discount_clients.client_id' => $post['clients_id']])
                         ->exists();
                     if ($total_exist){
                         $discount = Discount::find()->select('discount.*,discount_products.*,discount_clients.*')
@@ -1124,7 +1130,7 @@ class OrdersController extends Controller
                                 ['discount.end_date' => null]
                             ])
                             ->andWhere(['discount_products.product_id' => $post['nom_id'][$k]])
-                            ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                            ->andWhere(['discount_clients.client_id' => $post['clients_id']])
                             ->orderBy(['discount.discount_sortable' => SORT_ASC])
                             ->asArray()
                             ->all();
@@ -1137,7 +1143,7 @@ class OrdersController extends Controller
                                 $check_client_id = Discount::findOne($discount[$j]['discount_id']);
                                 if(!empty($check_client_id['discount_option_check_client_id'])){
                                     $arr = explode(',', $check_client_id['discount_option_check_client_id']);
-                                    if (!in_array($post['Orders']['clients_id'],$arr)){
+                                    if (!in_array($post['clients_id'],$arr)){
                                         if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
                                             if ($discount[$j]['discount_check'] == 0 && $count == 0){
                                                 $count++;
@@ -1196,7 +1202,7 @@ class OrdersController extends Controller
                                                 }
                                             }
                                         }
-                                        array_push($arr,$post['Orders']['clients_id']);
+                                        array_push($arr,$post['clients_id']);
 
                                     }
                                 }else{
@@ -1258,7 +1264,7 @@ class OrdersController extends Controller
                                             }
                                         }
                                     }
-                                    array_push($arr,$post['Orders']['clients_id']);
+                                    array_push($arr,$post['clients_id']);
                                 }
 
                                 $string_row = implode(',', $arr);
@@ -1371,7 +1377,7 @@ class OrdersController extends Controller
                                 $check_client_id = Discount::findOne($discount[$j]['discount_id']);
                                 if(!empty($check_client_id['discount_option_check_client_id'])){
                                     $arr = explode(',', $check_client_id['discount_option_check_client_id']);
-                                    if (!in_array($post['Orders']['clients_id'],$arr)){
+                                    if (!in_array($post['clients_id'],$arr)){
                                         if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
                                             if ($discount[$j]['discount_check'] == 0 && $count == 0){
                                                 $count++;
@@ -1430,7 +1436,7 @@ class OrdersController extends Controller
                                                 }
                                             }
                                         }
-                                        array_push($arr,$post['Orders']['clients_id']);
+                                        array_push($arr,$post['clients_id']);
 
                                     }
                                 }else{
@@ -1492,7 +1498,7 @@ class OrdersController extends Controller
                                             }
                                         }
                                     }
-                                    array_push($arr,$post['Orders']['clients_id']);
+                                    array_push($arr,$post['clients_id']);
                                 }
 
                                 $string_row = implode(',', $arr);
@@ -1591,7 +1597,7 @@ class OrdersController extends Controller
                                 ['>=', 'discount.end_date', $post['Orders']['orders_date']],
                                 ['discount.end_date' => null]
                             ])
-                            ->andWhere(['discount_clients.client_id' => $post['Orders']['clients_id']])
+                            ->andWhere(['discount_clients.client_id' => $post['clients_id']])
                             ->groupBy('discount.id')
                             ->orderBy(['discount.discount_sortable' => SORT_ASC])
                             ->asArray()
@@ -1605,7 +1611,7 @@ class OrdersController extends Controller
                                 $check_client_id = Discount::findOne($discount[$j]['discount_id']);
                                 if(!empty($check_client_id['discount_option_check_client_id'])){
                                     $arr = explode(',', $check_client_id['discount_option_check_client_id']);
-                                    if (!in_array($post['Orders']['clients_id'],$arr)){
+                                    if (!in_array($post['clients_id'],$arr)){
                                         if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
                                             if ($discount[$j]['discount_check'] == 0 && $count == 0){
                                                 $count++;
@@ -1664,7 +1670,7 @@ class OrdersController extends Controller
                                                 }
                                             }
                                         }
-                                        array_push($arr,$post['Orders']['clients_id']);
+                                        array_push($arr,$post['clients_id']);
 
                                     }
                                 }else{
@@ -1726,7 +1732,7 @@ class OrdersController extends Controller
                                             }
                                         }
                                     }
-                                    array_push($arr,$post['Orders']['clients_id']);
+                                    array_push($arr,$post['clients_id']);
                                 }
 
                                 $string_row = implode(',', $arr);
@@ -1872,14 +1878,23 @@ class OrdersController extends Controller
             ->leftJoin('products','products.id = order_items.product_id')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['order_id' => $id])->asArray()->all();
-        $clients = Clients::find()->select('id, name')->asArray()->all();
-        $clients = ArrayHelper::map($clients,'id','name');
-        $users = Users::find()->select('id, name')->asArray()->all();
-        $users = ArrayHelper::map($users,'id','name');
+//        echo "<pre>";
+        $clients = Clients::find()->select('id, name')->Where(['=','status',1])->asArray()->all();
+        $orders_clients = Orders::find()->select('clients_id')->where(['=','id',$id])->asArray()->all();
+        $orders_clients = array_column($orders_clients,'clients_id');
+        $session = Yii::$app->session;
+        if($session['role_id'] == 1){
+            $users = Users::find()->select('id, name')->where(['=','role_id',2])->asArray()->all();
+            $users = ArrayHelper::map($users,'id','name');
+        }elseif ($session['role_id'] == 2){
+            $users = Users::find()->select('id, name')->where(['=','id',$session['user_id']])->asArray()->all();
+            $users = ArrayHelper::map($users,'id','name');
+        }
         return $this->render('update', [
             'model' => $model,
             'users' => $users,
             'clients' => $clients,
+            'orders_clients' => $orders_clients,
             'nomenclatures' => $nomenclatures,
             'order_items' => $order_items,
             'total' => $total,

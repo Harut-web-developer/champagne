@@ -9,6 +9,8 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use app\widgets\CustomGridView;
+
 
 /** @var yii\web\View $this */
 /** @var app\models\OrdersSearch $searchModel */
@@ -325,7 +327,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
 }
 ?>
 
-    <?= GridView::widget([
+    <?= CustomGridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],

@@ -20,6 +20,7 @@ $this->params['date_tab'] = $date_tab;
         'model' => $model,
         'users' => $users,
         'clients' => $clients,
+        'orders_clients' => $orders_clients,
         'nomenclatures' => $nomenclatures,
         'order_items' => $order_items,
         'total' => $total,

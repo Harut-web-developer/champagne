@@ -7,6 +7,7 @@ use app\widgets\CustomLinkPager;
 /** @var yii\web\View $this */
 /** @var app\models\Orders $model */
 /** @var yii\widgets\ActiveForm $form */
+$session = Yii::$app->session;
 
 ?>
 <?php if ($model->id){ ?>
@@ -19,17 +20,29 @@ use app\widgets\CustomLinkPager;
                     <span class="non-active">Վաճառք</span>
                 </div>
                 <!--            <div class="card-body formDesign">-->
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                <div class="clientSelectSingle">
+                    <label for="singleClients">Հաճախորդ</label>
+                    <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
+                        <option  value=""></option>
+                        <?php foreach ($clients as $client){
+                            $isSelected = in_array($client['id'], $orders_clients);
+                            ?>
+                            <option <?= $isSelected ? 'selected' : '' ?> value="<?= $client['id'] ?>"><?= $client['name'] ?></option>
+                        <?php } ?>
+                    </select>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'clients_id')->dropDownList($clients) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalPrice">
-                    <?= $form->field($model, 'total_price')->textInput(['readonly'=> true, 'class' => 'form-control totalPrice']) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
-                    <?= $form->field($model, 'total_count')->textInput(['readonly'=> true,'class' => 'form-control totalCount']) ?>
+                    <?php
+                    if ($session['role_id'] == 1){
+                    ?>
+                        <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                    <?php
+                    }elseif($session['role_id'] == 2){
+                    ?>
+                        <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
+                    <?php
+                    }
+                    ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'comment')->textarea() ?>
@@ -165,7 +178,17 @@ use app\widgets\CustomLinkPager;
                         </div>
                     </div>
                 </div>
-
+            </div>
+            <div class="default-panel">
+                <div class="panel-title premission">
+                    <span class="non-active">Վաճառք</span>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalPrice">
+                    <?= $form->field($model, 'total_price')->textInput(['readonly'=> true, 'class' => 'form-control totalPrice']) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
+                    <?= $form->field($model, 'total_count')->textInput(['readonly'=> true,'class' => 'form-control totalCount']) ?>
+                </div>
             </div>
             <div class="card-footer">
                 <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
@@ -182,17 +205,29 @@ use app\widgets\CustomLinkPager;
                     <span class="non-active">Վաճառք</span>
                 </div>
                 <!--            <div class="card-body formDesign">-->
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+
+                <div class="clientSelectSingle">
+                    <label for="singleClients">Հաճախորդ</label>
+                    <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
+                        <option  value=""></option>
+                        <?php foreach ($clients as $client){
+                            ?>
+                            <option  value="<?= $client['id'] ?>"><?= $client['name'] ?></option>
+                        <?php } ?>
+                    </select>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'clients_id')->dropDownList($clients) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalPrice">
-                    <?= $form->field($model, 'total_price')->textInput(['readonly'=> true]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
-                    <?= $form->field($model, 'total_count')->textInput(['readonly'=> true]) ?>
+                    <?php
+                    if ($session['role_id'] == 1){
+                        ?>
+                        <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                        <?php
+                    }elseif($session['role_id'] == 2){
+                        ?>
+                        <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
+                        <?php
+                    }
+                    ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'comment')->textarea() ?>
@@ -308,7 +343,17 @@ use app\widgets\CustomLinkPager;
                         </div>
                     </div>
                 </div>
-
+            </div>
+            <div class="default-panel">
+                <div class="panel-title premission">
+                    <span class="non-active">Վաճառք</span>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalPrice">
+                    <?= $form->field($model, 'total_price')->textInput(['readonly'=> true]) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
+                    <?= $form->field($model, 'total_count')->textInput(['readonly'=> true]) ?>
+                </div>
             </div>
             <div class="card-footer">
                 <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>

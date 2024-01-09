@@ -22,6 +22,7 @@ class AppAsset extends AssetBundle
     public $css = [
         'css/site.css',
     ];
+
     public $js = [
         '/js/popper.js',
         '/js/bootstrap.js',

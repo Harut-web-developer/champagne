@@ -132,7 +132,7 @@ if(isset($action__)){
                                 $itemsArray[] = $document_item['nom_id'];
                                 ?>
                                 <tr class="oldTr">
-                                    <td><?=$keys + 1?><input type="hidden" name="document_items[]" value="<?=$document_item['id']?>">
+                                    <td><?=$keys + 1?><input type="hidden" class="docId" name="document_items[]" value="<?=$document_item['id']?>">
                                         <input class="itemsId" type="hidden" name="items[]" value="<?=$document_item['nom_id']?>">
 <!--                                        <input class="itemsId" type="hidden" name="nom_id[]" value="--><?php //=$document_item['nom_id']?><!--">-->
                                     </td>
@@ -175,6 +175,7 @@ if(isset($action__)){
                                             <tbody class="table-border-bottom-0 tbody_">
                                             <?php
                                             foreach ($nomenclatures as $keys => $nomenclature){
+//                                                var_dump($nomenclature['id']);
                                                 if(in_array($nomenclature['id'],$itemsArray)){
                                                     continue;
                                                 }
@@ -191,6 +192,7 @@ if(isset($action__)){
                                                 </tr>
                                                 <?php
                                             }
+
                                             ?>
                                             </tbody>
                                         </table>
@@ -201,12 +203,12 @@ if(isset($action__)){
                                 <nav aria-label="Page navigation example" class="pagination">
                                     <ul class="pagination pagination-sm">
                                         <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
-                                            <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
+                                            <a class="page-link by_ajax" href="#" data-document="<?=$model->id?>"  data-href="/documents/get-nomiclature?paging=<?= $page-1 ?>&&id=<?=$model->id?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
                                         </li>
                                         <?php for ($i = 1;$i <= $count; $i++){ ?>
                                             <?php if($i > 0 && $i <= $count+1){ ?>
                                                 <li class="page-item <?= ($page==$i) ? 'active' : '' ?>">
-                                                    <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $i ?>"><?= $i ?>
+                                                    <a class="page-link by_ajax" href="#" data-document="<?=$model->id?>" data-href="/documents/get-nomiclature?paging=<?= $i ?>&&id=<?=$model->id?>"><?= $i ?>
                                                     </a>
                                                 </li>
                                             <?php } ?>
@@ -214,7 +216,7 @@ if(isset($action__)){
 
                                         <?php if(intval($page) < $count){ ?>
                                             <li class="page-item next">
-                                                <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
+                                                <a class="page-link by_ajax" href="#" data-document="<?=$model->id?>" data-href="/documents/get-nomiclature?paging=<?= $page+1 ?>&&id=<?=$model->id?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
                                             </li>
                                         <?php } ?>
                                     </ul>

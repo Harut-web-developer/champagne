@@ -1,11 +1,13 @@
 $(document).ready(function () {
+    $('.js-example-basic-single').select2();
+
     $('body').on('click','.create', function(){
         var totalSum = 0;
         var countSum = 0;
         var addOrdersTableBody = '';
         var newTbody = $('<tbody></tbody>');
         $('.addOrdersTableTr').each(function () {
-            if ($(this).find("input:checkbox").is(':checked')) {
+            if ($(this).find("input:checkbox").is(':checked') && $(this).find('.ordersCountInput').val() != '') {
                 let id = $(this).find("input:checkbox").attr('data-id');
                 let nomenclature_id = $(this).find('.productIdInput').data('product');
                 let name = $(this).children(".nomenclatureName").text();
@@ -22,6 +24,8 @@ $(document).ready(function () {
                                         <td class="total"><span>`+total+`</span><input type="hidden" name="total[]" value="`+total+`"></td>
                                         <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                      </tr>`;
+            }else if($(this).find("input:checkbox").is(':checked') && $(this).find('.ordersCountInput').val() == ''){
+                alert('Դուք չեք նշել ընտրված ապրանքի քանակը:')
             }
         })
         newTbody.append(addOrdersTableBody);
@@ -37,7 +41,7 @@ $(document).ready(function () {
     })
         $('body').on('keyup','.countProduct', function (){
             if ($(this).val() < 1 || $(this).val() === ""){
-                $(this).closest('.tableNomenclature').remove();
+                $(this).val(1)
             }
                 var totalSum = 0;
                 var countSum = 0;
@@ -52,7 +56,7 @@ $(document).ready(function () {
         })
     $('body').on('click','.countProduct', function (){
         if ($(this).val() < 1 || $(this).val() === ""){
-            $(this).closest('.tableNomenclature').remove();
+            $(this).val(1)
         }
             var totalSum = 0;
             var countSum = 0;
@@ -67,10 +71,10 @@ $(document).ready(function () {
             $('#orders-total_count').attr('value', countSum);
     })
     $('body').on('click', '.deleteItems',function (){
-        let confirmed =  confirm("Are you sure want to delete this item");
+        let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
         if (confirmed){
             $(this).closest('.tableNomenclature').remove();
-            alert('deleted successfully');
+            alert('Հաջողությամբ ջնջված է:');
             let totalSum = 0;
             var countSum = 0;
             $('.tableNomenclature').each(function () {
@@ -86,7 +90,7 @@ $(document).ready(function () {
         var countSum = 0;
         var addOrdersTableBody = '';
         $('.addOrdersTableTr').each(function () {
-            if ($(this).find("input:checkbox").is(':checked')) {
+            if ($(this).find("input:checkbox").is(':checked') && $(this).find('.ordersCountInput').val() != '') {
                 let id = $(this).find("input:checkbox").attr('data-id');
                 let nomenclature_id = $(this).find('.productIdInput').data('product');
                 let name = $(this).children(".nomenclatureName").text();
@@ -106,6 +110,8 @@ $(document).ready(function () {
                                         <td class="total"><span>`+total+`</span><input type="hidden" name="total[]" value="`+total+`"></td>
                                         <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                      </tr>`;
+            }else if($(this).find("input:checkbox").is(':checked') && $(this).find('.ordersCountInput').val() == ''){
+                alert('Դուք չեք նշել ընտրված ապրանքի քանակը:')
             }
         })
         $('.ordersAddingTable tbody').parent().append(addOrdersTableBody);
@@ -151,7 +157,7 @@ $(document).ready(function () {
         $('#orders-total_count').attr('value', countSum);
     })
     $('body').on('click', '.deleteItemsFromDB',function (){
-        let confirmed =  confirm("Are you sure want to delete this item");
+        let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
         if (confirmed){
             var this_ = $(this);
             var itemId = this_.closest('.tableNomenclature').find('.orderItemsId').val();
@@ -173,7 +179,7 @@ $(document).ready(function () {
                 success:function (data){
                     if (data === 'true'){
                         this_.closest('.tableNomenclature').remove();
-                        alert('deleted successfully');
+                        alert('Հաջողությամբ ջնջված է:');
                         let totalSum = 0;
                         var countSum = 0;
                         $('.tableNomenclature').each(function () {
@@ -183,7 +189,7 @@ $(document).ready(function () {
                         $('#orders-total_price').attr('value', totalSum);
                         $('#orders-total_count').attr('value', countSum);
                     }else {
-                        alert('dont exist item or unsuccessfuly deleted');
+                        alert('Գոյություն չունի կամ հաջողությամբ չի կատարվել ջնջումը:');
                     }
                 }
             })
@@ -193,7 +199,7 @@ $(document).ready(function () {
     })
     $('body').on('keyup','.ordersCountInput',function (){
         var this_ = $(this);
-        var id = this_.closest('.addOrdersTableTr').find("input:checkbox").attr('data-id');
+        var id = this_.closest('.addOrdersTableTr').find(".productIdInput").attr('data-product');
         var count = this_.val();
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
@@ -227,7 +233,7 @@ $(document).ready(function () {
     })
     $('body').on('click','.ordersCountInput',function (){
         var this_ = $(this);
-        var id = this_.closest('.addOrdersTableTr').find("input:checkbox").attr('data-id');
+        var id = this_.closest('.addOrdersTableTr').find(".productIdInput").attr('data-product');
         var count = this_.val();
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
