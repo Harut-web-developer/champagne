@@ -2,12 +2,14 @@
 namespace app\controllers;
 
 use app\models\Clients;
+use app\models\CoordinatesUser;
 use app\models\Orders;
 use app\models\Route;
 use app\models\Users;
 use app\models\Warehouse;
 use Yii;
 use yii\web\Controller;
+use yii\web\Session;
 
 class MapController extends Controller
 {
@@ -65,6 +67,19 @@ class MapController extends Controller
                 ->orderBy('clients.sort_',SORT_DESC)
                 ->all();
             return json_encode(['location' => $locations, 'warehouse' => $warehouse]);
+        }
+    }
+
+    public function actionCoordinatesUser()
+    {
+        if ($this->request->isPost) {
+            $session = Yii::$app->session;
+            $post = $this->request->post();
+            $model = new CoordinatesUser();
+            $model->user_id = $session['user_id'];
+            $model->latitude = $post['myLatitude'];
+            $model->longitude = $post['myLongitude'];
+            $model->save();
         }
     }
 }
