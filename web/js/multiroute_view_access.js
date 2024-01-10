@@ -46,8 +46,8 @@ function init () {
                     myMap.setZoom(8, {duration: 300});
 
                     setInterval(function () {
-                        var myLatitude = 40.21427467;
-                        var myLongitude = 44.4896076;
+                        var myLatitude = 40;
+                        var myLongitude = 44;
                         function getLocation() {
                             if (navigator.geolocation) {
                                 navigator.geolocation.getCurrentPosition(showPosition);
@@ -56,9 +56,11 @@ function init () {
                             }
                         }
                         function showPosition(position) {
-                            myLatitude = position.coords.latitude;
-                            myLongitude = position.coords.longitude;
-
+                            console.log(position)
+                            if (position && position.coords) {
+                                myLatitude = position.coords.latitude;
+                                myLongitude = position.coords.longitude;
+                            }
                         }
                         //vayri nshan
                         myPlacemark = new ymaps.Placemark([myLatitude,myLongitude], {
