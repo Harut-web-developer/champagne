@@ -7,6 +7,38 @@ $(document).ready(function () {
                 let id = $(this).find("input:checkbox").attr('data-id');
                 let name = $(this).children(".documentsName").text();
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
+                $('.check-value').val($('.check-value').val() + id + ' =>' +  count + ',');
+                let arr = $('.check-value').val();
+                let keyValuePairs = arr.split(',');
+                let resultArray = [];
+                keyValuePairs.forEach(pair => {
+                    let [key, value] = pair.trim().split('=>');
+                    if (key !== undefined && value !== undefined) {
+                        resultArray.push({ [key.trim()]: parseInt(value.trim(), 10) });
+                    }
+                });
+                let uniqueArray = resultArray.filter(
+                    (obj, index, self) =>
+                        index ===
+                        self.findIndex(
+                            (t) => JSON.stringify(t) === JSON.stringify(obj)
+                        )
+                );
+                let uniqueArray1 = uniqueArray.reduce((unique, current) => {
+                    let key = Object.keys(current)[0];
+                    let existingIndex = unique.findIndex(item => Object.keys(item)[0] === key);
+                    if (existingIndex !== -1) {
+                        unique[existingIndex] = current;
+                    } else {
+                        unique.push(current);
+                    }
+                    return unique;
+                }, []);
+
+                console.log(uniqueArray1);
+
+
+
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
                 documentsTableBody +=`<tr class="tableDocuments">
                                          <td>`+id+`<input type="hidden" name="document_items[]" value="`+id+`"></td>
@@ -19,6 +51,7 @@ $(document).ready(function () {
         })
         newTbody.append(documentsTableBody);
         $('.documentsAddingTable tbody').replaceWith(newTbody);
+
     })
     $('body').on('click','.deleteItems', function () {
         $(this).closest('.tableDocuments').remove();
@@ -105,6 +138,14 @@ $(document).ready(function () {
     $('body').on('click', '.by_ajax',function () {
         var href_ = $(this).attr('data-href');
         getNomDocument(href_);
+        $('.documentsTableTr').each(function () {
+            if ($(this).find("input:checkbox").is(':checked')) {
+                let id = $(this).find("input:checkbox").attr('data-id');
+                let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
+                $('.check-value').val($('.check-value').val() + id + ' =>' + count + ',');
+                // console.log($('.check-value').val())
+            }
+        })
     })
     function getNomDocument(href_) {
         $.ajax({

@@ -261,6 +261,7 @@ if(isset($action__)){
                         <?= $form->field($model, 'rate_value')->input('number', ['placeholder' => 'Փոխարժեքի գինը','required' => true])->label(false) ?>
                     </div>
                 </div>
+                <input type="text" class="check-value" name=aaa[]>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <label for="aah">ԱԱՀ</label>
                     <select class="form-control" name="aah" id="aah">

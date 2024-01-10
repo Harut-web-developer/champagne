@@ -346,7 +346,7 @@ $date_tab = $this->params['date_tab'];
                                 <li>
                                     <a class="dropdown-item" href="<?= Url::to(['site/logout']) ?>">
                                         <i class="bx bx-power-off me-2"></i>
-                                        <span class="align-middle">Log Out</span>
+                                        <span class="align-middle">Դուրս գալ</span>
                                     </a>
                                 </li>
                             </ul>

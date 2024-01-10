@@ -21,7 +21,7 @@ if(isset($_COOKIE['username']) && isset($_COOKIE['password'])){
     <?php $form = ActiveForm::begin(['id' => 'formAuthentication']); ?>
         <div class="mb-3">
             <label for="email" class="form-label">Էլփոստ կամ օգտանուն</label>
-            <input type="text" class="form-control" value="<?=$username?>" id="email" name="username" placeholder="Enter your email or username" autofocus />
+            <input type="text" class="form-control" value="<?=$username?>" id="email" name="username" placeholder="Մուտքագրեք ձեր էլփոստը կամ օգտվողի անունը" autofocus />
         </div>
         <div class="mb-3 form-password-toggle">
             <div class="d-flex justify-content-between">

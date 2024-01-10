@@ -137,6 +137,9 @@ class DocumentsController extends Controller
             ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
+            echo "<pre>";
+            var_dump($post);
+            die;
             date_default_timezone_set('Asia/Yerevan');
             $model->user_id = $post['Documents']['user_id'];
             $model->warehouse_id = $post['Documents']['warehouse_id'];
@@ -148,7 +151,7 @@ class DocumentsController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model = Documents::getDefVals($model);
-            $model->save(false);
+//            $model->save(false);
                 for ($i = 0; $i < count($post['document_items']); $i++){
                     $document_items = new DocumentItems();
                     $document_items->document_id = $model->id;
@@ -158,7 +161,7 @@ class DocumentsController extends Controller
                     $document_items->AAH = $post['aah'];
                     $document_items->created_at = date('Y-m-d H:i:s');
                     $document_items->updated_at = date('Y-m-d H:i:s');
-                    $document_items->save(false);
+//                    $document_items->save(false);
                 }
                 if ($post['Documents']['document_type'] === '1'){
                     for ($i = 0; $i < count($post['document_items']); $i++) {
@@ -171,7 +174,7 @@ class DocumentsController extends Controller
                         $products->price = $post['price'][$i];
                         $products->created_at = date('Y-m-d H:i:s');
                         $products->updated_at = date('Y-m-d H:i:s');
-                        $products->save(false);
+//                        $products->save(false);
                     }
                 }
                 $model_new = [];
@@ -298,9 +301,7 @@ class DocumentsController extends Controller
         $model = $this->findModel($id);
         $sub_page = [];
         $date_tab = [];
-        if ($this->findModel($id)->status == 0) {
-            return $this->redirect(Yii::$app->request->referrer);
-        }
+
         $url = Url::to('', 'http');
         $oldattributes = Documents::find()
             ->select('*')
