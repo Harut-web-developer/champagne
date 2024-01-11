@@ -261,9 +261,6 @@ if(isset($action__)){
                         <?= $form->field($model, 'rate_value')->input('number', ['placeholder' => 'Փոխարժեքի գինը','required' => true])->label(false) ?>
                     </div>
                 </div>
-                <input type="text" class="check-value" name=aaa[]>
-                <input type="text" class="check-value-end" name=bbb[]>
-
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <label for="aah">ԱԱՀ</label>
                     <select class="form-control" name="aah" id="aah">
@@ -361,7 +358,6 @@ if(isset($action__)){
                                             <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>Ընտրել</th>
                                                 <th>Նկար</th>
                                                 <th>Անուն</th>
                                                 <th>Քանակ</th>
@@ -372,9 +368,9 @@ if(isset($action__)){
                                             foreach ($nomenclatures as $keys => $nomenclature){
                                                 ?>
                                                 <tr class="documentsTableTr">
-                                                    <td><?=$keys + 1?></td>
                                                     <td>
-                                                        <input data-id="<?=$nomenclature['id']?>" type="checkbox">
+                                                        <span><?=$keys + 1?></span>
+                                                        <input class="nom_id" data-id="<?=$nomenclature['id']?>" type="hidden">
                                                     </td>
                                                     <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
                                                     <td class="documentsName"><?=$nomenclature['name']?></td>

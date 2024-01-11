@@ -260,7 +260,6 @@ class DocumentsController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionGetNomiclature(){
-
         $page = $_GET['paging'] ?? 1;
         $search_name = $_GET['nomenclature'] ?? false;
         $pageSize = 10;
@@ -284,8 +283,10 @@ class DocumentsController extends Controller
         $nomenclatures = $nomenclatures
             ->asArray()
             ->all();
+        $id_count = $_POST['id_count'] ?? [];
         return $this->renderAjax('get-nom', [
             'nomenclatures' => $nomenclatures,
+            'id_count' => $id_count ,
             'total' => $total,
             'search_name' => $search_name
         ]);

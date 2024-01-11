@@ -5,7 +5,6 @@
             <thead>
             <tr>
                 <th>#</th>
-                <th>Ընտրել</th>
                 <th>Նկար</th>
                 <th>Անուն</th>
                 <th>Քանակ</th>
@@ -16,14 +15,14 @@
             foreach ($nomenclatures as $keys => $nomenclature){
                 ?>
                 <tr class="documentsTableTr">
-                    <td><?=$keys + 1?></td>
                     <td>
-                        <input data-id="<?=$nomenclature['id']?>" type="checkbox">
+                        <span><?=$keys + 1?></span>
+                        <input class="nom_id" data-id="<?=$nomenclature['id']?>" type="hidden">
                     </td>
                     <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
                     <td class="documentsName"><?=$nomenclature['name']?></td>
                     <td class="documentsCount">
-                        <input type="number" class="form-control documentsCountInput">
+                        <input type="number" class="form-control documentsCountInput" step="any" min="1" value="<?= $id_count[$nomenclature['id']] ?? '' ?>">
                         <input class="documentsPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
                     </td>
                 </tr>
