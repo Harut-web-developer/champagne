@@ -137,9 +137,6 @@ class DocumentsController extends Controller
             ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
-            echo "<pre>";
-            var_dump($post);
-            die;
             date_default_timezone_set('Asia/Yerevan');
             $model->user_id = $post['Documents']['user_id'];
             $model->warehouse_id = $post['Documents']['warehouse_id'];
@@ -151,7 +148,7 @@ class DocumentsController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model = Documents::getDefVals($model);
-//            $model->save(false);
+            $model->save(false);
                 for ($i = 0; $i < count($post['document_items']); $i++){
                     $document_items = new DocumentItems();
                     $document_items->document_id = $model->id;
@@ -161,7 +158,7 @@ class DocumentsController extends Controller
                     $document_items->AAH = $post['aah'];
                     $document_items->created_at = date('Y-m-d H:i:s');
                     $document_items->updated_at = date('Y-m-d H:i:s');
-//                    $document_items->save(false);
+                    $document_items->save(false);
                 }
                 if ($post['Documents']['document_type'] === '1'){
                     for ($i = 0; $i < count($post['document_items']); $i++) {
@@ -174,7 +171,7 @@ class DocumentsController extends Controller
                         $products->price = $post['price'][$i];
                         $products->created_at = date('Y-m-d H:i:s');
                         $products->updated_at = date('Y-m-d H:i:s');
-//                        $products->save(false);
+                        $products->save(false);
                     }
                 }
                 $model_new = [];
@@ -216,7 +213,6 @@ class DocumentsController extends Controller
             'total' => $total,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
         ]);
     }
 
@@ -272,8 +268,8 @@ class DocumentsController extends Controller
             ->groupBy('nomenclature.id');
                 if ($search_name){
                     $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
-                        ->offset(0)
-                        ->limit(10);
+                        ->offset(0);
+//                        ->limit(10);
                     $total = $nomenclatures->count();
                 }else{
                     $total = $countQuery->count();
@@ -288,7 +284,7 @@ class DocumentsController extends Controller
             'nomenclatures' => $nomenclatures,
             'id_count' => $id_count ,
             'total' => $total,
-            'search_name' => $search_name
+            'search_name' => $search_name,
         ]);
 
     }
@@ -327,6 +323,13 @@ class DocumentsController extends Controller
             $model->save();
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             $items = $post['document_items'];
+
+
+
+                  var_dump(  '<pre>' . print_r($post,true) .'</pre>');exit;
+
+
+
             foreach ($items as $j => $item){
                 if ($item != 'null'){
                     $document_items_update = DocumentItems::findOne(intval($item));
@@ -336,7 +339,7 @@ class DocumentsController extends Controller
                     $document_items_update->price = $post['price'][$j];
                     $document_items_update->AAH = $post['aah'];
                     $document_items_update->updated_at = date('Y-m-d H:i:s');
-                    $document_items_update->save();
+//                    $document_items_update->save();
                 }else{
                     $document_items_update = new DocumentItems();
                     $document_items_update->document_id = $id;
@@ -346,7 +349,7 @@ class DocumentsController extends Controller
                     $document_items_update->AAH = $post['aah'];
                     $document_items_update->created_at = date('Y-m-d H:i:s');
                     $document_items_update->updated_at = date('Y-m-d H:i:s');
-                    $document_items_update->save();
+//                    $document_items_update->save();
                 }
             }
 //            $_POST['item_id'] = $model->id;
@@ -384,6 +387,9 @@ class DocumentsController extends Controller
             ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
             ->where(['document_items.document_id' => $id])
             ->asArray()->all();
+//        echo "<pre>";
+//        var_dump($document_items);
+//        die();
         $aah = DocumentItems::find()->select('AAH')->where(['document_id' => $id])->asArray()->one();
         return $this->render('update', [
             'model' => $model,

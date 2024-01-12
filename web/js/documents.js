@@ -1,6 +1,5 @@
 $(document).ready(function () {
     var id_count = {};
-    var newTbody = $('<tbody></tbody>');
     $('body').on('input', '.documentsCountInput', function () {
         count_id_mariam($(this));
     });
@@ -14,49 +13,71 @@ $(document).ready(function () {
         }
     }
 
+    var newTbody = $('<tbody></tbody>');
+    var trs = {};
     $('body').on('click', '.createDocuments', function () {
         var documentsTableBody = '';
+        $('.documentsAddingTable tbody').html('')
         $('.documentsTableTr').each(function () {
             if ($(this).find(".documentsCountInput").val() != '') {
                 let id = $(this).find(".nom_id").attr('data-id');
                 let name = $(this).children(".documentsName").text();
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
-                documentsTableBody += `<tr class="tableDocuments">
+                trs[id.trim()] = `<tr class="tableDocuments">
                      <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
                      <td class="name">` + name + `</td>
                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control priceDocuments"></td>
                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
-                  </tr>`;
+                  </tr>`.trim();
             }
         })
+        console.log(trs)
+        for (let i in trs) {
+            if(trs[i] != ''){
+                newTbody.append(trs[i]);
+            }
+        }
         newTbody.append(documentsTableBody);
         $('.documentsAddingTable tbody').replaceWith(newTbody);
-        newTbody = $('<tbody></tbody>');
     })
     $('body').on('click', '.deleteItems', function () {
         $(this).closest('.tableDocuments').remove();
     })
 
+    const old_table = $('.table.documentsAddingTable').find('.old_tbody').html();
     $('body').on('click', '.updateDocuments', function () {
+        console.log(old_table)
         var documentsTableBody = '';
+        $('.documentsAddingTable tbody').html('')
         $('.documentsTableTr').each(function () {
-            if ($(this).find("input:checkbox").is(':checked')) {
-                let id = $(this).find("input:checkbox").attr('data-id');
+            if ($(this).find(".documentsCountInput").val() != '') {
+                let nom_id = $(this).find(".nom_id").attr('data-id');
                 let name = $(this).children(".documentsName").text();
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
-                documentsTableBody += `<tr class="tableDocuments">
-                                         <td>` + id + `<input type="hidden" name="document_items[]" value="null"><input type="hidden" name="items[]" value="` + id + `"></td>
-                                         <td class="name">` + name + `</td>
-                                         <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
-                                         <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control priceDocuments"></td>
-                                         <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
-                                      </tr>`;
+                trs[nom_id.trim()] = `<tr class="tableDocuments oldTr">
+                                     <td> new
+                                      <input type="hidden" name="document_items[]" value="new">
+                                      <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
+                                     </td>
+                                     <td class="name">` + name + `</td>
+                                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
+                                     <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control priceDocuments"></td>
+                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
+                                  </tr>`.trim();
             }
         })
-        $('.documentsAddingTable tbody').parent().append(documentsTableBody);
+        console.log(trs)
+        newTbody.append(old_table);
+        for (let i in trs) {
+            if(trs[i] != ''){
+                newTbody.append(trs[i]);
+            }
+        }
+        newTbody.append(documentsTableBody);
+        $('.documentsAddingTable tbody').replaceWith(newTbody);
     })
     $('body').on('click', '.deleteDocumentItems', function () {
         var this_ = $(this);
@@ -77,7 +98,6 @@ $(document).ready(function () {
             }
         })
     })
-
     $('body').on('click', '.priceDocuments', function () {
         $(this).val($(this).val().replace(/[^0-9.]/g, ''));
     })
@@ -85,63 +105,57 @@ $(document).ready(function () {
         $(this).val($(this).val().replace(/[^0-9.]/g, ''));
     })
 
+    var arr_carent_page = [];
     $('body').on('keyup', '.searchForDocument', function () {
         var nomenclature = $(this).val();
         let current_href = $('body').find('.active .by_ajax').data('href');
+        arr_carent_page.push(current_href);
+        let lastValidValue;
+        for (let i = arr_carent_page.length - 1; i >= 0; i--) {
+            const currentValue = arr_carent_page[i];
+            if (currentValue !== undefined) {
+                current_href = currentValue;
+                break;
+            }
+        }
         getNomDocument(current_href + '&nomenclature=' + nomenclature);
-        // $.ajax({
-        //     url:'/documents/search',
-        //     method:'post',
-        //     datatype:'json',
-        //     data:{
-        //         nomenclature:nomenclature,
-        //         _csrf:csrfToken
-        //     },
-        //     success:function (data) {
-        //         let parse = JSON.parse(data);
-        //         $('.tbody_').html('');
-        //         var html_ = '';
-        //         parse.nomenclature.forEach(function (item) {
-        //             html_ = `<tr class="documentsTableTr">
-        //                 <td>`+item.id+`</td>
-        //                 <td><input data-id="`+item.id+`" type="checkbox"></td>
-        //                 <td class="documentsName">`+item.name+`</td>
-        //                 <td class="documentsCount">
-        //                     <input type="number" class="form-control documentsCountInput">
-        //                     <input class="documentsPriceInput" type="hidden" value="`+item.price+`">
-        //                 </td>
-        //             </tr>`;
-        //             $('.tbody_').append(html_);
-        //         })
-        //     }
-        // })
-    })
-
-    $('body').on('click', '.by_ajax', function () {
-        var href_ = $(this).attr('data-href');
-        getNomDocument(href_);
         var documentsTableBody = '';
-        // var newTbody = $('<tbody></tbody>');
         $('.documentsTableTr').each(function () {
             if ($(this).find(".documentsCountInput").val() != '') {
                 let id = $(this).find(".nom_id").attr('data-id');
                 let name = $(this).children(".documentsName").text();
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
-                documentsTableBody += `<tr class="tableDocuments">
+                trs[id.trim()] = `<tr class="tableDocuments">
                      <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
                      <td class="name">` + name + `</td>
                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control priceDocuments"></td>
                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
-                  </tr>`;
+                  </tr>`.trim();
             }
         })
-        newTbody.append(documentsTableBody);
-        $('.documentsAddingTable tbody').replaceWith(newTbody);
-        newTbody = $('<tbody></tbody>');
-        // console.log(documentsTableBody)
+    })
+    $('body').on('click', '.by_ajax', function () {
+        var href_ = $(this).attr('data-href');
+        getNomDocument(href_);
 
+        var documentsTableBody = '';
+        $('.documentsTableTr').each(function () {
+            if ($(this).find(".documentsCountInput").val() != '') {
+                let id = $(this).find(".nom_id").attr('data-id');
+                let name = $(this).children(".documentsName").text();
+                let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
+                let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
+                trs[id.trim()] = `<tr class="tableDocuments">
+                     <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
+                     <td class="name">` + name + `</td>
+                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
+                     <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control priceDocuments"></td>
+                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
+                  </tr>`.trim();
+            }
+        })
     })
 
     function getNomDocument(href_) {

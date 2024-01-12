@@ -14,7 +14,6 @@ $req = true;
 if(isset($action__)){
     $req = false;
 }
-
 ?>
 <?php if ($model->id){
     if ($model->document_type === '1'){
@@ -125,7 +124,7 @@ if(isset($action__)){
                                 <th>Գործողություն</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="old_tbody">
                             <?php
                             $itemsArray = [];
                             foreach ($document_items as $keys => $document_item){
@@ -158,67 +157,68 @@ if(isset($action__)){
                                 <h5 class="modal-title" id="exampleModalLabel3">Ապրանքացուցակ</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body"  id="ajax_content">
+                            <div class="modal-body">
                                 <input class="form-control col-md-3 mb-3 searchForDocument" type="search" placeholder="Որոնել...">
-                                <div class="card">
-                                    <div class="table-responsive text-nowrap">
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Ընտրել</th>
-                                                <th>Նկար</th>
-                                                <th>Անուն</th>
-                                                <th>Քանակ</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody class="table-border-bottom-0 tbody_">
-                                            <?php
-                                            foreach ($nomenclatures as $keys => $nomenclature){
-                                                if(in_array($nomenclature['id'],$itemsArray)){
-                                                    continue;
+                                <div id="ajax_content">
+                                    <div class="card">
+                                        <div class="table-responsive text-nowrap">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Նկար</th>
+                                                    <th>Անուն</th>
+                                                    <th>Քանակ</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody class="table-border-bottom-0 tbody_">
+                                                <?php
+                                                foreach ($nomenclatures as $keys => $nomenclature){
+                                                    if(in_array($nomenclature['id'],$itemsArray)){
+                                                        continue;
+                                                    }
+                                                    ?>
+                                                    <tr class="documentsTableTr">
+                                                        <td><?=$keys + 1?></td>
+                                                        <input class="nom_id" data-id="<?=$nomenclature['id']?>" type="hidden">
+                                                        <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
+                                                        <td class="documentsName"><?=$nomenclature['name']?></td>
+                                                        <td class="documentsCount">
+                                                            <input type="number" class="form-control documentsCountInput">
+                                                            <input class="documentsPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
+                                                        </td>
+                                                    </tr>
+                                                    <?php
                                                 }
                                                 ?>
-                                                <tr class="documentsTableTr">
-                                                    <td><?=$keys + 1?></td>
-                                                    <td><input data-id="<?=$nomenclature['id']?>" type="checkbox"></td>
-                                                    <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
-                                                    <td class="documentsName"><?=$nomenclature['name']?></td>
-                                                    <td class="documentsCount">
-                                                        <input type="number" class="form-control documentsCountInput">
-                                                        <input class="documentsPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
-                                                    </td>
-                                                </tr>
-                                                <?php
-                                            }
-                                            ?>
-                                            </tbody>
-                                        </table>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
-                                <?php $page = @$_GET['paging'] ?? 1; ?>
-                                <?php  $count = intval(ceil($total/10)) ; ?>
-                                <nav aria-label="Page navigation example" class="pagination">
-                                    <ul class="pagination pagination-sm">
-                                        <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
-                                            <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
-                                        </li>
-                                        <?php for ($i = 1;$i <= $count; $i++){ ?>
-                                            <?php if($i > 0 && $i <= $count+1){ ?>
-                                                <li class="page-item <?= ($page==$i) ? 'active' : '' ?>">
-                                                    <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $i ?>"><?= $i ?>
-                                                    </a>
+                                    <?php $page = @$_GET['paging'] ?? 1; ?>
+                                    <?php  $count = intval(ceil($total/10)) ; ?>
+                                    <nav aria-label="Page navigation example" class="pagination">
+                                        <ul class="pagination pagination-sm">
+                                            <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
+                                                <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
+                                            </li>
+                                            <?php for ($i = 1;$i <= $count; $i++){ ?>
+                                                <?php if($i > 0 && $i <= $count+1){ ?>
+                                                    <li class="page-item <?= ($page==$i) ? 'active' : '' ?>">
+                                                        <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $i ?>"><?= $i ?>
+                                                        </a>
+                                                    </li>
+                                                <?php } ?>
+                                            <?php } ?>
+
+                                            <?php if(intval($page) < $count){ ?>
+                                                <li class="page-item next">
+                                                    <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
                                                 </li>
                                             <?php } ?>
-                                        <?php } ?>
-
-                                        <?php if(intval($page) < $count){ ?>
-                                            <li class="page-item next">
-                                                <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
-                                            </li>
-                                        <?php } ?>
-                                    </ul>
-                                </nav>
+                                        </ul>
+                                    </nav>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn rounded-pill btn-secondary updateDocuments" data-bs-dismiss="modal">Ավելացնել ցուցակում</button>
@@ -350,65 +350,67 @@ if(isset($action__)){
                                 <h5 class="modal-title" id="exampleModalLabel3">Ապրանքացուցակ</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body" id="ajax_content">
+                            <div class="modal-body">
                                 <input class="form-control col-md-3 mb-3 searchForDocument" type="search" placeholder="Որոնել...">
-                                <div class="card">
-                                    <div class="table-responsive text-nowrap">
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Նկար</th>
-                                                <th>Անուն</th>
-                                                <th>Քանակ</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody class="table-border-bottom-0 tbody_">
-                                            <?php
-                                            foreach ($nomenclatures as $keys => $nomenclature){
-                                                ?>
-                                                <tr class="documentsTableTr">
-                                                    <td>
-                                                        <span><?=$keys + 1?></span>
-                                                        <input class="nom_id" data-id="<?=$nomenclature['id']?>" type="hidden">
-                                                    </td>
-                                                    <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
-                                                    <td class="documentsName"><?=$nomenclature['name']?></td>
-                                                    <td class="documentsCount">
-                                                        <input type="number" class="form-control documentsCountInput">
-                                                        <input class="documentsPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
-                                                    </td>
+                                <div id="ajax_content">
+                                    <div class="card">
+                                        <div class="table-responsive text-nowrap">
+                                            <table class="table" id="myTable">
+                                                <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Նկար</th>
+                                                    <th>Անուն</th>
+                                                    <th>Քանակ</th>
                                                 </tr>
+                                                </thead>
+                                                <tbody class="table-border-bottom-0 tbody_">
                                                 <?php
-                                            }
-                                            ?>
-                                            </tbody>
-                                        </table>
+                                                foreach ($nomenclatures as $keys => $nomenclature){
+                                                    ?>
+                                                    <tr class="documentsTableTr">
+                                                        <td>
+                                                            <span><?=$keys + 1?></span>
+                                                            <input class="nom_id" data-id="<?=$nomenclature['id']?>" type="hidden">
+                                                        </td>
+                                                        <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
+                                                        <td class="documentsName"><?=$nomenclature['name']?></td>
+                                                        <td class="documentsCount">
+                                                            <input type="number" class="form-control documentsCountInput">
+                                                            <input class="documentsPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                                ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
-                                <?php $page = @$_GET['paging'] ?? 1; ?>
-                                <?php  $count = intval(ceil($total/10)) ; ?>
-                                <nav aria-label="Page navigation example" class="pagination">
-                                    <ul class="pagination pagination-sm">
-                                        <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
-                                            <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
-                                        </li>
-                                        <?php for ($i = 1;$i <= $count; $i++){ ?>
-                                            <?php if($i > 0 && $i <= $count+1){ ?>
-                                                <li class="page-item <?= ($page==$i) ? 'active' : '' ?>">
-                                                    <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $i ?>"><?= $i ?>
-                                                    </a>
+                                    <?php $page = @$_GET['paging'] ?? 1; ?>
+                                    <?php  $count = intval(ceil($total/10)) ; ?>
+                                    <nav aria-label="Page navigation example" class="pagination">
+                                        <ul class="pagination pagination-sm">
+                                            <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
+                                                <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
+                                            </li>
+                                            <?php for ($i = 1;$i <= $count; $i++){ ?>
+                                                <?php if($i > 0 && $i <= $count+1){ ?>
+                                                    <li class="page-item <?= ($page==$i) ? 'active' : '' ?>">
+                                                        <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $i ?>"><?= $i ?>
+                                                        </a>
+                                                    </li>
+                                                <?php } ?>
+                                            <?php } ?>
+
+                                            <?php if(intval($page) < $count){ ?>
+                                                <li class="page-item next">
+                                                    <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
                                                 </li>
                                             <?php } ?>
-                                        <?php } ?>
-
-                                        <?php if(intval($page) < $count){ ?>
-                                            <li class="page-item next">
-                                                <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
-                                            </li>
-                                        <?php } ?>
-                                    </ul>
-                                </nav>
+                                        </ul>
+                                    </nav>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn rounded-pill btn-secondary createDocuments" data-bs-dismiss="modal">Ավելացնել ցուցակում</button>
@@ -434,3 +436,13 @@ $this->registerJsFile(
     ['depends' => [\yii\web\JqueryAsset::class]]
 );
 ?>
+
+<style>
+    /* Vendor prefixes for cross-browser support */
+    input[type="search"]::-webkit-search-cancel-button,
+    input[type="search"]::-webkit-search-clear-button {
+        -webkit-appearance: none;
+        appearance: none;
+        display: none;
+    }
+</style>
