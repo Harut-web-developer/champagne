@@ -127,6 +127,763 @@ class OrdersController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
+    public function actionGetDiscount(){
+        if ($this->request->isPost) {
+            $client_id = intval($this->request->post('clientId'));
+            $product_id = intval($this->request->post('product_id'));
+            $nomenclature_id = intval($this->request->post('nomenclature_id'));
+            $name = $this->request->post('name');
+            $orders_date = $this->request->post('orders_date');
+            $orders_count = intval($this->request->post('count'));
+            $orders_price = intval($this->request->post('price'));
+            $orders_cost = intval($this->request->post('cost'));
+            $orders_total_sum = intval($this->request->post('totalSum'));
+            $orders_total_count = intval($this->request->post('countSum'));
+            $discount_desc = [];
+            $desc = [];
+            $res = [];
+            $total_exist = Discount::find()->select('discount.*,discount_products.*,discount_clients.*')
+                ->leftJoin('discount_products','discount.id = discount_products.discount_id')
+                ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
+                ->where(['and',['discount_products.status' => 1,'discount.status' => 1,'discount_clients.status' => 1]])
+                ->andWhere(['or',
+                    ['<=', 'discount.start_date', $orders_date],
+                    ['discount.start_date' => null]
+                ])
+                ->andWhere(['or',
+                    ['>=', 'discount.end_date', $orders_date],
+                    ['discount.end_date' => null]
+                ])
+                ->andWhere(['discount_products.product_id' => $nomenclature_id])
+                ->andWhere(['discount_clients.client_id' => $client_id])
+                ->exists();
+
+            $nomenclatures_exist = Discount::find()->select('discount.*,discount_products.*')
+                ->leftJoin('discount_products','discount.id = discount_products.discount_id')
+                ->where(['and',['discount_products.status' => 1,'discount.status' => 1]])
+                ->andWhere(['or',
+                    ['<=', 'discount.start_date', $orders_date],
+                    ['discount.start_date' => null]
+                ])
+                ->andWhere(['or',
+                    ['>=', 'discount.end_date', $orders_date],
+                    ['discount.end_date' => null]
+                ])
+                ->andWhere(['discount_products.product_id' => $nomenclature_id])
+                ->exists();
+            $clients_exist = Discount::find()->select('discount.*,discount_clients.*')
+                ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
+                ->where(['and',['discount_clients.status' => 1,'discount.status' => 1]])
+                ->andWhere(['or',
+                    ['<=', 'discount.start_date', $orders_date],
+                    ['discount.start_date' => null]
+                ])
+                ->andWhere(['or',
+                    ['>=', 'discount.end_date', $orders_date],
+                    ['discount.end_date' => null]
+                ])
+                ->andWhere(['discount_clients.client_id' => $client_id])
+                ->exists();
+
+            if ($total_exist){
+                $discount = Discount::find()->select('discount.*,discount_products.*,discount_clients.*')
+                    ->leftJoin('discount_products','discount.id = discount_products.discount_id')
+                    ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
+                    ->where(['and',['discount_products.status' => 1,'discount.status' => 1,'discount_clients.status' => 1]])
+                    ->andWhere(['or',
+                        ['<=', 'discount.start_date', $orders_date],
+                        ['discount.start_date' => null]
+                    ])
+                    ->andWhere(['or',
+                        ['>=', 'discount.end_date', $orders_date],
+                        ['discount.end_date' => null]
+                    ])
+                    ->andWhere(['discount_products.product_id' => $nomenclature_id])
+                    ->andWhere(['discount_clients.client_id' => $client_id])
+                    ->orderBy(['discount.discount_sortable' => SORT_ASC])
+                    ->asArray()
+                    ->all();
+                $arr = [];
+                $count = 0;
+                $count_discount_id = '';
+                $price = $orders_price;
+                for ($j = 0; $j < count($discount); $j++){
+                    if ($discount[$j]['discount_option'] == 1){
+                        $check_client_id = Discount::findOne($discount[$j]['discount_id']);
+                        if(!empty($check_client_id['discount_option_check_client_id'])){
+                            $arr = explode(',', $check_client_id['discount_option_check_client_id']);
+                            if (!in_array($client_id,$arr)){
+                                if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $orders_total_count &&  $discount[$j]['max'] > $orders_total_count){
+                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                        $count++;
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }elseif ($discount[$j]['discount_check'] == 1){
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }
+                                }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $orders_total_sum &&  $discount[$j]['max'] > $orders_total_sum){
+                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                        $count++;
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }elseif ($discount[$j]['discount_check'] == 1){
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }
+                                }elseif(empty($discount[$j]['discount_filter_type'])){
+                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                        $count++;
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }elseif ($discount[$j]['discount_check'] == 1){
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }
+                                }
+                                array_push($arr,$client_id);
+                            }
+                        }else{
+                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $orders_total_count &&  $discount[$j]['max'] > $orders_total_count){
+                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                    $count++;
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }elseif ($discount[$j]['discount_check'] == 1){
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }
+                            }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $orders_total_sum &&  $discount[$j]['max'] > $orders_total_sum){
+                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                    $count++;
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }elseif ($discount[$j]['discount_check'] == 1){
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }
+                            }elseif(empty($discount[$j]['discount_filter_type'])){
+                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                    $count++;
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }elseif ($discount[$j]['discount_check'] == 1){
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }
+                            }
+                            array_push($arr,$client_id);
+                        }
+
+                        $string_row = implode(',', $arr);
+                        $discount_client_string = Discount::findOne($discount[$j]['discount_id']);
+                        $discount_client_string->discount_option_check_client_id = $string_row;
+//                        $discount_client_string->save(false);
+                    }elseif ($discount[$j]['discount_option'] == 2){
+                        if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $orders_total_count &&  $discount[$j]['max'] > $orders_total_count){
+                            if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                $count++;
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }elseif ($discount[$j]['discount_check'] == 1){
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }
+                        }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $orders_total_sum &&  $discount[$j]['max'] > $orders_total_sum){
+                            if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                $count++;
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }elseif ($discount[$j]['discount_check'] == 1){
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }
+                        }elseif(empty($discount[$j]['discount_filter_type'])){
+                            if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                $count++;
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }elseif ($discount[$j]['discount_check'] == 1){
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }
+                        }
+                    }
+//                    $discount_desc[$discount[$j]['discount_id']] = $discount[$j]['name'];
+                    $desc = ['id' => $discount[$j]['discount_id'], 'name' => $discount[$j]['name']];
+                    array_push($discount_desc, $desc);
+                }
+                $res['product_id'] = $product_id;
+                $res['nomenclature_id'] = $nomenclature_id;
+                $res['discount_desc'] = $discount_desc;
+                $res['price'] = $price;
+                $res['count'] = $orders_count;
+                $res['name'] = $name;
+                $res['cost'] = $orders_cost;
+                $res['discount'] = $orders_price - $price;
+                $res['count_discount_id'] = substr($count_discount_id,0,-1);
+                $res['format_before_price'] = $orders_price;
+                return json_encode($res);
+            }elseif ($nomenclatures_exist){
+                $discount = Discount::find()->select('discount.*,discount_products.*')
+                    ->leftJoin('discount_products','discount.id = discount_products.discount_id')
+                    ->where(['and',['discount_products.status' => 1,'discount.status' => 1]])
+                    ->andWhere(['or',
+                        ['<=', 'discount.start_date', $orders_date],
+                        ['discount.start_date' => null]
+                    ])
+                    ->andWhere(['or',
+                        ['>=', 'discount.end_date', $orders_date],
+                        ['discount.end_date' => null]
+                    ])
+                    ->andWhere(['discount_products.product_id' => $nomenclature_id])
+                    ->groupBy('discount.id')
+                    ->orderBy(['discount.discount_sortable' => SORT_ASC])
+                    ->asArray()
+                    ->all();
+                $arr = [];
+                $count = 0;
+                $count_discount_id = '';
+                $price = $orders_price;
+                for ($j = 0; $j < count($discount); $j++){
+                    if ($discount[$j]['discount_option'] == 1){
+                        $check_client_id = Discount::findOne($discount[$j]['discount_id']);
+                        if(!empty($check_client_id['discount_option_check_client_id'])){
+                            $arr = explode(',', $check_client_id['discount_option_check_client_id']);
+                            if (!in_array($client_id,$arr)){
+                                if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $orders_total_count &&  $discount[$j]['max'] > $orders_total_count){
+                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                        $count++;
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }elseif ($discount[$j]['discount_check'] == 1){
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }
+                                }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $orders_total_sum &&  $discount[$j]['max'] > $orders_total_sum){
+                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                        $count++;
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }elseif ($discount[$j]['discount_check'] == 1){
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }
+                                }elseif(empty($discount[$j]['discount_filter_type'])){
+                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                        $count++;
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }elseif ($discount[$j]['discount_check'] == 1){
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }
+                                }
+                                array_push($arr,$client_id);
+                            }
+                        }else{
+                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $orders_total_count &&  $discount[$j]['max'] > $orders_total_count){
+                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                    $count++;
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }elseif ($discount[$j]['discount_check'] == 1){
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }
+                            }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $orders_total_sum &&  $discount[$j]['max'] > $orders_total_sum){
+                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                    $count++;
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }elseif ($discount[$j]['discount_check'] == 1){
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }
+                            }elseif(empty($discount[$j]['discount_filter_type'])){
+                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                    $count++;
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }elseif ($discount[$j]['discount_check'] == 1){
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }
+                            }
+                            array_push($arr,$client_id);
+                        }
+                        $string_row = implode(',', $arr);
+                        $discount_client_string = Discount::findOne($discount[$j]['discount_id']);
+                        $discount_client_string->discount_option_check_client_id = $string_row;
+//                        $discount_client_string->save(false);
+                    }else{
+                        if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $orders_total_count &&  $discount[$j]['max'] > $orders_total_count){
+                            if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                $count++;
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }elseif ($discount[$j]['discount_check'] == 1){
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }
+                        }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $orders_total_sum &&  $discount[$j]['max'] > $orders_total_sum){
+                            if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                $count++;
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }elseif ($discount[$j]['discount_check'] == 1){
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }
+                        }elseif(empty($discount[$j]['discount_filter_type'])){
+                            if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                $count++;
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }elseif ($discount[$j]['discount_check'] == 1){
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }
+                        }
+                    }
+//                    $discount_desc[$discount[$j]['discount_id']] = $discount[$j]['name'];
+                    $desc = ['id' => $discount[$j]['discount_id'], 'name' => $discount[$j]['name']];
+                    array_push($discount_desc, $desc);
+                }
+                $res['product_id'] = $product_id;
+                $res['nomenclature_id'] = $nomenclature_id;
+                $res['discount_desc'] = $discount_desc;
+                $res['price'] = $price;
+                $res['count'] = $orders_count;
+                $res['name'] = $name;
+                $res['cost'] = $orders_cost;
+                $res['discount'] = $orders_price - $price;
+                $res['count_discount_id'] = substr($count_discount_id,0,-1);
+                $res['format_before_price'] = $orders_price;
+                return json_encode($res);
+            }elseif ($clients_exist){
+                $discount = Discount::find()->select('discount.*,discount_clients.*')
+                    ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
+                    ->where(['and',['discount_clients.status' => 1,'discount.status' => 1]])
+                    ->andWhere(['or',
+                        ['<=', 'discount.start_date', $orders_date],
+                        ['discount.start_date' => null]
+                    ])
+                    ->andWhere(['or',
+                        ['>=', 'discount.end_date', $orders_date],
+                        ['discount.end_date' => null]
+                    ])
+                    ->andWhere(['discount_clients.client_id' => $client_id])
+                    ->groupBy('discount.id')
+                    ->orderBy(['discount.discount_sortable' => SORT_ASC])
+                    ->asArray()
+                    ->all();
+                $arr = [];
+                $count = 0;
+                $count_discount_id = '';
+                $price = $orders_price;
+                for ($j = 0; $j < count($discount); $j++){
+                    if ($discount[$j]['discount_option'] == 1){
+                        $check_client_id = Discount::findOne($discount[$j]['discount_id']);
+                        if(!empty($check_client_id['discount_option_check_client_id'])){
+                            $arr = explode(',', $check_client_id['discount_option_check_client_id']);
+                            if (!in_array($client_id,$arr)){
+                                if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $orders_total_count &&  $discount[$j]['max'] > $orders_total_count){
+                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                        $count++;
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }elseif ($discount[$j]['discount_check'] == 1){
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }
+                                }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $orders_total_sum &&  $discount[$j]['max'] > $orders_total_sum){
+                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                        $count++;
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }elseif ($discount[$j]['discount_check'] == 1){
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }
+                                }elseif(empty($discount[$j]['discount_filter_type'])){
+                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                        $count++;
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }elseif ($discount[$j]['discount_check'] == 1){
+                                        if ($discount[$j]['type'] == 'percent'){
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                        }else{
+                                            $count_discount_id .= $discount[$j]['discount_id'].',';
+                                            $price = $price - $discount[$j]['discount'];
+                                        }
+                                    }
+                                }
+                                array_push($arr,$client_id);
+                            }
+                        }else{
+                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $orders_total_count &&  $discount[$j]['max'] > $orders_total_count){
+                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                    $count++;
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }elseif ($discount[$j]['discount_check'] == 1){
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }
+                            }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $orders_total_sum &&  $discount[$j]['max'] > $orders_total_sum){
+                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                    $count++;
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }elseif ($discount[$j]['discount_check'] == 1){
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }
+                            }elseif(empty($discount[$j]['discount_filter_type'])){
+                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                    $count++;
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }elseif ($discount[$j]['discount_check'] == 1){
+                                    if ($discount[$j]['type'] == 'percent'){
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                    }else{
+                                        $count_discount_id .= $discount[$j]['discount_id'].',';
+                                        $price = $price - $discount[$j]['discount'];
+                                    }
+                                }
+                            }
+                            array_push($arr,$client_id);
+                        }
+                        $string_row = implode(',', $arr);
+                        $discount_client_string = Discount::findOne($discount[$j]['discount_id']);
+                        $discount_client_string->discount_option_check_client_id = $string_row;
+//                        $discount_client_string->save(false);
+                    }else{
+                        if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $orders_total_count &&  $discount[$j]['max'] > $orders_total_count){
+                            if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                $count++;
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }elseif ($discount[$j]['discount_check'] == 1){
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }
+                        }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $orders_total_sum &&  $discount[$j]['max'] > $orders_total_sum){
+                            if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                $count++;
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }elseif ($discount[$j]['discount_check'] == 1){
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }
+                        }elseif(empty($discount[$j]['discount_filter_type'])){
+                            if ($discount[$j]['discount_check'] == 0 && $count == 0){
+                                $count++;
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }elseif ($discount[$j]['discount_check'] == 1){
+                                if ($discount[$j]['type'] == 'percent'){
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price =  $price - ($price * $discount[$j]['discount'])/100;
+                                }else{
+                                    $count_discount_id .= $discount[$j]['discount_id'].',';
+                                    $price = $price - $discount[$j]['discount'];
+                                }
+                            }
+                        }
+                    }
+//                    $discount_desc[$discount[$j]['discount_id']] = $discount[$j]['name'];
+                    $desc = ['id' => $discount[$j]['discount_id'], 'name' => $discount[$j]['name']];
+                    array_push($discount_desc, $desc);
+                }
+                $res['product_id'] = $product_id;
+                $res['nomenclature_id'] = $nomenclature_id;
+                $res['discount_desc'] = $discount_desc;
+                $res['price'] = $price;
+                $res['count'] = $orders_count;
+                $res['name'] = $name;
+                $res['cost'] = $orders_cost;
+                $res['discount'] = $orders_price - $price;
+                $res['count_discount_id'] = substr($count_discount_id,0,-1);
+                $res['format_before_price'] = $orders_price;
+                return json_encode($res);
+            }else{
+                $res['product_id'] = $product_id;
+                $res['nomenclature_id'] = $nomenclature_id;
+                $res['price'] = $orders_price;
+                $res['count'] = $orders_count;
+                $res['name'] = $name;
+                $res['cost'] = $orders_cost;
+                $res['discount'] = 0;
+                $res['count_discount_id'] = 'չկա';
+                $res['format_before_price'] = $orders_price;
+                return json_encode($res);
+            }
+
+
+        }
+    }
     public function actionCreate()
     {
 //        echo "<pre>";
@@ -149,6 +906,8 @@ class OrdersController extends Controller
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
+            $model->total_price_before_discount = $post['Orders']['total_price_before_discount'];
+            $model->total_discount = $post['Orders']['total_discount'];
             $model->total_count = $post['Orders']['total_count'];
             $model->comment = $post['Orders']['comment'];
             $model->orders_date = $post['Orders']['orders_date'];
@@ -167,767 +926,25 @@ class OrdersController extends Controller
                 $product_write_out->updated_at = date('Y-m-d H:i:s');
                 $product_write_out->save(false);
             }
-            $total_debt = 0;
-            for ($i = 0; $i < count($post['order_items']); $i++){
-                $total_exist = Discount::find()->select('discount.*,discount_products.*,discount_clients.*')
-                    ->leftJoin('discount_products','discount.id = discount_products.discount_id')
-                    ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
-                    ->where(['and',['discount_products.status' => 1,'discount.status' => 1,'discount_clients.status' => 1]])
-                    ->andWhere(['or',
-                        ['<=', 'discount.start_date', $post['Orders']['orders_date']],
-                        ['discount.start_date' => null]
-                    ])
-                    ->andWhere(['or',
-                        ['>=', 'discount.end_date', $post['Orders']['orders_date']],
-                        ['discount.end_date' => null]
-                    ])
-                    ->andWhere(['discount_products.product_id' => $post['nomenclature_id'][$i]])
-                    ->andWhere(['discount_clients.client_id' => $post['clients_id']])
-                    ->exists();
-                $nomenclatures_exist = Discount::find()->select('discount.*,discount_products.*')
-                    ->leftJoin('discount_products','discount.id = discount_products.discount_id')
-                    ->where(['and',['discount_products.status' => 1,'discount.status' => 1]])
-                    ->andWhere(['or',
-                        ['<=', 'discount.start_date', $post['Orders']['orders_date']],
-                        ['discount.start_date' => null]
-                    ])
-                    ->andWhere(['or',
-                        ['>=', 'discount.end_date', $post['Orders']['orders_date']],
-                        ['discount.end_date' => null]
-                    ])
-                    ->andWhere(['discount_products.product_id' => $post['nomenclature_id'][$i]])
-                    ->exists();
-
-                $clients_exist = Discount::find()->select('discount.*,discount_clients.*')
-                    ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
-                    ->where(['and',['discount_clients.status' => 1,'discount.status' => 1]])
-                    ->andWhere(['or',
-                        ['<=', 'discount.start_date', $post['Orders']['orders_date']],
-                        ['discount.start_date' => null]
-                    ])
-                    ->andWhere(['or',
-                        ['>=', 'discount.end_date', $post['Orders']['orders_date']],
-                        ['discount.end_date' => null]
-                    ])
-                    ->andWhere(['discount_clients.client_id' => $post['clients_id']])
-                    ->exists();
-                if ($total_exist){
-                    $discount = Discount::find()->select('discount.*,discount_products.*,discount_clients.*')
-                        ->leftJoin('discount_products','discount.id = discount_products.discount_id')
-                        ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
-                        ->where(['and',['discount_products.status' => 1,'discount.status' => 1,'discount_clients.status' => 1]])
-                        ->andWhere(['or',
-                            ['<=', 'discount.start_date', $post['Orders']['orders_date']],
-                            ['discount.start_date' => null]
-                        ])
-                        ->andWhere(['or',
-                            ['>=', 'discount.end_date', $post['Orders']['orders_date']],
-                            ['discount.end_date' => null]
-                        ])
-                        ->andWhere(['discount_products.product_id' => $post['nomenclature_id'][$i]])
-                        ->andWhere(['discount_clients.client_id' => $post['clients_id']])
-                        ->orderBy(['discount.discount_sortable' => SORT_ASC])
-                        ->asArray()
-                        ->all();
-                    $arr = [];
-                    $count = 0;
-                    $count_discount_id = '';
-                    $price = intval($post['price'][$i]);
-                    for ($j = 0; $j < count($discount); $j++){
-                        if ($discount[$j]['discount_option'] == 1){
-                            $check_client_id = Discount::findOne($discount[$j]['discount_id']);
-                            if(!empty($check_client_id['discount_option_check_client_id'])){
-                                $arr = explode(',', $check_client_id['discount_option_check_client_id']);
-                                if (!in_array($post['clients_id'],$arr)){
-                                    if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
-                                        if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                            $count++;
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }elseif ($discount[$j]['discount_check'] == 1){
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }
-                                    }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $post['Orders']['total_price'] &&  $discount[$j]['max'] > $post['Orders']['total_price']){
-                                        if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                            $count++;
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }elseif ($discount[$j]['discount_check'] == 1){
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }
-                                    }elseif(empty($discount[$j]['discount_filter_type'])){
-                                        if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                            $count++;
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }elseif ($discount[$j]['discount_check'] == 1){
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }
-                                    }
-                                    array_push($arr,$post['clients_id']);
-
-                                }
-                            }else{
-                                if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
-                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                        $count++;
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }elseif ($discount[$j]['discount_check'] == 1){
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }
-                                }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $post['Orders']['total_price'] &&  $discount[$j]['max'] > $post['Orders']['total_price']){
-                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                        $count++;
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }elseif ($discount[$j]['discount_check'] == 1){
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }
-                                }elseif(empty($discount[$j]['discount_filter_type'])){
-                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                        $count++;
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }elseif ($discount[$j]['discount_check'] == 1){
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }
-                                }
-                                array_push($arr,$post['clients_id']);
-                            }
-
-                            $string_row = implode(',', $arr);
-                            $discount_client_string = Discount::findOne($discount[$j]['discount_id']);
-                            $discount_client_string->discount_option_check_client_id = $string_row;
-                            $discount_client_string->save(false);
-                        }elseif ($discount[$j]['discount_option'] == 2){
-                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
-                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                    $count++;
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }elseif ($discount[$j]['discount_check'] == 1){
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }
-                            }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $post['Orders']['total_price'] &&  $discount[$j]['max'] > $post['Orders']['total_price']){
-                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                    $count++;
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }elseif ($discount[$j]['discount_check'] == 1){
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }
-                            }elseif(empty($discount[$j]['discount_filter_type'])){
-                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                    $count++;
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }elseif ($discount[$j]['discount_check'] == 1){
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    $row_price = $price * $post['count_'][$i];
-                    $total_debt += $row_price;
-                    $row_before_price = intval($post['price'][$i]) * $post['count_'][$i];
-                    $format_number = round($row_price,2);
-                    $format_before_price = round($row_before_price,2);
-                    $order_items_create = new OrderItems();
-                    $order_items_create->order_id = $model->id;
-                    $order_items_create->product_id = $post['order_items'][$i];
-                    $order_items_create->nom_id_for_name = intval($post['nomenclature_id'][$i]);
-                    $order_items_create->price = $format_number;
-                    $order_items_create->count = $post['count_'][$i];
-                    $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
-                    $order_items_create->discount = (intval($post['price'][$i]) - $price) * $post['count_'][$i];
-                    $order_items_create->price_before_discount = $format_before_price;
-                    $order_items_create->count_discount_id = substr($count_discount_id,0,-1);
-                    $order_items_create->created_at = date('Y-m-d H:i:s');
-                    $order_items_create->updated_at = date('Y-m-d H:i:s');
-                    $order_items_create->save(false);
-                }elseif ($nomenclatures_exist){
-                    $discount = Discount::find()->select('discount.*,discount_products.*')
-                        ->leftJoin('discount_products','discount.id = discount_products.discount_id')
-                        ->where(['and',['discount_products.status' => 1,'discount.status' => 1]])
-                        ->andWhere(['or',
-                            ['<=', 'discount.start_date', $post['Orders']['orders_date']],
-                            ['discount.start_date' => null]
-                        ])
-                        ->andWhere(['or',
-                            ['>=', 'discount.end_date', $post['Orders']['orders_date']],
-                            ['discount.end_date' => null]
-                        ])
-                        ->andWhere(['discount_products.product_id' => $post['nomenclature_id'][$i]])
-                        ->groupBy('discount.id')
-                        ->orderBy(['discount.discount_sortable' => SORT_ASC])
-                        ->asArray()
-                        ->all();
-                    $arr = [];
-                    $count = 0;
-                    $count_discount_id = '';
-                    $price = intval($post['price'][$i]);
-                    for ($j = 0; $j < count($discount); $j++){
-                        if ($discount[$j]['discount_option'] == 1){
-                            $check_client_id = Discount::findOne($discount[$j]['discount_id']);
-                            if(!empty($check_client_id['discount_option_check_client_id'])){
-                                $arr = explode(',', $check_client_id['discount_option_check_client_id']);
-                                if (!in_array($post['clients_id'],$arr)){
-                                    if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
-                                        if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                            $count++;
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }elseif ($discount[$j]['discount_check'] == 1){
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }
-                                    }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $post['Orders']['total_price'] &&  $discount[$j]['max'] > $post['Orders']['total_price']){
-                                        if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                            $count++;
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }elseif ($discount[$j]['discount_check'] == 1){
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }
-                                    }elseif(empty($discount[$j]['discount_filter_type'])){
-                                        if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                            $count++;
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }elseif ($discount[$j]['discount_check'] == 1){
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }
-                                    }
-                                    array_push($arr,$post['clients_id']);
-                                }
-                            }else{
-                                if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
-                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                        $count++;
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }elseif ($discount[$j]['discount_check'] == 1){
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }
-                                }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $post['Orders']['total_price'] &&  $discount[$j]['max'] > $post['Orders']['total_price']){
-                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                        $count++;
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }elseif ($discount[$j]['discount_check'] == 1){
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }
-                                }elseif(empty($discount[$j]['discount_filter_type'])){
-                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                        $count++;
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }elseif ($discount[$j]['discount_check'] == 1){
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }
-                                }
-                                array_push($arr,$post['clients_id']);
-                            }
-                            $string_row = implode(',', $arr);
-                            $discount_client_string = Discount::findOne($discount[$j]['discount_id']);
-                            $discount_client_string->discount_option_check_client_id = $string_row;
-                            $discount_client_string->save(false);
-                        }else{
-                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
-                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                    $count++;
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }elseif ($discount[$j]['discount_check'] == 1){
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }
-                            }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $post['Orders']['total_price'] &&  $discount[$j]['max'] > $post['Orders']['total_price']){
-                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                    $count++;
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }elseif ($discount[$j]['discount_check'] == 1){
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }
-                            }elseif(empty($discount[$j]['discount_filter_type'])){
-                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                    $count++;
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }elseif ($discount[$j]['discount_check'] == 1){
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    $row_price = $price * $post['count_'][$i];
-                    $total_debt += $row_price;
-                    $row_before_price = intval($post['price'][$i]) * $post['count_'][$i];
-                    $format_number = round($row_price,2);
-                    $format_before_price = round($row_before_price,2);
-                    $order_items_create = new OrderItems();
-                    $order_items_create->order_id = $model->id;
-                    $order_items_create->product_id = $post['order_items'][$i];
-                    $order_items_create->nom_id_for_name = intval($post['nomenclature_id'][$i]);
-                    $order_items_create->price = $format_number;
-                    $order_items_create->count = $post['count_'][$i];
-                    $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
-                    $order_items_create->discount = (intval($post['price'][$i]) - $price) * $post['count_'][$i];
-                    $order_items_create->price_before_discount = $format_before_price;
-                    $order_items_create->count_discount_id = substr($count_discount_id,0,-1);
-                    $order_items_create->created_at = date('Y-m-d H:i:s');
-                    $order_items_create->updated_at = date('Y-m-d H:i:s');
-                    $order_items_create->save(false);
-                }elseif ($clients_exist){
-                    $discount = Discount::find()->select('discount.*,discount_clients.*')
-                        ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
-                        ->where(['and',['discount_clients.status' => 1,'discount.status' => 1]])
-                        ->andWhere(['or',
-                            ['<=', 'discount.start_date', $post['Orders']['orders_date']],
-                            ['discount.start_date' => null]
-                        ])
-                        ->andWhere(['or',
-                            ['>=', 'discount.end_date', $post['Orders']['orders_date']],
-                            ['discount.end_date' => null]
-                        ])
-                        ->andWhere(['discount_clients.client_id' => $post['clients_id']])
-                        ->groupBy('discount.id')
-                        ->orderBy(['discount.discount_sortable' => SORT_ASC])
-                        ->asArray()
-                        ->all();
-                    $arr = [];
-                    $count = 0;
-                    $count_discount_id = '';
-                    $price = intval($post['price'][$i]);
-                    for ($j = 0; $j < count($discount); $j++){
-                        if ($discount[$j]['discount_option'] == 1){
-                            $check_client_id = Discount::findOne($discount[$j]['discount_id']);
-                            if(!empty($check_client_id['discount_option_check_client_id'])){
-                                $arr = explode(',', $check_client_id['discount_option_check_client_id']);
-                                if (!in_array($post['clients_id'],$arr)){
-                                    if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
-                                        if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                            $count++;
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }elseif ($discount[$j]['discount_check'] == 1){
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }
-                                    }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $post['Orders']['total_price'] &&  $discount[$j]['max'] > $post['Orders']['total_price']){
-                                        if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                            $count++;
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }elseif ($discount[$j]['discount_check'] == 1){
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }
-                                    }elseif(empty($discount[$j]['discount_filter_type'])){
-                                        if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                            $count++;
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }elseif ($discount[$j]['discount_check'] == 1){
-                                            if ($discount[$j]['type'] == 'percent'){
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                            }else{
-                                                $count_discount_id .= $discount[$j]['discount_id'].',';
-                                                $price = $price - $discount[$j]['discount'];
-                                            }
-                                        }
-                                    }
-                                    array_push($arr,$post['clients_id']);
-                                }
-                            }else{
-                                if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
-                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                        $count++;
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }elseif ($discount[$j]['discount_check'] == 1){
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }
-                                }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $post['Orders']['total_price'] &&  $discount[$j]['max'] > $post['Orders']['total_price']){
-                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                        $count++;
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }elseif ($discount[$j]['discount_check'] == 1){
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }
-                                }elseif(empty($discount[$j]['discount_filter_type'])){
-                                    if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                        $count++;
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }elseif ($discount[$j]['discount_check'] == 1){
-                                        if ($discount[$j]['type'] == 'percent'){
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                        }else{
-                                            $count_discount_id .= $discount[$j]['discount_id'].',';
-                                            $price = $price - $discount[$j]['discount'];
-                                        }
-                                    }
-                                }
-                                array_push($arr,$post['clients_id']);
-                            }
-                            $string_row = implode(',', $arr);
-                            $discount_client_string = Discount::findOne($discount[$j]['discount_id']);
-                            $discount_client_string->discount_option_check_client_id = $string_row;
-                            $discount_client_string->save(false);
-                        }else{
-                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $post['Orders']['total_count'] &&  $discount[$j]['max'] > $post['Orders']['total_count']){
-                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                    $count++;
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }elseif ($discount[$j]['discount_check'] == 1){
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }
-                            }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $post['Orders']['total_price'] &&  $discount[$j]['max'] > $post['Orders']['total_price']){
-                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                    $count++;
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }elseif ($discount[$j]['discount_check'] == 1){
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }
-                            }elseif(empty($discount[$j]['discount_filter_type'])){
-                                if ($discount[$j]['discount_check'] == 0 && $count == 0){
-                                    $count++;
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }elseif ($discount[$j]['discount_check'] == 1){
-                                    if ($discount[$j]['type'] == 'percent'){
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price =  $price - ($price * $discount[$j]['discount'])/100;
-                                    }else{
-                                        $count_discount_id .= $discount[$j]['discount_id'].',';
-                                        $price = $price - $discount[$j]['discount'];
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-                    $row_price = $price * $post['count_'][$i];
-                    $total_debt += $row_price;
-                    $row_before_price = intval($post['price'][$i]) * $post['count_'][$i];
-                    $format_number = round($row_price,2);
-                    $format_before_price = round($row_before_price,2);
-                    $order_items_create = new OrderItems();
-                    $order_items_create->order_id = $model->id;
-                    $order_items_create->product_id = $post['order_items'][$i];
-                    $order_items_create->nom_id_for_name = intval($post['nomenclature_id'][$i]);
-                    $order_items_create->price = $format_number;
-                    $order_items_create->count = $post['count_'][$i];
-                    $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
-                    $order_items_create->discount = (intval($post['price'][$i]) - $price) * $post['count_'][$i];
-                    $order_items_create->price_before_discount = $format_before_price;
-                    $order_items_create->count_discount_id = substr($count_discount_id,0,-1);
-                    $order_items_create->created_at = date('Y-m-d H:i:s');
-                    $order_items_create->updated_at = date('Y-m-d H:i:s');
-                    $order_items_create->save(false);
-                }else{
-                    $order_items_create = new OrderItems();
-                    $order_items_create->order_id = $model->id;
-                    $order_items_create->product_id = $post['order_items'][$i];
-                    $order_items_create->nom_id_for_name = intval($post['nomenclature_id'][$i]);
-                    $order_items_create->price = $post['price'][$i] * $post['count_'][$i];
-                    $order_items_create->count = $post['count_'][$i];
-                    $order_items_create->cost = $post['cost'][$i] * $post['count_'][$i];
-                    $order_items_create->discount = 0;
-                    $order_items_create->count_discount_id = 'չկա';
-                    $order_items_create->price_before_discount = $post['price'][$i] * $post['count_'][$i];
-                    $order_items_create->created_at = date('Y-m-d H:i:s');
-                    $order_items_create->updated_at = date('Y-m-d H:i:s');
-                    $order_items_create->save(false);
-                    $total_debt += $post['price'][$i] * $post['count_'][$i];
-                }
+            for ($i = 0; $i < count($post['order_items']); $i++) {
+                $order_items_create = new OrderItems();
+                $order_items_create->order_id = $model->id;
+                $order_items_create->product_id = intval($post['order_items'][$i]);
+                $order_items_create->nom_id_for_name = intval($post['nomenclature_id'][$i]);
+                $order_items_create->price = intval($post['price'][$i]) * intval($post['count_'][$i]);
+                $order_items_create->count = $post['count_'][$i];
+                $order_items_create->cost = intval($post['cost'][$i]) * intval($post['count_'][$i]);
+                $order_items_create->discount = intval($post['discount'][$i]) * intval($post['count_'][$i]);
+                $order_items_create->price_before_discount = intval($post['beforePrice'][$i]) * intval($post['count_'][$i]);
+                $order_items_create->count_discount_id = $post['count_discount_id'][$i];
+                $order_items_create->created_at = date('Y-m-d H:i:s');
+                $order_items_create->updated_at = date('Y-m-d H:i:s');
+                $order_items_create->save(false);
             }
-            $orders_total_debt = Orders::findOne($model->id);
-            $orders_total_debt->total_price = $total_debt;
-            $orders_total_debt->save(false);
+
+//            $orders_total_debt = Orders::findOne($model->id);
+//            $orders_total_debt->total_price = $total_debt;
+//            $orders_total_debt->save(false);
             $model = Orders::getDefVals($model);
             Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
                 return $this->redirect(['index', 'id' => $model->id]);
@@ -1042,9 +1059,6 @@ class OrdersController extends Controller
             $model->comment = $post['Orders']['comment'];
             $model->orders_date = $post['Orders']['orders_date'];
             $model->updated_at = date('Y-m-d H:i:s');
-//            echo "<pre>";
-//            var_dump($post);
-//            exit();
             $model->save();
             $items = $post['order_items'];
             $quantity = 0;
@@ -1873,8 +1887,9 @@ class OrdersController extends Controller
             ->limit(10)
             ->asArray()
             ->all();
-        $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as price,
-        (order_items.cost / order_items.count) as cost,nomenclature.name, (nomenclature.id) as nom_id')
+        $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
+        order_items.price_before_discount as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
+        order_items.price as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id')
             ->leftJoin('products','products.id = order_items.product_id')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['order_id' => $id])->asArray()->all();
@@ -1978,6 +1993,8 @@ class OrdersController extends Controller
         if ($this->request->isPost){
             $total_count = $this->request->post('totalCount');
             $total_price = $this->request->post('totalPrice');
+            $total_price_before_discount = $this->request->post('totalPriceBeforeDiscount');
+            $total_discount = $this->request->post('totalDiscount');
             $item_id = intval($this->request->post('itemId'));
             $nom_id = intval($this->request->post('nomId'));
             $orders_id = OrderItems::find()->select('order_id')->where(['id' => $item_id])->one();
@@ -1990,6 +2007,8 @@ class OrdersController extends Controller
             $update_orders = Orders::findOne($orders_id->order_id);
             $update_orders->total_count = $total_count;
             $update_orders->total_price = $total_price;
+            $update_orders->total_price_before_discount = $total_price_before_discount;
+            $update_orders->total_discount = $total_discount;
             $update_orders->save(false);
             if(isset($delete_items) && isset($delete_products)){
                 return json_encode(true);

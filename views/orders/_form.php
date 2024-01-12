@@ -63,9 +63,11 @@ $session = Yii::$app->session;
                                 <th>#</th>
                                 <th>Անուն</th>
                                 <th>Քանակ</th>
-                                <th>Գին</th>
-                                <th>Ինքնարժեք</th>
+                                <th>Զեղչ</th>
+                                <th>Գինը մինչև զեղչելը</th>
+                                <th>Զեղչված գին</th>
                                 <th>Ընդհանուր գումար</th>
+                                <th>Ընդհանուր զեղչված գումար</th>
                                 <th>Գործողություն</th>
                             </tr>
                             </thead>
@@ -75,16 +77,46 @@ $session = Yii::$app->session;
                                 foreach($order_items as $keys => $item){
                                     $itemsArray[] = $item['product_id'];
                                     ?>
-                                    <tr class="tableNomenclature">
-                                        <td><?=$item['nom_id']?><input class="orderItemsId" type="hidden" name="order_items[]" value="<?=$item['id']?>">
-                                            <input type="hidden" name="product_id[]" value="<?=$item['product_id']?>">
+                                    <tr class="tableNomenclature fromDB">
+                                        <td>
+                                            <span><?=$item['nom_id']?></span>
+                                            <input class="orderItemsId" type="hidden" name="order_items[]" value="<?=$item['id']?>">
+                                            <input class="prodId" type="hidden" name="product_id[]" value="<?=$item['product_id']?>">
                                             <input class="nomId"  type="hidden" name="nom_id[]" value="<?=$item['nom_id']?>">
                                         </td>
                                         <td class="name"><?=$item['name']?></td>
-                                        <td class="count"><input type="number" name="count_[]" value="<?=$item['count']?>" class="form-control countProductForUpdate"></td>
-                                        <td class="price"><?=$item['price']?><input type="hidden" name="price[]" value="<?=$item['price']?>"></td>
-                                        <td class="cost"><?=$item['cost']?><input type="hidden" name="cost[]" value="<?=$item['cost']?>"></td>
-                                        <td class="total"><span><?=$item['count'] * $item['price']?></span><input type="hidden" name="total[]" value="<?=$item['count'] * $item['price']?>"></td>
+                                        <td class="count">
+                                            <input type="number" name="count_[]" value="<?=$item['count']?>" class="form-control countProductForUpdate">
+                                        </td>
+                                        <td class="discount">
+                                            <?php
+                                            if ($item['discount'] == 0){
+                                            ?>
+                                                <span>0</span>
+                                                <input type="hidden" name="discount[]" value="0">
+                                            <?php
+                                            }else{
+                                            ?>
+                                                <span><?=$item['discount'] / $item['count']?></span>
+                                                <input type="hidden" name="discount[]" value="<?=$item['discount'] / $item['count']?>">
+                                            <?php
+                                            }
+                                            ?>
+                                        </td>
+                                        <td class="beforePrice"><span><?=$item['beforePrice']?></span>
+                                            <input type="hidden" name="beforePrice[]" value="<?=$item['beforePrice']?>">
+                                        </td>
+                                        <td class="price"><span><?=$item['price']?></span>
+                                            <input type="hidden" name="price[]" value="<?=$item['price']?>">
+                                        </td>
+                                        <td class="totalBeforePrice">
+                                            <span><?=$item['totalBeforePrice']?></span>
+                                            <input type="hidden" name="totalBeforePrice[]" value="<?=$item['totalBeforePrice']?>">
+                                        </td>
+                                        <td class="totalPrice">
+                                            <span><?=$item['total_price']?></span>
+                                            <input type="hidden" name="total_price[]" value="<?=$item['total_price']?>">
+                                        </td>
                                         <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsFromDB">Ջնջել</button></td>
                                     </tr>
                                <?php }?>
@@ -110,7 +142,6 @@ $session = Yii::$app->session;
                                             <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>Ընտրել</th>
                                                 <th>Նկար</th>
                                                 <th>Անուն</th>
                                                 <th>Քանակ</th>
@@ -126,9 +157,9 @@ $session = Yii::$app->session;
                                                 }
                                                 ?>
                                                 <tr class="addOrdersTableTr">
-                                                    <td><?=$keys + 1?></td>
                                                     <td>
-                                                        <input data-id="<?=$nomenclature['id']?>" type="checkbox">
+                                                        <span><?=$keys + 1?></span>
+                                                        <input class="prodId" data-id="<?=$nomenclature['id']?>" type="hidden">
                                                         <input class="productIdInput" data-product="<?=$nomenclature['nom_id']?>" type="hidden">
                                                     </td>
                                                     <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
@@ -137,8 +168,6 @@ $session = Yii::$app->session;
                                                         <input type="number" class="form-control ordersCountInput">
                                                         <input class="ordersPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
                                                         <input class="ordersCostInput" type="hidden" value="<?=$nomenclature['cost']?>">
-<!--                                                        <input class="ordersPriceBrforeDiscount" type="hidden" value="--><?php //=$nomenclature['price_before_discount']?><!--">-->
-<!--                                                        <input class="ordersDiscountInput" type="hidden" value="--><?php //=$nomenclature['discount_id']?><!--">-->
                                                     </td>
                                                 </tr>
                                                 <?php
@@ -181,13 +210,43 @@ $session = Yii::$app->session;
             </div>
             <div class="default-panel">
                 <div class="panel-title premission">
+                    <span class="non-active">Կիրառված զեղչեր</span>
+                </div>
+                <div class="card">
+                    <div class="table-responsive text-nowrap">
+                        <div class="loader d-none">
+                            <img src="/upload/loader.gif" >
+                        </div>
+                        <table class="table discountDesc">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Զեղչի անուն</th>
+                                <th>Զեղչի չափ</th>
+                            </tr>
+                            </thead>
+                            <tbody class="table-border-bottom-0">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="default-panel">
+                <div class="panel-title premission">
                     <span class="non-active">Վաճառք</span>
                 </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
+                    <?= $form->field($model, 'total_price_before_discount')->textInput(['readonly'=> true]) ?>
+                </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalPrice">
-                    <?= $form->field($model, 'total_price')->textInput(['readonly'=> true, 'class' => 'form-control totalPrice']) ?>
+                    <?= $form->field($model, 'total_price')->textInput(['readonly'=> true]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
-                    <?= $form->field($model, 'total_count')->textInput(['readonly'=> true,'class' => 'form-control totalCount']) ?>
+                    <?= $form->field($model, 'total_discount')->textInput(['readonly'=> true]) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
+                    <?= $form->field($model, 'total_count')->textInput(['readonly'=> true]) ?>
                 </div>
             </div>
             <div class="card-footer">
@@ -242,17 +301,20 @@ $session = Yii::$app->session;
                 </div>
                 <div class="card">
                     <div class="table-responsive text-nowrap">
+                        <div class="loader d-none">
+                            <img src="/upload/loader.gif" >
+                        </div>
                         <table class="table ordersAddingTable">
                             <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Անուն</th>
                                 <th>Քանակ</th>
-                                <th>Գին</th>
-                                <th>Ինքնարժեք</th>
-<!--                                <th>Discount</th>-->
-<!--                                <th>Before discounting</th>-->
+                                <th>Զեղչ</th>
+                                <th>Գինը մինչև զեղչելը</th>
+                                <th>Զեղչված գին</th>
                                 <th>Ընդհանուր գումար</th>
+                                <th>Ընդհանուր զեղչված գումար</th>
                                 <th>Գործողություն</th>
                             </tr>
                             </thead>
@@ -280,7 +342,6 @@ $session = Yii::$app->session;
                                             <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>Ընտրել</th>
                                                 <th>Նկար</th>
                                                 <th>Անուն</th>
                                                 <th>Քանակ</th>
@@ -291,9 +352,9 @@ $session = Yii::$app->session;
                                             foreach ($nomenclatures as $keys => $nomenclature){
                                                 ?>
                                                 <tr class="addOrdersTableTr">
-                                                    <td><?=$keys + 1?></td>
                                                     <td>
-                                                        <input data-id="<?=$nomenclature['id']?>" type="checkbox">
+                                                        <span><?=$keys + 1?></span>
+                                                        <input class="prodId" data-id="<?=$nomenclature['id']?>" type="hidden">
                                                         <input class="productIdInput" data-product="<?=$nomenclature['nomenclature_id']?>" type="hidden">
                                                     </td>
                                                     <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
@@ -311,7 +372,6 @@ $session = Yii::$app->session;
                                         </table>
                                     </div>
                                 </div>
-
                                 <?php $page = @$_GET['paging'] ?? 1; ?>
                                 <?php  $count = intval(ceil($total/10)) ; ?>
                                  <nav aria-label="Page navigation example" class="pagination">
@@ -346,10 +406,40 @@ $session = Yii::$app->session;
             </div>
             <div class="default-panel">
                 <div class="panel-title premission">
+                    <span class="non-active">Կիրառված զեղչեր</span>
+                </div>
+                <div class="card">
+                    <div class="table-responsive text-nowrap">
+                        <div class="loader d-none">
+                            <img src="/upload/loader.gif" >
+                        </div>
+                        <table class="table discountDesc">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Զեղչի անուն</th>
+                                <th>Զեղչի չափ</th>
+                            </tr>
+                            </thead>
+                            <tbody class="table-border-bottom-0">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="default-panel">
+                <div class="panel-title premission">
                     <span class="non-active">Վաճառք</span>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
+                    <?= $form->field($model, 'total_price_before_discount')->textInput(['readonly'=> true]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalPrice">
                     <?= $form->field($model, 'total_price')->textInput(['readonly'=> true]) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
+                    <?= $form->field($model, 'total_discount')->textInput(['readonly'=> true]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'total_count')->textInput(['readonly'=> true]) ?>
