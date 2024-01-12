@@ -326,32 +326,62 @@ class DocumentsController extends Controller
 
 
 
-                  var_dump(  '<pre>' . print_r($post,true) .'</pre>');exit;
-
-
+//                  var_dump(  '<pre>' . print_r($post,true) .'</pre>');exit;
 
             foreach ($items as $j => $item){
                 if ($item != 'null'){
                     $document_items_update = DocumentItems::findOne(intval($item));
-                    $document_items_update->document_id = $id;
-                    $document_items_update->nomenclature_id = $post['items'][$j];
-                    $document_items_update->count = $post['count_'][$j];
-                    $document_items_update->price = $post['price'][$j];
-                    $document_items_update->AAH = $post['aah'];
-                    $document_items_update->updated_at = date('Y-m-d H:i:s');
-//                    $document_items_update->save();
-                }else{
+
+                    if ($document_items_update !== null) {
+                        $document_items_update->document_id = $id;
+                        $document_items_update->nomenclature_id = $post['items'][$j];
+                        $document_items_update->count = $post['count_'][$j];
+                        $document_items_update->price = $post['price'][$j];
+                        $document_items_update->AAH = $post['aah'];
+                        $document_items_update->updated_at = date('Y-m-d H:i:s');
+                        $document_items_update->save();
+                    } else {
+                        $document_items_update = new DocumentItems();
+                        $document_items_update->document_id = $id;
+                        $document_items_update->nomenclature_id = $post['items'][$j];
+                        $document_items_update->count = $post['count_'][$j];
+                        $document_items_update->price = $post['price'][$j];
+                        $document_items_update->AAH = $post['aah'];
+                        $document_items_update->created_at = date('Y-m-d H:i:s');
+                        $document_items_update->updated_at = date('Y-m-d H:i:s');
+                    $document_items_update->save();
+//                        var_dump(  '<pre>' . print_r($document_items_update,true) .'</pre>');exit;
+                    }
+                } else {
                     $document_items_update = new DocumentItems();
                     $document_items_update->document_id = $id;
-                    $document_items_update->nomenclature_id = $post['items'][$j];
-                    $document_items_update->count = $post['count_'][$j];
-                    $document_items_update->price = $post['price'][$j];
-                    $document_items_update->AAH = $post['aah'];
-                    $document_items_update->created_at = date('Y-m-d H:i:s');
-                    $document_items_update->updated_at = date('Y-m-d H:i:s');
-//                    $document_items_update->save();
+                    $document_items_update->save();
                 }
             }
+
+
+//            foreach ($items as $j => $item){
+//                if ($item != 'null'){
+//                    $document_items_update = DocumentItems::findOne(intval($item));
+//                    $document_items_update->document_id = $id;
+//                    $document_items_update->nomenclature_id = $post['items'][$j];
+//                    $document_items_update->count = $post['count_'][$j];
+//                    $document_items_update->price = $post['price'][$j];
+//                    $document_items_update->AAH = $post['aah'];
+//                    $document_items_update->updated_at = date('Y-m-d H:i:s');
+////                    $document_items_update->save();
+//                }else{
+//                    $document_items_update = new DocumentItems();
+//                    $document_items_update->document_id = $id;
+//                    $document_items_update->nomenclature_id = $post['items'][$j];
+//                    $document_items_update->count = $post['count_'][$j];
+//                    $document_items_update->price = $post['price'][$j];
+//                    $document_items_update->AAH = $post['aah'];
+//                    $document_items_update->created_at = date('Y-m-d H:i:s');
+//                    $document_items_update->updated_at = date('Y-m-d H:i:s');
+////                    $document_items_update->save();
+//                }
+//            }
 //            $_POST['item_id'] = $model->id;
 //            if($post['newblocks'] || $post['new_fild_name']){
 //                Yii::$app->runAction('custom-fields/create-title',$post);
@@ -363,6 +393,7 @@ class DocumentsController extends Controller
             foreach ($model as $name => $value) {
                 $model_new[$name] = $value;
             }
+//            var_dump(  '<pre>' . print_r($model_new,true) .'</pre>');exit;
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
 //            return $this->redirect(['index', 'id' => $model->id]);
