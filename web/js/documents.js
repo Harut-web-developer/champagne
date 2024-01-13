@@ -1,6 +1,5 @@
 $(document).ready(function () {
     var id_count = {};
-    var newTbody = $('<tbody></tbody>');
     $('body').on('input', '.documentsCountInput', function () {
         count_id_mariam($(this));
     });
@@ -14,6 +13,7 @@ $(document).ready(function () {
         }
     }
 
+    var newTbody = $('<tbody></tbody>');
     $('body').on('click', '.createDocuments', function () {
         var documentsTableBody = '';
         $('.documentsTableTr').each(function () {
@@ -35,6 +35,7 @@ $(document).ready(function () {
         $('.documentsAddingTable tbody').replaceWith(newTbody);
         newTbody = $('<tbody></tbody>');
     })
+
     $('body').on('click', '.deleteItems', function () {
         $(this).closest('.tableDocuments').remove();
     })
@@ -58,6 +59,7 @@ $(document).ready(function () {
         })
         $('.documentsAddingTable tbody').parent().append(documentsTableBody);
     })
+
     $('body').on('click', '.deleteDocumentItems', function () {
         var this_ = $(this);
         let id = this_.closest('.oldTr').find('.itemsId').val()
@@ -81,6 +83,7 @@ $(document).ready(function () {
     $('body').on('click', '.priceDocuments', function () {
         $(this).val($(this).val().replace(/[^0-9.]/g, ''));
     })
+
     $('body').on('keyup', '.priceDocuments', function () {
         $(this).val($(this).val().replace(/[^0-9.]/g, ''));
     })
@@ -121,28 +124,41 @@ $(document).ready(function () {
         var href_ = $(this).attr('data-href');
         getNomDocument(href_);
         var documentsTableBody = '';
-        // var newTbody = $('<tbody></tbody>');
+        var hasChange = false;
         $('.documentsTableTr').each(function () {
             if ($(this).find(".documentsCountInput").val() != '') {
+                let currentCount = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
+                let currentPrice = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
                 let id = $(this).find(".nom_id").attr('data-id');
                 let name = $(this).children(".documentsName").text();
-                let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
-                let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
-                documentsTableBody += `<tr class="tableDocuments">
+                let count = currentCount;
+                let price = currentPrice;
+                let previousRow;
+                if (previousTableContent) {
+                    previousRow = previousTableContent.find('.tableDocuments[data-id="' + id + '"]');
+                }
+                if (previousRow && previousRow.length > 0) {
+                    let previousCount = parseFloat(previousRow.find('.countDocuments').val());
+                    let previousPrice = +parseFloat(previousRow.find('.priceDocuments').val()).toFixed(2);
+                    if (currentCount !== previousCount || currentPrice !== previousPrice) {
+                        hasChange = true;
+                    }
+                }
+                documentsTableBody += `<tr class="tableDocuments" data-id="` + id + `">
                      <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
                      <td class="name">` + name + `</td>
                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control priceDocuments"></td>
-                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
+                     <td><button type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                   </tr>`;
             }
-        })
-        newTbody.append(documentsTableBody);
-        $('.documentsAddingTable tbody').replaceWith(newTbody);
-        newTbody = $('<tbody></tbody>');
-        // console.log(documentsTableBody)
-
-    })
+        });
+        if (!hasChange) {
+            documentsTableBody += previousTableContent;
+        }
+        previousTableContent = $(documentsTableBody);
+        $('.documentsAddingTable tbody').html(documentsTableBody);
+    });
 
     function getNomDocument(href_) {
         $.ajax({
