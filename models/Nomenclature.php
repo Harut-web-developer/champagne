@@ -86,4 +86,9 @@ class Nomenclature extends \yii\db\ActiveRecord
     public function getDefaultTitle(){
         return CustomfieldsBlocksTitle::findOne(['id'=>2]);
     }
+
+    public function getDocumentItems()
+    {
+        return $this->hasMany(DocumentItems::class, ['nomenclature_id' => 'id']);
+    }
 }
