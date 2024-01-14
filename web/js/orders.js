@@ -58,7 +58,6 @@ $(document).ready(function () {
                     },
                     success:function (data) {
                         let pars = JSON.parse(data);
-                        // console.log(pars)
                         if (pars.discount_desc != undefined){
                             discount_desc.push(pars.discount_desc);
                         }
@@ -108,7 +107,6 @@ $(document).ready(function () {
                         $('.ordersAddingTable tbody').parent().append(aaa);
                         ordersTableLength--;
                         if(ordersTableLength == 0){
-                            console.log(uniquePairs)
                             uniquePairs.forEach((item,index) => {
                                 discountBody += `<tr>
                                                      <td>`+(parseInt(index) + 1) +`</td>
@@ -205,15 +203,13 @@ $(document).ready(function () {
     const newtbody = $('.tableNomenclature').closest('tbody').html();
     $('body').on('click','.update', function(){
         let fromModal = '';
+        var discount_name = [];
         let clientId = $('#singleClients').val();
         let orders_date = $('#orders-orders_date').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         var totalSum = 0;
         var countSum = 0;
         var ordersTableLength = 0;
-
-
-        // console.log(sss)
         $('.addOrdersTableTr').each(function () {
             if ($(this).find('.ordersCountInput').val() != '') {
                 countSum += parseInt($(this).children('.ordersAddCount').find('.ordersCountInput').val());
@@ -249,16 +245,17 @@ $(document).ready(function () {
                     },
                     success:function (data) {
                         let addOrdersTableBody = '';
-
                         let pars = JSON.parse(data);
-                        // console.log(pars)
+                        if (pars.discount_name != undefined){
+                            discount_name.push(pars.discount_name);
+                        }
                         trs[id.trim()] = `<tr class="tableNomenclature">
                                      <td>
                                         <span>`+pars.nomenclature_id+`</span>
                                         <input type="hidden" name="order_items[]" value="null">
                                         <input type="hidden" name="product_id[]" value="`+pars.product_id+`">
                                         <input class="nomId"  type="hidden" name="nom_id[]" value="`+pars.nomenclature_id+`">
-                                        <input type="hidden" name="count_discount_id[]" value="`+pars.count_discount_id+`">
+                                        <input class="countDiscountId" type="hidden" name="count_discount_id[]" value="`+pars.count_discount_id+`">
                                         <input type="hidden" name="cost[]" value="`+pars.cost+`">
                                      </td>
                                      <td  class="name">`+pars.name+`</td>
@@ -279,11 +276,11 @@ $(document).ready(function () {
                                      </td>
                                      <td class="totalBeforePrice">
                                         <span>`+pars.format_before_price * pars.count+`</span>
-                                        <input type="hidden" name="totalBeforePrice[]" value="`+pars.format_before_price * pars.count+`">
+                                        <input type="hidden" name="total_before_price[]" value="`+pars.format_before_price * pars.count+`">
                                      </td>
                                      <td class="totalPrice">
                                         <span>`+Math.round(pars.price) * pars.count+`</span>
-                                        <input type="hidden" name="totalPrice[]" value="`+Math.round(pars.price) * pars.count+`">
+                                        <input type="hidden" name="total_price[]" value="`+Math.round(pars.price) * pars.count+`">
                                      </td>
                                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                  </tr>`.trim()
@@ -311,10 +308,50 @@ $(document).ready(function () {
                             $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
                             $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
                             $('body').find('#orders-total_discount').val(Math.round(totalDiscount));
+                            // $('.tableNomenclature').each(function () {
+                                // console.log($(this).find('.countDiscountId').val())
+                            // })
+                            // console.log(discount_desc)
+                            // console.log(discount_name[0])
+                            let allValues = [];
+
+                            $('.tableNomenclature').each(function () {
+                                let countDiscountValues = $(this).find('.countDiscountId').val().split(',');
+                                countDiscountValues.forEach(function(value) {
+                                    allValues.push(value.trim())
+                                });
+                            });
+                            let uniqueArray = [...new Set(allValues)];
+                            let convertedArray = uniqueArray.map(function(element) {
+                                return isNaN(element) ? element : parseInt(element);
+                            });
+                            // console.log(convertedArray);
+                            // console.log(convertedArray)
+                            if (discount_name.length != 0){
+                                $('.discountDesc tbody').html('');
+                                let discount = '';
+                                // console.log(discount_name[0]);
+                                for (let b = 0; b < discount_name[0].length; b++){
+                                    for (let c = 0; c < convertedArray.length; c++){
+                                        if (typeof convertedArray[c] == 'number'){
+                                            if (convertedArray[c] == discount_name[0][b].id)
+                                                discount += `<tr>
+                                                            <td>`+ c +`</td>
+                                                            <td>`+ discount_name[0][b].name +`</td>
+                                                            <td>`+ discount_name[0][b].discount +`</td>
+                                                         </tr>`
+                                        }
+                                    }
+                                }
+                                $('.discountDesc tbody').append(discount)
+                                // console.log(discount)
+                            }
+
+
+
                         }
                     }
                 })
-
             }
         })
 

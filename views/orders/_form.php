@@ -83,6 +83,8 @@ $session = Yii::$app->session;
                                             <input class="orderItemsId" type="hidden" name="order_items[]" value="<?=$item['id']?>">
                                             <input class="prodId" type="hidden" name="product_id[]" value="<?=$item['product_id']?>">
                                             <input class="nomId"  type="hidden" name="nom_id[]" value="<?=$item['nom_id']?>">
+                                            <input class="cost" type="hidden" name="cost[]" value="<?=$item['cost']?>">
+                                            <input class="countDiscountId" type="hidden" name="count_discount_id[]" value="<?=$item['count_discount_id']?>">
                                         </td>
                                         <td class="name"><?=$item['name']?></td>
                                         <td class="count">
@@ -111,7 +113,7 @@ $session = Yii::$app->session;
                                         </td>
                                         <td class="totalBeforePrice">
                                             <span><?=$item['totalBeforePrice']?></span>
-                                            <input type="hidden" name="totalBeforePrice[]" value="<?=$item['totalBeforePrice']?>">
+                                            <input type="hidden" name="total_before_price[]" value="<?=$item['totalBeforePrice']?>">
                                         </td>
                                         <td class="totalPrice">
                                             <span><?=$item['total_price']?></span>
@@ -226,7 +228,23 @@ $session = Yii::$app->session;
                             </tr>
                             </thead>
                             <tbody class="table-border-bottom-0">
-
+                            <?php
+                            $n = 0;
+                            foreach ($numericValuesOnly as $key => $value){
+                                foreach ($active_discount as $k => $item){
+                                    if ($item['id'] == $value){
+                                        $n++;
+                                        ?>
+                                        <tr>
+                                            <td><?=$n?></td>
+                                            <td><?=$item['name']?></td>
+                                            <td><?=$item['discount']?></td>
+                                        </tr>
+                                        <?php
+                                    }
+                                }
+                            }
+                            ?>
                             </tbody>
                         </table>
                     </div>
