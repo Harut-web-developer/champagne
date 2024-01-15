@@ -130,7 +130,7 @@ if(isset($action__)){
                             foreach ($document_items as $keys => $document_item){
                                 $itemsArray[] = $document_item['nom_id'];
                                 ?>
-                                <tr class="oldTr">
+                                <tr class="oldTr" id="tr_<?=$document_item['nom_id']?>">
                                     <td><?=$keys + 1?><input type="hidden" name="document_items[]" value="<?=$document_item['id']?>">
                                         <input class="itemsId" type="hidden" name="items[]" value="<?=$document_item['nom_id']?>">
 <!--                                        <input class="itemsId" type="hidden" name="nom_id[]" value="--><?php //=$document_item['nom_id']?><!--">-->
@@ -174,9 +174,9 @@ if(isset($action__)){
                                                 <tbody class="table-border-bottom-0 tbody_">
                                                 <?php
                                                 foreach ($nomenclatures as $keys => $nomenclature){
-                                                    if(in_array($nomenclature['id'],$itemsArray)){
-                                                        continue;
-                                                    }
+//                                                    if(in_array($nomenclature['id'],$itemsArray)){
+//                                                        continue;
+//                                                    }
                                                     ?>
                                                     <tr class="documentsTableTr">
                                                         <td><?=$keys + 1?></td>

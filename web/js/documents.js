@@ -28,11 +28,12 @@ $(document).ready(function () {
                                      <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
                                      <td class="name">` + name + `</td>
                                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
-                                     <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control priceDocuments"></td>
+                                     <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                   </tr>`.trim();
             }
         })
+        console.log('createDocuments')
         for (let i in trs) {
             if(trs[i] != ''){
                 newTbody.append(trs[i]);
@@ -46,9 +47,19 @@ $(document).ready(function () {
         $(this).closest('.tableDocuments').remove();
     })
 
-    const old_table = $('.table.documentsAddingTable').find('.old_tbody').html();
+    var old_table = $('.table.documentsAddingTable').find('.old_tbody').html();
+    var old_attrs = {};
+    $('body').on('input', '.documentsAddingTable td input', function () {
+        // let el = $(this);
+        let id = $(this).closest('tr').find('.itemsId').val(); // iitem_id
+        let count = $(this).closest('tr').find('.countDocuments').val(); // iitem_id
+        let price = $(this).closest('tr').find('.PriceDocuments').val(); // iitem_id
+        old_attrs[id]= { count:count , price:price};
+    })
+
     $('body').on('click', '.updateDocuments', function () {
         var documentsTableBody = '';
+        documentsCountInputReadOnly();
         $('.documentsAddingTable tbody').html('')
         $('.documentsTableTr').each(function () {
             if ($(this).find(".documentsCountInput").val() != '') {
@@ -63,7 +74,7 @@ $(document).ready(function () {
                                          </td>
                                          <td class="name">` + name + `</td>
                                          <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
-                                         <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control priceDocuments"></td>
+                                         <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                          <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                       </tr>`.trim();
             }
@@ -74,15 +85,29 @@ $(document).ready(function () {
                 newTbody.append(trs[i]);
             }
         }
-
         newTbody.append(documentsTableBody);
         $('.documentsAddingTable tbody').replaceWith(newTbody);
+        giveOldValues();
+
     })
+    function giveOldValues() {
+        for (let argumentsKey in old_attrs) {
+           let tr = $('body').find('#tr_'+argumentsKey);
+           tr.find('.count').find('.countDocuments').val(old_attrs[argumentsKey].count);
+           tr.find('.price').find('.PriceDocuments').val(old_attrs[argumentsKey].price);
+        }
+    }
+
+    function documentsCountInputReadOnly(){
+        if ($(this).find(".documentsCountInput").val() != ''){
+            $('.documentsCountInput').prop('readonly', true);
+        }
+    }
 
     $('body').on('click', '.by_ajax_update', function () {
-
         var href_ = $(this).attr('data-href');
         getNomDocument(href_);
+        documentsCountInputReadOnly();
         $('.documentsTableTr').each(function () {
             if ($(this).find(".documentsCountInput").val() != '') {
                 let nom_id = $(this).find(".nom_id").attr('data-id');
@@ -96,11 +121,13 @@ $(document).ready(function () {
                                          </td>
                                          <td class="name">` + name + `</td>
                                          <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
-                                         <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control priceDocuments"></td>
+                                         <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                          <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                       </tr>`.trim();
             }
         })
+        console.log('by_ajax_update')
+
     })
 
     $('body').on('click', '.deleteDocumentItems', function () {
@@ -127,11 +154,11 @@ $(document).ready(function () {
         })
     })
 
-    $('body').on('click', '.priceDocuments', function () {
+    $('body').on('click', '.PriceDocuments', function () {
         $(this).val($(this).val().replace(/[^0-9.]/g, ''));
     })
 
-    $('body').on('keyup', '.priceDocuments', function () {
+    $('body').on('keyup', '.PriceDocuments', function () {
         $(this).val($(this).val().replace(/[^0-9.]/g, ''));
     })
 
@@ -160,11 +187,12 @@ $(document).ready(function () {
                      <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
                      <td class="name">` + name + `</td>
                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
-                     <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control priceDocuments"></td>
+                     <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                   </tr>`.trim();
             }
         })
+        console.log('searchForDocument')
     })
 
     var arr_carent_page_update = [];
@@ -195,11 +223,12 @@ $(document).ready(function () {
                                          </td>
                                          <td class="name">` + name + `</td>
                                          <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
-                                         <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control priceDocuments"></td>
+                                         <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                          <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                       </tr>`.trim();
             }
         })
+        console.log('searchForDocumentUpdate')
     })
 
     $('body').on('click', '.by_ajax', function () {
@@ -215,11 +244,12 @@ $(document).ready(function () {
                      <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
                      <td class="name">` + name + `</td>
                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
-                     <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control priceDocuments"></td>
+                     <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                   </tr>`.trim();
             }
         })
+        console.log('by_ajax')
     })
     function getNomDocument(href_) {
         let url_id = window.location.href;
