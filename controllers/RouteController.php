@@ -340,7 +340,11 @@ class RouteController extends Controller
                 ->asArray()
                 ->orderBy('clients.sort_',SORT_DESC)
                 ->all();
-            return json_encode(['location' => $locations, 'warehouse' => $warehouse]);
+            return json_encode([
+                'location' => $locations,
+                'warehouse' => $warehouse,
+                'coordinatesUser' => $coordinatesUser
+            ]);
         }
     }
 }

@@ -69,12 +69,26 @@ $this->params['date_tab'] = $date_tab;
                             arr.push(data['location'][i]['location']);
                         }
                         arr.unshift(data['warehouse']['location']);
+
+                        var arr2 = [];
+                        for (var j = 0; j < data['coordinatesUser'].length; j++) {
+                            arr2.push(data['coordinatesUser'][j]['latitude'] + ',' + data['coordinatesUser'][j]['longitude']);
+                        }
+
                         var multiRoute = new ymaps.multiRouter.MultiRoute({
                             referencePoints: arr,
                             params: {
                                 routingMode: 'masstransit',
                             }
                         });
+
+                        var multiRoute2 = new ymaps.multiRouter.MultiRoute({
+                            referencePoints: arr2,
+                            params: {
+                                routingMode: 'masstransit',
+                            }
+                        });
+
                         $('#map').html('');
                         var myMap = new ymaps.Map('map', {
                             center: [40.2100725, 44.4987508],
@@ -87,17 +101,25 @@ $this->params['date_tab'] = $date_tab;
                         ymaps.modules.require([
                             'MultiRouteColorizer'
                         ], function (MultiRouteColorizer) {
-                            new MultiRouteColorizer(multiRoute);
+                            new MultiRouteColorizer(multiRoute, {
+                                lineColor: '#002c8b',
+                            });
+
+                            new MultiRouteColorizer(multiRoute2, {
+                                lineColor: '#8b0000',
+                            });
                         });
 
+
                         myMap.geoObjects.add(multiRoute);
-                        myMap.setZoom(8, {duration: 300});
+                        myMap.geoObjects.add(multiRoute2);
+                        myMap.setZoom(8, { duration: 300 });
+
                     }
                 }
             })
         });
     }
-
     ymaps.ready(init);
 </script>
 <style>
