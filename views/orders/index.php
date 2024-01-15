@@ -33,13 +33,11 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'template' => '{reports} {delivered} {update} {delete}',
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
                     'title' => Yii::t('yii', 'delivered'), // Add a title if needed
                 ]);
             },
             'reports' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
                     'title' => Yii::t('yii', 'reports'),
                     'target' => '_blank',

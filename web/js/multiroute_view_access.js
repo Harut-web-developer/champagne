@@ -1,6 +1,4 @@
 function init () {
-    // Создаем карту.
-
     $('#routeSelect, #myLocalDate').on('change', function() {
         var location_value = $('#routeSelect').val();
         var date = $("#myLocalDate").val();
