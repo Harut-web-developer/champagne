@@ -235,6 +235,7 @@ $session = Yii::$app->session;
                                     if (!in_array($item['id'],$numericValuesOnly)){
                                         continue;
                                     }else{
+
                                         $n++;
                                         ?>
                                         <tr>
