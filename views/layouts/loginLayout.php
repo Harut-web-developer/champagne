@@ -48,13 +48,13 @@ AppAsset::register($this);
                                 </div>
                             </div>
                             <!-- /Logo -->
-                            <h4 class="mb-2">Welcome to Champagne! </h4>
-                            <p class="mb-4">Please sign-in to your account and start the adventure</p>
-                                <?= $content ?>
+                            <h4 class="mb-2">Բարի գալուստ Champagne </h4>
+                            <p class="mb-4">Խնդրում ենք մուտք գործել ձեր հաշիվ</p>
+                            <?= $content ?>
                             <p class="text-center">
-                                <span>New on our platform?</span>
+                                <span>Նորությո՞ւն մեր հարթակում:</span>
                                 <a href="auth-register-basic.html">
-                                    <span>Create an account</span>
+                                    <span>Ստեղծել հաշիվ</span>
                                 </a>
                             </p>
                         </div>

@@ -32,7 +32,104 @@ $this->params['date_tab'] = $date_tab;
             <input id="myLocalDate" class="fil-input form-control valuemap" type="datetime-local" name="date">
         </div>
     </div>
-    <div id="map"></div>
+    <div id="map">
+
+    </div>
+
+<!--    <script>-->
+<!--        ymaps.ready(init);-->
+<!---->
+<!--        function init() {-->
+<!--            var geolocation = ymaps.geolocation,-->
+<!--                myMap = new ymaps.Map('map', {-->
+<!--                    center: [55, 34],-->
+<!--                    zoom: 10-->
+<!--                }, {-->
+<!--                    searchControlProvider: 'yandex#search'-->
+<!--                });-->
+<!---->
+<!--            // Համեմատել օգտվողի IP- ից հաշվարկված դիրքը եւ-->
+<!--            // դիրքը հաշվարկված է բրաուզերի կողմից:-->
+<!--            geolocation.get({-->
+<!--                provider: 'yandex',-->
+<!--                mapStateAutoApply: true-->
+<!--            }).then(function (result) {-->
+<!--                // Կարմիրով նշենք ip-ի միջոցով հաշվարկված դիրքը։-->
+<!--                result.geoObjects.options.set('preset', 'islands#redCircleIcon');-->
+<!--                result.geoObjects.get(0).properties.set({-->
+<!--                    balloonContentBody: 'Мое местоположение'-->
+<!--                });-->
+<!--                myMap.geoObjects.add(result.geoObjects);-->
+<!--            });-->
+<!---->
+<!--            geolocation.get({-->
+<!--                provider: 'browser',-->
+<!--                mapStateAutoApply: true-->
+<!--            }).then(function (result) {-->
+<!--                // Կապույտով նշեք բրաուզերի միջոցով ստացված դիրքը:-->
+<!--                // Եթե զննարկիչը չի ապահովում այս գործառույթը, ապա պիտակը չի ավելացվի քարտեզին:-->
+<!--                result.geoObjects.options.set('preset', 'islands#blueCircleIcon');-->
+<!--                myMap.geoObjects.add(result.geoObjects);-->
+<!--            });-->
+<!--        }-->
+<!--    </script>-->
+
+
+<!--    <script>-->
+<!--        const x = document.getElementById("map");-->
+<!---->
+<!--        function getLocation() {-->
+<!--            if (navigator.geolocation) {-->
+<!--                navigator.geolocation.getCurrentPosition(showPosition);-->
+<!--            } else {-->
+<!--                x.innerHTML = "Geolocation is not supported by this browser.";-->
+<!--            }-->
+<!--        }-->
+<!---->
+<!--        function showPosition(position) {-->
+<!--            x.innerHTML = "Latitude: " + position.coords.latitude +-->
+<!--                "<br>Longitude: " + position.coords.longitude;-->
+<!--        }-->
+<!--        setInterval(getLocation, 1000);-->
+<!--        getLocation();-->
+<!--    </script>-->
+
+<!--    <script>-->
+<!--        ymaps.ready(init);-->
+<!---->
+<!--        function init() {-->
+<!--            var map = new ymaps.Map("map", {-->
+<!--                center: [0, 0],-->
+<!--                zoom: 3-->
+<!--            });-->
+<!---->
+<!--            var placemark = new ymaps.Placemark([0, 0], {-->
+<!--                balloonContent: "Your Location"-->
+<!--            });-->
+<!---->
+<!--            map.geoObjects.add(placemark);-->
+<!---->
+<!--            function updateLocation() {-->
+<!--                navigator.geolocation.getCurrentPosition(-->
+<!--                    function(position) {-->
+<!--                        var userLocation = [position.coords.latitude, position.coords.longitude];-->
+<!---->
+<!--                        placemark.geometry.setCoordinates(userLocation);-->
+<!--                        map.setCenter(userLocation);-->
+<!--                        console.log(userLocation)-->
+<!--                    },-->
+<!--                    // function(error) {-->
+<!--                    //     console.error('Error getting user location:', error);-->
+<!--                    // }-->
+<!--                );-->
+<!--            }-->
+<!---->
+<!--            setInterval(updateLocation, 1000);-->
+<!---->
+<!--            updateLocation();-->
+<!--        }-->
+<!--    </script>-->
+
 </body>
 <style>
     body, #map {

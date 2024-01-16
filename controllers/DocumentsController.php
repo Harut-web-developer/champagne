@@ -188,7 +188,7 @@ class DocumentsController extends Controller
             $model->loadDefaultValues();
         }
 
-        $users = Users::find()->select('id,name')->where(['=','role_id',4])->asArray()->all();
+        $users = Users::find()->select('id,name')->asArray()->all();
         $users = ArrayHelper::map($users,'id','name');
         $warehouse = Warehouse::find()->select('id,name')->asArray()->all();
         $warehouse =  ArrayHelper::map($warehouse,'id','name');
@@ -213,7 +213,6 @@ class DocumentsController extends Controller
             'total' => $total,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
         ]);
     }
 
@@ -257,38 +256,56 @@ class DocumentsController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionGetNomiclature(){
-
-        $document_id = $_GET['id'] ?? false;
         $page = $_GET['paging'] ?? 1;
+        $urlId = intval($_POST['urlId']);
         $search_name = $_GET['nomenclature'] ?? false;
         $pageSize = 10;
         $offset = ($page-1) * $pageSize;
         $query = Nomenclature::find();
         $countQuery = clone $query;
-        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
-        nomenclature.cost,products.id as products_id,products.count')
-            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+//        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
+//        nomenclature.cost,products.id as products_id,products.count')
+//            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+//            ->groupBy('nomenclature.id');
+//                if ($search_name){
+//                    $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
+//                        ->offset(0);
+////                        ->limit(10);
+//                    $total = $nomenclatures->count();
+//                }else{
+//                    $total = $countQuery->count();
+//                    $nomenclatures->offset($offset)
+//                        ->limit($pageSize);
+//                }
+//        $nomenclatures = $nomenclatures
+//            ->asArray()
+//            ->all();
+        $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')
+            ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
+            ->where(['document_items.document_id' => $urlId])
+            ->asArray()
+            ->all();
+        $nomenclatures = $query->where(['not in','id' , array_column($document_items,'nomenclature_id')])
             ->groupBy('nomenclature.id');
                 if ($search_name){
                     $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
-                        ->offset(0)
-                        ->limit(10);
-                    $total = $nomenclatures->count();
+                        ->offset(0);
+//                        ->limit(10);
                 }else{
-                    $total = $countQuery->count();
                     $nomenclatures->offset($offset)
                         ->limit($pageSize);
                 }
         $nomenclatures = $nomenclatures
             ->asArray()
             ->all();
-        $itemsArray = DocumentItems::find()->select('document_items.nomenclature_id')->where(['=','document_id',$document_id])->asArray()->all();
-        $itemsArray = array_column($itemsArray,'nomenclature_id');
+        $total = $countQuery->count() - count($document_items);
+        $id_count = $_POST['id_count'] ?? [];
         return $this->renderAjax('get-nom', [
             'nomenclatures' => $nomenclatures,
+            'id_count' => $id_count ,
             'total' => $total,
             'search_name' => $search_name,
-            'itemsArray' => $itemsArray,
+            'urlId' => $urlId,
         ]);
 
     }
@@ -302,9 +319,7 @@ class DocumentsController extends Controller
         $model = $this->findModel($id);
         $sub_page = [];
         $date_tab = [];
-        if ($this->findModel($id)->status == 0) {
-            return $this->redirect(Yii::$app->request->referrer);
-        }
+
         $url = Url::to('', 'http');
         $oldattributes = Documents::find()
             ->select('*')
@@ -329,32 +344,36 @@ class DocumentsController extends Controller
             $model->save();
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             $items = $post['document_items'];
+//                  var_dump(  '<pre>' . print_r($post,true) .'</pre>');
+//                  var_dump('<pre>' . print_r($items, true) . '</pre>');exit;
             foreach ($items as $j => $item){
                 if ($item != 'null'){
                     $document_items_update = DocumentItems::findOne(intval($item));
-                    $document_items_update->document_id = $id;
-                    $document_items_update->nomenclature_id = $post['items'][$j];
-                    $document_items_update->count = $post['count_'][$j];
-                    $document_items_update->price = $post['price'][$j];
-                    $document_items_update->AAH = $post['aah'];
-                    $document_items_update->updated_at = date('Y-m-d H:i:s');
-                    $document_items_update->save();
-                }else{
+                    if ($document_items_update !== null) {
+                        $document_items_update->document_id = $id;
+                        $document_items_update->nomenclature_id = $post['items'][$j];
+                        $document_items_update->count = $post['count_'][$j];
+                        $document_items_update->price = $post['price'][$j];
+                        $document_items_update->AAH = $post['aah'];
+                        $document_items_update->updated_at = date('Y-m-d H:i:s');
+                        $document_items_update->save();
+                    } else {
+                        $document_items_update = new DocumentItems();
+                        $document_items_update->document_id = $id;
+                        $document_items_update->nomenclature_id = $post['items'][$j];
+                        $document_items_update->count = $post['count_'][$j];
+                        $document_items_update->price = $post['price'][$j];
+                        $document_items_update->AAH = $post['aah'];
+                        $document_items_update->created_at = date('Y-m-d H:i:s');
+                        $document_items_update->updated_at = date('Y-m-d H:i:s');
+                        $document_items_update->save();
+                    }
+                } else {
                     $document_items_update = new DocumentItems();
                     $document_items_update->document_id = $id;
-                    $document_items_update->nomenclature_id = $post['items'][$j];
-                    $document_items_update->count = $post['count_'][$j];
-                    $document_items_update->price = $post['price'][$j];
-                    $document_items_update->AAH = $post['aah'];
-                    $document_items_update->created_at = date('Y-m-d H:i:s');
-                    $document_items_update->updated_at = date('Y-m-d H:i:s');
                     $document_items_update->save();
                 }
             }
-//            $_POST['item_id'] = $model->id;
-//            if($post['newblocks'] || $post['new_fild_name']){
-//                Yii::$app->runAction('custom-fields/create-title',$post);
-//            }
             $model_new = [];
             foreach ($document_items_update as $name => $value) {
                 $model_new[$name] = $value;
@@ -364,7 +383,6 @@ class DocumentsController extends Controller
             }
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
-//            return $this->redirect(['index', 'id' => $model->id]);
         }
         $users = Users::find()->select('id,name')->asArray()->all();
         $users = ArrayHelper::map($users,'id','name');
@@ -374,18 +392,24 @@ class DocumentsController extends Controller
         $rates = ArrayHelper::map($rates,'id','name');
         $query = Nomenclature::find();
         $countQuery = clone $query;
-        $total = $countQuery->count();
-        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
-        nomenclature.cost,products.id as products_id,products.count,')
-            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
-            ->offset(0)
-            ->groupBy('nomenclature.id')
-            ->limit(10)
-            ->asArray()->all();
+//        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
+//        nomenclature.cost,products.id as products_id,products.count,')
+//            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
+//            ->offset(0)
+//            ->groupBy('nomenclature.id')
+//            ->limit(10)
+//            ->asArray()->all();
         $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')
             ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
             ->where(['document_items.document_id' => $id])
             ->asArray()->all();
+
+        $nomenclatures = $query->where(['not in','id' , array_column($document_items,'nomenclature_id')])
+            ->offset(0)
+            ->limit(10)
+            ->asArray()
+            ->all();
+        $total = $countQuery->count() - count($document_items);
         $aah = DocumentItems::find()->select('AAH')->where(['document_id' => $id])->asArray()->one();
         return $this->render('update', [
             'model' => $model,
@@ -414,7 +438,7 @@ class DocumentsController extends Controller
         $have_access = Users::checkPremission(39);
         if(!$have_access){
             $this->redirect('/site/403');
-        } 
+        }
         $premission = Premissions::find()
             ->select('name')
             ->where(['id' => 39])
@@ -436,8 +460,13 @@ class DocumentsController extends Controller
 
     public function actionDeleteDocumentItems(){
         if ($this->request->isPost){
+//            $delete_items = DocumentItems::findOne($post_id)->delete();
             $post_id = intval($this->request->post('id'));
-            $delete_items = DocumentItems::findOne($post_id)->delete();
+            $post_udate_id = intval($this->request->post('urlId'));
+            $delete_items = DocumentItems::find()
+                ->where(['and', ['document_id' => $post_udate_id], ['nomenclature_id' => $post_id]])
+                ->one();
+            $delete_items->delete();
             if (isset($delete_items)){
                 return json_encode(true);
             }

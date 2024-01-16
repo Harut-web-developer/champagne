@@ -20,29 +20,29 @@ if(isset($_COOKIE['username']) && isset($_COOKIE['password'])){
 ?>
     <?php $form = ActiveForm::begin(['id' => 'formAuthentication']); ?>
         <div class="mb-3">
-            <label for="email" class="form-label">Email or Username</label>
-            <input type="text" class="form-control" value="<?=$username?>" id="email" name="username" placeholder="Enter your email or username" autofocus />
+            <label for="email" class="form-label">Էլփոստ կամ օգտանուն</label>
+            <input type="text" class="form-control" value="<?=$username?>" id="email" name="username" placeholder="Մուտքագրեք ձեր էլփոստը կամ օգտվողի անունը" autofocus />
         </div>
         <div class="mb-3 form-password-toggle">
             <div class="d-flex justify-content-between">
-                <label class="form-label" for="password">Password</label>
+                <label class="form-label" for="password">Գաղտնաբառ</label>
             </div>
             <div class="input-group input-group-merge">
                 <input type="password" id="password" value="<?=$password?>" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                 <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
             </div>
             <a href="<?= Url::to(['site/forgot-password']) ?>">
-                <small>Forgot Password?</small>
+                <small>Մոռացել եք գաղտնաբառը?</small>
             </a>
         </div>
         <div class="mb-3">
             <div class="form-check">
                 <input class="form-check-input" name="remember" type="checkbox" id="remember-me" />
-                <label class="form-check-label" for="remember-me"> Remember Me </label>
+                <label class="form-check-label" for="remember-me"> Հիշիր ինձ </label>
             </div>
         </div>
         <div class="class="mb-3"">
-            <?= Html::submitButton('Login', ['class' => 'btn btn-primary d-grid w-100', 'name' => 'login-button']) ?>
+            <?= Html::submitButton('Մուտք գործել', ['class' => 'btn btn-primary d-grid w-100', 'name' => 'login-button']) ?>
         </div>
     <?php ActiveForm::end(); ?>
 

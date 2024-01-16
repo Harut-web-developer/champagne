@@ -3,12 +3,14 @@
 namespace app\controllers;
 
 use app\models\Clients;
+use app\models\CoordinatesUser;
 use app\models\Log;
 use app\models\Orders;
 use app\models\Premissions;
 use app\models\Route;
 use app\models\RouteSearch;
 use app\models\Users;
+use app\models\Warehouse;
 use Yii;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -291,5 +293,58 @@ class RouteController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionShippingRoute(){
+        $id = Yii::$app->request->get('id');
+        $sub_page = [];
+        $date_tab = [];
+        $route = Route::find()->select('route')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+        $users = Users::find()->select('id, name, username')
+            ->asArray()
+            ->all();
+        return $this->render('shipping-route', [
+            'id' => $id,
+            'route' => $route,
+            'users' => $users,
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
+        ]);
+    }
+
+    public function actionLocationValue()
+    {
+        if (isset($_GET)) {
+            $get = $this->request->get();
+            $valueurlId = $get['urlId'];
+            $valuedate = $get['date'];
+            $userId =  intval($get['user']);
+            $coordinatesUser = CoordinatesUser::find()
+                ->select('latitude, longitude')
+                ->where(['=', 'user_id', $userId])
+                ->asArray()
+                ->all();
+            date_default_timezone_set('UTC');
+            $warehouse = Warehouse::find()->select('location')->where(['id' => 1])->asArray()->one();
+            $formattedSelectedDate = Yii::$app->formatter->asDatetime($valuedate, 'yyyy-MM-dd');
+            $locations = Orders::find()
+                ->select(["clients.location", 'DATE_FORMAT(orders.orders_date, "%Y-%m-%d") as orders_date'])
+                ->leftJoin('clients','clients.id = orders.clients_id')
+                ->where(['route_id' => $valueurlId])
+                ->andWhere(['and',['>=','orders.orders_date', $formattedSelectedDate.' 00:00:00'],
+                    ['<','orders.orders_date', $formattedSelectedDate.' 23:59:59']])
+                ->asArray()
+                ->orderBy('clients.sort_',SORT_DESC)
+                ->all();
+            return json_encode([
+                'location' => $locations,
+                'warehouse' => $warehouse,
+                'coordinatesUser' => $coordinatesUser
+            ]);
+        }
     }
 }

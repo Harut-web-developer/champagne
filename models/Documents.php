@@ -80,4 +80,7 @@ class Documents extends \yii\db\ActiveRecord
     public function getRateName(){
         return $this->hasOne(Rates::className(), ['id'=>'rate_id']);
     }
+//    public function getDocumentitems(){
+//        return $this->hasMany(DocumentItems::className(),['document_id' => 'id']);
+//    }
 }

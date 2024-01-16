@@ -2,18 +2,18 @@ $(document).ready(function() {
     var x = "/" + window.location.href.split("/")[3];
     var y = "/" + window.location.href.split("/")[4];
     var t = 0;
-        $(".menu-sub a").each(function () {
-            var currentHref = $(this).attr("href");
+    $(".menu-sub a").each(function () {
+        var currentHref = $(this).attr("href");
 
-            if ((currentHref === x && y === '/undefined') || currentHref === x + y) {
+        if ((currentHref === x && y === '/undefined') || currentHref === x + y) {
+            $(this).parent().addClass("active");
+        } else if (currentHref.indexOf(x) !== -1 && t === 0) {
+            if (y !== '/undefined') {
                 $(this).parent().addClass("active");
-            } else if (currentHref.indexOf(x) !== -1 && t === 0) {
-                if (y !== '/undefined') {
-                    $(this).parent().addClass("active");
-                    t++;
-                }
+                t++;
             }
-        });
+        }
+    });
 
     // var pgurl = window.location.href.substr(window.location.href
     //     .lastIndexOf("/")+1);
@@ -21,7 +21,6 @@ $(document).ready(function() {
     //     if($(this).attr("href") == '/'+pgurl || $(this).attr("href") == '' )
     //         $(this).parent().addClass("active");
     // })
-
 
     $('body').on('click','.edite-block-title',function (){
         $(this).closest('.panel-title').find('.non-active').hide();
