@@ -879,6 +879,7 @@ class OrdersController extends Controller
                 $res['format_before_price'] = $orders_price;
                 return json_encode($res);
             }else{
+//                var_dump('chka');
                 $res['product_id'] = $product_id;
                 $res['nomenclature_id'] = $nomenclature_id;
                 $res['price'] = $orders_price;
@@ -1168,17 +1169,21 @@ class OrdersController extends Controller
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['order_id' => $id])->asArray()->all();
 //        echo "<pre>";
-        $order_items_discount = OrderItems::find()->select('count_discount_id')->asArray()->all();
+        $order_items_discount = OrderItems::find()->select('count_discount_id')->where(['=','order_id', $id])->asArray()->all();
+
         $uniqueValues = [];
         foreach ($order_items_discount as $item) {
             $ids = explode(',', $item["count_discount_id"]);
             $uniqueValues = array_merge($uniqueValues, $ids);
         }
         $uniqueValues = array_unique($uniqueValues);
+
         $numericArray = array_map(function ($value) {
             return is_numeric($value) ? intval($value) : $value;
         }, $uniqueValues);
+
         $numericValuesOnly = array_filter($numericArray, 'is_numeric');
+
         $active_discount = Discount::find()->select('id,name,discount')->asArray()->all();
 
         $clients = Clients::find()->select('id, name')->Where(['=','status',1])->asArray()->all();

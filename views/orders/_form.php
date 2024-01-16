@@ -79,7 +79,7 @@ $session = Yii::$app->session;
                                     ?>
                                     <tr class="tableNomenclature fromDB">
                                         <td>
-                                            <span><?=$item['nom_id']?></span>
+                                            <span class="acordingNumber"><?=$keys + 1?></span>
                                             <input class="orderItemsId" type="hidden" name="order_items[]" value="<?=$item['id']?>">
                                             <input class="prodId" type="hidden" name="product_id[]" value="<?=$item['product_id']?>">
                                             <input class="nomId"  type="hidden" name="nom_id[]" value="<?=$item['nom_id']?>">
@@ -162,7 +162,7 @@ $session = Yii::$app->session;
                                                     <td>
                                                         <span><?=$keys + 1?></span>
                                                         <input class="prodId" data-id="<?=$nomenclature['id']?>" type="hidden">
-                                                        <input class="productIdInput" data-product="<?=$nomenclature['nom_id']?>" type="hidden">
+                                                        <input class="nomId" data-product="<?=$nomenclature['nom_id']?>" type="hidden">
                                                     </td>
                                                     <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
                                                     <td class="nomenclatureName"><?=$nomenclature['name']?></td>
@@ -230,9 +230,11 @@ $session = Yii::$app->session;
                             <tbody class="table-border-bottom-0">
                             <?php
                             $n = 0;
-                            foreach ($numericValuesOnly as $key => $value){
+//                            foreach ($numericValuesOnly as $key => $value){
                                 foreach ($active_discount as $k => $item){
-                                    if ($item['id'] == $value){
+                                    if (!in_array($item['id'],$numericValuesOnly)){
+                                        continue;
+                                    }else{
                                         $n++;
                                         ?>
                                         <tr>
@@ -242,8 +244,12 @@ $session = Yii::$app->session;
                                         </tr>
                                         <?php
                                     }
+
+//                                    if ($item['id'] == $value){
+
+//                                    }
                                 }
-                            }
+//                            }
                             ?>
                             </tbody>
                         </table>
@@ -343,7 +349,7 @@ $session = Yii::$app->session;
                     </div>
                 </div>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn rounded-pill btn-secondary addOrders" data-bs-toggle="modal" data-bs-target="#largeModal">Ավելացնել ապրանք</button>
+                <button type="button" class="btn rounded-pill btn-secondary addOrders" disabled data-bs-toggle="modal" data-bs-target="#largeModal">Ավելացնել ապրանք</button>
                 <!-- Modal -->
                 <div class="modal fade" id="largeModal" tabindex="-1" style="display: none;" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">
@@ -373,7 +379,7 @@ $session = Yii::$app->session;
                                                     <td>
                                                         <span><?=$keys + 1?></span>
                                                         <input class="prodId" data-id="<?=$nomenclature['id']?>" type="hidden">
-                                                        <input class="productIdInput" data-product="<?=$nomenclature['nomenclature_id']?>" type="hidden">
+                                                        <input class="nomId" data-product="<?=$nomenclature['nomenclature_id']?>" type="hidden">
                                                     </td>
                                                     <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
                                                     <td class="nomenclatureName"><?=$nomenclature['name']?></td>
