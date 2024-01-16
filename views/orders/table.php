@@ -5,10 +5,11 @@ use app\widgets\CustomLinkPager;
 /** @var yii\web\View $this */
 /** @var app\models\Orders $model */
 /** @var yii\widgets\ActiveForm $form */
-
+echo __DIR__;
 ?>
 
-<link href="/assets/d8c33cc9/dist/css/bootstrap.css" rel="stylesheet">
+<!--<link href="/assets/d8c33cc9/dist/css/bootstrap.css" rel="stylesheet">-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 <!-- Basic Bootstrap Table -->
 <div id="print">
     <div class="card">
