@@ -13,7 +13,6 @@ $this->params['date_tab'] = $date_tab;
                 <th>Հաճախորդ</th>
                 <th>Ընդհանուր պարտք</th>
                 <th>Վճարված գումար</th>
-                <th>Գործողություն</th>
             </tr>
             </thead>
             <tbody class="table-border-bottom-0">
@@ -25,7 +24,6 @@ $this->params['date_tab'] = $date_tab;
                         <td><?=$statistic['name']?></td>
                         <td><?=$statistic['debt']?></td>
                         <td><?=$statistic['payment_sum']?></td>
-                        <td>heto ksarqem</td>
                     </tr>
                 <?php
                 }

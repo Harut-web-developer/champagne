@@ -6,6 +6,8 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use app\widgets\CustomGridView;
+
 
 /** @var yii\web\View $this */
 /** @var app\models\PaymentsSearch $searchModel */
@@ -27,7 +29,7 @@ $this->params['date_tab'] = $date_tab;
         <?= Html::a('Կատարել վճար', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
     </p>
     <div class="card">
-    <?= GridView::widget([
+    <?= CustomGridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],
         'dataProvider' => new ActiveDataProvider([

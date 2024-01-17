@@ -6,7 +6,7 @@ use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
-use yii\grid\GridView;
+use app\widgets\CustomGridView;
 
 /** @var yii\web\View $this */
 /** @var app\models\ClientsSearch $searchModel */
@@ -74,7 +74,7 @@ if ($have_access_update && $have_access_delete){
         <?php } ?>
     </p>
     <div class="card">
-    <?= GridView::widget([
+    <?= CustomGridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],
         'dataProvider' => new ActiveDataProvider([

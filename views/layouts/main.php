@@ -150,13 +150,13 @@ $date_tab = $this->params['date_tab'];
                             </a>
                             <ul class="menu-sub sub_menu_sub">
                                 <li class="menu-item">
-                                    <a href="/clients" class="menu-link">
-                                        <div data-i18n="clients">Հաճախորդներ</div>
+                                    <a href="/groups-name" class="menu-link">
+                                        <div data-i18n="groups-name">Խմբեր</div>
                                     </a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="/groups-name" class="menu-link">
-                                        <div data-i18n="groups-name">Խմբեր</div>
+                                    <a href="/clients" class="menu-link">
+                                        <div data-i18n="clients">Հաճախորդներ</div>
                                     </a>
                                 </li>
                             </ul>

@@ -385,8 +385,8 @@ $(document).ready(function() {
             window.location.href = $(this).attr('href');
         }
     })
-
     $('.js-example-basic-multiple').select2();
+
     $("#slider-range").slider({
         range:true,
         orientation:"horizontal",
@@ -420,7 +420,7 @@ $(document).ready(function() {
                 let pars = JSON.parse(data);
                 const today = new Date();
                 const year = today.getFullYear();
-                const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based, so we add 1
+                const month = String(today.getMonth() + 1).padStart(2, '0');
                 const day = String(today.getDate()).padStart(2, '0');
                 if(pars == 'later'){
                     alert('Զեղչի սկիզբը չի կարող ավելի շուտ լինել քան այսօրը:')
@@ -477,6 +477,15 @@ $(document).ready(function() {
             })
         })
     })
+    $('body').on('click', '.customIcon',function (e) {
+        if ($('.start_date').val() > $('.end_date').val()){
+            alert('Ամսաթվերը գրել ճիշտ հերթականությամբ:');
+            e.preventDefault()
+            $('.start_date').val('');
+            $('.end_date').val('')
+        }
+    })
+
 
 });
 

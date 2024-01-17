@@ -78,8 +78,8 @@ class DiscountController extends Controller
         ];
         $date_tab = [];
 
-        $searchModel = new DiscountSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+//        $searchModel = new DiscountSearch();
+//        $dataProvider = $searchModel->search($this->request->queryParams);
         $discount_overdue = Discount::find()->where(['status' => 1])->all();
 
         foreach ($discount_overdue as $key => $value){
@@ -88,11 +88,11 @@ class DiscountController extends Controller
                 $value->save(false);
             }
         }
-        $discount_sortable = Discount::find()->where(['status' => 1])->orderBy(['end_date'=> SORT_ASC])->asArray()->all();
+        $discount_sortable = Discount::find()->where(['status' => 1])->orderBy(['discount_sortable'=> SORT_ASC])->asArray()->all();
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+//            'searchModel' => $searchModel,
+//            'dataProvider' => $dataProvider,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
 
@@ -104,16 +104,16 @@ class DiscountController extends Controller
         if ($this->request->isPost) {
             if (!empty($_POST['sort'])) {
                 foreach ($_POST['sort'] as $i => $row) {
-
                     $discount = Discount::find()->where(['and',['status'=> 1],['id'=>intval($row)]])->one();
                     $discount->discount_sortable = $i;
                     $discount->save(false);
                 }
             }
-            return 'success';
-        } else {
-            return 'error';
+//            return 'success';
         }
+//        else {
+//            return 'error';
+//        }
     }
     public function actionInactive(){
         $sub_page = [

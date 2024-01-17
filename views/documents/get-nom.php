@@ -13,6 +13,9 @@
             <tbody class="table-border-bottom-0 tbody_">
             <?php
             foreach ($nomenclatures as $keys => $nomenclature){
+                if(in_array($nomenclature['id'],$itemsArray)){
+                    continue;
+                }
                 ?>
                 <tr class="documentsTableTr">
                     <td>
