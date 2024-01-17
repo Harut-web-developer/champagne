@@ -62,10 +62,11 @@ $this->params['date_tab'] = $date_tab;
                     _csrf:csrfToken,
                 },
                 success:function(data){
-                    console.log(data)
+                    console.log(data);
                     if (data['location'].length != 0) {
                         var arr = [];
                         var clients = [];
+                        var time_visit = {};
                         for (var i = 0; i < data['location'].length; i++) {
                             arr.push(data['location'][i]['location']);
                             clients.push(data['location'][i]['location']);
@@ -84,37 +85,62 @@ $this->params['date_tab'] = $date_tab;
                             var d = R * c * 1000; // Distance in metr
                             return d;
                         }
-                        for (let y = 0; y < clients.length; y++) {
-                            var distance = 0;
+                        for (var y = 0; y < clients.length; y++) {
+                            var distance = 0;  //heravorutyun
                             var f = 0;
-                            var lat_long = clients[y];
+                            var temp = 0;
+                            var lat_long = clients[y];   // klienti koordinat
                             var coordinates = lat_long.split(',');
                             var latitude1 = parseFloat(coordinates[0]);
                             var longitude2 = parseFloat(coordinates[1]);
-                            for (let d = 0; d < data['coordinatesUser'].length; d++) {
+                            var visit = 0;
+
+                            for (var d = 0; d < data['coordinatesUser'].length; d++) {
                                 var latitude = data['coordinatesUser'][d]['latitude'];
                                 var longitude = data['coordinatesUser'][d]['longitude'];
                                 console.log(latitude, longitude, latitude1, longitude2)
                                 distance = getDistanceFromLatLonInKm(latitude, longitude, latitude1, longitude2).toFixed(1);
                                 console.log(distance)
-                                if (distance < 6000) {
+                                if (distance < 7000) {
                                     var csrfToken = $('meta[name="csrf-token"]').attr("content");
-                                    var visit = data.visit[0]['visit'];
                                     var coord_id = data['coordinatesUser'][d]['id'];
                                     visit++;
+                                    temp = visit;
+                                    console.log(visit,temp)
                                     $.ajax({
-                                        url: "/map/coordinates-user",
+                                        url: "/route/update-visit",
                                         method: 'get',
                                         dataType: 'json',
                                         data: {
                                             visit:visit,
                                             coord_id:coord_id,
-                                            _csrf: csrfToken,
+                                            _csrf:csrfToken,
                                         },
                                     })
                                 }
+                                console.log(d == (data['coordinatesUser'].length - 1))
+                                if( d == (data['coordinatesUser'].length -1 ) ){
+                                    if (temp >= visit){
+                                        time_visit[String(data['location'][y].name)] = temp * 10; //qani vor 10 varkyan mek en koordinatnern galis
+
+                                        // console.log("temp", temp)
+                                    }else {
+                                        time_visit[String(data['location'][y].name)] = visit * 10;
+                                        // console.log("visit", visit)
+                                    }
+                                }
                             }
+                            $.ajax({
+                                url: "/route/delete-all-visit",
+                                method: 'get',
+                                dataType: 'json',
+                                data: {
+                                    _csrf:csrfToken,
+                                },
+                            })
+                            console.log(time_visit)
                         }
+
                         var arr2 = [];
                         for (let j = 0; j < data['coordinatesUser'].length; j++) {
                             arr2.push(data['coordinatesUser'][j]['latitude'] + ',' + data['coordinatesUser'][j]['longitude']);
@@ -122,12 +148,10 @@ $this->params['date_tab'] = $date_tab;
                         function deg2rad(deg) {
                             return deg * (Math.PI/180)
                         }
-
                         var size = 25;
                         var arrays2 = [];
                         var t = 0;
                         var multiRoute2 = [];
-                        // console.log(arr)
                         for (let j = 0; j < Math.ceil(arr2.length / size); j++) {
                             arrays2[j] = [];
                             for (let i = 0; i < size && t < arr2.length; i += 1) {
@@ -171,7 +195,6 @@ $this->params['date_tab'] = $date_tab;
 
                         }
                         myMap.setZoom(8, { duration: 300 });
-
                     }
                 }
             })

@@ -317,6 +317,27 @@ class RouteController extends Controller
         ]);
     }
 
+    public function actionDeleteAllVisit()
+    {
+        if(isset($_GET)){
+            $coordinatesUsers = CoordinatesUser::find()->where(['not', ['visit' => null]])->all();
+            foreach ($coordinatesUsers as $coordinatesUser) {
+                $coordinatesUser->visit = 0;
+                $coordinatesUser->save(false);
+            }
+        }
+    }
+    public function actionUpdateVisit()
+    {
+        if(isset($_GET)){
+            $visit_get = CoordinatesUser::findOne(['id' => $_GET['coord_id']]);
+            echo "<pre>";
+            var_dump($visit_get);
+            $visit_get->visit = $_GET['visit'];
+            var_dump($visit_get);
+            $visit_get->save(false);
+        }
+    }
     public function actionLocationValue()
     {
         if (isset($_GET)) {
@@ -339,13 +360,13 @@ class RouteController extends Controller
                 ->andWhere(['and',['>=','orders.orders_date', $formattedSelectedDate.' 00:00:00'],
                     ['<','orders.orders_date', $formattedSelectedDate.' 23:59:59']])
                 ->andWhere(['orders.status' => '1'])
+                ->andwhere(['=', 'orders.user_id', $userId])
                 ->asArray()
                 ->orderBy('clients.sort_',SORT_DESC)
                 ->all();
             $visit = CoordinatesUser::find()
                 ->select('visit, id')
-                ->orderBy(['id' => SORT_DESC])
-                ->limit(1)
+                ->where(['=', 'user_id', $userId])
                 ->asArray()
                 ->all();
             return json_encode([
