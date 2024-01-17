@@ -27,7 +27,7 @@ $this->params['date_tab'] = $date_tab;
             <select id="userSelect" class="form-select form-control valueuser" aria-label="Default select example">
                 <option value="">Ընտրել օգտագործողին</option>
                 <?php foreach ($users as $index => $user ){ ?>
-                    <option value="<?= $user['id'] ?>"><?= $user['name'] . ' ' . $user['username']?></option>
+                    <option value="<?= $user['id'] ?>"><?= $user['name']?></option>
                 <?php } ?>
             </select>
         </div>
@@ -44,7 +44,7 @@ $this->params['date_tab'] = $date_tab;
 </body>
 <script>
     function init () {
-        $('#myDate').on('change', function() {
+        $('#userSelect, #myDate').on('change', function() {
             var date = $('#myDate').val();
             var user = $('#userSelect').val();
             let url_id = window.location.href;
@@ -65,30 +65,97 @@ $this->params['date_tab'] = $date_tab;
                     console.log(data)
                     if (data['location'].length != 0) {
                         var arr = [];
+                        var clients = [];
                         for (var i = 0; i < data['location'].length; i++) {
                             arr.push(data['location'][i]['location']);
+                            clients.push(data['location'][i]['location']);
                         }
                         arr.unshift(data['warehouse']['location']);
-
+                        function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+                            var R = 6371; // Radius of the earth in km
+                            var dLat = deg2rad(lat2-lat1);  // deg2rad below
+                            var dLon = deg2rad(lon2-lon1);
+                            var a =
+                                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                                Math.sin(dLon/2) * Math.sin(dLon/2)
+                            ;
+                            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                            var d = R * c * 1000; // Distance in metr
+                            return d;
+                        }
+                        for (let y = 0; y < clients.length; y++) {
+                            var distance = 0;
+                            var f = 0;
+                            var lat_long = clients[y];
+                            var coordinates = lat_long.split(',');
+                            var latitude1 = parseFloat(coordinates[0]);
+                            var longitude2 = parseFloat(coordinates[1]);
+                            for (let d = 0; d < data['coordinatesUser'].length; d++) {
+                                var latitude = data['coordinatesUser'][d]['latitude'];
+                                var longitude = data['coordinatesUser'][d]['longitude'];
+                                console.log(latitude, longitude, latitude1, longitude2)
+                                distance = getDistanceFromLatLonInKm(latitude, longitude, latitude1, longitude2).toFixed(1);
+                                console.log(distance)
+                                if (distance < 6000) {
+                                    var csrfToken = $('meta[name="csrf-token"]').attr("content");
+                                    var visit = data.visit[0]['visit'];
+                                    var coord_id = data['coordinatesUser'][d]['id'];
+                                    visit++;
+                                    $.ajax({
+                                        url: "/map/coordinates-user",
+                                        method: 'get',
+                                        dataType: 'json',
+                                        data: {
+                                            visit:visit,
+                                            coord_id:coord_id,
+                                            _csrf: csrfToken,
+                                        },
+                                    })
+                                }
+                            }
+                        }
                         var arr2 = [];
-                        for (var j = 0; j < data['coordinatesUser'].length; j++) {
+                        for (let j = 0; j < data['coordinatesUser'].length; j++) {
                             arr2.push(data['coordinatesUser'][j]['latitude'] + ',' + data['coordinatesUser'][j]['longitude']);
                         }
+                        function deg2rad(deg) {
+                            return deg * (Math.PI/180)
+                        }
 
+                        var size = 25;
+                        var arrays2 = [];
+                        var t = 0;
+                        var multiRoute2 = [];
+                        // console.log(arr)
+                        for (let j = 0; j < Math.ceil(arr2.length / size); j++) {
+                            arrays2[j] = [];
+                            for (let i = 0; i < size && t < arr2.length; i += 1) {
+                                var val = arr2[t];
+                                arrays2[j].push(val);
+                                t += 1;
+                            }
+                            multiRoute2[j] = new ymaps.multiRouter.MultiRoute({
+                                referencePoints: arrays2[j],
+                                params: {
+                                    routingMode: 'masstransit',
+                                },
+                            }, {
+                                routeStrokeColor: 'rgba(255,0,0,0.5)',
+                                routeActiveStrokeColor: 'rgba(255,0,0,0.5)',
+                                wayPointStartIconColor: 'rgba(255,0,0,0.5)',
+                                wayPointFinishIconColor: 'rgba(255,0,0,0.5)',
+                                routeMarkerIconColor: 'rgba(255,0,0,0.5)',
+                            });
+
+                        }
+                        // console.log(arrays2)
                         var multiRoute = new ymaps.multiRouter.MultiRoute({
                             referencePoints: arr,
                             params: {
                                 routingMode: 'masstransit',
                             }
                         });
-
-                        var multiRoute2 = new ymaps.multiRouter.MultiRoute({
-                            referencePoints: arr2,
-                            params: {
-                                routingMode: 'masstransit',
-                            }
-                        });
-
                         $('#map').html('');
                         var myMap = new ymaps.Map('map', {
                             center: [40.2100725, 44.4987508],
@@ -98,21 +165,11 @@ $this->params['date_tab'] = $date_tab;
                             buttonMaxWidth: 300
                         });
 
-                        ymaps.modules.require([
-                            'MultiRouteColorizer'
-                        ], function (MultiRouteColorizer) {
-                            new MultiRouteColorizer(multiRoute, {
-                                lineColor: '#002c8b',
-                            });
-
-                            new MultiRouteColorizer(multiRoute2, {
-                                lineColor: '#8b0000',
-                            });
-                        });
-
-
                         myMap.geoObjects.add(multiRoute);
-                        myMap.geoObjects.add(multiRoute2);
+                        for (let k = 0;  k< Math.ceil(arr2.length / size); k++) {
+                            myMap.geoObjects.add(multiRoute2[k]);
+
+                        }
                         myMap.setZoom(8, { duration: 300 });
 
                     }

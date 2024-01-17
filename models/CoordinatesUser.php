@@ -11,6 +11,9 @@ use Yii;
  * @property float|null $latitude
  * @property float|null $longitude
  * @property int|null $user_id
+ * @property int $visit
+ * @property string $created_at
+ *
  */
 class CoordinatesUser extends \yii\db\ActiveRecord
 {
@@ -29,7 +32,9 @@ class CoordinatesUser extends \yii\db\ActiveRecord
     {
         return [
             [['latitude', 'longitude'], 'number'],
-            [['user_id'], 'integer'],
+            [['user_id', 'visit'], 'integer'],
+            [['created_at'], 'safe'],
+
         ];
     }
 
@@ -43,6 +48,8 @@ class CoordinatesUser extends \yii\db\ActiveRecord
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
             'user_id' => 'User ID',
+            'visit' => 'visit',
+            'created_at' => 'Ստեղծվել է',
         ];
     }
 }
