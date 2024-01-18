@@ -7,6 +7,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use app\widgets\CustomGridView;
 use app\models\CustomfieldsBlocksInputValues;
 
 /** @var yii\web\View $this */
@@ -76,7 +77,7 @@ if(!empty($new_fields)){
         <?php } ?>
     </p>
     <div class="card">
-        <?= GridView::widget([
+        <?= CustomGridView::widget([
             'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
             'summaryOptions' => ['class' => 'summary'],
             'dataProvider' => new ActiveDataProvider([
