@@ -57,15 +57,12 @@ function init () {
                             });
                             myMap.geoObjects.add(result.geoObjects);
                         });
-
                         geolocation.get({
                             provider: 'browser',
                             mapStateAutoApply: true
                         }).then(function (result) {
                             myLatitude = result.geoObjects.get(0).geometry.getCoordinates()[0];
                             myLongitude = result.geoObjects.get(0).geometry.getCoordinates()[1];
-                            console.log('Latitude:', myLatitude);
-                            console.log('Longitude:', myLongitude);
                             result.geoObjects.options.set('preset', 'islands#blueCircleIcon');
                             myMap.geoObjects.add(result.geoObjects);
                             var csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -81,7 +78,7 @@ function init () {
                             });
                         });
 
-                    }, 10 * 1000);
+                    }, 60 * 1000);
                 }
             }
         })

@@ -71,16 +71,6 @@ class MapController extends Controller
             return json_encode(['location' => $locations, 'warehouse' => $warehouse]);
         }
     }
-
-//    public function actionUpdateVisit()
-//    {
-//        if(isset($_GET)){
-//            $visit_get = CoordinatesUser::findOne(['id' => $_GET['coord_id']]);
-//            $visit_get->visit = $_GET['visit'];
-//            $visit_get->save(false);
-//        }
-//
-//    }
     public function actionCoordinatesUser()
     {
         if ($this->request->isPost) {
@@ -90,11 +80,6 @@ class MapController extends Controller
             $model = new CoordinatesUser();
             $model->user_id = $session['user_id'];
             $model->latitude = $post['myLatitude'];
-            if(isset($_GET)){
-                $visit_get = CoordinatesUser::findOne(['id' => $_GET['coord_id']]);
-                $visit_get->visit = $_GET['visit'];
-                $visit_get->save(false);
-            }
             $model->longitude = $post['myLongitude'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->save();
