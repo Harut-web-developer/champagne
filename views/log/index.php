@@ -61,7 +61,7 @@ if ($have_access_update && $have_access_delete){
 <!--            --><?php //= Html::a('Ստեղծել տեղեկամատյան', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
 <!--        --><?php //} ?>
     </p>
-    <div class="card">
+    <div class="card pageStyle">
     <?= CustomGridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],

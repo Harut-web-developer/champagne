@@ -65,7 +65,7 @@ if ($have_access_update && $have_access_delete){
             <?= Html::a('Ստեղծել ապրանք', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
         <?php } ?>
     </p>
-    <div class="card">
+    <div class="card pageStyle">
     <?= CustomGridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],
@@ -97,7 +97,17 @@ if ($have_access_update && $have_access_delete){
                     }
                 }
             ],
-            'count',
+//            'count',
+            [
+                'attribute' => 'Քանակ',
+                'value' => function ($model) {
+                    if ($model->count < 0) {
+                        return $model->count * (-1);
+                    } else {
+                        return $model->count;
+                    }
+                }
+            ],
             'price',
             ...$action_column,
         ],

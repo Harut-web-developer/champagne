@@ -68,7 +68,6 @@ $(document).ready(function () {
                             return [id, uniqueName[0]];
                         });
                         sequenceNumber++;
-
                         ordersBeforTotalPriceSum += Math.round(pars.format_before_price) * pars.count;
                         ordersTotalPriceSum += Math.round(pars.price) * pars.count;
                         ordersTotalCount += pars.count;
@@ -98,8 +97,8 @@ $(document).ready(function () {
                                         <input type="hidden" name="price[]" value="`+Math.round(pars.price)+`">
                                      </td>
                                      <td class="totalBeforePrice">
-                                        <span>`+pars.format_before_price * pars.count+`</span>
-                                        <input type="hidden" name="totalBeforePrice[]" value="`+pars.format_before_price * pars.count+`">
+                                        <span>`+Math.round(pars.format_before_price) * pars.count+`</span>
+                                        <input type="hidden" name="totalBeforePrice[]" value="`+Math.round(pars.format_before_price) * pars.count+`">
                                      </td>
                                      <td class="totalPrice">
                                         <span>`+Math.round(pars.price) * pars.count+`</span>
@@ -307,8 +306,8 @@ $(document).ready(function () {
                                         <input type="hidden" name="price[]" value="`+Math.round(pars.price)+`">
                                      </td>
                                      <td class="totalBeforePrice">
-                                        <span>`+pars.format_before_price * pars.count+`</span>
-                                        <input type="hidden" name="total_before_price[]" value="`+pars.format_before_price * pars.count+`">
+                                        <span>`+Math.round(pars.format_before_price) * pars.count+`</span>
+                                        <input type="hidden" name="total_before_price[]" value="`+Math.round(pars.format_before_price) * pars.count+`">
                                      </td>
                                      <td class="totalPrice">
                                         <span>`+Math.round(pars.price) * pars.count+`</span>
@@ -421,12 +420,28 @@ $(document).ready(function () {
                 },
                 success: function (data) {
                     let param = JSON.parse(data)
-                    console.log(param)
+                    // console.log(param)
                     if (data){
                         if (param.count === 'nullable'){
                             this_.val('')
                         }else if (param.count === 'countMore'){
+                            this_.val(1)
                             alert('Պահեստում նման քանակի ապրանք չկա');
+                            this_.closest('.tableNomenclature').find('.totalPrice').children('span').text(this_.closest('.tableNomenclature').find('.price').children('input').val() * this_.val())
+                            this_.closest('.tableNomenclature').find('.totalPrice').children('input').val(this_.closest('.tableNomenclature').find('.price').children('input').val() * this_.val())
+                            this_.closest('.tableNomenclature').find('.totalBeforePrice').children('span').text(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val())
+                            this_.closest('.tableNomenclature').find('.totalBeforePrice').children('input').val(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val())
+                            $('body').find('.tableNomenclature').each(function () {
+                                ordersTotalPriceSum += parseInt($(this).find('.totalPrice').children('input').val());
+                                ordersTotalCount += parseInt($(this).find('.count').children('input').val());
+                                ordersBeforTotalPriceSum += parseInt($(this).find('.totalBeforePrice').children('input').val());
+                                totalDiscount += parseInt($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
+                            })
+                            $('body').find('#orders-total_price').val(Math.round(ordersTotalPriceSum));
+                            $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
+                            $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
+                            $('body').find('#orders-total_discount').val(Math.round(totalDiscount));
+
                         }else if (param.count === 'dontExists'){
                             alert('Նման ապրանք պահեստում գոյություն չունի')
                             this_.val('')
@@ -436,11 +451,11 @@ $(document).ready(function () {
                             this_.closest('.tableNomenclature').find('.totalPrice').children('input').val(this_.closest('.tableNomenclature').find('.price').children('input').val() * this_.val())
                             this_.closest('.tableNomenclature').find('.totalBeforePrice').children('span').text(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val())
                             this_.closest('.tableNomenclature').find('.totalBeforePrice').children('input').val(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val())
-                            $('.tableNomenclature').each(function () {
-                                ordersTotalPriceSum += parseInt(this_.find('.totalPrice').children('input').val());
-                                ordersTotalCount += parseInt(this_.find('.count').children('input').val());
-                                ordersBeforTotalPriceSum += parseInt(this_.find('.totalBeforePrice').children('input').val());
-                                totalDiscount += parseInt(this_.find('.discount').children('input').val()) * parseInt(this_.find('.count').children('input').val());
+                            $('body').find('.tableNomenclature').each(function () {
+                                ordersTotalPriceSum += parseInt($(this).find('.totalPrice').children('input').val());
+                                ordersTotalCount += parseInt($(this).find('.count').children('input').val());
+                                ordersBeforTotalPriceSum += parseInt($(this).find('.totalBeforePrice').children('input').val());
+                                totalDiscount += parseInt($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
                             })
                             $('body').find('#orders-total_price').val(Math.round(ordersTotalPriceSum));
                             $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
@@ -458,6 +473,7 @@ $(document).ready(function () {
         let ordersTotalPriceSum = 0;
         let ordersBeforTotalPriceSum = 0;
         let totalDiscount = 0;
+        var this_ = $(this);
         if ($(this).val() === "" || $(this).val() < 1){
             $(this).val(1)
             $(this).closest('.tableNomenclature').find('.totalPrice').children('span').text($(this).closest('.tableNomenclature').find('.price').children('input').val() * $(this).val())
@@ -475,11 +491,10 @@ $(document).ready(function () {
             $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
             $('body').find('#orders-total_discount').val(Math.round(totalDiscount));
         }else {
-            var this_ = $(this);
             var id = this_.closest('.tableNomenclature').find(".nomId").val();
             var count = this_.val();
             var csrfToken = $('meta[name="csrf-token"]').attr("content");
-            console.log(id,count)
+            // console.log(id,count)
                 $.ajax({
                     url: '/products/get-products',
                     method: 'post',
@@ -491,12 +506,27 @@ $(document).ready(function () {
                     },
                     success: function (data) {
                         let param = JSON.parse(data)
-                        console.log(param)
                         if (data){
                             if (param.count === 'nullable'){
                                 this_.val('')
                             }else if (param.count === 'countMore'){
+                                this_.val(1)
                                 alert('Պահեստում նման քանակի ապրանք չկա');
+                                this_.closest('.tableNomenclature').find('.totalPrice').children('span').text(this_.closest('.tableNomenclature').find('.price').children('input').val() * this_.val())
+                                this_.closest('.tableNomenclature').find('.totalPrice').children('input').val(this_.closest('.tableNomenclature').find('.price').children('input').val() * this_.val())
+                                this_.closest('.tableNomenclature').find('.totalBeforePrice').children('span').text(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val())
+                                this_.closest('.tableNomenclature').find('.totalBeforePrice').children('input').val(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val())
+                                $('body').find('.tableNomenclature').each(function () {
+                                    ordersTotalPriceSum += parseInt($(this).find('.totalPrice').children('input').val());
+                                    ordersTotalCount += parseInt($(this).find('.count').children('input').val());
+                                    ordersBeforTotalPriceSum += parseInt($(this).find('.totalBeforePrice').children('input').val());
+                                    totalDiscount += parseInt($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
+                                })
+                                $('body').find('#orders-total_price').val(Math.round(ordersTotalPriceSum));
+                                $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
+                                $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
+                                $('body').find('#orders-total_discount').val(Math.round(totalDiscount));
+
                             }else if (param.count === 'dontExists'){
                                 alert('Նման ապրանք պահեստում գոյություն չունի')
                                 this_.val('')
@@ -506,11 +536,11 @@ $(document).ready(function () {
                                 this_.closest('.tableNomenclature').find('.totalPrice').children('input').val(this_.closest('.tableNomenclature').find('.price').children('input').val() * this_.val())
                                 this_.closest('.tableNomenclature').find('.totalBeforePrice').children('span').text(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val())
                                 this_.closest('.tableNomenclature').find('.totalBeforePrice').children('input').val(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val())
-                                $('.tableNomenclature').each(function () {
-                                    ordersTotalPriceSum += parseInt(this_.find('.totalPrice').children('input').val());
-                                    ordersTotalCount += parseInt(this_.find('.count').children('input').val());
-                                    ordersBeforTotalPriceSum += parseInt(this_.find('.totalBeforePrice').children('input').val());
-                                    totalDiscount += parseInt(this_.find('.discount').children('input').val()) * parseInt(this_.find('.count').children('input').val());
+                                $('body').find('.tableNomenclature').each(function () {
+                                    ordersTotalPriceSum += parseInt($(this).find('.totalPrice').children('input').val());
+                                    ordersTotalCount += parseInt($(this).find('.count').children('input').val());
+                                    ordersBeforTotalPriceSum += parseInt($(this).find('.totalBeforePrice').children('input').val());
+                                    totalDiscount += parseInt($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
                                 })
                                 $('body').find('#orders-total_price').val(Math.round(ordersTotalPriceSum));
                                 $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
@@ -662,7 +692,6 @@ $(document).ready(function () {
         })
 
     }
-
 
 
 

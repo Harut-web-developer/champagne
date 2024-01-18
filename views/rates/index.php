@@ -63,7 +63,7 @@ if ($have_access_update && $have_access_delete){
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-    <div class="card">
+    <div class="card pageStyle">
     <?= CustomGridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],

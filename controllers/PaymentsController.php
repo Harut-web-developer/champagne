@@ -92,6 +92,7 @@ class PaymentsController extends Controller
             ->leftJoin('clients', 'clients.id = payments.client_id')
             ->where(['orders.status' => '2'])
             ->groupBy('payments.client_id')
+            ->orderBy(['payments.created_at'=> SORT_DESC])
             ->asArray()
             ->all();
         $sub_page = [

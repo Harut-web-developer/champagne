@@ -56,8 +56,8 @@ if(isset($action__)){
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <label for="aah">ԱԱՀ</label>
                     <select class="form-control" name="aah" id="aah">
-                        <option value="true" <?php echo ($aah['AAH'] === 'true') ? 'selected' : ''; ?>>Կա</option>
-                        <option value="false" <?php echo ($aah['AAH'] === 'false') ? 'selected' : ''; ?>>Չկա</option>
+                        <option value="true" <?php echo ($aah['AAH'] === 'true') ? 'selected' : ''; ?>>20%</option>
+                        <option value="false" <?php echo ($aah['AAH'] === 'false') ? 'selected' : ''; ?>>0%</option>
                     </select>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
@@ -255,17 +255,17 @@ if(isset($action__)){
                 <label class="rateLabel" for="rate">Փոխարժեք</label>
                 <div id="rate" class="form-group col-md-12 col-lg-12 col-sm-12 rateDocument">
                     <div class="rateType">
-                        <?= $form->field($model, 'rate_id')->dropDownList($rates)->label(false) ?>
+                        <?= $form->field($model, 'rate_id')->dropDownList($rates, ['options' => [1 => ['selected' => true]]])->label(false) ?>
                     </div>
                     <div class="rateValue">
-                        <?= $form->field($model, 'rate_value')->input('number', ['placeholder' => 'Փոխարժեքի գինը','required' => true])->label(false) ?>
+                        <?= $form->field($model, 'rate_value')->input('number', ['required' => true,'value' => 1, 'readonly' => true])->label(false) ?>
                     </div>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <label for="aah">ԱԱՀ</label>
                     <select class="form-control" name="aah" id="aah">
-                        <option value="true">Կա</option>
-                        <option value="false">Չկա</option>
+                        <option value="true">20%</option>
+                        <option value="false">0%</option>
                     </select>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">

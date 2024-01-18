@@ -202,6 +202,7 @@ class DocumentsController extends Controller
             ->leftJoin('products','nomenclature.id = products.nomenclature_id')
             ->offset(0)
             ->groupBy('nomenclature.id')
+            ->orderBy(['nomenclature.id'=> SORT_DESC])
             ->limit(10)
             ->asArray()->all();
         return $this->render('create', [
@@ -262,6 +263,7 @@ class DocumentsController extends Controller
         $pageSize = 10;
         $offset = ($page-1) * $pageSize;
         $query = Nomenclature::find();
+
         $countQuery = clone $query;
 //        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
 //        nomenclature.cost,products.id as products_id,products.count')
@@ -296,8 +298,10 @@ class DocumentsController extends Controller
                         ->limit($pageSize);
                 }
         $nomenclatures = $nomenclatures
+            ->orderBy(['nomenclature.id'=> SORT_DESC])
             ->asArray()
             ->all();
+
         $total = $countQuery->count() - count($document_items);
         $id_count = $_POST['id_count'] ?? [];
         return $this->renderAjax('get-nom', [
@@ -405,6 +409,7 @@ class DocumentsController extends Controller
             ->asArray()->all();
 
         $nomenclatures = $query->where(['not in','id' , array_column($document_items,'nomenclature_id')])
+            ->orderBy(['nomenclature.id'=> SORT_DESC])
             ->offset(0)
             ->limit(10)
             ->asArray()
@@ -444,7 +449,7 @@ class DocumentsController extends Controller
             ->where(['id' => 39])
             ->asArray()
             ->one();
-        echo "<pre>";
+//        echo "<pre>";
         $oldattributes = Documents::find()
             ->select(['users.id', 'users.name', 'users.username'])
             ->leftJoin('users', 'users.id = documents.user_id')
@@ -473,6 +478,16 @@ class DocumentsController extends Controller
         }
     }
 
+    public function actionChangeRates(){
+        if ($this->request->isPost){
+            $id = $this->request->post('id');
+            if ($id != 1){
+                return json_encode('others');
+            }else{
+                return json_encode('amd');
+            }
+        }
+    }
 //    public function actionSearch(){
 //        if ($this->request->isPost){
 //            $nom = $this->request->post('nomenclature');

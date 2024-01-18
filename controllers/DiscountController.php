@@ -121,7 +121,7 @@ class DiscountController extends Controller
         ];
         $date_tab = [];
 
-        $discount_sortable = Discount::find()->where(['or',['status' => '0'],['status' => '2']])->asArray()->all();
+        $discount_sortable = Discount::find()->where(['or',['status' => '0'],['status' => '2']])->orderBy(['created_at'=> SORT_DESC])->asArray()->all();
         return $this->render('inactive', [
             'date_tab' => $date_tab,
             'sub_page' => $sub_page,

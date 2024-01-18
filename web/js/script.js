@@ -486,6 +486,31 @@ $(document).ready(function() {
         }
     })
 
+    $('body').on('change','#payments-rate_id',function () {
+        let id = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url: '/documents/change-rates',
+            method: 'post',
+            datatype: 'json',
+            data: {
+                id: id,
+                _csrf: csrfToken
+            },
+            success: function (data) {
+                let param = JSON.parse(data)
+                console.log(param)
+                if (param == 'others') {
+                    // alert(2222)
+                    $('body').find('#payments-rate_value').attr('readonly', false);
+                    $('body').find('#payments-rate_value').val('');
+                }else if(param == 'amd'){
+                    $('body').find('#payments-rate_value').attr('readonly', true);
+                    $('body').find('#payments-rate_value').val(1);
+                }
+            }
+        })
+    })
 
 });
 

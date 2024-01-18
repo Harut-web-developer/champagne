@@ -17,6 +17,7 @@ $(document).ready(function () {
     var trs = {};
     $('body').on('click', '.createDocuments', function () {
         var documentsTableBody = '';
+        let n = 0;
         $('.documentsAddingTable tbody').html('')
         $('.documentsTableTr').each(function () {
             if ($(this).find(".documentsCountInput").val() != '') {
@@ -25,7 +26,10 @@ $(document).ready(function () {
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
                 trs[id.trim()] = `<tr class="tableDocuments oldTr">
-                                     <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
+                                     <td>
+                                        <span>` + id + `</span>
+                                        <input type="hidden" name="document_items[]" value="` + id + `">
+                                     </td>
                                      <td class="name">` + name + `</td>
                                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
                                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
@@ -33,7 +37,7 @@ $(document).ready(function () {
                                   </tr>`.trim();
             }
         })
-        console.log('createDocuments')
+        // console.log('createDocuments')
         for (let i in trs) {
             if(trs[i] != ''){
                 newTbody.append(trs[i]);
@@ -268,4 +272,30 @@ $(document).ready(function () {
             }
         })
     }
+    $('body').on('change','#documents-rate_id',function () {
+        let id = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url: '/documents/change-rates',
+            method: 'post',
+            datatype: 'json',
+            data: {
+                id: id,
+                _csrf: csrfToken
+            },
+            success: function (data) {
+                let param = JSON.parse(data)
+                console.log(param)
+                if (param == 'others') {
+                    // alert(2222)
+                    $('body').find('#documents-rate_value').attr('readonly', false);
+                    $('body').find('#documents-rate_value').val('');
+                }else if(param == 'amd'){
+                    $('body').find('#documents-rate_value').attr('readonly', true);
+                    $('body').find('#documents-rate_value').val(1);
+                }
+            }
+        })
+    })
+
 })

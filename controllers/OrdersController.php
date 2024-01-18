@@ -418,7 +418,7 @@ class OrdersController extends Controller
                 $res['count_discount_id'] = substr($count_discount_id,0,-1);
                 $res['format_before_price'] = $orders_price;
                 return json_encode($res);
-            }elseif ($nomenclatures_exist){
+            }elseif ($nomenclatures_exist && !$clients_exist){
                 $discount = Discount::find()->select('discount.*,discount_products.*')
                     ->leftJoin('discount_products','discount.id = discount_products.discount_id')
                     ->where(['and',['discount_products.status' => 1,'discount.status' => 1]])
@@ -648,7 +648,7 @@ class OrdersController extends Controller
                 $res['count_discount_id'] = substr($count_discount_id,0,-1);
                 $res['format_before_price'] = $orders_price;
                 return json_encode($res);
-            }elseif ($clients_exist){
+            }elseif ($clients_exist && !$nomenclatures_exist){
                 $discount = Discount::find()->select('discount.*,discount_clients.*')
                     ->leftJoin('discount_clients','discount.id = discount_clients.discount_id')
                     ->where(['and',['discount_clients.status' => 1,'discount.status' => 1]])
@@ -972,7 +972,7 @@ class OrdersController extends Controller
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
             ->groupBy('products.nomenclature_id')
-            ->orderBy(['products.created_at' => SORT_ASC])
+            ->orderBy(['products.created_at' => SORT_DESC])
             ->limit(10)
             ->asArray()
             ->all();
@@ -1157,7 +1157,7 @@ class OrdersController extends Controller
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
             ->groupBy('products.nomenclature_id')
-            ->orderBy(['products.created_at' => SORT_ASC])
+            ->orderBy(['products.created_at' => SORT_DESC])
             ->offset(0)
             ->limit(10)
             ->asArray()
