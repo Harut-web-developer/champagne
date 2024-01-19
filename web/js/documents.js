@@ -255,7 +255,6 @@ $(document).ready(function () {
                   </tr>`.trim();
             }
         })
-        // console.log('by_ajax')
     })
     function getNomDocument(href_) {
         let url_id = window.location.href;
@@ -287,7 +286,6 @@ $(document).ready(function () {
             },
             success: function (data) {
                 let param = JSON.parse(data)
-                console.log(param)
                 if (param == 'others') {
                     // alert(2222)
                     $('body').find('#documents-rate_value').attr('readonly', false);

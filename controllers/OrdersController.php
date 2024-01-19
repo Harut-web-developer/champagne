@@ -156,8 +156,6 @@ class OrdersController extends Controller
     }
     public function actionCreate()
     {
-//        echo "<pre>";
-
         $have_access = Users::checkPremission(21);
         if(!$have_access){
             $this->redirect('/site/403');
@@ -266,8 +264,9 @@ class OrdersController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionGetNomiclature(){
-
+//        var_dump('<pre>' . print_r($_GET, true) . '</pre>');
         $page = $_GET['paging'] ?? 1;
+        $urlId = intval($_POST['urlId']);
         $search_name = $_GET['nomenclature'] ?? false;
         $pageSize = 10;
         $offset = ($page-1) * $pageSize;
@@ -277,11 +276,11 @@ class OrdersController extends Controller
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
             ->groupBy('products.nomenclature_id')
-            ->orderBy(['products.created_at' => SORT_ASC]);
+            ->orderBy(['products.created_at' => SORT_DESC]);
         if ($search_name){
             $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
-                ->offset(0)
-                ->limit(10);
+                ->offset(0);
+//                ->limit(10);
             $total = $nomenclatures->count();
         }else{
             $total = $countQuery->where(['and',['products.status' => 1,'products.type' => 1]])->groupBy('products.nomenclature_id')->count();
@@ -291,10 +290,14 @@ class OrdersController extends Controller
         $nomenclatures = $nomenclatures
             ->asArray()
             ->all();
+//        $total = $countQuery->count() - count($document_items);
+        $id_count = $_POST['id_count'] ?? [];
         return $this->renderAjax('get-nom', [
             'nomenclatures' => $nomenclatures,
+            'id_count' => $id_count ,
             'total' => $total,
-            'search_name' => $search_name
+            'search_name' => $search_name,
+            'urlId' => $urlId,
         ]);
     }
     public function actionUpdate($id)
