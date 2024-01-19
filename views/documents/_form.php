@@ -131,7 +131,7 @@ if(isset($action__)){
                                 $itemsArray[] = $document_item['nom_id'];
                                 ?>
                                 <tr class="oldTr" id="tr_<?=$document_item['nom_id']?>">
-                                    <td><?=$keys + 1?><input type="hidden" name="document_items[]" value="<?=$document_item['id']?>">
+                                    <td><?=$keys + 1?><input type="hidden" name="document_items[]" value="<?=$document_item['nom_id']?>">
                                         <input class="itemsId" type="hidden" name="items[]" value="<?=$document_item['nom_id']?>">
 <!--                                        <input class="itemsId" type="hidden" name="nom_id[]" value="--><?php //=$document_item['nom_id']?><!--">-->
                                     </td>

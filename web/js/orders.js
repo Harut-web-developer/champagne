@@ -1,12 +1,29 @@
 $(document).ready(function () {
+    var id_count = {};
+    $('body').on('input', '.ordersCountInput', function () {
+        count_id($(this));
+    });
+    function count_id(el) {
+        let id = el.closest('tr').find('.prodId').data('id');
+        let count = el.val();
+        if (count) {
+            id_count[String(id).trim()] = parseInt(count.trim());
+        }else{
+            delete id_count[String(id).trim()];
+        }
+    }
+
     $('.js-example-basic-single').select2();
     $('body').on('change','#orders-orders_date, #singleClients',function(){
         if($('#orders-orders_date').val() != '' && $('#singleClients').val() != ''){
             $('body').find('.addOrders').attr('disabled',false);
         }
     })
-
+    var newTbody = $('<tbody></tbody>');
+    var trss = {};
     $('body').on('click','.create', function (e) {
+        var documentsTableBody = '';
+        let n = 0;
         let clientId = $('#singleClients').val();
         let totalSum = 0;
         let countSum = 0;
@@ -38,8 +55,6 @@ $(document).ready(function () {
                  let count = $(this).children('.ordersAddCount').find('.ordersCountInput').val();
                  let price = $(this).children('.ordersAddCount').find('.ordersPriceInput').val();
                  let cost = $(this).children('.ordersAddCount').find('.ordersCostInput').val();
-                 let aaa = '';
-                // console.log(id,nomenclature_id,name,count,price,cost,totalSum,countSum)
                 $.ajax({
                     url:'/orders/get-discount',
                     method:'post',
@@ -72,41 +87,41 @@ $(document).ready(function () {
                         ordersTotalPriceSum += Math.round(pars.price) * pars.count;
                         ordersTotalCount += pars.count;
                         totalDiscount += Math.round(pars.discount) * pars.count;
-                         aaa += `<tr class="tableNomenclature">
-                                     <td>
-                                        <span>`+sequenceNumber+`</span>
-                                        <input type="hidden" name="order_items[]" value="`+pars.product_id+`">
-                                        <input type="hidden" name="nomenclature_id[]" value="`+pars.nomenclature_id+`">
-                                        <input type="hidden" name="count_discount_id[]" value="`+pars.count_discount_id+`">
-                                        <input type="hidden" name="cost[]" value="`+pars.cost+`">
-                                     </td>
-                                     <td  class="name">`+pars.name+`</td>
-                                     <td class="count">
-                                        <input type="number" name="count_[]" value="`+pars.count+`" class="form-control countProduct">
-                                     </td>
-                                     <td class="discount">
-                                        <span>`+Math.round(pars.discount)+`</span>
-                                        <input type="hidden" name="discount[]" value="`+Math.round(pars.discount)+`">
-                                     </td>
-                                     <td class="beforePrice">
-                                        <span>`+Math.round(pars.format_before_price)+`</span>
-                                        <input type="hidden" name="beforePrice[]" value="`+Math.round(pars.format_before_price)+`">
-                                     </td>
-                                     <td class="price">
-                                        <span>`+Math.round(pars.price)+`</span>
-                                        <input type="hidden" name="price[]" value="`+Math.round(pars.price)+`">
-                                     </td>
-                                     <td class="totalBeforePrice">
-                                        <span>`+Math.round(pars.format_before_price) * pars.count+`</span>
-                                        <input type="hidden" name="totalBeforePrice[]" value="`+Math.round(pars.format_before_price) * pars.count+`">
-                                     </td>
-                                     <td class="totalPrice">
-                                        <span>`+Math.round(pars.price) * pars.count+`</span>
-                                        <input type="hidden" name="totalPrice[]" value="`+Math.round(pars.price) * pars.count+`">
-                                     </td>
-                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
-                                 </tr>`
-                        $('.ordersAddingTable tbody').parent().append(aaa);
+                        trss[pars.product_id] = `<tr class="tableNomenclature">
+                                                     <td>
+                                                        <span>`+sequenceNumber+`</span>
+                                                        <input type="hidden" name="order_items[]" value="`+pars.product_id+`">
+                                                        <input type="hidden" name="nomenclature_id[]" value="`+pars.nomenclature_id+`">
+                                                        <input type="hidden" name="count_discount_id[]" value="`+pars.count_discount_id+`">
+                                                        <input type="hidden" name="cost[]" value="`+pars.cost+`">
+                                                     </td>
+                                                     <td  class="name">`+pars.name+`</td>
+                                                     <td class="count">
+                                                        <input type="number" name="count_[]" value="`+pars.count+`" class="form-control countProduct">
+                                                     </td>
+                                                     <td class="discount">
+                                                        <span>`+Math.round(pars.discount)+`</span>
+                                                        <input type="hidden" name="discount[]" value="`+Math.round(pars.discount)+`">
+                                                     </td>
+                                                     <td class="beforePrice">
+                                                        <span>`+Math.round(pars.format_before_price)+`</span>
+                                                        <input type="hidden" name="beforePrice[]" value="`+Math.round(pars.format_before_price)+`">
+                                                     </td>
+                                                     <td class="price">
+                                                        <span>`+Math.round(pars.price)+`</span>
+                                                        <input type="hidden" name="price[]" value="`+Math.round(pars.price)+`">
+                                                     </td>
+                                                     <td class="totalBeforePrice">
+                                                        <span>`+Math.round(pars.format_before_price) * pars.count+`</span>
+                                                        <input type="hidden" name="totalBeforePrice[]" value="`+Math.round(pars.format_before_price) * pars.count+`">
+                                                     </td>
+                                                     <td class="totalPrice">
+                                                        <span>`+Math.round(pars.price) * pars.count+`</span>
+                                                        <input type="hidden" name="totalPrice[]" value="`+Math.round(pars.price) * pars.count+`">
+                                                     </td>
+                                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
+                                                 </tr>`;
+
                         ordersTableLength--;
                         if(ordersTableLength == 0){
                             uniquePairs.forEach((item,index) => {
@@ -129,8 +144,15 @@ $(document).ready(function () {
                 })
             }
         })
+        for (let i in trss) {
+            if(trss[i] != ''){
+                newTbody.append(trss[i]);
+            }
+        }
+        newTbody.append(documentsTableBody);
+        $('.ordersAddingTable tbody').replaceWith(newTbody);
     })
-        $('body').on('keyup','.countProduct', function (){
+    $('body').on('keyup','.countProduct', function (){
             let ordersTotalCount = 0;
             let ordersTotalPriceSum = 0;
             let ordersBeforTotalPriceSum = 0;
@@ -662,9 +684,6 @@ $(document).ready(function () {
                     }else if (pars.count === 'dontExists'){
                         alert('Նման ապրանք պահեստում գոյություն չունի')
                     }
-                    // else if(parse.count === 'exists'){
-                    //
-                    // }
                 }
             }
         })
@@ -680,22 +699,147 @@ $(document).ready(function () {
     $('body').on('click', '.by_ajax',function () {
         var href_ = $(this).attr('data-href');
         getNom(href_);
+        let clientId = $('#singleClients').val();
+        let totalSum = 0;
+        let countSum = 0;
+        $('.ordersAddingTable tbody').html('');
+        let orders_date = $('#orders-orders_date').val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        var ordersTotalPriceSum = 0;
+        var ordersTotalCount = 0;
+        var ordersBeforTotalPriceSum = 0;
+        var totalDiscount = 0;
+        var discount_desc = [];
+        var discountBody = '';
+        $('body').find('.loader').toggleClass('d-none');
+        $('body').find('.ordersAddingTable').addClass('d-none');
+        var ordersTableLength = 0;
+        var sequenceNumber = 0;
+        $('.addOrdersTableTr').each(function () {
+            if ($(this).find('.ordersCountInput').val() != '') {
+                countSum += parseInt($(this).children('.ordersAddCount').find('.ordersCountInput').val());
+                totalSum += parseInt($(this).children('.ordersAddCount').find('.ordersPriceInput').val()) * parseInt($(this).children('.ordersAddCount').find('.ordersCountInput').val());
+                ordersTableLength++;
+            }
+        })
+        $('.addOrdersTableTr').each(function () {
+            if ($(this).find('.ordersCountInput').val() != '') {
+                let id = $(this).find(".prodId").attr('data-id');
+                let nomenclature_id = $(this).find('.nomId').data('product');
+                let name = $(this).children(".nomenclatureName").text();
+                let count = $(this).children('.ordersAddCount').find('.ordersCountInput').val();
+                let price = $(this).children('.ordersAddCount').find('.ordersPriceInput').val();
+                let cost = $(this).children('.ordersAddCount').find('.ordersCostInput').val();
+                let aaa = '';
+                // console.log(id,nomenclature_id,name,count,price,cost,totalSum,countSum)
+                $.ajax({
+                    url:'/orders/get-discount',
+                    method:'post',
+                    datatype:'json',
+                    data:{
+                        clientId:clientId,
+                        product_id: id,
+                        nomenclature_id:nomenclature_id,
+                        name:name,
+                        count:count,
+                        price:price,
+                        cost:cost,
+                        orders_date:orders_date,
+                        totalSum:totalSum,
+                        countSum:countSum,
+                        _csrf:csrfToken
+                    },
+                    success:function (data) {
+                        let pars = JSON.parse(data);
+                        if (pars.discount_desc != undefined){
+                            discount_desc.push(pars.discount_desc);
+                        }
+                        let uniquePairs = [...new Set(discount_desc.flat().map(item => item.id))].map(id => {
+                            let matchingItems = discount_desc.flat().filter(item => item.id === id);
+                            let uniqueName = [...new Set(matchingItems.map(item => item.name))];
+                            return [id, uniqueName[0]];
+                        });
+                        sequenceNumber++;
+                        ordersBeforTotalPriceSum += Math.round(pars.format_before_price) * pars.count;
+                        ordersTotalPriceSum += Math.round(pars.price) * pars.count;
+                        ordersTotalCount += pars.count;
+                        totalDiscount += Math.round(pars.discount) * pars.count;
+                        trss[pars.product_id] = `<tr class="tableNomenclature">
+                                     <td>
+                                        <span>`+sequenceNumber+`</span>
+                                        <input type="hidden" name="order_items[]" value="`+pars.product_id+`">
+                                        <input type="hidden" name="nomenclature_id[]" value="`+pars.nomenclature_id+`">
+                                        <input type="hidden" name="count_discount_id[]" value="`+pars.count_discount_id+`">
+                                        <input type="hidden" name="cost[]" value="`+pars.cost+`">
+                                     </td>
+                                     <td  class="name">`+pars.name+`</td>
+                                     <td class="count">
+                                        <input type="number" name="count_[]" value="`+pars.count+`" class="form-control countProduct">
+                                     </td>
+                                     <td class="discount">
+                                        <span>`+Math.round(pars.discount)+`</span>
+                                        <input type="hidden" name="discount[]" value="`+Math.round(pars.discount)+`">
+                                     </td>
+                                     <td class="beforePrice">
+                                        <span>`+Math.round(pars.format_before_price)+`</span>
+                                        <input type="hidden" name="beforePrice[]" value="`+Math.round(pars.format_before_price)+`">
+                                     </td>
+                                     <td class="price">
+                                        <span>`+Math.round(pars.price)+`</span>
+                                        <input type="hidden" name="price[]" value="`+Math.round(pars.price)+`">
+                                     </td>
+                                     <td class="totalBeforePrice">
+                                        <span>`+Math.round(pars.format_before_price) * pars.count+`</span>
+                                        <input type="hidden" name="totalBeforePrice[]" value="`+Math.round(pars.format_before_price) * pars.count+`">
+                                     </td>
+                                     <td class="totalPrice">
+                                        <span>`+Math.round(pars.price) * pars.count+`</span>
+                                        <input type="hidden" name="totalPrice[]" value="`+Math.round(pars.price) * pars.count+`">
+                                     </td>
+                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
+                                 </tr>`
+                        // $('.ordersAddingTable tbody').parent().append(aaa);
+                        console.log(trss[pars.product_id])
+                        ordersTableLength--;
+                        if(ordersTableLength == 0){
+                            uniquePairs.forEach((item,index) => {
+                                discountBody += `<tr>
+                                                     <td>`+(parseInt(index) + 1) +`</td>
+                                                     <td>`+item[1]+`</td>
+                                                     <td>`+item[0]+`</td>
+                                                </tr>`
+                            })
+                            $('.discountDesc tbody').parent().append(discountBody);
+
+                            $('body').find('.ordersAddingTable').removeClass('d-none');
+                            $('body').find('.loader').toggleClass('d-none');
+                            $('body').find('#orders-total_price').val(Math.round(ordersTotalPriceSum));
+                            $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
+                            $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
+                            $('body').find('#orders-total_discount').val(Math.round(totalDiscount));
+                        }
+                    }
+                })
+            }
+        })
+        console.log("ajaxsaaaaaaaaa")
     })
     function getNom(href_) {
+        let url_id = window.location.href;
+        let url = new URL(url_id);
+        let urlId = url.searchParams.get("id");
         $.ajax({
             url:href_,
-            method:'get',
+            method:'post',
             datatype:'html',
+            data:{
+                id_count:id_count,
+                urlId: urlId,
+            },
             success:function (data) {
                 $('#ajax_content').html(data);
             }
         })
 
     }
-
-
-
-
-
-
 })
