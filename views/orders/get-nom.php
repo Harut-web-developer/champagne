@@ -44,9 +44,7 @@
     </div>
 </div>
 
-<?php $page = @$_GET['paging'] ?? 1;
-//        var_dump('<pre>' . print_r($_GET,true) . '</pre>');exit();
-?>
+<?php $page = @$_GET['paging'] ?? 1; ?>
 <?php  $count = intval(ceil($total/10)) ;
 if (@$_GET['nomenclature'] != ''){
     $count = 1 ;

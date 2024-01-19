@@ -149,6 +149,7 @@ $(document).ready(function () {
                 newTbody.append(trss[i]);
             }
         }
+        console.log(newTbody)
         newTbody.append(documentsTableBody);
         $('.ordersAddingTable tbody').replaceWith(newTbody);
     })
@@ -277,7 +278,6 @@ $(document).ready(function () {
                 let count = $(this).children('.ordersAddCount').find('.ordersCountInput').val();
                 let price = $(this).children('.ordersAddCount').find('.ordersPriceInput').val();
                 let cost = $(this).children('.ordersAddCount').find('.ordersCostInput').val();
-                console.log(id,nomenclature_id,name,count,price,cost,totalSum,countSum)
                 $.ajax({
                     url:'/orders/get-discount',
                     method:'post',
@@ -730,8 +730,6 @@ $(document).ready(function () {
                 let count = $(this).children('.ordersAddCount').find('.ordersCountInput').val();
                 let price = $(this).children('.ordersAddCount').find('.ordersPriceInput').val();
                 let cost = $(this).children('.ordersAddCount').find('.ordersCostInput').val();
-                let aaa = '';
-                // console.log(id,nomenclature_id,name,count,price,cost,totalSum,countSum)
                 $.ajax({
                     url:'/orders/get-discount',
                     method:'post',
@@ -799,7 +797,7 @@ $(document).ready(function () {
                                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                  </tr>`
                         // $('.ordersAddingTable tbody').parent().append(aaa);
-                        console.log(trss[pars.product_id])
+                        // console.log(trss[pars.product_id])
                         ordersTableLength--;
                         if(ordersTableLength == 0){
                             uniquePairs.forEach((item,index) => {

@@ -225,14 +225,16 @@ class OrdersController extends Controller
         $query = Products::find();
         $countQuery = clone $query;
         $total = $countQuery->where(['and',['products.status' => 1,'products.type' => 1]])->groupBy('products.nomenclature_id')->count();
+
         $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
-            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
-            ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
-            ->groupBy('products.nomenclature_id')
+            ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
+            ->where(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
             ->orderBy(['products.created_at' => SORT_DESC])
+            ->groupBy('nomenclature_id')
             ->limit(10)
             ->asArray()
             ->all();
+
         $clients = Clients::find()->select('id, name')->where(['=','status',1])->asArray()->all();
         $session = Yii::$app->session;
         if($session['role_id'] == 1){
@@ -264,7 +266,6 @@ class OrdersController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionGetNomiclature(){
-//        var_dump('<pre>' . print_r($_GET, true) . '</pre>');
         $page = $_GET['paging'] ?? 1;
         $urlId = intval($_POST['urlId']);
         $search_name = $_GET['nomenclature'] ?? false;
@@ -272,11 +273,16 @@ class OrdersController extends Controller
         $offset = ($page-1) * $pageSize;
         $query = Products::find();
         $countQuery = clone $query;
+        $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')
+            ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
+            ->where(['document_items.document_id' => $urlId])
+            ->asArray()
+            ->all();
         $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
-            ->groupBy('products.nomenclature_id')
-            ->orderBy(['products.created_at' => SORT_DESC]);
+            ->orderBy(['products.created_at' => SORT_DESC])
+            ->groupBy('nomenclature_id');
         if ($search_name){
             $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
                 ->offset(0);
@@ -290,6 +296,14 @@ class OrdersController extends Controller
         $nomenclatures = $nomenclatures
             ->asArray()
             ->all();
+//        $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
+//            ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
+//            ->where(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
+//            ->orderBy(['products.created_at' => SORT_DESC])
+//            ->groupBy('nomenclature.id') // Group by nomenclature.id to get distinct records
+//            ->limit(10)
+//            ->asArray()
+//            ->all();
 //        $total = $countQuery->count() - count($document_items);
         $id_count = $_POST['id_count'] ?? [];
         return $this->renderAjax('get-nom', [
