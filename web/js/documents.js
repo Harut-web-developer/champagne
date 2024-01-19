@@ -12,32 +12,31 @@ $(document).ready(function () {
             delete id_count[String(id).trim()];
         }
     }
-
+    var n = 0;
     var newTbody = $('<tbody></tbody>');
     var trs = {};
     $('body').on('click', '.createDocuments', function () {
         var documentsTableBody = '';
-        let n = 0;
         $('.documentsAddingTable tbody').html('')
         $('.documentsTableTr').each(function () {
             if ($(this).find(".documentsCountInput").val() != '') {
+                n++
                 let id = $(this).find(".nom_id").attr('data-id');
                 let name = $(this).children(".documentsName").text();
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
-                trs[id.trim()] = `<tr class="tableDocuments oldTr">
+                trs[n] = `<tr class="tableDocuments oldTr">
                                      <td>
-                                        <span>` + id + `</span>
+                                        <span>` + n + `</span>
                                         <input type="hidden" name="document_items[]" value="` + id + `">
                                      </td>
                                      <td class="name">` + name + `</td>
                                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
                                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
-                                  </tr>`.trim();
+                                  </tr>`;
             }
         })
-        // console.log('createDocuments')
         for (let i in trs) {
             if(trs[i] != ''){
                 newTbody.append(trs[i]);
@@ -64,23 +63,28 @@ $(document).ready(function () {
     $('body').on('click', '.updateDocuments', function () {
         var documentsTableBody = '';
         documentsCountInputReadOnly();
+        if ($('.documentsAddingTable tbody') != ''){
+            n = parseInt($('.fromDb').last().find('.acordingNumber').text());
+        }
         $('.documentsAddingTable tbody').html('')
         $('.documentsTableTr').each(function () {
             if ($(this).find(".documentsCountInput").val() != '') {
+                n++;
                 let nom_id = $(this).find(".nom_id").attr('data-id');
                 let name = $(this).children(".documentsName").text();
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
-                trs[nom_id.trim()] = `<tr class="tableDocuments oldTr">
-                                         <td> `+ nom_id +`
-                                          <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
-                                          <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
+                trs[n] = `<tr class="tableDocuments oldTr">
+                                         <td>
+                                            <span>`+ n +`</span> 
+                                            <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
+                                            <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
                                          <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
                                          <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                          <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
-                                      </tr>`.trim();
+                                      </tr>`;
             }
         })
         newTbody.append(old_table);
@@ -130,7 +134,6 @@ $(document).ready(function () {
                                       </tr>`.trim();
             }
         })
-        console.log('by_ajax_update')
 
     })
 
@@ -196,7 +199,6 @@ $(document).ready(function () {
                   </tr>`.trim();
             }
         })
-        console.log('searchForDocument')
     })
 
     var arr_carent_page_update = [];
@@ -232,7 +234,6 @@ $(document).ready(function () {
                                       </tr>`.trim();
             }
         })
-        console.log('searchForDocumentUpdate')
     })
 
     $('body').on('click', '.by_ajax', function () {
@@ -240,12 +241,13 @@ $(document).ready(function () {
         getNomDocument(href_);
         $('.documentsTableTr').each(function () {
             if ($(this).find(".documentsCountInput").val() != '') {
+                n++
                 let id = $(this).find(".nom_id").attr('data-id');
                 let name = $(this).children(".documentsName").text();
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
-                trs[id.trim()] = `<tr class="tableDocuments oldTr">
-                     <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
+                trs[n] = `<tr class="tableDocuments oldTr">
+                     <td>` + n + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
                      <td class="name">` + name + `</td>
                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
@@ -253,7 +255,7 @@ $(document).ready(function () {
                   </tr>`.trim();
             }
         })
-        console.log('by_ajax')
+        // console.log('by_ajax')
     })
     function getNomDocument(href_) {
         let url_id = window.location.href;

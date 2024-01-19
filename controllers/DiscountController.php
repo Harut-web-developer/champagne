@@ -199,6 +199,16 @@ class DiscountController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model = Discount::getDefVals($model);
+            if(!empty($post['clients']) && !empty($post['products'])){
+                $model->discount_available_type = 3;
+            }elseif(!empty($post['clients']) && empty($post['products'])){
+                $model->discount_available_type = 1;
+            }elseif(empty($post['clients']) && !empty($post['products'])){
+                $model->discount_available_type = 2;
+            }elseif (empty($post['clients']) && empty($post['products'])){
+                $model->discount_available_type = 4;
+            }
+
             $model->save();
             if(!empty($post['clients'])){
                 $client_groups_id = [];
@@ -344,6 +354,15 @@ class DiscountController extends Controller
             }
             $model->comment = $post["Discount"]['comment'];
             $model->updated_at = date('Y-m-d H:i:s');
+            if(!empty($post['clients']) && !empty($post['products'])){
+                $model->discount_available_type = 3;
+            }elseif(!empty($post['clients']) && empty($post['products'])){
+                $model->discount_available_type = 1;
+            }elseif(empty($post['clients']) && !empty($post['products'])){
+                $model->discount_available_type = 2;
+            }elseif (empty($post['clients']) && empty($post['products'])){
+                $model->discount_available_type = 4;
+            }
             $model->save();
             if(!empty($post['clients'])){
                 $client_groups_id = [];
