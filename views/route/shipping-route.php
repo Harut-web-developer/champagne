@@ -101,7 +101,7 @@ $this->params['date_tab'] = $date_tab;
                                 console.log(latitude, longitude, latitude1, longitude2)
                                 distance = getDistanceFromLatLonInKm(latitude, longitude, latitude1, longitude2).toFixed(1);
                                 console.log(distance)
-                                if (distance < 1000) {
+                                if (distance < 300) {
                                     var csrfToken = $('meta[name="csrf-token"]').attr("content");
                                     var coord_id = data['coordinatesUser'][d]['id'];
                                     visit++;
@@ -169,20 +169,19 @@ $this->params['date_tab'] = $date_tab;
                                 params: {
                                     routingMode: 'masstransit',
                                 },
-                            }, {
-                                routeStrokeColor: 'rgba(255,0,0,0.5)',
-                                routeActiveStrokeColor: 'rgba(255,0,0,0.5)',
-                                wayPointStartIconColor: 'rgba(255,0,0,0.5)',
-                                wayPointFinishIconColor: 'rgba(255,0,0,0.5)',
-                                routeMarkerIconColor: 'rgba(255,0,0,0.5)',
                             });
-
                         }
                         var multiRoute = new ymaps.multiRouter.MultiRoute({
                             referencePoints: arr,
                             params: {
                                 routingMode: 'masstransit',
-                            }
+                            },
+                        },{
+                            routeStrokeColor: 'rgb(255,0,0)',
+                            routeActiveStrokeColor: 'rgb(255,0,0)',
+                            wayPointStartIconColor: 'rgba(255,0,0,0.5)',
+                            wayPointFinishIconColor: 'rgb(255,0,0)',
+                            routeMarkerIconColor: 'rgb(255,0,0)',
                         });
                         $('#map').html('');
                         var myMap = new ymaps.Map('map', {

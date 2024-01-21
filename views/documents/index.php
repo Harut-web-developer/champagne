@@ -80,6 +80,8 @@ if ($have_access_update && $have_access_delete){
         ]),
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+
+            'id',
             [
                 'attribute' => 'Օգտատեր',
                 'value' => function ($model) {

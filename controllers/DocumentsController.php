@@ -202,9 +202,10 @@ class DocumentsController extends Controller
             ->leftJoin('products','nomenclature.id = products.nomenclature_id')
             ->offset(0)
             ->groupBy('nomenclature.id')
-            ->orderBy(['nomenclature.id'=> SORT_DESC])
             ->limit(10)
-            ->asArray()->all();
+            ->orderBy(['nomenclature.id'=> SORT_DESC])
+            ->asArray()
+            ->all();
         return $this->render('create', [
             'model' => $model,
             'users' => $users,
@@ -245,7 +246,6 @@ class DocumentsController extends Controller
             'model' => $model,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
         ]);
     }
 
@@ -263,25 +263,7 @@ class DocumentsController extends Controller
         $pageSize = 10;
         $offset = ($page-1) * $pageSize;
         $query = Nomenclature::find();
-
         $countQuery = clone $query;
-//        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
-//        nomenclature.cost,products.id as products_id,products.count')
-//            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
-//            ->groupBy('nomenclature.id');
-//                if ($search_name){
-//                    $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
-//                        ->offset(0);
-////                        ->limit(10);
-//                    $total = $nomenclatures->count();
-//                }else{
-//                    $total = $countQuery->count();
-//                    $nomenclatures->offset($offset)
-//                        ->limit($pageSize);
-//                }
-//        $nomenclatures = $nomenclatures
-//            ->asArray()
-//            ->all();
         $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')
             ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
             ->where(['document_items.document_id' => $urlId])
@@ -292,7 +274,6 @@ class DocumentsController extends Controller
                 if ($search_name){
                     $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
                         ->offset(0);
-//                        ->limit(10);
                 }else{
                     $nomenclatures->offset($offset)
                         ->limit($pageSize);
@@ -301,7 +282,6 @@ class DocumentsController extends Controller
             ->orderBy(['nomenclature.id'=> SORT_DESC])
             ->asArray()
             ->all();
-
         $total = $countQuery->count() - count($document_items);
         $id_count = $_POST['id_count'] ?? [];
         return $this->renderAjax('get-nom', [
@@ -396,22 +376,15 @@ class DocumentsController extends Controller
         $rates = ArrayHelper::map($rates,'id','name');
         $query = Nomenclature::find();
         $countQuery = clone $query;
-//        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
-//        nomenclature.cost,products.id as products_id,products.count,')
-//            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
-//            ->offset(0)
-//            ->groupBy('nomenclature.id')
-//            ->limit(10)
-//            ->asArray()->all();
         $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')
             ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
             ->where(['document_items.document_id' => $id])
             ->asArray()->all();
 
         $nomenclatures = $query->where(['not in','id' , array_column($document_items,'nomenclature_id')])
-            ->orderBy(['nomenclature.id'=> SORT_DESC])
             ->offset(0)
             ->limit(10)
+            ->orderBy(['nomenclature.id'=> SORT_DESC])
             ->asArray()
             ->all();
         $total = $countQuery->count() - count($document_items);
@@ -449,7 +422,7 @@ class DocumentsController extends Controller
             ->where(['id' => 39])
             ->asArray()
             ->one();
-//        echo "<pre>";
+        echo "<pre>";
         $oldattributes = Documents::find()
             ->select(['users.id', 'users.name', 'users.username'])
             ->leftJoin('users', 'users.id = documents.user_id')
@@ -478,16 +451,6 @@ class DocumentsController extends Controller
         }
     }
 
-    public function actionChangeRates(){
-        if ($this->request->isPost){
-            $id = $this->request->post('id');
-            if ($id != 1){
-                return json_encode('others');
-            }else{
-                return json_encode('amd');
-            }
-        }
-    }
 //    public function actionSearch(){
 //        if ($this->request->isPost){
 //            $nom = $this->request->post('nomenclature');
@@ -517,5 +480,16 @@ class DocumentsController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionChangeRates(){
+        if ($this->request->isPost){
+            $id = $this->request->post('id');
+            if ($id != 1){
+                return json_encode('others');
+            }else{
+                return json_encode('amd');
+            }
+        }
     }
 }

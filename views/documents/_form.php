@@ -52,7 +52,6 @@ if(isset($action__)){
                     </div>
                 </div>
 
-
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <label for="aah">ԱԱՀ</label>
                     <select class="form-control" name="aah" id="aah">
@@ -130,10 +129,8 @@ if(isset($action__)){
                             foreach ($document_items as $keys => $document_item){
                                 $itemsArray[] = $document_item['nom_id'];
                                 ?>
-                                <tr class="oldTr fromDb" id="tr_<?=$document_item['nom_id']?>">
-                                    <td>
-                                        <span class="acordingNumber"><?=$keys + 1?></span>
-                                        <input type="hidden" name="document_items[]" value="<?=$document_item['id']?>">
+                                <tr class="oldTr" id="tr_<?=$document_item['nom_id']?>">
+                                    <td><?=$keys + 1?><input type="hidden" name="document_items[]" value="<?=$document_item['id']?>">
                                         <input class="itemsId" type="hidden" name="items[]" value="<?=$document_item['nom_id']?>">
 <!--                                        <input class="itemsId" type="hidden" name="nom_id[]" value="--><?php //=$document_item['nom_id']?><!--">-->
                                     </td>
@@ -175,11 +172,7 @@ if(isset($action__)){
                                                 </thead>
                                                 <tbody class="table-border-bottom-0 tbody_">
                                                 <?php
-                                                foreach ($nomenclatures as $keys => $nomenclature){
-//                                                    if(in_array($nomenclature['id'],$itemsArray)){
-//                                                        continue;
-//                                                    }
-                                                    ?>
+                                                foreach ($nomenclatures as $keys => $nomenclature){?>
                                                     <tr class="documentsTableTr">
                                                         <td><?=$keys + 1?></td>
                                                         <input class="nom_id" data-id="<?=$nomenclature['id']?>" type="hidden">
@@ -257,11 +250,12 @@ if(isset($action__)){
                 <label class="rateLabel" for="rate">Փոխարժեք</label>
                 <div id="rate" class="form-group col-md-12 col-lg-12 col-sm-12 rateDocument">
                     <div class="rateType">
-                        <?= $form->field($model, 'rate_id')->dropDownList($rates, ['options' => [1 => ['selected' => true]]])->label(false) ?>
+                        <?= $form->field($model, 'rate_id')->dropDownList($rates)->label(false) ?>
                     </div>
                     <div class="rateValue">
                         <?= $form->field($model, 'rate_value')->input('number', ['required' => true,'value' => 1, 'readonly' => true])->label(false) ?>
                     </div>
+
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <label for="aah">ԱԱՀ</label>
@@ -270,6 +264,7 @@ if(isset($action__)){
                         <option value="false">0%</option>
                     </select>
                 </div>
+
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
                 </div>
