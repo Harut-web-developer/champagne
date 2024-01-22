@@ -39,38 +39,38 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                 </tr>
                 </tbody>
             </table>
-    <?php if (!empty($order_items)) {?>
-    <h1>Վաճառքի ցուցակ</h1>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>ԱՆՈՒՆ</th>
-                <th>ՔԱՆԱԿ</th>
-                <th>ԶԵՂՉ</th>
-                <th>ԳԻՆԸ ՄԻՆՉԵՒ ԶԵՂՉԵԼԸ</th>
-                <th>ԶԵՂՉՎԱԾ ԳԻՆ</th>
-                <th>ԸՆԴՀԱՆՈՒՐ ԳՈՒՄԱՐ</th>
-                <th>ԸՆԴՀԱՆՈՒՐ ԶԵՂՉՎԱԾ ԳՈՒՄԱՐ</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php
-            for ($i=0; $i<count($order_items); $i++){ ?>
-            <tr>
-                <td><?=$i; ?></td>
-                <td><?=$order_items[$i]['name']; ?></td>
-                <td><?=$order_items[$i]['count']; ?></td>
-                <td><?=$order_items[$i]['discount']/$order_items[$i]['count']; ?></td>
-                <td><?=$order_items[$i]['beforePrice']; ?></td>
-                <td><?=$order_items[$i]['price']; ?></td>
-                <td><?=$order_items[$i]['totalBeforePrice']; ?></td>
-                <td><?=$order_items[$i]['total_price']; ?></td>
-<!--                <td>--><?php //=$order_items[$i]['count']*$order_items[$i]['price']; ?><!--</td>-->
-            </tr>
-            <?php } ?>
-            </tbody>
-        </table>
+            <?php if (!empty($order_items)) {?>
+            <h1>Վաճառքի ցուցակ</h1>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ԱՆՈՒՆ</th>
+                    <th>ՔԱՆԱԿ</th>
+                    <th>ԶԵՂՉ</th>
+                    <th>ԳԻՆԸ ՄԻՆՉԵՒ ԶԵՂՉԵԼԸ</th>
+                    <th>ԶԵՂՉՎԱԾ ԳԻՆ</th>
+                    <th>ԸՆԴՀԱՆՈՒՐ ԳՈՒՄԱՐ</th>
+                    <th>ԸՆԴՀԱՆՈՒՐ ԶԵՂՉՎԱԾ ԳՈՒՄԱՐ</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                for ($i=0; $i<count($order_items); $i++){ ?>
+                    <tr>
+                        <td><?=$i; ?></td>
+                        <td><?=$order_items[$i]['name']; ?></td>
+                        <td><?=$order_items[$i]['count']; ?></td>
+                        <td><?=$order_items[$i]['discount']/$order_items[$i]['count']; ?></td>
+                        <td><?=$order_items[$i]['beforePrice']; ?></td>
+                        <td><?=$order_items[$i]['price']; ?></td>
+                        <td><?=$order_items[$i]['totalBeforePrice']; ?></td>
+                        <td><?=$order_items[$i]['total_price']; ?></td>
+                        <!--                <td>--><?php //=$order_items[$i]['count']*$order_items[$i]['price']; ?><!--</td>-->
+                    </tr>
+                <?php } ?>
+                </tbody>
+            </table>
         </div>
     </div>
     <?php }?>
