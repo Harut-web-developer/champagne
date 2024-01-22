@@ -241,14 +241,18 @@ $session = Yii::$app->session;
                                         <tr>
                                             <td><?=$n?></td>
                                             <td><?=$item['name']?></td>
-                                            <td><?=$item['discount']?></td>
+                                            <td>
+                                            <?php
+                                                if ($item['type'] == 'percent'){
+                                                        echo $item['discount'].' %';
+                                                }else{
+                                                    echo $item['discount'].' դր․';
+                                                }
+                                                ?>
+                                            </td>
                                         </tr>
                                         <?php
                                     }
-
-//                                    if ($item['id'] == $value){
-
-//                                    }
                                 }
 //                            }
                             ?>
