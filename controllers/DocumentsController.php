@@ -203,7 +203,9 @@ class DocumentsController extends Controller
             ->offset(0)
             ->groupBy('nomenclature.id')
             ->limit(10)
-            ->asArray()->all();
+            ->orderBy(['nomenclature.id'=> SORT_DESC])
+            ->asArray()
+            ->all();
         return $this->render('create', [
             'model' => $model,
             'users' => $users,
@@ -244,7 +246,6 @@ class DocumentsController extends Controller
             'model' => $model,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
         ]);
     }
 
@@ -263,23 +264,6 @@ class DocumentsController extends Controller
         $offset = ($page-1) * $pageSize;
         $query = Nomenclature::find();
         $countQuery = clone $query;
-//        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
-//        nomenclature.cost,products.id as products_id,products.count')
-//            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
-//            ->groupBy('nomenclature.id');
-//                if ($search_name){
-//                    $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
-//                        ->offset(0);
-////                        ->limit(10);
-//                    $total = $nomenclatures->count();
-//                }else{
-//                    $total = $countQuery->count();
-//                    $nomenclatures->offset($offset)
-//                        ->limit($pageSize);
-//                }
-//        $nomenclatures = $nomenclatures
-//            ->asArray()
-//            ->all();
         $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')
             ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
             ->where(['document_items.document_id' => $urlId])
@@ -290,12 +274,12 @@ class DocumentsController extends Controller
                 if ($search_name){
                     $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
                         ->offset(0);
-//                        ->limit(10);
                 }else{
                     $nomenclatures->offset($offset)
                         ->limit($pageSize);
                 }
         $nomenclatures = $nomenclatures
+            ->orderBy(['nomenclature.id'=> SORT_DESC])
             ->asArray()
             ->all();
         $total = $countQuery->count() - count($document_items);
@@ -392,13 +376,6 @@ class DocumentsController extends Controller
         $rates = ArrayHelper::map($rates,'id','name');
         $query = Nomenclature::find();
         $countQuery = clone $query;
-//        $nomenclatures = $query->select('nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.price,
-//        nomenclature.cost,products.id as products_id,products.count,')
-//            ->leftJoin('products','nomenclature.id = products.nomenclature_id')
-//            ->offset(0)
-//            ->groupBy('nomenclature.id')
-//            ->limit(10)
-//            ->asArray()->all();
         $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')
             ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
             ->where(['document_items.document_id' => $id])
@@ -407,6 +384,7 @@ class DocumentsController extends Controller
         $nomenclatures = $query->where(['not in','id' , array_column($document_items,'nomenclature_id')])
             ->offset(0)
             ->limit(10)
+            ->orderBy(['nomenclature.id'=> SORT_DESC])
             ->asArray()
             ->all();
         $total = $countQuery->count() - count($document_items);
@@ -502,5 +480,16 @@ class DocumentsController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionChangeRates(){
+        if ($this->request->isPost){
+            $id = $this->request->post('id');
+            if ($id != 1){
+                return json_encode('others');
+            }else{
+                return json_encode('amd');
+            }
+        }
     }
 }

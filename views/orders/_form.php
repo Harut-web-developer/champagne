@@ -235,19 +235,24 @@ $session = Yii::$app->session;
                                     if (!in_array($item['id'],$numericValuesOnly)){
                                         continue;
                                     }else{
+
                                         $n++;
                                         ?>
                                         <tr>
                                             <td><?=$n?></td>
                                             <td><?=$item['name']?></td>
-                                            <td><?=$item['discount']?></td>
+                                            <td>
+                                            <?php
+                                                if ($item['type'] == 'percent'){
+                                                        echo $item['discount'].' %';
+                                                }else{
+                                                    echo $item['discount'].' դր․';
+                                                }
+                                                ?>
+                                            </td>
                                         </tr>
                                         <?php
                                     }
-
-//                                    if ($item['id'] == $value){
-
-//                                    }
                                 }
 //                            }
                             ?>
@@ -349,7 +354,7 @@ $session = Yii::$app->session;
                     </div>
                 </div>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn rounded-pill btn-secondary addOrders" disabled data-bs-toggle="modal" data-bs-target="#largeModal">Ավելացնել ապրանք</button>
+                <button type="button" class="btn rounded-pill btn-secondary addOrders" data-bs-toggle="modal" data-bs-target="#largeModal">Ավելացնել ապրանք</button>
                 <!-- Modal -->
                 <div class="modal fade" id="largeModal" tabindex="-1" style="display: none;" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">
@@ -358,68 +363,69 @@ $session = Yii::$app->session;
                                 <h5 class="modal-title" id="exampleModalLabel3">Ապրանքացուցակ</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body" id="ajax_content">
+                            <div class="modal-body">
                                 <input class="form-control col-md-3 mb-3 searchForOrder" type="search" placeholder="Որոնել...">
-                                <div class="card">
-                                    <div class="table-responsive text-nowrap">
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Նկար</th>
-                                                <th>Անուն</th>
-                                                <th>Քանակ</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody class="table-border-bottom-0 tbody_">
-                                            <?php
-                                            foreach ($nomenclatures as $keys => $nomenclature){
-                                                ?>
-                                                <tr class="addOrdersTableTr">
-                                                    <td>
-                                                        <span><?=$keys + 1?></span>
-                                                        <input class="prodId" data-id="<?=$nomenclature['id']?>" type="hidden">
-                                                        <input class="nomId" data-product="<?=$nomenclature['nomenclature_id']?>" type="hidden">
-                                                    </td>
-                                                    <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
-                                                    <td class="nomenclatureName"><?=$nomenclature['name']?></td>
-                                                    <td class="ordersAddCount">
-                                                        <input type="number" class="form-control ordersCountInput">
-                                                        <input class="ordersPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
-                                                        <input class="ordersCostInput" type="hidden" value="<?=$nomenclature['cost']?>">
-                                                    </td>
+                                <div id="ajax_content">
+                                    <div class="card">
+                                        <div class="table-responsive text-nowrap">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Նկար</th>
+                                                    <th>Անուն</th>
+                                                    <th>Քանակ</th>
                                                 </tr>
+                                                </thead>
+                                                <tbody class="table-border-bottom-0 tbody_">
                                                 <?php
-                                            }
-                                            ?>
-                                            </tbody>
-                                        </table>
+                                                foreach ($nomenclatures as $keys => $nomenclature){
+                                                    ?>
+                                                    <tr class="addOrdersTableTr">
+                                                        <td>
+                                                            <span><?=$keys + 1?></span>
+                                                            <input class="prodId" data-id="<?=$nomenclature['id']?>" type="hidden">
+                                                            <input class="nomId" data-product="<?=$nomenclature['nomenclature_id']?>" type="hidden">
+                                                        </td>
+                                                        <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
+                                                        <td class="nomenclatureName"><?=$nomenclature['name']?></td>
+                                                        <td class="ordersAddCount">
+                                                            <input type="number" class="form-control ordersCountInput">
+                                                            <input class="ordersPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
+                                                            <input class="ordersCostInput" type="hidden" value="<?=$nomenclature['cost']?>">
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                                ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
-                                <?php $page = @$_GET['paging'] ?? 1; ?>
-                                <?php  $count = intval(ceil($total/10)) ; ?>
-                                 <nav aria-label="Page navigation example" class="pagination">
-                                    <ul class="pagination pagination-sm">
-                                        <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
-                                            <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
-                                        </li>
-                                        <?php for ($i = 1;$i <= $count; $i++){ ?>
-                                            <?php if($i > 0 && $i <= $count+1){ ?>
-                                            <li class="page-item <?= ($page==$i) ? 'active' : '' ?>">
-                                                <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $i ?>"><?= $i ?>
-                                                </a>
+                                    <?php $page = @$_GET['paging'] ?? 1; ?>
+                                    <?php  $count = intval(ceil($total/10)) ; ?>
+                                     <nav aria-label="Page navigation example" class="pagination">
+                                        <ul class="pagination pagination-sm">
+                                            <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
+                                                <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
+                                            </li>
+                                            <?php for ($i = 1;$i <= $count; $i++){ ?>
+                                                <?php if($i > 0 && $i <= $count+1){ ?>
+                                                <li class="page-item <?= ($page==$i) ? 'active' : '' ?>">
+                                                    <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $i ?>"><?= $i ?>
+                                                    </a>
+                                                </li>
+                                                <?php } ?>
+                                            <?php } ?>
+
+                                            <?php if(intval($page) < $count){ ?>
+                                            <li class="page-item next">
+                                                <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
                                             </li>
                                             <?php } ?>
-                                        <?php } ?>
-
-                                        <?php if(intval($page) < $count){ ?>
-                                        <li class="page-item next">
-                                            <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
-                                        </li>
-                                        <?php } ?>
-                                    </ul>
-                                </nav>
-
+                                        </ul>
+                                    </nav>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn rounded-pill btn-secondary create" data-bs-dismiss="modal">Ավելացնել ցուցակում</button>
@@ -483,3 +489,13 @@ $this->registerJsFile(
     ['depends' => [\yii\web\JqueryAsset::class]]
 );
 ?>
+
+<style>
+    /* Vendor prefixes for cross-browser support */
+    input[type="search"]::-webkit-search-cancel-button,
+    input[type="search"]::-webkit-search-clear-button {
+        -webkit-appearance: none;
+        appearance: none;
+        display: none;
+    }
+</style>

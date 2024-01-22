@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
                 <?= $form->field($model, 'groups_name')->textInput(['maxlength' => true]) ?>
             </div>
             <?php if ($model->id){ ?>
-            <div class="form-group col-md-12 col-lg-12 col-sm-12 discount">
+            <div class="form-group col-md-12 col-lg-12 col-sm-12 discount groupName">
                 <label for="multipleClients">Հաճախորդ</label>
                 <select id="multipleClients" class="js-example-basic-multiple form-control" name="clients[]" multiple="multiple">
                     <?php foreach ($clients as $client){
@@ -29,7 +29,7 @@ use yii\widgets\ActiveForm;
                 </select>
             </div>
             <?php }else{ ?>
-            <div class="clientSelect">
+            <div class="clientSelect groupName">
                 <label for="multipleClients">Հաճախորդ</label>
                 <select id="multipleClients" class="js-example-basic-multiple form-control" name="clients[]" multiple="multiple">
                     <?php foreach ($clients as $client){ ?>

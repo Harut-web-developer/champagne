@@ -46,20 +46,20 @@ class OrdersSearch extends Orders
         $query = Orders::find();
         if ($session['role_id'] == 1){
             if(isset($params['numberVal']) && $params['numberVal'] != 3) {
-                $query->andWhere(['status' => $params['numberVal']]);
+                $query->andWhere(['status' => $params['numberVal']])->orderBy(['created_at'=> SORT_DESC]);
             }elseif (isset($params['numberVal']) && $params['numberVal'] == 3){
-                $query->andWhere(['status' => '1']);
+                $query->andWhere(['status' => '1'])->orderBy(['created_at'=> SORT_DESC]);
             }
         }else {
             if (isset($params['numberVal']) && $params['numberVal'] != 4) {
-                $query->andWhere(['status' => $params['numberVal']]);
+                $query->andWhere(['status' => $params['numberVal']])->orderBy(['created_at'=> SORT_DESC]);;
             }elseif (isset($params['numberVal']) && $params['numberVal'] == 4){
-                $query->andWhere(['status' => '1']);
+                $query->andWhere(['status' => '1'])->orderBy(['created_at'=> SORT_DESC]);;
             }
         }
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $query->orderBy(['created_at'=> SORT_DESC]),
         ]);
 
 

@@ -12,6 +12,7 @@ use app\models\RouteSearch;
 use app\models\Users;
 use app\models\Warehouse;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -303,7 +304,7 @@ class RouteController extends Controller
             ->where(['id' => $id])
             ->asArray()
             ->one();
-        $users = Users::find()->select('id, name, username')
+        $users = Users::find()->select('id, name')
             ->asArray()
             ->all();
         return $this->render('shipping-route', [
@@ -316,15 +317,36 @@ class RouteController extends Controller
         ]);
     }
 
+    public function actionDeleteAllVisit()
+    {
+        if(isset($_GET)){
+            $coordinatesUsers = CoordinatesUser::find()->where(['not', ['visit' => null]])->all();
+            foreach ($coordinatesUsers as $coordinatesUser) {
+                $coordinatesUser->visit = 0;
+                $coordinatesUser->save(false);
+            }
+        }
+    }
+    public function actionUpdateVisit()
+    {
+        if(isset($_GET)){
+            $visit_get = CoordinatesUser::findOne(['id' => $_GET['coord_id']]);
+            echo "<pre>";
+            var_dump($visit_get);
+            $visit_get->visit = $_GET['visit'];
+            var_dump($visit_get);
+            $visit_get->save(false);
+        }
+    }
     public function actionLocationValue()
     {
         if (isset($_GET)) {
             $get = $this->request->get();
-            $valueurlId = $get['urlId'];
+            $valueurlId = intval($get['urlId']);
             $valuedate = $get['date'];
             $userId =  intval($get['user']);
             $coordinatesUser = CoordinatesUser::find()
-                ->select('latitude, longitude')
+                ->select('id, latitude, longitude')
                 ->where(['=', 'user_id', $userId])
                 ->asArray()
                 ->all();
@@ -332,18 +354,26 @@ class RouteController extends Controller
             $warehouse = Warehouse::find()->select('location')->where(['id' => 1])->asArray()->one();
             $formattedSelectedDate = Yii::$app->formatter->asDatetime($valuedate, 'yyyy-MM-dd');
             $locations = Orders::find()
-                ->select(["clients.location", 'DATE_FORMAT(orders.orders_date, "%Y-%m-%d") as orders_date'])
+                ->select(["clients.location", 'clients.name', 'DATE_FORMAT(orders.orders_date, "%Y-%m-%d") as orders_date'])
                 ->leftJoin('clients','clients.id = orders.clients_id')
                 ->where(['route_id' => $valueurlId])
                 ->andWhere(['and',['>=','orders.orders_date', $formattedSelectedDate.' 00:00:00'],
                     ['<','orders.orders_date', $formattedSelectedDate.' 23:59:59']])
+                ->andWhere(['orders.status' => '1'])
+//                ->andwhere(['=', 'orders.user_id', $userId])
                 ->asArray()
                 ->orderBy('clients.sort_',SORT_DESC)
+                ->all();
+            $visit = CoordinatesUser::find()
+                ->select('visit, id')
+                ->where(['=', 'user_id', $userId])
+                ->asArray()
                 ->all();
             return json_encode([
                 'location' => $locations,
                 'warehouse' => $warehouse,
-                'coordinatesUser' => $coordinatesUser
+                'coordinatesUser' => $coordinatesUser,
+                'visit' => $visit,
             ]);
         }
     }

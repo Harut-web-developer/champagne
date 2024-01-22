@@ -13,6 +13,11 @@ $(document).ready(function () {
         }
     }
 
+    function check_delete(){
+        var arj = $('.deleteItems').closest('tr').find(".itemsId").val();
+        $('.documentsTableTr').find('.nom_id[data-id="arj"]').siblings('.documentsCount').find('.documentsCountInput').val('');
+    }
+
     var newTbody = $('<tbody></tbody>');
     var trs = {};
     $('body').on('click', '.createDocuments', function () {
@@ -33,7 +38,6 @@ $(document).ready(function () {
                                   </tr>`.trim();
             }
         })
-        console.log('createDocuments')
         for (let i in trs) {
             if(trs[i] != ''){
                 newTbody.append(trs[i]);
@@ -268,4 +272,29 @@ $(document).ready(function () {
             }
         })
     }
+
+    $('body').on('change','#documents-rate_id',function () {
+        let id = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url: '/documents/change-rates',
+            method: 'post',
+            datatype: 'json',
+            data: {
+                id: id,
+                _csrf: csrfToken
+            },
+            success: function (data) {
+                let param = JSON.parse(data)
+                if (param == 'others') {
+                    // alert(2222)
+                    $('body').find('#documents-rate_value').attr('readonly', false);
+                    $('body').find('#documents-rate_value').val('');
+                }else if(param == 'amd'){
+                    $('body').find('#documents-rate_value').attr('readonly', true);
+                    $('body').find('#documents-rate_value').val(1);
+                }
+            }
+        })
+    })
 })

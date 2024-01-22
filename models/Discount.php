@@ -72,4 +72,21 @@ class Discount extends \yii\db\ActiveRecord
         }
         return $model;
     }
+
+    public function getClients($client_id = 0){
+        $for_client = $this->hasMany(DiscountClients::class, ['discount_id' => 'id'])
+            ->andWhere([DiscountClients::tableName().'.status' => 1]);
+        if($client_id){
+            $for_client->andWhere(['client_id' => $client_id]);
+        }
+        return $for_client;
+    }
+    public function getNomenclatures($product_id = 0){
+        $for_prod = $this->hasMany(DiscountProducts::class, ['discount_id' => 'id'])
+            ->andWhere([DiscountProducts::tableName().'.status' => 1]);
+        if($product_id){
+            $for_prod->andWhere(['product_id' => $product_id]);
+        }
+        return $for_prod;
+    }
 }

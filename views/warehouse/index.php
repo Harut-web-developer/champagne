@@ -76,7 +76,7 @@ if(!empty($new_fields)){
           <?= Html::a('Ստեղծել պահեստ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
         <?php } ?>
     </p>
-    <div class="card">
+    <div class="card pageStyle">
         <?= CustomGridView::widget([
             'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
             'summaryOptions' => ['class' => 'summary'],

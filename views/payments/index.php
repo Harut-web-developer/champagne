@@ -28,7 +28,7 @@ $this->params['date_tab'] = $date_tab;
     <p>
         <?= Html::a('Կատարել վճար', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
     </p>
-    <div class="card">
+    <div class="card pageStyle">
     <?= CustomGridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],

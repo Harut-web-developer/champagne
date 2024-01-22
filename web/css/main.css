@@ -237,11 +237,12 @@
     position:relative;
     padding:10px;
     padding-right:50px;
-    margin-bottom:20px;
+    margin:20px 10px;
 }
 
 .bx-trash{
-    font-size:40px;
+    padding: 10px 5px 0px 0px;
+    font-size: 25px;
     cursor:pointer;
 }
 .new-field input,.new-field select,.new-field textarea{
@@ -317,6 +318,12 @@
 .select2-selection{
     width:100% !important;
 }
+/*.groupName > .select2-container{*/
+/*    max-width: 1246px;*/
+/*}*/
+/*.groupName{*/
+/*    margin-left:10px;*/
+/*}*/
 .selGroup{
     display:flex;
     flex-direction:column;
@@ -544,4 +551,57 @@
 }
 .help-block{
     color: #ff3333!important;
+}
+#orders-total_price_before_discount{
+    border:none !important;
+}
+#orders-total_price{
+    border:none !important;
+}
+#orders-total_discount{
+    border:none !important;
+}
+#orders-total_count{
+    border:none !important;
+}
+.field-orders-total_price_before_discount > .help-block{
+    display:none !important;
+}
+.field-orders-total_price > .help-block{
+    display:none !important;
+}
+.field-orders-total_discount > .help-block{
+    display:none !important;
+}
+.field-orders-total_count > .help-block{
+    display:none !important;
+}
+.pageStyle > .text-nowrap > ul{
+    margin-top:5px !important;
+}
+.pageStyle > .text-nowrap > ul > li > a{
+    border-radius: 3px;
+    margin: 0px 3px;
+    padding: 2px 8px;
+    background-color: #F0F2F4;
+}
+.pageStyle > .text-nowrap > ul > .active > a{
+    padding: 3px 8px;
+    margin: 0px 3px;
+    border-radius: 5px;
+}
+.pageStyle > .text-nowrap > ul > .prev > a{
+    border-radius: 3px;
+    margin: 0px 3px;
+    padding: 2px 8px;
+    background-color: #F0F2F4;
+}
+.pageStyle > .text-nowrap > ul > .next > a{
+    border-radius: 3px;
+    margin: 0px 3px;
+    padding: 2px 8px;
+    background-color: #F0F2F4;
+}
+.pageStyle > .text-nowrap > ul > li > a:hover{
+    background-color: #E1E4E8;
 }

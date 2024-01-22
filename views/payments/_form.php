@@ -24,10 +24,10 @@ use yii\widgets\ActiveForm;
                 <label class="rateLabel" for="rate">Փոխարժեք</label>
                 <div id="rate" class="form-group col-md-12 col-lg-12 col-sm-12 rateDocument">
                     <div class="rateType">
-                        <?= $form->field($model, 'rate_id')->dropDownList($rates)->label(false) ?>
+                        <?= $form->field($model, 'rate_id')->dropDownList($rates,['options' => [1 => ['selected' => true]]])->label(false) ?>
                     </div>
                     <div class="rateValue">
-                        <?= $form->field($model, 'rate_value')->input('number',['placeholder' => 'Փոխարժեքի գինը','required' => true])->label(false) ?>
+                        <?= $form->field($model, 'rate_value')->input('number',['value' => 1,'required' => true,'readonly' => true])->label(false) ?>
                     </div>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">

@@ -10,6 +10,7 @@ use app\models\Warehouse;
 use Yii;
 use yii\web\Controller;
 use yii\web\Session;
+use function React\Promise\all;
 
 class MapController extends Controller
 {
@@ -51,6 +52,8 @@ class MapController extends Controller
     public function actionLocationValue()
     {
         if (isset($_GET)) {
+            $session = Yii::$app->session;
+            $userId = $session['user_id'];
             $get = $this->request->get();
             $value = $get['locationvalue'];
             $valuedate =$get['date'];
@@ -63,22 +66,25 @@ class MapController extends Controller
                 ->where(['route_id' => $value])
                 ->andWhere(['and',['>=','orders.orders_date', $formattedSelectedDate.' 00:00:00'],
                     ['<','orders.orders_date', $formattedSelectedDate.' 23:59:59']])
+                ->andWhere(['orders.status' => '1'])
+//                ->andwhere(['=', 'orders.user_id', $userId])
                 ->asArray()
                 ->orderBy('clients.sort_',SORT_DESC)
                 ->all();
             return json_encode(['location' => $locations, 'warehouse' => $warehouse]);
         }
     }
-
     public function actionCoordinatesUser()
     {
         if ($this->request->isPost) {
             $session = Yii::$app->session;
             $post = $this->request->post();
+            date_default_timezone_set('Asia/Yerevan');
             $model = new CoordinatesUser();
             $model->user_id = $session['user_id'];
             $model->latitude = $post['myLatitude'];
             $model->longitude = $post['myLongitude'];
+            $model->created_at = date('Y-m-d H:i:s');
             $model->save();
         }
     }
