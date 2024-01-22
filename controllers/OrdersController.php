@@ -267,7 +267,7 @@ class OrdersController extends Controller
     public function actionGetNomiclature(){
 //        var_dump('<pre>' . print_r($_GET, true) . '</pre>');
         $page = $_GET['paging'] ?? 1;
-        $urlId = intval($_POST['urlId']);
+//        $urlId = intval($_POST['urlId']);
         $search_name = $_GET['nomenclature'] ?? false;
         $pageSize = 10;
         $offset = ($page-1) * $pageSize;
@@ -298,7 +298,7 @@ class OrdersController extends Controller
             'id_count' => $id_count ,
             'total' => $total,
             'search_name' => $search_name,
-            'urlId' => $urlId,
+//            'urlId' => $urlId,
         ]);
     }
     public function actionUpdate($id)
