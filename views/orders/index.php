@@ -405,6 +405,7 @@ else{ ?>
                     'comment',
                     'total_price',
                     'total_count',
+                    'orders_date',
                     ...$action_column,
                 ],
             ]); ?>

@@ -18,9 +18,11 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                 <tr>
                     <th>Օգտատեր</th>
                     <th>Հաճախորդ</th>
-                    <th>Ընդհանուր գումար</th>
-                    <th>Ընդհանուր քանակ</th>
                     <th>Մեկնաբանություն</th>
+                    <th>Ընդհանուր գումար</th>
+                    <th>Ընդհանուր զեղչված գումար</th>
+                    <th>Ընդհանուր զեղչի չափ</th>
+                    <th>Ընդհանուր քանակ</th>
                     <th>Պատվերի ամսաթիվ</th>
                 </tr>
                 </thead>
@@ -28,40 +30,47 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                 <tr>
                     <td><?=$users[$model->user_id]; ?></td>
                     <td><?=$clients[$model['clients_id']]; ?></td>
-                    <td><?=$model['total_price']?></td>
-                    <td><?=$model['total_count']?></td>
                     <td><?=$model['comment']?></td>
+                    <td><?=$model['total_price_before_discount']?></td>
+                    <td><?=$model['total_price']?></td>
+                    <td><?=$model['total_discount']?></td>
+                    <td><?=$model['total_count']?></td>
                     <td><?=$model['orders_date']?></td>
                 </tr>
                 </tbody>
             </table>
-    <?php if (!empty($order_items)) {?>
-    <h1>Վաճառքի ցուցակ</h1>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>ԱՆՈՒՆ</th>
-                <th>ՔԱՆԱԿ</th>
-                <th>ԳԻՆ</th>
-                <th>ԻՆՔՆԱՐԺԵՔ</th>
-                <th>ԸՆԴՀԱՆՈՒՐ ԳՈՒՄԱՐ</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php
-            for ($i=0; $i<count($order_items); $i++){ ?>
-            <tr>
-                <td><?=$i; ?></td>
-                <td><?=$order_items[$i]['name']; ?></td>
-                <td><?=$order_items[$i]['count']; ?></td>
-                <td><?=$order_items[$i]['price']; ?></td>
-                <td><?=$order_items[$i]['cost']; ?></td>
-                <td><?=$order_items[$i]['count']*$order_items[$i]['price']; ?></td>
-            </tr>
-            <?php } ?>
-            </tbody>
-        </table>
+            <?php if (!empty($order_items)) {?>
+            <h1>Վաճառքի ցուցակ</h1>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ԱՆՈՒՆ</th>
+                    <th>ՔԱՆԱԿ</th>
+                    <th>ԶԵՂՉ</th>
+                    <th>ԳԻՆԸ ՄԻՆՉԵՒ ԶԵՂՉԵԼԸ</th>
+                    <th>ԶԵՂՉՎԱԾ ԳԻՆ</th>
+                    <th>ԸՆԴՀԱՆՈՒՐ ԳՈՒՄԱՐ</th>
+                    <th>ԸՆԴՀԱՆՈՒՐ ԶԵՂՉՎԱԾ ԳՈՒՄԱՐ</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                for ($i=0; $i<count($order_items); $i++){ ?>
+                    <tr>
+                        <td><?=$i; ?></td>
+                        <td><?=$order_items[$i]['name']; ?></td>
+                        <td><?=$order_items[$i]['count']; ?></td>
+                        <td><?=$order_items[$i]['discount']/$order_items[$i]['count']; ?></td>
+                        <td><?=$order_items[$i]['beforePrice']; ?></td>
+                        <td><?=$order_items[$i]['price']; ?></td>
+                        <td><?=$order_items[$i]['totalBeforePrice']; ?></td>
+                        <td><?=$order_items[$i]['total_price']; ?></td>
+                        <!--                <td>--><?php //=$order_items[$i]['count']*$order_items[$i]['price']; ?><!--</td>-->
+                    </tr>
+                <?php } ?>
+                </tbody>
+            </table>
         </div>
     </div>
     <?php }?>

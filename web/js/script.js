@@ -282,6 +282,7 @@ $(document).ready(function() {
             dataType: "html",
             success: function(data) {
                 $('body').append(data);
+                console.log(data)
                 tables = document.getElementsByClassName("chatgbti_");
                 $(".chatgbti_").hide();
                 $(".deletesummary").hide();
