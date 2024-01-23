@@ -21,6 +21,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\Pagination;
+use function React\Promise\all;
 
 /**
  * OrdersController implements the CRUD actions for Orders model.
@@ -226,9 +227,11 @@ class OrdersController extends Controller
         $query = Products::find();
         $countQuery = clone $query;
         $total = $countQuery->where(['and',['products.status' => 1,'products.type' => 1]])->groupBy('products.nomenclature_id')->count();
-        $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
+        $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,
+        nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
+            ->offset(0)
             ->groupBy('products.nomenclature_id')
             ->orderBy(['products.created_at' => SORT_DESC])
             ->limit(10)
@@ -265,7 +268,6 @@ class OrdersController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionGetNomiclature(){
-//        var_dump('<pre>' . print_r($_GET, true) . '</pre>');
         $page = $_GET['paging'] ?? 1;
         $urlId = intval($_POST['urlId']);
         $search_name = $_GET['nomenclature'] ?? false;
@@ -273,25 +275,38 @@ class OrdersController extends Controller
         $offset = ($page-1) * $pageSize;
         $query = Products::find();
         $countQuery = clone $query;
-        $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
-            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
-            ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
+        $orders_items_update = OrderItems::find()
+            ->select('order_items.*,nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.cost')
+            ->leftJoin('nomenclature','order_items.nom_id_for_name = nomenclature.id')
+            ->where(['order_items.order_id' => $urlId])
+            ->asArray()
+            ->all();
+        $nomenclatures = $query->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
+            ->select('products.id, products.count, products.price, nomenclature.id as nomenclature_id, nomenclature.image, nomenclature.name, nomenclature.cost')
+            ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
+            ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
             ->groupBy('products.nomenclature_id')
             ->orderBy(['products.created_at' => SORT_DESC]);
-        if ($search_name){
-            $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
-                ->offset(0);
-//                ->limit(10);
-            $total = $nomenclatures->count();
-        }else{
-            $total = $countQuery->where(['and',['products.status' => 1,'products.type' => 1]])->groupBy('products.nomenclature_id')->count();
-            $nomenclatures->offset($offset)
-                ->limit($pageSize);
-        }
+            if ($search_name){
+                $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
+                    ->offset(0);
+            }else{
+                $nomenclatures->offset($offset)
+                    ->limit($pageSize);
+            }
+        $product_count =
+            $countQuery
+                ->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
+                ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
+                ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
+                ->groupBy('products.nomenclature_id')
+                ->orderBy(['products.created_at' => SORT_DESC])
+                ->asArray()
+                ->all();
+        $total = count($product_count);
         $nomenclatures = $nomenclatures
             ->asArray()
             ->all();
-//        $total = $countQuery->count() - count($document_items);
         $id_count = $_POST['id_count'] ?? [];
         return $this->renderAjax('get-nom', [
             'nomenclatures' => $nomenclatures,
@@ -341,6 +356,9 @@ class OrdersController extends Controller
             $total_price = 0;
             $total_price_before_discount = 0;
             $total_discount = 0;
+            echo "<pre>";
+            var_dump($post);
+            die;
             foreach ($items as $k => $item){
                 if($item != 'null'){
                     $order_item = OrderItems::findOne($item);
@@ -415,23 +433,41 @@ class OrdersController extends Controller
 
         $query = Products::find();
         $countQuery = clone $query;
-        $total = $countQuery->where(['and',['products.status' => 1,'products.type' => 1]])->groupBy('products.nomenclature_id')->count();
-        $nomenclatures = $query->select('products.id,nomenclature.id as nom_id,nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
-            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
-            ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
-            ->groupBy('products.nomenclature_id')
-            ->orderBy(['products.created_at' => SORT_DESC])
-            ->offset(0)
-            ->limit(10)
+        $orders_items_update = OrderItems::find()
+            ->select('order_items.*,nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.cost')
+            ->leftJoin('nomenclature','order_items.nom_id_for_name = nomenclature.id')
+            ->where(['order_items.order_id' => $id])
             ->asArray()
             ->all();
+        $nomenclatures = $query->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
+            ->select('products.id, products.count, products.price, nomenclature.id as nom_id, nomenclature.image, nomenclature.name, nomenclature.cost')
+            ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
+            ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
+            ->offset(0)
+            ->limit(10)
+            ->groupBy('products.nomenclature_id')
+            ->orderBy(['products.created_at' => SORT_DESC])
+            ->asArray()
+            ->all();
+
+        $product_count =
+            $countQuery
+                ->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
+            ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
+            ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
+            ->groupBy('products.nomenclature_id')
+            ->orderBy(['products.created_at' => SORT_DESC])
+            ->asArray()
+            ->all();
+        $total = count($product_count);
         $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
         order_items.price_before_discount as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
         order_items.price as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
             ->leftJoin('products','products.id = order_items.product_id')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
-            ->where(['order_id' => $id])->asArray()->all();
-//        echo "<pre>";
+            ->where(['order_id' => $id])
+            ->asArray()
+            ->all();
         $order_items_discount = OrderItems::find()->select('count_discount_id')->where(['=','order_id', $id])->asArray()->all();
 
         $uniqueValues = [];
@@ -611,9 +647,8 @@ class OrdersController extends Controller
             ->limit(10)
             ->asArray()
             ->all();
-        $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
-        order_items.price_before_discount as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
-        order_items.price as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
+        $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price / order_items.count) as price,
+        (order_items.cost / order_items.count) as cost,order_items.discount,order_items.price_before_discount,nomenclature.name, (nomenclature.id) as nom_id')
             ->leftJoin('products','products.id = order_items.product_id')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['order_id' => $id])->asArray()->all();

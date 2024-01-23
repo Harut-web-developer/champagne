@@ -60,7 +60,7 @@ if (@$_GET['nomenclature'] != ''){
                         $('.page-item-active-insearche').addClass('active');
                     });
                     $('.page-item-active-insearche').on('click', function(event) {
-                        $('.searchForDocument').val('');
+                        $('.searchForDocumentUpdate').val('');
                     });
                   </script>";
                     }
