@@ -30,7 +30,10 @@ $(document).ready(function () {
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
                 trs[id.trim()] = `<tr class="tableDocuments oldTr">
-                                     <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
+                                     <td>
+                                        <span>` + id + `</span>
+                                        <input type="hidden" name="document_items[]" value="` + id + `">
+                                     </td>
                                      <td class="name">` + name + `</td>
                                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
                                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
@@ -45,6 +48,7 @@ $(document).ready(function () {
         }
         newTbody.append(documentsTableBody);
         $('.documentsAddingTable tbody').replaceWith(newTbody);
+        trCounter($('body').find('.documentsAddingTable'));
     })
 
     $('body').on('click', '.deleteItems', function () {
@@ -72,9 +76,10 @@ $(document).ready(function () {
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
                 trs[nom_id.trim()] = `<tr class="tableDocuments oldTr">
-                                         <td> `+ nom_id +`
-                                          <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
-                                          <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
+                                         <td>
+                                            <span>`+ nom_id +`</span>
+                                            <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
+                                            <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
                                          <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
@@ -92,6 +97,7 @@ $(document).ready(function () {
         newTbody.append(documentsTableBody);
         $('.documentsAddingTable tbody').replaceWith(newTbody);
         giveOldValues();
+        trCounter($('body').find('.documentsAddingTable'));
 
     })
     function giveOldValues() {
@@ -119,9 +125,10 @@ $(document).ready(function () {
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
                 trs[nom_id.trim()] = `<tr class="tableDocuments oldTr">
-                                         <td> ` + nom_id +`
-                                          <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
-                                          <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
+                                         <td>
+                                            <span>` + nom_id +`</span>
+                                            <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
+                                            <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
                                          <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
@@ -130,7 +137,7 @@ $(document).ready(function () {
                                       </tr>`.trim();
             }
         })
-        console.log('by_ajax_update')
+        // console.log('by_ajax_update')
 
     })
 
@@ -188,7 +195,10 @@ $(document).ready(function () {
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
                 trs[id.trim()] = `<tr class="tableDocuments oldTr">
-                     <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
+                     <td>
+                        <span>` + id + `</span>
+                        <input type="hidden" name="document_items[]" value="` + id + `">
+                     </td>
                      <td class="name">` + name + `</td>
                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
@@ -196,7 +206,7 @@ $(document).ready(function () {
                   </tr>`.trim();
             }
         })
-        console.log('searchForDocument')
+        // console.log('searchForDocument')
     })
 
     var arr_carent_page_update = [];
@@ -221,9 +231,10 @@ $(document).ready(function () {
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
                 trs[nom_id.trim()] = `<tr class="tableDocuments oldTr">
-                                         <td> ` + nom_id +`
-                                          <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
-                                          <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
+                                         <td>
+                                            <span>` + nom_id +`</span>
+                                            <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
+                                            <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
                                          <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
@@ -232,7 +243,7 @@ $(document).ready(function () {
                                       </tr>`.trim();
             }
         })
-        console.log('searchForDocumentUpdate')
+        // console.log('searchForDocumentUpdate')
     })
 
     $('body').on('click', '.by_ajax', function () {
@@ -245,7 +256,10 @@ $(document).ready(function () {
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
                 trs[id.trim()] = `<tr class="tableDocuments oldTr">
-                     <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
+                     <td>
+                        <span>` + id + `</span>
+                        <input type="hidden" name="document_items[]" value="` + id + `">
+                     </td>
                      <td class="name">` + name + `</td>
                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
@@ -253,7 +267,7 @@ $(document).ready(function () {
                   </tr>`.trim();
             }
         })
-        console.log('by_ajax')
+        // console.log('by_ajax')
     })
     function getNomDocument(href_) {
         let url_id = window.location.href;
@@ -297,4 +311,10 @@ $(document).ready(function () {
             }
         })
     })
+    function trCounter(table){
+        let i = 0;
+        table.find('tbody').find('tr').each(function () {
+            $(this).find('td:first').find('span').text(++i);
+        })
+    }
 })

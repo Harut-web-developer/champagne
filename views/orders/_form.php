@@ -71,7 +71,7 @@ $session = Yii::$app->session;
                                 <th>Գործողություն</th>
                             </tr>
                             </thead>
-                            <tbody class="table-border-bottom-0">
+                            <tbody class="table-border-bottom-0 old_tbody">
                                 <?php
                                 $itemsArray = [];
                                 foreach($order_items as $keys => $item){
@@ -136,72 +136,74 @@ $session = Yii::$app->session;
                                 <h5 class="modal-title" id="exampleModalLabel3">Ապրանքացուցակ</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body" id="ajax_content">
-                                <input class="form-control col-md-3 mb-3 searchForOrder" type="search" placeholder="Որոնել...">
-                                <div class="card">
-                                    <div class="table-responsive text-nowrap">
-                                        <table class="table resultSearch">
-                                            <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Նկար</th>
-                                                <th>Անուն</th>
-                                                <th>Քանակ</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody class="table-border-bottom-0 tbody_">
-                                            <?php
-//                                            var_dump($nomenclatures);
+                            <div class="modal-body">
+                                <input class="form-control col-md-3 mb-3 searchForOrderUpdate" type="search" placeholder="Որոնել...">
+                                <div id="ajax_content">
+                                    <div class="card">
+                                        <div class="table-responsive text-nowrap">
+                                            <table class="table resultSearch">
+                                                <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Նկար</th>
+                                                    <th>Անուն</th>
+                                                    <th>Քանակ</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody class="table-border-bottom-0 tbody_">
+                                                <?php
+                                                //                                            var_dump($nomenclatures);
 
-                                            foreach ($nomenclatures as $keys => $nomenclature){
-                                                if(in_array($nomenclature['id'],$itemsArray)){
-                                                    continue;
+                                                foreach ($nomenclatures as $keys => $nomenclature){
+                                                    if(in_array($nomenclature['id'],$itemsArray)){
+                                                        continue;
+                                                    }
+                                                    ?>
+                                                    <tr class="addOrdersTableTr">
+                                                        <td>
+                                                            <span><?=$keys + 1?></span>
+                                                            <input class="prodId" data-id="<?=$nomenclature['id']?>" type="hidden">
+                                                            <input class="nomId" data-product="<?=$nomenclature['nom_id']?>" type="hidden">
+                                                        </td>
+                                                        <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
+                                                        <td class="nomenclatureName"><?=$nomenclature['name']?></td>
+                                                        <td class="ordersAddCount">
+                                                            <input type="number" class="form-control ordersCountInput">
+                                                            <input class="ordersPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
+                                                            <input class="ordersCostInput" type="hidden" value="<?=$nomenclature['cost']?>">
+                                                        </td>
+                                                    </tr>
+                                                    <?php
                                                 }
                                                 ?>
-                                                <tr class="addOrdersTableTr">
-                                                    <td>
-                                                        <span><?=$keys + 1?></span>
-                                                        <input class="prodId" data-id="<?=$nomenclature['id']?>" type="hidden">
-                                                        <input class="nomId" data-product="<?=$nomenclature['nom_id']?>" type="hidden">
-                                                    </td>
-                                                    <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
-                                                    <td class="nomenclatureName"><?=$nomenclature['name']?></td>
-                                                    <td class="ordersAddCount">
-                                                        <input type="number" class="form-control ordersCountInput">
-                                                        <input class="ordersPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
-                                                        <input class="ordersCostInput" type="hidden" value="<?=$nomenclature['cost']?>">
-                                                    </td>
-                                                </tr>
-                                                <?php
-                                            }
-                                            ?>
-                                            </tbody>
-                                        </table>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
-                                <?php $page = $_GET['paging'] ?? 1;?>
-                                <?php  $count = intval(ceil($total/10)) ; ?>
-                                <nav aria-label="Page navigation example" class="pagination">
-                                    <ul class="pagination pagination-sm">
-                                        <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
-                                            <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
-                                        </li>
-                                        <?php for ($i = 1;$i <= $count; $i++){ ?>
-                                            <?php if($i > 0 && $i <= $count+1){ ?>
-                                                <li class="page-item <?= ($page==$i) ? 'active' : '' ?>">
-                                                    <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $i ?>"><?= $i ?>
-                                                    </a>
+                                    <?php $page = $_GET['paging'] ?? 1;?>
+                                    <?php  $count = intval(ceil($total/10)) ; ?>
+                                    <nav aria-label="Page navigation example" class="pagination">
+                                        <ul class="pagination pagination-sm">
+                                            <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
+                                                <a class="page-link by_ajax_update" href="#" data-href="/orders/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
+                                            </li>
+                                            <?php for ($i = 1;$i <= $count; $i++){ ?>
+                                                <?php if($i > 0 && $i <= $count+1){ ?>
+                                                    <li class="page-item <?= ($page==$i) ? 'active' : '' ?>">
+                                                        <a class="page-link by_ajax_update" href="#" data-href="/orders/get-nomiclature?paging=<?= $i ?>"><?= $i ?>
+                                                        </a>
+                                                    </li>
+                                                <?php } ?>
+                                            <?php } ?>
+                                            <!--                                        /orders/update?id=--><?php //=$model->id?>
+                                            <?php if(intval($page) < $count){ ?>
+                                                <li class="page-item next">
+                                                    <a class="page-link by_ajax_update" href="#" data-href="/orders/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
                                                 </li>
                                             <?php } ?>
-                                        <?php } ?>
-<!--                                        /orders/update?id=--><?php //=$model->id?>
-                                        <?php if(intval($page) < $count){ ?>
-                                            <li class="page-item next">
-                                                <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
-                                            </li>
-                                        <?php } ?>
-                                    </ul>
-                                </nav>
+                                        </ul>
+                                    </nav>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn rounded-pill btn-secondary update" data-bs-dismiss="modal">Ավելացնել ցուցակում</button>
@@ -216,9 +218,9 @@ $session = Yii::$app->session;
                 </div>
                 <div class="card">
                     <div class="table-responsive text-nowrap">
-                        <div class="loader d-none">
-                            <img src="/upload/loader.gif" >
-                        </div>
+<!--                        <div class="loader d-none">-->
+<!--                            <img src="/upload/loader.gif" >-->
+<!--                        </div>-->
                         <table class="table discountDesc">
                             <thead>
                             <tr>
@@ -485,7 +487,7 @@ $session = Yii::$app->session;
 
 <?php
 $this->registerJsFile(
-    '@web/js/orders.js',
+    '@web/js/orders.js?v=15999132',
     ['depends' => [\yii\web\JqueryAsset::class]]
 );
 ?>
