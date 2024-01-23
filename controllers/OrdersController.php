@@ -357,9 +357,9 @@ class OrdersController extends Controller
             $total_price = 0;
             $total_price_before_discount = 0;
             $total_discount = 0;
-            echo "<pre>";
-            var_dump($post);
-            die;
+//            echo "<pre>";
+//            var_dump($post);
+//            die;
             foreach ($items as $k => $item){
                 if($item != 'null'){
                     $order_item = OrderItems::findOne($item);
@@ -648,11 +648,17 @@ class OrdersController extends Controller
             ->limit(10)
             ->asArray()
             ->all();
-        $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price / order_items.count) as price,
-        (order_items.cost / order_items.count) as cost,order_items.discount,order_items.price_before_discount,nomenclature.name, (nomenclature.id) as nom_id')
+
+
+        $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,
+        order_items.count,(order_items.price / order_items.count) as price,
+        (order_items.cost / order_items.count) as cost,order_items.discount,order_items.price_before_discount,
+        nomenclature.name, (nomenclature.id) as nom_id')
             ->leftJoin('products','products.id = order_items.product_id')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
-            ->where(['order_id' => $id])->asArray()->all();
+            ->where(['order_id' => $id])
+            ->asArray()
+            ->all();
         $clients = Clients::find()->select('id, name')->asArray()->all();
         $clients = ArrayHelper::map($clients,'id','name');
         $users = Users::find()->select('id, name')->asArray()->all();

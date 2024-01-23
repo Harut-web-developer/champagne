@@ -332,9 +332,9 @@ $session = Yii::$app->session;
                 </div>
                 <div class="card">
                     <div class="table-responsive text-nowrap">
-                        <div class="loader d-none">
-                            <img src="/upload/loader.gif" >
-                        </div>
+<!--                        <div class="loader d-none">-->
+<!--                            <img src="/upload/loader.gif" >-->
+<!--                        </div>-->
                         <table class="table ordersAddingTable">
                             <thead>
                             <tr>
@@ -442,9 +442,9 @@ $session = Yii::$app->session;
                 </div>
                 <div class="card">
                     <div class="table-responsive text-nowrap">
-                        <div class="loader d-none">
-                            <img src="/upload/loader.gif" >
-                        </div>
+<!--                        <div class="loader d-none">-->
+<!--                            <img src="/upload/loader.gif" >-->
+<!--                        </div>-->
                         <table class="table discountDesc">
                             <thead>
                             <tr>

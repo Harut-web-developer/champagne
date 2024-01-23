@@ -29,7 +29,7 @@ $(document).ready(function () {
         let clientId = $('#singleClients').val();
         let totalSum = 0;
         let countSum = 0;
-        $('.ordersAddingTable tbody').html('');
+        // $('.ordersAddingTable tbody').html('');
         let orders_date = $('#orders-orders_date').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         var ordersTotalPriceSum = 0;
@@ -37,8 +37,8 @@ $(document).ready(function () {
         var ordersBeforTotalPriceSum = 0;
         var totalDiscount = 0;
         var discountBody = '';
-        $('body').find('.loader').toggleClass('d-none');
-        $('body').find('.ordersAddingTable').addClass('d-none');
+        // $('body').find('.loader').toggleClass('d-none');
+        // $('body').find('.ordersAddingTable').addClass('d-none');
         var ordersTableLength = 0;
         var sequenceNumber = 0;
         $('.addOrdersTableTr').each(function () {
@@ -168,8 +168,8 @@ $(document).ready(function () {
                             $('.ordersAddingTable tbody').replaceWith(newTbody);
                             trCounter($('body').find('.ordersAddingTable'));
 
-                            $('body').find('.ordersAddingTable').removeClass('d-none');
-                            $('body').find('.loader').toggleClass('d-none');
+                            // $('body').find('.ordersAddingTable').removeClass('d-none');
+                            // $('body').find('.loader').toggleClass('d-none');
                             $('body').find('#orders-total_price').val(Math.round(ordersTotalPriceSum));
                             $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
                             $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
@@ -179,6 +179,7 @@ $(document).ready(function () {
                 })
             }
         })
+        console.log(old_table,trss)
     })
     $('body').on('keyup','.countProduct', function (){
             let ordersTotalCount = 0;
@@ -1058,7 +1059,7 @@ $(document).ready(function () {
         let clientId = $('#singleClients').val();
         let totalSum = 0;
         let countSum = 0;
-        $('.ordersAddingTable tbody').html('');
+        // $('.ordersAddingTable tbody').html('');
         let orders_date = $('#orders-orders_date').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         var ordersTotalPriceSum = 0;
@@ -1066,8 +1067,8 @@ $(document).ready(function () {
         var ordersBeforTotalPriceSum = 0;
         var totalDiscount = 0;
         var discountBody = '';
-        $('body').find('.loader').toggleClass('d-none');
-        $('body').find('.ordersAddingTable').addClass('d-none');
+        // $('body').find('.loader').toggleClass('d-none');
+        // $('body').find('.ordersAddingTable').addClass('d-none');
         var ordersTableLength = 0;
         var sequenceNumber = 0;
         $('.addOrdersTableTr').each(function () {
@@ -1149,8 +1150,17 @@ $(document).ready(function () {
                                  </tr>`
                         ordersTableLength--;
                         if(ordersTableLength == 0){
-                            $('body').find('.ordersAddingTable').removeClass('d-none');
-                            $('body').find('.loader').toggleClass('d-none');
+                            // $('.discountDesc tbody').parent().append(discountBody);
+                            for (let i in trss) {
+                                if(trss[i] != ''){
+                                    newTbody.append(trss[i]);
+                                }
+                            }
+                            $('.ordersAddingTable tbody').replaceWith(newTbody);
+                            trCounter($('body').find('.ordersAddingTable'));
+                            newTbody = $('<tbody></tbody>');
+                            // $('body').find('.ordersAddingTable').removeClass('d-none');
+                            // $('body').find('.loader').toggleClass('d-none');
                             $('body').find('#orders-total_price').val(Math.round(ordersTotalPriceSum));
                             $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
                             $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
@@ -1160,6 +1170,9 @@ $(document).ready(function () {
                 })
             }
         })
+
+        console.log(old_table,trss)
+
     })
     function getNom(href_) {
         let url_id = window.location.href;

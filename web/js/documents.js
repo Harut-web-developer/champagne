@@ -108,8 +108,6 @@ $(document).ready(function () {
         }
     }
 
-        }
-    }
 
     $('body').on('click', '.by_ajax_update', function () {
         var href_ = $(this).attr('data-href');

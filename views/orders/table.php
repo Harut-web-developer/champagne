@@ -7,6 +7,9 @@ use app\widgets\CustomLinkPager;
 /** @var yii\widgets\ActiveForm $form */
 
 $this->registerCssFile('@web/css/bootstrap.min.css');
+//echo "<pre>";
+//var_dump($order_items);
+//die;
 ?>
 <!-- Basic Bootstrap Table -->
 <div id="print">
@@ -62,11 +65,11 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                         <td><?=$order_items[$i]['name']; ?></td>
                         <td><?=$order_items[$i]['count']; ?></td>
                         <td><?=$order_items[$i]['discount']/$order_items[$i]['count']; ?></td>
-                        <td><?=$order_items[$i]['beforePrice']; ?></td>
+                        <td><?=$order_items[$i]['price'] + ($order_items[$i]['discount']/$order_items[$i]['count']); ?></td>
                         <td><?=$order_items[$i]['price']; ?></td>
-                        <td><?=$order_items[$i]['totalBeforePrice']; ?></td>
-                        <td><?=$order_items[$i]['total_price']; ?></td>
-                        <!--                <td>--><?php //=$order_items[$i]['count']*$order_items[$i]['price']; ?><!--</td>-->
+                        <td><?=$order_items[$i]['price_before_discount']; ?></td>
+<!--                        <td>--><?php //=$order_items[$i]['total_price']; ?><!--</td>-->
+                        <td><?=$order_items[$i]['count']*$order_items[$i]['price']; ?></td>
                     </tr>
                 <?php } ?>
                 </tbody>
