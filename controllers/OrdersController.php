@@ -152,8 +152,9 @@ class OrdersController extends Controller
                 'orders_total_sum' => $orders_total_sum,
                 'orders_total_count' => $orders_total_count
             ]);
-//            echo "<pre>";
             return $discount;
+//            echo "<pre>";
+//            var_dump($discount);
         }
     }
     public function actionCreate()
@@ -188,7 +189,7 @@ class OrdersController extends Controller
                 $order_items_create = new OrderItems();
                 $order_items_create->order_id = $model->id;
                 $order_items_create->product_id = intval($post['order_items'][$i]);
-                $order_items_create->nom_id_for_name = intval($post['nomenclature_id'][$i]);
+                $order_items_create->nom_id_for_name = intval($post['nom_id'][$i]);
                 $order_items_create->price = intval($post['price'][$i]) * intval($post['count_'][$i]);
                 $order_items_create->count = $post['count_'][$i];
                 $order_items_create->cost = intval($post['cost'][$i]) * intval($post['count_'][$i]);
@@ -201,7 +202,7 @@ class OrdersController extends Controller
 
                 $product_write_out = new Products();
                 $product_write_out->warehouse_id = 1;
-                $product_write_out->nomenclature_id = intval($post['nomenclature_id'][$i]);
+                $product_write_out->nomenclature_id = intval($post['nom_id'][$i]);
                 $product_write_out->document_id = $model->id;
                 $product_write_out->type = 2;
                 $product_write_out->count = -intval($post['count_'][$i]);

@@ -256,7 +256,7 @@ class Products extends \yii\db\ActiveRecord
                             $discount_client_id = ['id' => $discount[$j]['id'], 'clients_id' => $string_row];
                             $discount_client_string = Discount::findOne($discount[$j]['id']);
                             $discount_client_string->discount_option_check_client_id = $string_row;
-                        $discount_client_string->save(false);
+//                        $discount_client_string->save(false);
                         } elseif ($discount[$j]['discount_option'] == 2) {//bazmaki
                             if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $orders_total_count && $discount[$j]['max'] > $orders_total_count) {
                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
@@ -456,7 +456,7 @@ class Products extends \yii\db\ActiveRecord
                             $discount_client_id = ['id' => $discount[$j]['id'], 'clients_id' => $string_row];
                                     $discount_client_string = Discount::findOne($discount[$j]['id']);
                                     $discount_client_string->discount_option_check_client_id = $string_row;
-                                    $discount_client_string->save(false);
+//                                    $discount_client_string->save(false);
                         } else {
                             if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
@@ -655,7 +655,7 @@ class Products extends \yii\db\ActiveRecord
                             $discount_client_id = ['id' => $discount[$j]['id'], 'clients_id' => $string_row];
                             $discount_client_string = Discount::findOne($discount[$j]['id']);
                             $discount_client_string->discount_option_check_client_id = $string_row;
-                            $discount_client_string->save(false);
+//                            $discount_client_string->save(false);
                         }
                         else {
                             if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
@@ -854,7 +854,7 @@ class Products extends \yii\db\ActiveRecord
                             $discount_client_id = ['id' => $discount[$j]['id'], 'clients_id' => $string_row];
                             $discount_client_string = Discount::findOne($discount[$j]['id']);
                             $discount_client_string->discount_option_check_client_id = $string_row;
-                            $discount_client_string->save(false);
+//                            $discount_client_string->save(false);
                         }
                         else {
                             if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
@@ -934,7 +934,12 @@ class Products extends \yii\db\ActiveRecord
                 $res['price'] = $price;
                 $res['count'] = $orders_count;
                 $res['discount'] = $orders_price - $price;//gin - zexchvac gin
-                $res['count_discount_id'] = substr($count_discount_id,0,-1);
+                //return $discount_desc;
+                if ($count_discount_id == ''){
+                    $res['count_discount_id'] = 'չկա';
+                }else{
+                    $res['count_discount_id'] = substr($count_discount_id,0,-1);
+                }
                 $res['format_before_price'] = $orders_price;
                 return json_encode($res);
             }else{

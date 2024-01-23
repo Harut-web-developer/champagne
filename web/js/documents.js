@@ -30,7 +30,10 @@ $(document).ready(function () {
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
                 trs[id.trim()] = `<tr class="tableDocuments oldTr">
-                                     <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
+                                     <td>
+                                        <span>` + id + `</span>
+                                        <input type="hidden" name="document_items[]" value="` + id + `">
+                                     </td>
                                      <td class="name">` + name + `</td>
                                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
                                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
@@ -45,12 +48,11 @@ $(document).ready(function () {
         }
         newTbody.append(documentsTableBody);
         $('.documentsAddingTable tbody').replaceWith(newTbody);
-        console.log('1')
+        trCounter($('body').find('.documentsAddingTable'));
     })
 
     $('body').on('click', '.deleteItems', function () {
         $(this).closest('.tableDocuments').remove();
-        console.log('2')
     })
 
     var old_table = $('.table.documentsAddingTable').find('.old_tbody').html();
@@ -61,7 +63,6 @@ $(document).ready(function () {
         let count = $(this).closest('tr').find('.countDocuments').val(); // iitem_id
         let price = $(this).closest('tr').find('.PriceDocuments').val(); // iitem_id
         old_attrs[id]= { count:count , price:price};
-        console.log('3')
     })
 
     $('body').on('click', '.updateDocuments', function () {
@@ -75,9 +76,10 @@ $(document).ready(function () {
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
                 trs[nom_id.trim()] = `<tr class="tableDocuments oldTr">
-                                         <td> `+ nom_id +`
-                                          <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
-                                          <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
+                                         <td>
+                                            <span>`+ nom_id +`</span>
+                                            <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
+                                            <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
                                          <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
@@ -95,23 +97,19 @@ $(document).ready(function () {
         newTbody.append(documentsTableBody);
         $('.documentsAddingTable tbody').replaceWith(newTbody);
         giveOldValues();
-        console.log('4')
+        trCounter($('body').find('.documentsAddingTable'));
+
     })
     function giveOldValues() {
         for (let argumentsKey in old_attrs) {
            let tr = $('body').find('#tr_'+argumentsKey);
            tr.find('.count').find('.countDocuments').val(old_attrs[argumentsKey].count);
            tr.find('.price').find('.PriceDocuments').val(old_attrs[argumentsKey].price);
-            console.log('5')
+        }
+    }
 
         }
     }
-    // function documentsCountInputReadOnly(){
-    //     if ($(this).find(".documentsCountInput").val() != ''){
-    //         $('.documentsCountInput').prop('readonly', true);
-    //     }
-    //     console.log('6')
-    // }
 
     $('body').on('click', '.by_ajax_update', function () {
         var href_ = $(this).attr('data-href');
@@ -124,9 +122,10 @@ $(document).ready(function () {
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
                 trs[nom_id.trim()] = `<tr class="tableDocuments oldTr">
-                                         <td> ` + nom_id +`
-                                          <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
-                                          <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
+                                         <td>
+                                            <span>` + nom_id +`</span>
+                                            <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
+                                            <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
                                          <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
@@ -135,7 +134,8 @@ $(document).ready(function () {
                                       </tr>`.trim();
             }
         })
-        console.log('7')
+        // console.log('by_ajax_update')
+
     })
 
     $('body').on('click', '.deleteDocumentItems', function () {
@@ -160,7 +160,6 @@ $(document).ready(function () {
                 }
             }
         })
-        console.log('8')
     })
 
     $('body').on('click', '.PriceDocuments', function () {
@@ -193,7 +192,10 @@ $(document).ready(function () {
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
                 trs[id.trim()] = `<tr class="tableDocuments oldTr">
-                     <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
+                     <td>
+                        <span>` + id + `</span>
+                        <input type="hidden" name="document_items[]" value="` + id + `">
+                     </td>
                      <td class="name">` + name + `</td>
                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
@@ -201,7 +203,7 @@ $(document).ready(function () {
                   </tr>`.trim();
             }
         })
-        console.log('9')
+        // console.log('searchForDocument')
     })
 
     var arr_carent_page_update = [];
@@ -226,9 +228,10 @@ $(document).ready(function () {
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
                 trs[nom_id.trim()] = `<tr class="tableDocuments oldTr">
-                                         <td> ` + nom_id +`
-                                          <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
-                                          <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
+                                         <td>
+                                            <span>` + nom_id +`</span>
+                                            <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
+                                            <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
                                          <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
@@ -237,28 +240,32 @@ $(document).ready(function () {
                                       </tr>`.trim();
             }
         })
-        console.log('10')
+        // console.log('searchForDocumentUpdate')
     })
 
-    // $('body').on('click', '.by_ajax', function () {
-    //     var href_ = $(this).attr('data-href');
-    //     getNomDocument(href_);
-    //     $('.documentsTableTr').each(function () {
-    //         if ($(this).find(".documentsCountInput").val() != '') {
-    //             let id = $(this).find(".nom_id").attr('data-id');
-    //             let name = $(this).children(".documentsName").text();
-    //             let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
-    //             let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
-    //             trs[id.trim()] = `<tr class="tableDocuments oldTr">
-    //                  <td>` + id + `<input type="hidden" name="document_items[]" value="` + id + `"></td>
-    //                  <td class="name">` + name + `</td>
-    //                  <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
-    //                  <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
-    //                  <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
-    //               </tr>`.trim();
-    //         }
-    //     })
-    // })
+    $('body').on('click', '.by_ajax', function () {
+        var href_ = $(this).attr('data-href');
+        getNomDocument(href_);
+        $('.documentsTableTr').each(function () {
+            if ($(this).find(".documentsCountInput").val() != '') {
+                let id = $(this).find(".nom_id").attr('data-id');
+                let name = $(this).children(".documentsName").text();
+                let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
+                let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
+                trs[id.trim()] = `<tr class="tableDocuments oldTr">
+                     <td>
+                        <span>` + id + `</span>
+                        <input type="hidden" name="document_items[]" value="` + id + `">
+                     </td>
+                     <td class="name">` + name + `</td>
+                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
+                     <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
+                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
+                  </tr>`.trim();
+            }
+        })
+        // console.log('by_ajax')
+    })
     function getNomDocument(href_) {
         let url_id = window.location.href;
         let url = new URL(url_id);
@@ -275,7 +282,6 @@ $(document).ready(function () {
                 $('#ajax_content').html(data);
             }
         })
-        console.log('11')
     }
 
     $('body').on('change','#documents-rate_id',function () {
@@ -302,4 +308,10 @@ $(document).ready(function () {
             }
         })
     })
+    function trCounter(table){
+        let i = 0;
+        table.find('tbody').find('tr').each(function () {
+            $(this).find('td:first').find('span').text(++i);
+        })
+    }
 })
