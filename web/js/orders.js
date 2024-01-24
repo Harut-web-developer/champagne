@@ -74,23 +74,21 @@ $(document).ready(function () {
                         _csrf:csrfToken
                     },
                     success:function (data) {
-                        let clientsIdCheck = [];
                         let pars = JSON.parse(data);
-
                         if (pars.discount_desc != undefined){
                             discount_desc.push(pars.discount_desc);
                         }
-                        // console.log(pars.discount_desc)
+                        let  prod_clients = '';
+                        if (pars.discount_client_id_check.length == 1 && pars.discount_client_id_check[0] == 'empty'){
+                            prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
+                        }else {
+                            for (let c = 0; c < pars.discount_client_id_check.length; c++){
+                                if (pars.discount_client_id_check[c] != 'empty'){
+                                    prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars.discount_client_id_check[c].id+']" value="'+pars.discount_client_id_check[c].clients_id+'">';
+                                }
+                            }
 
-                        // if (pars.discount_client_id_check != []){
-                        //     for (let d = 0; d < pars.discount_client_id_check.length; d++){
-                        //         let arr = [];
-                        //         arr.push(pars.discount_client_id_check[d].id);
-                        //         arr.push(pars.discount_client_id_check[d].clients_id);
-                        //         clientsIdCheck.push(arr);
-                        //     }
-                        // }
-
+                        }
                         sequenceNumber++;
                         ordersBeforTotalPriceSum += Math.round(pars.format_before_price) * pars.count;
                         ordersTotalPriceSum += Math.round(pars.price) * pars.count;
@@ -103,7 +101,7 @@ $(document).ready(function () {
                                                         <input class="prodId" type="hidden" name="product_id[]" value="`+pars.product_id+`">
                                                         <input type="hidden" name="nom_id[]" value="`+pars.nomenclature_id+`">
                                                         <input type="hidden" name="count_discount_id[]" value="`+pars.count_discount_id+`">
-<!--                                                        <input type="hidden" name="discount_client_id_check[]" value='`+(pars.discount_client_id_check == [] ? []: JSON.stringify(clientsIdCheck))+`'>-->
+                                                        `+prod_clients+`
                                                         <input type="hidden" name="cost[]" value="`+pars.cost+`">
                                                      </td>
                                                      <td  class="name">`+pars.name+`</td>
@@ -137,21 +135,25 @@ $(document).ready(function () {
                         if(ordersTableLength == 0){
                             // console.log(discount_desc)
                             $('.discountDesc tbody').html('');
-                            // for (let d = 0; d< discount_desc.length;d++){
-                            //     if (discount_desc[d] == []){
-                            //         discount_desc.pop(discount_desc[d])
-                            //     }
-                            // }
-                            // console.log(discount_desc)
-                            let uniquePairs = [...new Set(discount_desc.flat().map(item => item.id))].map(id => {
-                                let matchingItems = discount_desc.flat().filter(item => item.id === id);
-                                let uniqueName = [...new Set(matchingItems.map(item => item.name))];
-                                let uniqueDiscount = [...new Set(matchingItems.map(item => item.discount))];
-                                let uniqueDiscountType = [...new Set(matchingItems.map(item => item.type))];
-                                return [id, uniqueName[0], uniqueDiscount[0],uniqueDiscountType[0]];
-                            });
-                            // console.log(uniquePairs)
+                            let uniquePairs = discount_desc
+                                .flat()
+                                .filter(item => item.id !== 'empty')
+                                .reduce((result, item) => {
+                                    let existingPair = result.find(pair => pair[0] === item.id);
+                                    if (existingPair) {
+                                        if (item.discount > existingPair[2]) {
+                                            existingPair[1] = item.name;
+                                            existingPair[2] = item.discount;
+                                            existingPair[3] = item.type;
+                                        }
+                                    } else {
+                                        result.push([item.id, item.name, item.discount, item.type]);
+                                    }
+                                    return result;
+                                }, [])
+                                .filter(pair => pair.every(value => value !== undefined));
 
+                            // console.log(uniquePairs);
                             uniquePairs.forEach((item,index) => {
                                 discountBody += `<tr>
                                                      <td>`+(parseInt(index) + 1) +`</td>
@@ -179,7 +181,7 @@ $(document).ready(function () {
                 })
             }
         })
-        console.log(old_table,trss)
+        // console.log(old_table,trss)
     })
     $('body').on('keyup','.countProduct', function (){
             let ordersTotalCount = 0;
@@ -347,6 +349,16 @@ $(document).ready(function () {
                         if (pars.discount_desc != undefined){
                             discount_desc.push(pars.discount_desc);
                         }
+                        let  prod_clients = '';
+                        if (pars.discount_client_id_check.length == 1 && pars.discount_client_id_check[0] == 'empty'){
+                            prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
+                        }else {
+                            for (let c = 0; c < pars.discount_client_id_check.length; c++){
+                                if (pars.discount_client_id_check[c] != 'empty'){
+                                    prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars.discount_client_id_check[c].id+']" value="'+pars.discount_client_id_check[c].clients_id+'">';
+                                }
+                            }
+                        }
                         // console.log(discount_desc)
                         acordingNumber++
                         trss[id.trim()] = `<tr class="tableNomenclature">
@@ -356,6 +368,7 @@ $(document).ready(function () {
                                         <input class="prodId" type="hidden" name="product_id[]" value="`+pars.product_id+`">
                                         <input class="nomId"  type="hidden" name="nom_id[]" value="`+pars.nomenclature_id+`">
                                         <input class="countDiscountId" type="hidden" name="count_discount_id[]" value="`+pars.count_discount_id+`">
+                                        `+prod_clients+`
                                         <input type="hidden" name="cost[]" value="`+pars.cost+`">
                                      </td>
                                      <td  class="name">`+pars.name+`</td>
@@ -417,13 +430,25 @@ $(document).ready(function () {
                                     allValues.push(value.trim())
                                 });
                             });
-                            let uniquePairs = [...new Set(discount_desc.flat().map(item => item.id))].map(id => {
-                                let matchingItems = discount_desc.flat().filter(item => item.id === id);
-                                let uniqueName = [...new Set(matchingItems.map(item => item.name))];
-                                let uniqueDiscount = [...new Set(matchingItems.map(item => item.discount))];
-                                let uniqueDiscountType = [...new Set(matchingItems.map(item => item.type))];
-                                return [id, uniqueName[0], uniqueDiscount[0],uniqueDiscountType[0]];
-                            });
+                            // console.log(discount_desc)
+                            let uniquePairs = discount_desc
+                                .flat()
+                                .filter(item => item.id !== 'empty')
+                                .reduce((result, item) => {
+                                    let existingPair = result.find(pair => pair[0] === item.id);
+                                    if (existingPair) {
+                                        if (item.discount > existingPair[2]) {
+                                            existingPair[1] = item.name;
+                                            existingPair[2] = item.discount;
+                                            existingPair[3] = item.type;
+                                        }
+                                    } else {
+                                        result.push([item.id, item.name, item.discount, item.type]);
+                                    }
+                                    return result;
+                                }, [])
+                                .filter(pair => pair.every(value => value !== undefined));
+                            // console.log(uniquePairs)
                             for (let s = 0; s < uniquePairs.length; s++){
                                 allValues.push(uniquePairs[s][0] + '')
                             }
@@ -539,6 +564,16 @@ $(document).ready(function () {
                         if (pars.discount_desc != undefined){
                             discount_desc.push(pars.discount_desc);
                         }
+                        let  prod_clients = '';
+                        if (pars.discount_client_id_check.length == 1 && pars.discount_client_id_check[0] == 'empty'){
+                            prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
+                        }else {
+                            for (let c = 0; c < pars.discount_client_id_check.length; c++){
+                                if (pars.discount_client_id_check[c] != 'empty'){
+                                    prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars.discount_client_id_check[c].id+']" value="'+pars.discount_client_id_check[c].clients_id+'">';
+                                }
+                            }
+                        }
                         sequenceNumber++;
                         ordersBeforTotalPriceSum += Math.round(pars.format_before_price) * pars.count;
                         ordersTotalPriceSum += Math.round(pars.price) * pars.count;
@@ -551,6 +586,7 @@ $(document).ready(function () {
                                         <input class="prodId" type="hidden" name="product_id[]" value="`+pars.product_id+`">
                                         <input type="hidden" name="nom_id[]" value="`+pars.nomenclature_id+`">
                                         <input type="hidden" name="count_discount_id[]" value="`+pars.count_discount_id+`">
+                                        `+prod_clients+`
                                         <input type="hidden" name="cost[]" value="`+pars.cost+`">
                                      </td>
                                      <td  class="name">`+pars.name+`</td>
@@ -582,32 +618,26 @@ $(document).ready(function () {
                         // $('.ordersAddingTable tbody').parent().append(aaa);
                         ordersTableLength--;
                         if(ordersTableLength == 0){
-                            let uniquePairs = [...new Set(discount_desc.flat().map(item => item.id))].map(id => {
-                                let matchingItems = discount_desc.flat().filter(item => item.id === id);
-                                let uniqueName = [...new Set(matchingItems.map(item => item.name))];
-                                let uniqueDiscount = [...new Set(matchingItems.map(item => item.discount))];
-                                let uniqueDiscountType = [...new Set(matchingItems.map(item => item.type))];
-                                return [id, uniqueName[0], uniqueDiscount[0],uniqueDiscountType[0]];
-                            });
+                            let uniquePairs = discount_desc
+                                .flat()
+                                .filter(item => item.id !== 'empty')
+                                .reduce((result, item) => {
+                                    let existingPair = result.find(pair => pair[0] === item.id);
+                                    if (existingPair) {
+                                        if (item.discount > existingPair[2]) {
+                                            existingPair[1] = item.name;
+                                            existingPair[2] = item.discount;
+                                            existingPair[3] = item.type;
+                                        }
+                                    } else {
+                                        result.push([item.id, item.name, item.discount, item.type]);
+                                    }
+                                    return result;
+                                }, [])
+                                .filter(pair => pair.every(value => value !== undefined));
                             for (let s = 0; s < uniquePairs.length; s++){
                                 allValues.push(uniquePairs[s][0] + '')
                             }
-                            // let uniquePairs = [...new Set(discount_desc.flat().map(item => item.id))].map(id => {
-                            //     let matchingItems = discount_desc.flat().filter(item => item.id === id);
-                            //     let uniqueName = [...new Set(matchingItems.map(item => item.name))];
-                            //     let uniqueDiscount = [...new Set(matchingItems.map(item => item.discount))];
-                            //     let uniqueDiscountType = [...new Set(matchingItems.map(item => item.type))];
-                            //     return [id, uniqueName[0], uniqueDiscount[0],uniqueDiscountType[0]];
-                            // });
-                            //
-                            // uniquePairs.forEach((item,index) => {
-                            //     discountBody += `<tr>
-                            //                          <td>`+(parseInt(index) + 1) +`</td>
-                            //                          <td>`+item[1]+`</td>
-                            //                          <td>`+(item[3] == 'percent' ? item[2] + ' %' : item[2] + ' դր․')+`</td>
-                            //                     </tr>`
-                            // })
-                            // $('.discountDesc tbody').parent().append(discountBody);
 
                             $('body').find('.ordersAddingTable').removeClass('d-none');
                             $('body').find('.loader').toggleClass('d-none');
@@ -923,7 +953,6 @@ $(document).ready(function () {
         let clientId = $('#singleClients').val();
         let totalSum = 0;
         let countSum = 0;
-        $('.ordersAddingTable tbody').html('');
         let orders_date = $('#orders-orders_date').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         var ordersTotalPriceSum = 0;
@@ -932,8 +961,6 @@ $(document).ready(function () {
         var totalDiscount = 0;
         var discount_desc = [];
         var discountBody = '';
-        $('body').find('.loader').toggleClass('d-none');
-        $('body').find('.ordersAddingTable').addClass('d-none');
         var ordersTableLength = 0;
         var sequenceNumber = 0;
         $('.addOrdersTableTr').each(function () {
@@ -973,6 +1000,16 @@ $(document).ready(function () {
                         if (pars.discount_desc != undefined){
                             discount_desc.push(pars.discount_desc);
                         }
+                        let  prod_clients = '';
+                        if (pars.discount_client_id_check.length == 1 && pars.discount_client_id_check[0] == 'empty'){
+                            prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
+                        }else {
+                            for (let c = 0; c < pars.discount_client_id_check.length; c++){
+                                if (pars.discount_client_id_check[c] != 'empty'){
+                                    prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars.discount_client_id_check[c].id+']" value="'+pars.discount_client_id_check[c].clients_id+'">';
+                                }
+                            }
+                        }
                         sequenceNumber++;
                         ordersBeforTotalPriceSum += Math.round(pars.format_before_price) * pars.count;
                         ordersTotalPriceSum += Math.round(pars.price) * pars.count;
@@ -985,6 +1022,7 @@ $(document).ready(function () {
                                         <input class="prodId" type="hidden" name="product_id[]" value="`+pars.product_id+`">
                                         <input type="hidden" name="nom_id[]" value="`+pars.nomenclature_id+`">
                                         <input type="hidden" name="count_discount_id[]" value="`+pars.count_discount_id+`">
+                                        `+prod_clients+`
                                         <input type="hidden" name="cost[]" value="`+pars.cost+`">
                                      </td>
                                      <td  class="name">`+pars.name+`</td>
@@ -1013,17 +1051,25 @@ $(document).ready(function () {
                                      </td>
                                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                  </tr>`
-                        // $('.ordersAddingTable tbody').parent().append(aaa);
                         ordersTableLength--;
                         if(ordersTableLength == 0){
-                            let uniquePairs = [...new Set(discount_desc.flat().map(item => item.id))].map(id => {
-                                let matchingItems = discount_desc.flat().filter(item => item.id === id);
-                                let uniqueName = [...new Set(matchingItems.map(item => item.name))];
-                                let uniqueDiscount = [...new Set(matchingItems.map(item => item.discount))];
-                                let uniqueDiscountType = [...new Set(matchingItems.map(item => item.type))];
-                                return [id, uniqueName[0], uniqueDiscount[0],uniqueDiscountType[0]];
-                            });
-
+                            let uniquePairs = discount_desc
+                                .flat()
+                                .filter(item => item.id !== 'empty')
+                                .reduce((result, item) => {
+                                    let existingPair = result.find(pair => pair[0] === item.id);
+                                    if (existingPair) {
+                                        if (item.discount > existingPair[2]) {
+                                            existingPair[1] = item.name;
+                                            existingPair[2] = item.discount;
+                                            existingPair[3] = item.type;
+                                        }
+                                    } else {
+                                        result.push([item.id, item.name, item.discount, item.type]);
+                                    }
+                                    return result;
+                                }, [])
+                                .filter(pair => pair.every(value => value !== undefined));
                             uniquePairs.forEach((item,index) => {
                                 discountBody += `<tr>
                                                      <td>`+(parseInt(index) + 1) +`</td>
@@ -1033,8 +1079,6 @@ $(document).ready(function () {
                             })
                             $('.discountDesc tbody').parent().append(discountBody);
 
-                            $('body').find('.ordersAddingTable').removeClass('d-none');
-                            $('body').find('.loader').toggleClass('d-none');
                             $('body').find('#orders-total_price').val(Math.round(ordersTotalPriceSum));
                             $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
                             $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
@@ -1108,6 +1152,17 @@ $(document).ready(function () {
                         if (pars.discount_desc != undefined){
                             discount_desc.push(pars.discount_desc);
                         }
+                        let  prod_clients = '';
+                        if (pars.discount_client_id_check.length == 1 && pars.discount_client_id_check[0] == 'empty'){
+                            prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
+                        }else {
+                            for (let c = 0; c < pars.discount_client_id_check.length; c++){
+                                if (pars.discount_client_id_check[c] != 'empty'){
+                                    prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars.discount_client_id_check[c].id+']" value="'+pars.discount_client_id_check[c].clients_id+'">';
+                                }
+                            }
+
+                        }
                         sequenceNumber++;
                         ordersBeforTotalPriceSum += Math.round(pars.format_before_price) * pars.count;
                         ordersTotalPriceSum += Math.round(pars.price) * pars.count;
@@ -1120,6 +1175,7 @@ $(document).ready(function () {
                                         <input class="prodId" type="hidden" name="product_id[]" value="`+pars.product_id+`">
                                         <input type="hidden" name="nom_id[]" value="`+pars.nomenclature_id+`">
                                         <input type="hidden" name="count_discount_id[]" value="`+pars.count_discount_id+`">
+                                        `+prod_clients+`
                                         <input type="hidden" name="cost[]" value="`+pars.cost+`">
                                      </td>
                                      <td  class="name">`+pars.name+`</td>
@@ -1171,7 +1227,7 @@ $(document).ready(function () {
             }
         })
 
-        console.log(old_table,trss)
+        // console.log(old_table,trss)
 
     })
     function getNom(href_) {

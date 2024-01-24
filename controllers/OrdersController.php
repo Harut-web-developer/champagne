@@ -174,6 +174,9 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+//            echo "<pre>";
+//            var_dump($post);
+//            exit();
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
@@ -211,11 +214,13 @@ class OrdersController extends Controller
                 $product_write_out->updated_at = date('Y-m-d H:i:s');
                 $product_write_out->save(false);
             }
-
-
-//            $orders_total_debt = Orders::findOne($model->id);
-//            $orders_total_debt->total_price = $total_debt;
-//            $orders_total_debt->save(false);
+            foreach ($post['discount_client_id_check'] as $key => $value){
+                if ($key != 'empty'){
+                    $discount_client_check_id = Discount::findOne($key);
+                    $discount_client_check_id->discount_option_check_client_id = $value;
+                    $discount_client_check_id->save(false);
+                }
+            }
             $model = Orders::getDefVals($model);
             Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
                 return $this->redirect(['index', 'id' => $model->id]);
@@ -342,6 +347,9 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            echo "<pre>";
+            var_dump($post);
+            exit();
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price_before_discount = $post['Orders']['total_price_before_discount'];
@@ -426,6 +434,13 @@ class OrdersController extends Controller
             $order->total_price = $total_price;
             $order->total_count = $quantity;
             $order->save(false);
+            foreach ($post['discount_client_id_check'] as $key => $value){
+                if ($key != 'empty'){
+                    $discount_client_check_id = Discount::findOne($key);
+                    $discount_client_check_id->discount_option_check_client_id = $value;
+                    $discount_client_check_id->save(false);
+                }
+            }
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
