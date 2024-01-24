@@ -75,6 +75,8 @@ $(document).ready(function () {
                     success:function (data) {
                         let clientsIdCheck = [];
                         let pars = JSON.parse(data);
+
+                        // console.log(pars.discount_client_id_check);
                         if (pars.discount_desc != undefined){
                             discount_desc.push(pars.discount_desc);
                         }
@@ -92,7 +94,16 @@ $(document).ready(function () {
                         //         clientsIdCheck.push(arr);
                         //     }
                         // }
-                        // console.log(clientsIdCheck)
+                        // console.log(clientsIdCheck = )
+                        let prod_clients = '';
+                        if (pars.discount_client_id_check != []){
+                            for (let i in pars.discount_client_id_check) {
+                                console.log(pars.discount_client_id_check)
+                                // prod_clients += '<input type="hidden" class="discount_client_id" ' +
+                                //     'name="discount_client_id_check[][' + pars.discount_client_id_check[i].id +']"' +
+                                //     'value="'+ pars.discount_client_id_check[i].clients_id+' " >';
+                            }
+                        }
 
                         sequenceNumber++;
                         ordersBeforTotalPriceSum += Math.round(pars.format_before_price) * pars.count;
@@ -105,7 +116,7 @@ $(document).ready(function () {
                                                         <input type="hidden" name="order_items[]" value="`+pars.product_id+`">
                                                         <input type="hidden" name="nomenclature_id[]" value="`+pars.nomenclature_id+`">
                                                         <input type="hidden" name="count_discount_id[]" value="`+pars.count_discount_id+`">
-<!--                                                        <input type="hidden" name="discount_client_id_check[]" value='`+(pars.discount_client_id_check == [] ? []: JSON.stringify(clientsIdCheck))+`'>-->
+                                                        ` + prod_clients + `
                                                         <input type="hidden" name="cost[]" value="`+pars.cost+`">
                                                      </td>
                                                      <td  class="name">`+pars.name+`</td>
@@ -146,7 +157,7 @@ $(document).ready(function () {
                                 return [id, uniqueName[0], uniqueDiscount[0],uniqueDiscountType[0]];
                             });
                             // console.log(uniquePairs)
-
+.
                             uniquePairs.forEach((item,index) => {
                                 discountBody += `<tr>
                                                      <td>`+(parseInt(index) + 1) +`</td>
@@ -155,11 +166,13 @@ $(document).ready(function () {
                                                 </tr>`
                             })
                             $('.discountDesc tbody').parent().append(discountBody);
+                            // console.log(trss)
                             for (let i in trss) {
                                 if(trss[i] != ''){
                                     newTbody.append(trss[i]);
                                 }
                             }
+
                             $('.ordersAddingTable tbody').replaceWith(newTbody);
 
                             $('body').find('.ordersAddingTable').removeClass('d-none');
@@ -168,6 +181,8 @@ $(document).ready(function () {
                             $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
                             $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
                             $('body').find('#orders-total_discount').val(Math.round(totalDiscount));
+
+                            countingNames($('body').find('.ordersAddingTable'));
                         }
                     }
                 })
@@ -875,4 +890,23 @@ $(document).ready(function () {
         })
 
     }
+    function countingNames(table){
+        table.find('tbody').find('tr').each(function () {
+            if ($(this).has('.discount_client_id').length > 0){
+                let col = $(this).parent().children().index($(this));
+
+                $(this).find('.discount_client_id').attr('name',$(this).find('.discount_client_id').attr('name').replace(/\[\]/, '['+ (col+1) +']'));
+            }
+            // console.log($(this).has('.discount_client_id'))
+        })
+    }
+    // function TrCounter(table){
+    //     let i = 0;
+    //     table.find('tbody').find('tr').each(function () {
+    //         $(this).find('td:first').find('span').text(++i);
+    //         $(this).data('id' , i);
+    //
+    //
+    //     })
+    // }
 })

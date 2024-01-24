@@ -172,22 +172,53 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            echo "<pre>";
+            var_dump($post);
+            exit();
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
-            $model->total_price = $post['Orders']['total_price'];
-            $model->total_price_before_discount = $post['Orders']['total_price_before_discount'];
-            $model->total_discount = $post['Orders']['total_discount'];
+
+            $model->total_price = $post['Orders']['total_price']; //-
+            $model->total_price_before_discount = $post['Orders']['total_price_before_discount']; //-
+            $model->total_discount = $post['Orders']['total_discount']; //-
+
             $model->total_count = $post['Orders']['total_count'];
             $model->comment = $post['Orders']['comment'];
             $model->orders_date = $post['Orders']['orders_date'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
-            $model->save();
+//            $model->save();
             for ($i = 0; $i < count($post['order_items']); $i++){
                 $order_items_create = new OrderItems();
                 $order_items_create->order_id = $model->id;
                 $order_items_create->product_id = intval($post['order_items'][$i]);
+
+//                $prod = Products::findOne($post['order_items'][$i]);
+//                $nom = Nomenclature::findOne($post['nomenclature_id']);
+//
+//                $disc = Products::getDiscount([
+//                    'client_id' => $post['clients_id'],
+//                    'prod_id' => $prod->id,
+//                    'nom_id' => intval($post['nomenclature_id'][$i]),
+//                    'date' => date('Y-m-d'),
+//                    'orders_price' => $prod->price,
+//                    'orders_count' => intval($post['count_'][$i]),
+//                    'orders_cost' => $nom->cost,
+//                    'orders_total_count' => $post['Orders']['total_count'],
+//                    'orders_total_sum' => $post['Orders']['total_count'],
+//                    'to_order' => 1,
+////                ]);
+//                if($disc['discount']){
+//                    $post['price'][$i] = $prod->price - $disc['discount'];
+//                }else{
+//                    $post['price'][$i] = $prod->price;
+//                }
+//                echo '<pre>';
+//                var_dump($prod);
+//                die;
                 $order_items_create->nom_id_for_name = intval($post['nomenclature_id'][$i]);
+
+
                 $order_items_create->price = intval($post['price'][$i]) * intval($post['count_'][$i]);
                 $order_items_create->count = $post['count_'][$i];
                 $order_items_create->cost = intval($post['cost'][$i]) * intval($post['count_'][$i]);
