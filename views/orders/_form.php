@@ -487,7 +487,7 @@ $session = Yii::$app->session;
 
 <?php
 $this->registerJsFile(
-    '@web/js/orders.js?v=15999132',
+    '@web/js/orders.js?v=15992',
     ['depends' => [\yii\web\JqueryAsset::class]]
 );
 ?>

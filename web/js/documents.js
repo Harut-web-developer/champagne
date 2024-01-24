@@ -67,7 +67,6 @@ $(document).ready(function () {
 
     $('body').on('click', '.updateDocuments', function () {
         var documentsTableBody = '';
-        documentsCountInputReadOnly();
         $('.documentsAddingTable tbody').html('')
         $('.documentsTableTr').each(function () {
             if ($(this).find(".documentsCountInput").val() != '') {
@@ -112,7 +111,6 @@ $(document).ready(function () {
     $('body').on('click', '.by_ajax_update', function () {
         var href_ = $(this).attr('data-href');
         getNomDocument(href_);
-        // documentsCountInputReadOnly();
         $('.documentsTableTr').each(function () {
             if ($(this).find(".documentsCountInput").val() != '') {
                 let nom_id = $(this).find(".nom_id").attr('data-id');
