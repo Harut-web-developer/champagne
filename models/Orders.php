@@ -72,4 +72,5 @@ class Orders extends \yii\db\ActiveRecord
         }
         return $model;
     }
+//    public static  function getMeneger(x)
 }

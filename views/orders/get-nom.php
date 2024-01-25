@@ -44,26 +44,23 @@
     </div>
 </div>
 
-<?php $page = @$_GET['paging'] ?? 1;
-//        var_dump('<pre>' . print_r($_GET,true) . '</pre>');exit();
-?>
+<?php $page = @$_GET['paging'] ?? 1; ?>
 <?php  $count = intval(ceil($total/10)) ;
 if (@$_GET['nomenclature'] != ''){
     $count = 1 ;
 }
 ?>
-
+<?php if($urlId){ ?>
 <nav aria-label="Page navigation example" class="pagination">
     <ul class="pagination pagination-sm">
         <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
-            <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
+            <a class="page-link by_ajax_update" href="#" data-href="/orders/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
         </li>
         <?php for ($i = 1;$i <= $count; $i++){ ?>
             <?php if($i > 0 && $i <= $count+1){?>
                 <li class="page-item <?= ($page==$i) ? 'active' : '' ?> page-item-active-insearche">
-                    <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $i ?>"><?= $i ?></a>
+                    <a class="page-link by_ajax_update" href="#" data-href="/orders/get-nomiclature?paging=<?= $i ?>"><?= $i ?></a>
                 </li>
-
                 <?php
                 if (!empty($_GET['nomenclature'])) {
                     echo "<script>
@@ -71,7 +68,7 @@ if (@$_GET['nomenclature'] != ''){
                         $('.page-item-active-insearche').addClass('active');
                     });
                     $('.page-item-active-insearche').on('click', function(event) {
-                        $('.searchForOrder').val('');
+                        $('.searchForOrderUpdate').val('');
                     });
                   </script>";
                 }
@@ -81,11 +78,48 @@ if (@$_GET['nomenclature'] != ''){
 
         <?php if(intval($page) < $count){ ?>
             <li class="page-item next">
-                <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
+                <a class="page-link by_ajax_update" href="#" data-href="/orders/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
             </li>
         <?php } ?>
     </ul>
 </nav>
+<?php } else { ?>
+    <nav aria-label="Page navigation example" class="pagination">
+        <ul class="pagination pagination-sm">
+            <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
+                <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
+            </li>
+            <?php for ($i = 1;$i <= $count; $i++){ ?>
+                <?php if($i > 0 && $i <= $count+1){?>
+                    <li class="page-item <?= ($page==$i) ? 'active' : '' ?> page-item-active-insearche">
+                        <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $i ?>"><?= $i ?></a>
+                    </li>
+
+                    <?php
+                    if (!empty($_GET['nomenclature'])) {
+                        echo "<script>
+                    $(document).ready(function() {
+                        $('.page-item-active-insearche').addClass('active');
+                    });
+                    $('.page-item-active-insearche').on('click', function(event) {
+                        $('.searchForOrder').val('');
+                    });
+                  </script>";
+                    }
+                    ?>
+                <?php } ?>
+            <?php } ?>
+
+            <?php if(intval($page) < $count){ ?>
+                <li class="page-item next">
+                    <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
+                </li>
+            <?php } ?>
+        </ul>
+    </nav>
+<?php } ?>
+
+
 
 
 <!--<nav aria-label="Page navigation example" class="pagination">-->
@@ -109,4 +143,3 @@ if (@$_GET['nomenclature'] != ''){
 <!--        --><?php //} ?>
 <!--    </ul>-->
 <!--</nav>-->
-

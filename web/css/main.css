@@ -605,3 +605,6 @@
 .pageStyle > .text-nowrap > ul > li > a:hover{
     background-color: #E1E4E8;
 }
+.changeManager{
+    margin: 10px 0px 10px 5px;
+}

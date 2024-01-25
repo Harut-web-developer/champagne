@@ -44,6 +44,10 @@ class DashboardController extends Controller
         return parent::beforeAction($action);
     }
     public function actionIndex(){
+        $have_access = Users::checkPremission(57);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $payment = 0;
         $sale = 0;
         $deal = 0;

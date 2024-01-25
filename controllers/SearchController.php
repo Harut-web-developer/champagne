@@ -29,11 +29,11 @@ class SearchController extends Controller{
 
     public function actionIndex()
     {
-        $res = [];
-        $have_access = Users::checkPremission(53);
+        $have_access = Users::checkPremission(67);
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $res = [];
         $sub_page = [];
         $date_tab = [];
 

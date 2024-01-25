@@ -6,6 +6,7 @@ use app\models\Clients;
 use app\models\ClientsGroups;
 use app\models\GroupsName;
 use app\models\GroupsNameSearch;
+use app\models\Users;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -37,20 +38,20 @@ class GroupsNameController extends Controller
         }
         return parent::beforeAction($action);
     }
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
+//    public function behaviors()
+//    {
+//        return array_merge(
+//            parent::behaviors(),
+//            [
+//                'verbs' => [
+//                    'class' => VerbFilter::className(),
+//                    'actions' => [
+//                        'delete' => ['POST'],
+//                    ],
+//                ],
+//            ]
+//        );
+//    }
 
     /**
      * Lists all GroupsName models.
@@ -59,6 +60,10 @@ class GroupsNameController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(61);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $searchModel = new GroupsNameSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
         $sub_page = [
@@ -109,6 +114,10 @@ class GroupsNameController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(58);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new GroupsName();
         $sub_page = [];
         $date_tab = [];
@@ -157,6 +166,10 @@ class GroupsNameController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(59);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
         $sub_page = [];
         $date_tab = [];
@@ -221,6 +234,10 @@ class GroupsNameController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(60);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $groups_name = GroupsName::findOne($id);
         $groups_name->status = '0';
         $groups_name->save(false);

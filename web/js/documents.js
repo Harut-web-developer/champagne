@@ -108,16 +108,11 @@ $(document).ready(function () {
         }
     }
 
-    function documentsCountInputReadOnly(){
-        if ($(this).find(".documentsCountInput").val() != ''){
-            $('.documentsCountInput').prop('readonly', true);
-        }
-    }
 
     $('body').on('click', '.by_ajax_update', function () {
         var href_ = $(this).attr('data-href');
         getNomDocument(href_);
-        documentsCountInputReadOnly();
+        // documentsCountInputReadOnly();
         $('.documentsTableTr').each(function () {
             if ($(this).find(".documentsCountInput").val() != '') {
                 let nom_id = $(this).find(".nom_id").attr('data-id');

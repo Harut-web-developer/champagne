@@ -42,24 +42,40 @@ class OrdersSearch extends Orders
      */
     public function search($params)
     {
+//        var_dump($params);
         $session = Yii::$app->session;
         $query = Orders::find();
         if ($session['role_id'] == 1){
-            if(isset($params['numberVal']) && $params['numberVal'] != 3) {
-                $query->andWhere(['status' => $params['numberVal']])->orderBy(['created_at'=> SORT_DESC]);
-            }elseif (isset($params['numberVal']) && $params['numberVal'] == 3){
-                $query->andWhere(['status' => '1'])->orderBy(['created_at'=> SORT_DESC]);
+            if (isset($params['managerId']) && $params['managerId'] == 'null'){
+                if(isset($params['numberVal']) && $params['numberVal'] != 3) {
+                    $query->andWhere(['status' => $params['numberVal']])->orderBy(['created_at'=> SORT_DESC]);
+                }elseif (isset($params['numberVal']) && $params['numberVal'] == 3){
+                    $query->andWhere(['status' => '1'])->orderBy(['created_at'=> SORT_DESC]);
+                }
+            }elseif (isset($params['managerId']) && $params['managerId'] != 'null'){
+                if(isset($params['numberVal']) && $params['numberVal'] != 3) {
+                    $query->andWhere(['status' => $params['numberVal']])->andWhere(['user_id' => $params['managerId']])->orderBy(['created_at'=> SORT_DESC]);
+                }elseif (isset($params['numberVal']) && $params['numberVal'] == 3){
+                    $query->andWhere(['status' => '1'])->andWhere(['user_id' => $params['managerId']])->orderBy(['created_at'=> SORT_DESC]);
+                }
             }
+
         }else {
             if (isset($params['numberVal']) && $params['numberVal'] != 4) {
-                $query->andWhere(['status' => $params['numberVal']])->orderBy(['created_at'=> SORT_DESC]);;
+                $query->andWhere(['status' => $params['numberVal']])->andWhere(['user_id' => $params['managerId']])->orderBy(['created_at'=> SORT_DESC]);;
             }elseif (isset($params['numberVal']) && $params['numberVal'] == 4){
-                $query->andWhere(['status' => '1'])->orderBy(['created_at'=> SORT_DESC]);;
+                $query->andWhere(['status' => '1'])->andWhere(['user_id' => $params['managerId']])->orderBy(['created_at'=> SORT_DESC]);;
             }
         }
+        if ($session['role_id'] == 1){
+            $res =  $query->orderBy(['created_at'=> SORT_DESC]);
+        }else{
+            $res =  $query->andWhere(['user_id' => $session['user_id']])->orderBy(['created_at'=> SORT_DESC]);
+        }
+
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query->orderBy(['created_at'=> SORT_DESC]),
+            'query' => $res,
         ]);
 
 

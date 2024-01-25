@@ -149,6 +149,19 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                             ['id' => 54, 'name' => 'Տեսնել երթուղու դասավորություն', 'label_id' => 'premission54'],
                             ['id' => 55, 'name' => 'Հաստատել առաքումը', 'label_id' => 'premission55'],
                             ['id' => 56, 'name' => 'Հասանելիություն ֆայլերին', 'label_id' => 'premission56'],
+                            ['id' => 57, 'name' => 'Տեսնել վահանակը', 'label_id' => 'premission57'],
+                            ['id' => 58, 'name' => 'Ստեղծել խմբեր', 'label_id' => 'premission58'],
+                            ['id' => 59, 'name' => 'Փոփոխել խմբեր', 'label_id' => 'premission59'],
+                            ['id' => 60, 'name' => 'Ջնջել խմբեր', 'label_id' => 'premission60'],
+                            ['id' => 61, 'name' => 'Տեսնել խմբեր', 'label_id' => 'premission61'],
+                            ['id' => 62, 'name' => 'Ստեղծել վճարներ', 'label_id' => 'premission62'],
+                            ['id' => 63, 'name' => 'Փոփոխել վճարներ', 'label_id' => 'premission63'],
+                            ['id' => 64, 'name' => 'Ջնջել վճարներ', 'label_id' => 'premission64'],
+                            ['id' => 65, 'name' => 'Տեսնել վճարներ', 'label_id' => 'premission65'],
+                            ['id' => 66, 'name' => 'Տեսնել վիճակագրություն', 'label_id' => 'premission66'],
+                            ['id' => 67, 'name' => 'Տեսնել փնտրվածը', 'label_id' => 'premission67'],
+                            ['id' => 68, 'name' => 'Տեսնել պատվերների վճարները', 'label_id' => 'premission68'],
+                            ['id' => 69, 'name' => 'Տեսնել անցած երթուղին', 'label_id' => 'premission69'],
 
                         ];
 
@@ -400,6 +413,58 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                         <div class="premission-content-items">
                             <label for="premission56" class="items-title">Հասանելիություն ֆայլերին</label>
                             <input id="premission56" type="checkbox" value="56" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission57" class="items-title">Տեսնել վահանակը</label>
+                            <input id="premission57" type="checkbox" value="57" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission58" class="items-title">Ստեղծել խմբեր</label>
+                            <input id="premission58" type="checkbox" value="58" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission59" class="items-title">Փոփոխել խմբեր</label>
+                            <input id="premission59" type="checkbox" value="59" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission60" class="items-title">Ջնջել խմբեր</label>
+                            <input id="premission60" type="checkbox" value="60" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission61" class="items-title">Տեսնել խմբեր</label>
+                            <input id="premission61" type="checkbox" value="61" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission62" class="items-title">Ստեղծել վճարներ</label>
+                            <input id="premission62" type="checkbox" value="62" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission63" class="items-title">Փոփոխել վճարներ</label>
+                            <input id="premission63" type="checkbox" value="63" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission64" class="items-title">Ջնջել վճարներ</label>
+                            <input id="premission64" type="checkbox" value="64" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission65" class="items-title">Տեսնել վճարներ</label>
+                            <input id="premission65" type="checkbox" value="65" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission66" class="items-title">Տեսնել վիճակագրություն</label>
+                            <input id="premission66" type="checkbox" value="66" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission67" class="items-title">Տեսնել փնտրվածը</label>
+                            <input id="premission67" type="checkbox" value="67" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission68" class="items-title">Տեսնել պատվերների վճարները</label>
+                            <input id="premission68" type="checkbox" value="68" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="9" class="items-title">Տեսնել անցած երթուղին</label>
+                            <input id="premission69" type="checkbox" value="69" name="premission[]">
                         </div>
                     </div>
                 </div>

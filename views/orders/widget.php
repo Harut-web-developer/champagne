@@ -356,6 +356,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
             'comment',
             'total_price',
             'total_count',
+            'orders_date',
             ...$action_column,
         ],
     ]); ?>

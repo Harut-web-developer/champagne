@@ -116,6 +116,10 @@ class DiscountController extends Controller
 //        }
     }
     public function actionInactive(){
+        $have_access = Users::checkPremission(44);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $sub_page = [
             ['name' => 'Ակտիվ զեղչեր','address' => '/discount'],
         ];

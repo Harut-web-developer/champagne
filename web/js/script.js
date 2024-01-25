@@ -282,6 +282,7 @@ $(document).ready(function() {
             dataType: "html",
             success: function(data) {
                 $('body').append(data);
+                console.log(data)
                 tables = document.getElementsByClassName("chatgbti_");
                 $(".chatgbti_").hide();
                 $(".deletesummary").hide();
@@ -363,14 +364,36 @@ $(document).ready(function() {
         });
 
     $('body').on('change', '.orderStatus', function () {
+        let managerId = $('.changeManager').val();
         let numberVal = $(this).val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        // console.log(managerId,numberVal)
         $.ajax({
             url:'/orders/filter-status',
             method:'get',
             datatype:'json',
             data:{
                 numberVal:numberVal,
+                managerId:managerId,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+            }
+        })
+    })
+    $('body').on('change', '.changeManager', function () {
+        let managerId = $(this).val();
+        let numberVal = $('.orderStatus').val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        // console.log(managerId,numberVal)
+        $.ajax({
+            url:'/orders/filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                numberVal:numberVal,
+                managerId:managerId,
                 _csrf: csrfToken,
             },
             success:function (data){
@@ -511,6 +534,23 @@ $(document).ready(function() {
             }
         })
     })
+    // $('body').on('change', '.changeManager', function () {
+    //     let managerId = $(this).val();
+    //     let csrfToken = $('meta[name="csrf-token"]').attr("content");
+    //     $.ajax({
+    //         url: '/orders/change-manager',
+    //         method: 'get',
+    //         datatype: 'json',
+    //         data: {
+    //             managerId: managerId,
+    //             _csrf: csrfToken
+    //         },
+    //         success: function (data) {
+    //
+    //         }
+    //     })
+    // })
+
 
 });
 

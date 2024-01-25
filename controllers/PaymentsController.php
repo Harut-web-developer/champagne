@@ -6,6 +6,7 @@ use app\models\Clients;
 use app\models\Payments;
 use app\models\PaymentsSearch;
 use app\models\Rates;
+use app\models\Users;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -60,6 +61,10 @@ class PaymentsController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(65);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $sub_page = [
             ['name' => 'Վիճակագրություն','address' => '/payments/statistics'],
             ['name' => 'Փոխարժեք','address' => '/rates']
@@ -85,6 +90,10 @@ class PaymentsController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public  function actionStatistics(){
+        $have_access = Users::checkPremission(66);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
 //        echo "<pre>";
         $statistics = Payments::find()->select('orders.id as orders_id,SUM(orders.total_price) as debt,orders.status,
          clients.name, payments.id as payment_id,payments.payment_sum,')
@@ -130,6 +139,10 @@ class PaymentsController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(62);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new Payments();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
@@ -177,6 +190,10 @@ class PaymentsController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(63);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost) {
@@ -221,6 +238,10 @@ class PaymentsController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(64);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $payments = Payments::findOne($id);
         $payments->status = '0';
         $payments->save();

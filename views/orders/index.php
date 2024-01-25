@@ -19,6 +19,7 @@ $this->title = 'Վաճառքներ';
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
 $this->params['date_tab'] = $date_tab;
+$session = Yii::$app->session;
 
 
 $have_access_create = Users::checkPremission(21);
@@ -305,10 +306,28 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                     <?= Html::a('Ստեղծել վաճառքներ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
                 <?php } ?>
             </p>
+            <div>
+                <?php
+                    $users = Users::find()->select('id,name')->where(['=','role_id',2])->asArray()->all();
+                    if($session['role_id'] == '1'){?>
+                        <select class="form-control changeManager">
+                            <option value="null">Ընտրել մենեջերին</option>
+                            <?php
+                            foreach ($users as $user){
+                                ?>
+                                <option value="<?=$user['id']?>"><?=$user['name']?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                <?php }elseif ($session['role_id'] == '2'){ ?>
+                        <input class="changeManager" type="hidden" value="<?=$session['user_id']?>">
+                <?php }?>
+            </div>
             <div style="display: flex; justify-content: space-between; ">
                 <select class="form-select orderStatus" aria-label="Default select example" style="width: 150px; margin: 0px 10px 15px 5px;">
                     <?php
-                    $session = Yii::$app->session;
+//                    $session = Yii::$app->session;
                     if($session['role_id'] == '1'){?>
                         <!--                    <option selected value="3">Ընտրել</option>-->
                         <option selected value="3">Ընդհանուր</option>
@@ -405,6 +424,7 @@ else{ ?>
                     'comment',
                     'total_price',
                     'total_count',
+                    'orders_date',
                     ...$action_column,
                 ],
             ]); ?>

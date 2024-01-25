@@ -297,6 +297,10 @@ class RouteController extends Controller
     }
 
     public function actionShippingRoute(){
+        $have_access = Users::checkPremission(69);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $id = Yii::$app->request->get('id');
         $sub_page = [];
         $date_tab = [];

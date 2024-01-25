@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Payments;
+use app\models\Users;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -17,8 +18,37 @@ $this->title = 'Վճարում';
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
 $this->params['date_tab'] = $date_tab;
-
-
+$have_access_create = Users::checkPremission(62);
+$have_access_update = Users::checkPremission(63);
+$have_access_delete = Users::checkPremission(64);
+if ($have_access_update && $have_access_delete){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{update} {delete}',
+        'urlCreator' => function ($action, Payments $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+} else if($have_access_update){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{update}',
+        'urlCreator' => function ($action, Payments $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}else if($have_access_delete){
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => '{delete}',
+        'urlCreator' => function ($action, Payments $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}
 ?>
 <div class="payments-index">
     <div class="titleAndPrevPage">
@@ -26,7 +56,9 @@ $this->params['date_tab'] = $date_tab;
         <h3><?= Html::encode($this->title) ?></h3>
     </div>
     <p>
-        <?= Html::a('Կատարել վճար', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+        <?php if($have_access_create){ ?>
+            <?= Html::a('Կատարել վճար', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+        <?php } ?>
     </p>
     <div class="card pageStyle">
     <?= CustomGridView::widget([
@@ -64,14 +96,7 @@ $this->params['date_tab'] = $date_tab;
             ],
             'rate_value',
             'pay_date',
-
-            [
-                'header' => 'Գործողություն',
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Payments $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
-            ],
+            ...$action_column,
         ],
     ]); ?>
     </div>

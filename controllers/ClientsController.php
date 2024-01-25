@@ -108,6 +108,10 @@ class ClientsController extends Controller
     }
     public function actionClientsDebt()
     {
+        $have_access = Users::checkPremission(68);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $id = intval(Yii::$app->request->get('id'));
         $sub_page = [];
         $date_tab = [];

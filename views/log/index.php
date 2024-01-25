@@ -18,38 +18,38 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
 $this->params['date_tab'] = $date_tab;
 
-$have_access_create = Users::checkPremission(25);
-$have_access_update = Users::checkPremission(26);
-$have_access_delete = Users::checkPremission(27);
-$action_column = [];
-if ($have_access_update && $have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{update} {delete}',
-        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-} else if($have_access_update){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{update}',
-        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{delete}',
-        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}
+//$have_access_create = Users::checkPremission(25);
+//$have_access_update = Users::checkPremission(26);
+//$have_access_delete = Users::checkPremission(27);
+//$action_column = [];
+//if ($have_access_update && $have_access_delete){
+//    $action_column[] = [
+//        'header' => 'Գործողություն',
+//        'class' => ActionColumn::className(),
+//        'template' => '{update} {delete}',
+//        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
+//            return Url::toRoute([$action, 'id' => $model->id]);
+//        }
+//    ];
+//} else if($have_access_update){
+//    $action_column[] = [
+//        'header' => 'Գործողություն',
+//        'class' => ActionColumn::className(),
+//        'template' => '{update}',
+//        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
+//            return Url::toRoute([$action, 'id' => $model->id]);
+//        }
+//    ];
+//}else if($have_access_delete){
+//    $action_column[] = [
+//        'header' => 'Գործողություն',
+//        'class' => ActionColumn::className(),
+//        'template' => '{delete}',
+//        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
+//            return Url::toRoute([$action, 'id' => $model->id]);
+//        }
+//    ];
+//}
 ?>
 <div class="log-index">
     <div class="titleAndPrevPage">
