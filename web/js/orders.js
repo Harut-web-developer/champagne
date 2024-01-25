@@ -12,6 +12,41 @@ $(document).ready(function () {
             delete id_count[String(id).trim()];
         }
     }
+    var count_product = {};
+    function product_count() {
+        $('.ordersAddingTable .tableNomenclature .nom_Id').each(function() {
+            let nomIdValue = $(this).val();
+            let countProductValue = $(this).closest('tr').find('.countProduct').val();
+            let discountProductValue = $(this).closest('tr').find('input[name="discount[]"]').val();
+            let beforePriceProductValue = $(this).closest('tr').find('input[name="beforePrice[]"]').val();
+            let priceProductValue = $(this).closest('tr').find('input[name="price[]"]').val();
+            if (!count_product[nomIdValue]) {
+                count_product[nomIdValue] = {};
+            }
+            count_product[nomIdValue]['count'] = countProductValue;
+            count_product[nomIdValue]['discount'] = discountProductValue;
+            count_product[nomIdValue]['beforePrice'] = beforePriceProductValue;
+            count_product[nomIdValue]['price'] = priceProductValue;
+        });
+        var ordersTotalPriceSum = 0;
+        var ordersTotalCount = 0;
+        var ordersBeforTotalPriceSum = 0;
+        var totalDiscount = 0;
+        for(let i in count_product){
+            ordersTotalPriceSum += parseInt(count_product[i].price * count_product[i].count);     //yndhanur zexchvac gumar
+            ordersTotalCount += parseInt(count_product[i].count);
+            ordersBeforTotalPriceSum += parseInt(count_product[i].beforePrice * count_product[i].count);  //yndhanur gumar
+            totalDiscount += parseInt(count_product[i].discount * count_product[i].count);
+        }
+        console.log(count_product)
+        return {
+            count_product: count_product,
+            ordersBeforTotalPriceSum: ordersBeforTotalPriceSum,
+            ordersTotalPriceSum: ordersTotalPriceSum,
+            ordersTotalCount: ordersTotalCount,
+            totalDiscount: totalDiscount
+        };
+    }
 
     $('.js-example-basic-single').select2();
     $('body').on('change','#orders-orders_date, #singleClients',function(){
@@ -29,16 +64,9 @@ $(document).ready(function () {
         let clientId = $('#singleClients').val();
         let totalSum = 0;
         let countSum = 0;
-        // $('.ordersAddingTable tbody').html('');
         let orders_date = $('#orders-orders_date').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
-        var ordersTotalPriceSum = 0;
-        var ordersTotalCount = 0;
-        var ordersBeforTotalPriceSum = 0;
-        var totalDiscount = 0;
         var discountBody = '';
-        // $('body').find('.loader').toggleClass('d-none');
-        // $('body').find('.ordersAddingTable').addClass('d-none');
         var ordersTableLength = 0;
         var sequenceNumber = 0;
         $('.addOrdersTableTr').each(function () {
@@ -90,16 +118,12 @@ $(document).ready(function () {
 
                         }
                         sequenceNumber++;
-                        ordersBeforTotalPriceSum += Math.round(pars.format_before_price) * pars.count;
-                        ordersTotalPriceSum += Math.round(pars.price) * pars.count;
-                        ordersTotalCount += pars.count;
-                        totalDiscount += Math.round(pars.discount) * pars.count;
                         trss[pars.product_id] = `<tr class="tableNomenclature">
                                                      <td>
                                                         <span>`+sequenceNumber+`</span>
                                                         <input type="hidden" name="order_items[]" value="`+pars.product_id+`">
                                                         <input class="prodId" type="hidden" name="product_id[]" value="`+pars.product_id+`">
-                                                        <input type="hidden" name="nom_id[]" value="`+pars.nomenclature_id+`">
+                                                        <input class="nom_Id" type="hidden" name="nom_id[]" value="`+pars.nomenclature_id+`">
                                                         <input type="hidden" name="count_discount_id[]" value="`+pars.count_discount_id+`">
                                                         `+prod_clients+`
                                                         <input type="hidden" name="cost[]" value="`+pars.cost+`">
@@ -153,7 +177,6 @@ $(document).ready(function () {
                                 }, [])
                                 .filter(pair => pair.every(value => value !== undefined));
 
-                            // console.log(uniquePairs);
                             uniquePairs.forEach((item,index) => {
                                 discountBody += `<tr>
                                                      <td>`+(parseInt(index) + 1) +`</td>
@@ -169,116 +192,78 @@ $(document).ready(function () {
                             }
                             $('.ordersAddingTable tbody').replaceWith(newTbody);
                             trCounter($('body').find('.ordersAddingTable'));
-
-                            // $('body').find('.ordersAddingTable').removeClass('d-none');
-                            // $('body').find('.loader').toggleClass('d-none');
-                            $('body').find('#orders-total_price').val(Math.round(ordersTotalPriceSum));
-                            $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-                            $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
-                            $('body').find('#orders-total_discount').val(Math.round(totalDiscount));
+                            newTbody = $('<tbody></tbody>');
+                            var result = product_count();
+                            $('body').find('#orders-total_price').val(Math.round(result.ordersTotalPriceSum));
+                            $('body').find('#orders-total_count').val(Math.round(result.ordersTotalCount));
+                            $('body').find('#orders-total_price_before_discount').val(Math.round(result.ordersBeforTotalPriceSum));
+                            $('body').find('#orders-total_discount').val(Math.round(result.totalDiscount));
                         }
                     }
                 })
             }
         })
-        // console.log(old_table,trss)
     })
     $('body').on('keyup','.countProduct', function (){
-            let ordersTotalCount = 0;
-            let ordersTotalPriceSum = 0;
-            let ordersBeforTotalPriceSum = 0;
-            let totalDiscount = 0;
-            if ($(this).val() < 1 || $(this).val() === ""){
-                $(this).val(1)
-                $(this).closest('.tableNomenclature').find('.totalPrice').children('span').text($(this).closest('.tableNomenclature').find('.price').children('input').val() * $(this).val())
-                $(this).closest('.tableNomenclature').find('.totalPrice').children('input').val($(this).closest('.tableNomenclature').find('.price').children('input').val() * $(this).val())
-                $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('span').text($(this).closest('.tableNomenclature').find('.beforePrice').children('input').val() * $(this).val())
-                $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('input').val($(this).closest('.tableNomenclature').find('.beforePrice').children('input').val() * $(this).val())
-                $('.tableNomenclature').each(function (){
-                    ordersTotalPriceSum += parseInt($(this).find('.totalPrice').children('input').val());
-                    ordersTotalCount += parseInt($(this).find('.count').children('input').val());
-                    ordersBeforTotalPriceSum += parseInt($(this).find('.totalBeforePrice').children('input').val());
-                    totalDiscount += parseInt($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
-                })
-                $('body').find('#orders-total_price').val(Math.round(ordersTotalPriceSum));
-                $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-                $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
-                $('body').find('#orders-total_discount').val(Math.round(totalDiscount));
-            }else {
-                $(this).closest('.tableNomenclature').find('.totalPrice').children('span').text($(this).closest('.tableNomenclature').find('.price').children('input').val() * $(this).val())
-                $(this).closest('.tableNomenclature').find('.totalPrice').children('input').val($(this).closest('.tableNomenclature').find('.price').children('input').val() * $(this).val())
-                $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('span').text($(this).closest('.tableNomenclature').find('.beforePrice').children('input').val() * $(this).val())
-                $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('input').val($(this).closest('.tableNomenclature').find('.beforePrice').children('input').val() * $(this).val())
-                $('.tableNomenclature').each(function (){
-                    ordersTotalPriceSum += parseInt($(this).find('.totalPrice').children('input').val());
-                    ordersTotalCount += parseInt($(this).find('.count').children('input').val());
-                    ordersBeforTotalPriceSum += parseInt($(this).find('.totalBeforePrice').children('input').val());
-                    totalDiscount += parseInt($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
-                })
-                $('body').find('#orders-total_price').val(Math.round(ordersTotalPriceSum));
-                $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-                $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
-                $('body').find('#orders-total_discount').val(Math.round(totalDiscount));
-            }
-        })
-    $('body').on('click','.countProduct', function (){
-        let ordersTotalCount = 0;
-        let ordersTotalPriceSum = 0;
-        let ordersBeforTotalPriceSum = 0;
-        let totalDiscount = 0;
+        var result = product_count();
         if ($(this).val() < 1 || $(this).val() === ""){
             $(this).val(1)
             $(this).closest('.tableNomenclature').find('.totalPrice').children('span').text($(this).closest('.tableNomenclature').find('.price').children('input').val() * $(this).val())
             $(this).closest('.tableNomenclature').find('.totalPrice').children('input').val($(this).closest('.tableNomenclature').find('.price').children('input').val() * $(this).val())
             $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('span').text($(this).closest('.tableNomenclature').find('.beforePrice').children('input').val() * $(this).val())
             $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('input').val($(this).closest('.tableNomenclature').find('.beforePrice').children('input').val() * $(this).val())
-            $('.tableNomenclature').each(function (){
-                ordersTotalPriceSum += parseInt($(this).find('.totalPrice').children('input').val());
-                ordersTotalCount += parseInt($(this).find('.count').children('input').val());
-                ordersBeforTotalPriceSum += parseInt($(this).find('.totalBeforePrice').children('input').val());
-                totalDiscount += parseInt($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
-            })
-            $('body').find('#orders-total_price').val(Math.round(ordersTotalPriceSum));
-            $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-            $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
-            $('body').find('#orders-total_discount').val(Math.round(totalDiscount));
+            $('body').find('#orders-total_price').val(Math.round(result.ordersTotalPriceSum));
+            $('body').find('#orders-total_count').val(Math.round(result.ordersTotalCount));
+            $('body').find('#orders-total_price_before_discount').val(Math.round(result.ordersBeforTotalPriceSum));
+            $('body').find('#orders-total_discount').val(Math.round(result.totalDiscount));
         }else {
             $(this).closest('.tableNomenclature').find('.totalPrice').children('span').text($(this).closest('.tableNomenclature').find('.price').children('input').val() * $(this).val())
             $(this).closest('.tableNomenclature').find('.totalPrice').children('input').val($(this).closest('.tableNomenclature').find('.price').children('input').val() * $(this).val())
             $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('span').text($(this).closest('.tableNomenclature').find('.beforePrice').children('input').val() * $(this).val())
             $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('input').val($(this).closest('.tableNomenclature').find('.beforePrice').children('input').val() * $(this).val())
-            $('.tableNomenclature').each(function (){
-                ordersTotalPriceSum += parseInt($(this).find('.totalPrice').children('input').val());
-                ordersTotalCount += parseInt($(this).find('.count').children('input').val());
-                ordersBeforTotalPriceSum += parseInt($(this).find('.totalBeforePrice').children('input').val());
-                totalDiscount += parseInt($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
-            })
-            $('body').find('#orders-total_price').val(Math.round(ordersTotalPriceSum));
-            $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-            $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
-            $('body').find('#orders-total_discount').val(Math.round(totalDiscount));
+            $('body').find('#orders-total_price').val(Math.round(result.ordersTotalPriceSum));
+            $('body').find('#orders-total_count').val(Math.round(result.ordersTotalCount));
+            $('body').find('#orders-total_price_before_discount').val(Math.round(result.ordersBeforTotalPriceSum));
+            $('body').find('#orders-total_discount').val(Math.round(result.totalDiscount));
         }
-
+    })
+    $('body').on('click','.countProduct', function (){
+        var result = product_count();
+        if ($(this).val() < 1 || $(this).val() === ""){
+            $(this).val(1)
+            $(this).closest('.tableNomenclature').find('.totalPrice').children('span').text($(this).closest('.tableNomenclature').find('.price').children('input').val() * $(this).val())
+            $(this).closest('.tableNomenclature').find('.totalPrice').children('input').val($(this).closest('.tableNomenclature').find('.price').children('input').val() * $(this).val())
+            $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('span').text($(this).closest('.tableNomenclature').find('.beforePrice').children('input').val() * $(this).val())
+            $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('input').val($(this).closest('.tableNomenclature').find('.beforePrice').children('input').val() * $(this).val())
+            $('body').find('#orders-total_price').val(Math.round(result.ordersTotalPriceSum));
+            $('body').find('#orders-total_count').val(Math.round(result.ordersTotalCount));
+            $('body').find('#orders-total_price_before_discount').val(Math.round(result.ordersBeforTotalPriceSum));
+            $('body').find('#orders-total_discount').val(Math.round(result.totalDiscount));
+        }else {
+            $(this).closest('.tableNomenclature').find('.totalPrice').children('span').text($(this).closest('.tableNomenclature').find('.price').children('input').val() * $(this).val())
+            $(this).closest('.tableNomenclature').find('.totalPrice').children('input').val($(this).closest('.tableNomenclature').find('.price').children('input').val() * $(this).val())
+            $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('span').text($(this).closest('.tableNomenclature').find('.beforePrice').children('input').val() * $(this).val())
+            $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('input').val($(this).closest('.tableNomenclature').find('.beforePrice').children('input').val() * $(this).val())
+            $('body').find('#orders-total_price').val(Math.round(result.ordersTotalPriceSum));
+            $('body').find('#orders-total_count').val(Math.round(result.ordersTotalCount));
+            $('body').find('#orders-total_price_before_discount').val(Math.round(result.ordersBeforTotalPriceSum));
+            $('body').find('#orders-total_discount').val(Math.round(result.totalDiscount));
+        }
     })
     $('body').on('click', '.deleteItems',function (){
         let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
         if (confirmed){
             $(this).closest('.tableNomenclature').remove();
             alert('Հաջողությամբ ջնջված է:');
-            let ordersTotalCount = 0;
-            let ordersTotalPriceSum = 0;
-            let ordersBeforTotalPriceSum = 0;
-            let totalDiscount = 0;
-            $('.tableNomenclature').each(function () {
-                ordersTotalPriceSum += parseInt($(this).find('.totalPrice').children('input').val());
-                ordersTotalCount += parseInt($(this).find('.count').children('input').val());
-                ordersBeforTotalPriceSum += parseInt($(this).find('.totalBeforePrice').children('input').val());
-                totalDiscount += parseInt($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
-            });
-            $('body').find('#orders-total_price').val(Math.round(ordersTotalPriceSum));
-            $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-            $('body').find('#orders-total_price_before_discount').val(Math.round(ordersBeforTotalPriceSum));
-            $('body').find('#orders-total_discount').val(Math.round(totalDiscount));
+            let id_delete = $(this).closest('.tableNomenclature').find('.nom_Id').val();
+            if (id_delete) {
+                delete count_product[id_delete];
+            }
+            var result = product_count();
+            $('body').find('#orders-total_price').val(Math.round(result.ordersTotalPriceSum));
+            $('body').find('#orders-total_count').val(Math.round(result.ordersTotalCount));
+            $('body').find('#orders-total_price_before_discount').val(Math.round(result.ordersBeforTotalPriceSum));
+            $('body').find('#orders-total_discount').val(Math.round(result.totalDiscount));
         }
     })
 
@@ -498,7 +483,6 @@ $(document).ready(function () {
         // $('.documentsAddingTable tbody').replaceWith(newTbody);
         giveOldValues();
     })
-
     function giveOldValues() {
         for (let argumentsKey in old_attrs) {
             let tr = $('body').find('#tr_'+argumentsKey);
@@ -652,7 +636,6 @@ $(document).ready(function () {
         })
     })
 
-
     $('body').on('keyup','.countProductForUpdate', function (){
         let ordersTotalCount = 0;
         let ordersTotalPriceSum = 0;
@@ -734,7 +717,6 @@ $(document).ready(function () {
                     }
                 }
             })
-
         }
     })
     $('body').on('click','.countProductForUpdate', function (){
@@ -897,13 +879,9 @@ $(document).ready(function () {
                         alert('Նման ապրանք պահեստում գոյություն չունի')
                         this_.val('')
                     }
-                    // else if(parse.count === 'exists'){
-                    //
-                    // }
                 }
             }
         })
-
     })
     $('body').on('click','.ordersCountInput',function (){
         var this_ = $(this);
@@ -933,7 +911,6 @@ $(document).ready(function () {
                 }
             }
         })
-
     })
 
     var arr_carent_page_update = [];
@@ -1172,7 +1149,7 @@ $(document).ready(function () {
                                         <span>`+sequenceNumber+`</span>
                                         <input type="hidden" name="order_items[]" value="`+pars.product_id+`">
                                         <input class="prodId" type="hidden" name="product_id[]" value="`+pars.product_id+`">
-                                        <input type="hidden" name="nom_id[]" value="`+pars.nomenclature_id+`">
+                                        <input class="nom_Id" type="hidden" name="nom_id[]" value="`+pars.nomenclature_id+`">
                                         <input type="hidden" name="count_discount_id[]" value="`+pars.count_discount_id+`">
                                         `+prod_clients+`
                                         <input type="hidden" name="cost[]" value="`+pars.cost+`">
@@ -1226,7 +1203,6 @@ $(document).ready(function () {
             }
         })
     })
-
     function getNom(href_) {
         let url_id = window.location.href;
         let url = new URL(url_id);
@@ -1243,7 +1219,6 @@ $(document).ready(function () {
                 $('#ajax_content').html(data);
             }
         })
-
     }
     function trCounter(table){
         let i = 0;

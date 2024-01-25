@@ -375,8 +375,8 @@ class OrdersController extends Controller
             $total_price_before_discount = 0;
             $total_discount = 0;
             foreach ($items as $k => $item){
-                if($item != 'null'){
-                    $order_item = OrderItems::findOne($item);
+                $order_item = OrderItems::findOne(intval($item));
+                if($order_item !== null){
                     $order_item->order_id = $id;
                     $order_item->product_id = $post['product_id'][$k];
                     $order_item->nom_id_for_name = intval($post['nom_id'][$k]);
