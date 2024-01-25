@@ -440,13 +440,16 @@ class OrdersController extends Controller
             $order->total_price = $total_price;
             $order->total_count = $quantity;
             $order->save(false);
-            foreach ($post['discount_client_id_check'] as $key => $value){
-                if ($key != 'empty'){
-                    $discount_client_check_id = Discount::findOne($key);
-                    $discount_client_check_id->discount_option_check_client_id = $value;
-                    $discount_client_check_id->save(false);
+            if(isset($post['discount_client_id_check'])){
+                foreach ($post['discount_client_id_check'] as $key => $value){
+                    if ($key != 'empty'){
+                        $discount_client_check_id = Discount::findOne($key);
+                        $discount_client_check_id->discount_option_check_client_id = $value;
+                        $discount_client_check_id->save(false);
+                    }
                 }
             }
+
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
