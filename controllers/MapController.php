@@ -41,6 +41,10 @@ class MapController extends Controller
         $sub_page = [];
         $date_tab = [];
 
+//        if(isset($_POST)){
+//            $result = 'post ka';
+//            return json_encode(['result' => $result]);
+//        }
         $route = Route::find()->select('id, route')->asArray()->all();
         return $this->render('index', [
             'route' => $route,

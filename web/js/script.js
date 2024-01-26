@@ -611,6 +611,20 @@ $(document).ready(function() {
             }
         })
     }
+
+    // var csrfToken = $('meta[name="csrf-token"]').attr("content");
+    // $.ajax({
+    //     url:"/map/index",
+    //     method: 'post',
+    //     dataType:'json',
+    //     data:{
+    //         _csrf : csrfToken
+    //     },
+    //     success:function(data){
+    //         alert(data)
+    //     }
+    // })
+
 });
 
 

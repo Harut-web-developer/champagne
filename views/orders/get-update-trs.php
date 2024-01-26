@@ -23,8 +23,8 @@
                 <input class="countDiscountId" type="hidden" name="count_discount_id[]" value="<?=$item['count_discount_id']?>">
             </td>
             <td class="name"><?=$item['name']?></td>
-            <td class="count">
-                <span name="count_[]" value="" class="form-control countProductForUpdate"><?=$item['count']?></span>
+            <td class="count" style="justify-content: center; text-align: center;">
+                <span name="count_[]" class="form-control countProductForUpdate"><?=$item['count']?></span>
             </td>
             <td class="discount">
                 <?php
