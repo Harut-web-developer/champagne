@@ -450,7 +450,7 @@
 .documentsCountInput{
     min-width:80px;
 }
-.downloadXLSX{
+.downloadXLSX, .print_orders_table{
     cursor: pointer;
     height: 40px;
 }

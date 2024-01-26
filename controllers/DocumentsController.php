@@ -422,7 +422,6 @@ class DocumentsController extends Controller
             ->where(['id' => 39])
             ->asArray()
             ->one();
-        echo "<pre>";
         $oldattributes = Documents::find()
             ->select(['users.id', 'users.name', 'users.username'])
             ->leftJoin('users', 'users.id = documents.user_id')

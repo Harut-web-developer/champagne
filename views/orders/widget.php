@@ -327,6 +327,41 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
 }
 ?>
 
+<!--    --><?php //= CustomGridView::widget([
+//        'dataProvider' => $dataProvider,
+//        'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
+//        'summaryOptions' => ['class' => 'summary'],
+//        'columns' => [
+//            ['class' => 'yii\grid\SerialColumn'],
+//            [
+//                'attribute' => 'Օգտատեր',
+//                'value' => function ($model) {
+//                    if ($model->usersName) {
+//                        return $model->usersName->name;
+//                    } else {
+//                        return 'Դատարկ';
+//                    }
+//                }
+//            ],
+//            [
+//                'attribute' => 'Հաճախորդ',
+//                'value' => function ($model) {
+//                    if ($model->clientsName) {
+//                        return $model->clientsName->name;
+//                    } else {
+//                        return 'Դատարկ';
+//                    }
+//                }
+//            ],
+//            'comment',
+//            'total_price',
+//            'total_count',
+//            'orders_date',
+//            ...$action_column,
+//        ],
+//    ]); ?>
+
+<?php if(!isset($data_size)){ ?>
     <?= CustomGridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
@@ -360,5 +395,49 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
             ...$action_column,
         ],
     ]); ?>
-<!--<div>-->
 
+<?php
+}
+else{ ?>
+
+<?php $dataProvider->pagination = false; ?>
+<?= CustomGridView::widget([
+        'tableOptions' => [
+            'class'=>'table chatgbti_',
+        ],
+        'options' => [
+            'class' => 'summary deletesummary'
+        ],
+        'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
+        'summaryOptions' => ['class' => 'summary'],
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+            [
+                'attribute' => 'Օգտատեր',
+                'value' => function ($model) {
+                    if ($model->usersName) {
+                        return $model->usersName->name;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
+            [
+                'attribute' => 'Հաճախորդ',
+                'value' => function ($model) {
+                    if ($model->clientsName) {
+                        return $model->clientsName->name;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
+            'comment',
+            'total_price',
+            'total_count',
+            'orders_date',
+            ...$action_column,
+        ],
+    ]); ?>
+<?php } ?>

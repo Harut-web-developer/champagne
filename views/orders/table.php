@@ -7,9 +7,6 @@ use app\widgets\CustomLinkPager;
 /** @var yii\widgets\ActiveForm $form */
 
 $this->registerCssFile('@web/css/bootstrap.min.css');
-//echo "<pre>";
-//var_dump($order_items);
-//die;
 ?>
 <!-- Basic Bootstrap Table -->
 <div id="print">
@@ -59,9 +56,10 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                 </thead>
                 <tbody>
                 <?php
+                $j = 1;
                 for ($i=0; $i<count($order_items); $i++){ ?>
                     <tr>
-                        <td><?=$i; ?></td>
+                        <td><?=$j++; ?></td>
                         <td><?=$order_items[$i]['name']; ?></td>
                         <td><?=$order_items[$i]['count']; ?></td>
                         <td><?=$order_items[$i]['discount']/$order_items[$i]['count']; ?></td>

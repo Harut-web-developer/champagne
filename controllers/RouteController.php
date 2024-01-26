@@ -335,10 +335,7 @@ class RouteController extends Controller
     {
         if(isset($_GET)){
             $visit_get = CoordinatesUser::findOne(['id' => $_GET['coord_id']]);
-            echo "<pre>";
-            var_dump($visit_get);
             $visit_get->visit = $_GET['visit'];
-            var_dump($visit_get);
             $visit_get->save(false);
         }
     }
