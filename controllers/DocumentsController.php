@@ -137,6 +137,8 @@ class DocumentsController extends Controller
             ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
+            echo "<pre>";
+
             date_default_timezone_set('Asia/Yerevan');
             $model->user_id = $post['Documents']['user_id'];
             $model->warehouse_id = $post['Documents']['warehouse_id'];
@@ -174,6 +176,20 @@ class DocumentsController extends Controller
                         $products->save(false);
                     }
                 }
+                if($post['Documents']['document_type'] === '4'){
+                    for ($i = 0; $i < count($post['document_items']); $i++) {
+                        $products = new Products();
+                        $products->warehouse_id = $post['Documents']['warehouse_id'];
+                        $products->nomenclature_id = $post['document_items'][$i];
+                        $products->document_id = $model->id;
+                        $products->type = 4;
+                        $products->count = -intval($post['count_'][$i]);
+                        $products->price = $post['price'][$i];
+                        $products->created_at = date('Y-m-d H:i:s');
+                        $products->updated_at = date('Y-m-d H:i:s');
+                        $products->save(false);
+                    }
+                }
                 $model_new = [];
                 foreach ($document_items as $name => $value) {
                     $model_new[$name] = $value;
@@ -203,7 +219,7 @@ class DocumentsController extends Controller
             ->offset(0)
             ->groupBy('nomenclature.id')
             ->limit(10)
-            ->orderBy(['nomenclature.id'=> SORT_DESC])
+//            ->orderBy(['nomenclature.id'=> SORT_DESC])
             ->asArray()
             ->all();
         return $this->render('create', [
@@ -220,6 +236,10 @@ class DocumentsController extends Controller
 
     public function actionCreateFields()
     {
+        $have_access = Users::checkPremission(71);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $sub_page = [
             ['name' => 'Պահեստ','address' => '/warehouse'],
             ['name' => 'Փաստաթղթեր','address' => '/documents'],
@@ -279,7 +299,7 @@ class DocumentsController extends Controller
                         ->limit($pageSize);
                 }
         $nomenclatures = $nomenclatures
-            ->orderBy(['nomenclature.id'=> SORT_DESC])
+//            ->orderBy(['nomenclature.id'=> SORT_DESC])
             ->asArray()
             ->all();
         $total = $countQuery->count() - count($document_items);
@@ -384,7 +404,7 @@ class DocumentsController extends Controller
         $nomenclatures = $query->where(['not in','id' , array_column($document_items,'nomenclature_id')])
             ->offset(0)
             ->limit(10)
-            ->orderBy(['nomenclature.id'=> SORT_DESC])
+//            ->orderBy(['nomenclature.id'=> SORT_DESC])
             ->asArray()
             ->all();
         $total = $countQuery->count() - count($document_items);

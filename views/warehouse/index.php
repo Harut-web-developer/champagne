@@ -22,6 +22,7 @@ $this->params['date_tab'] = $date_tab;
 $have_access_create = Users::checkPremission(1);
 $have_access_update = Users::checkPremission(2);
 $have_access_delete = Users::checkPremission(3);
+$have_access_custom_field = Users::checkPremission(73);
 $action_column = [];
 if ($have_access_update && $have_access_delete){
     $action_column[] = [
@@ -69,7 +70,9 @@ if(!empty($new_fields)){
             <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
             <h3><?= Html::encode($this->title) ?></h3>
         </div>
-        <h3><?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h3>
+        <?php if($have_access_custom_field){ ?>
+            <h3><?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h3>
+        <?php } ?>
     </div>
     <p>
         <?php if($have_access_create){ ?>

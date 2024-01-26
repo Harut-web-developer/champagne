@@ -608,3 +608,16 @@
 .changeManager{
     margin: 10px 0px 10px 5px;
 }
+@media screen and (min-width: 395px) and (max-width: 406px) {
+    .filtersField {
+        display: flex;
+        align-items: end;
+    }
+}
+@media only screen and (max-width: 394px) {
+    .filtersField {
+        display:flex;
+        flex-direction:column;
+        justify-content:end;
+    }
+}

@@ -534,22 +534,24 @@ $(document).ready(function() {
             }
         })
     })
-    // $('body').on('change', '.changeManager', function () {
-    //     let managerId = $(this).val();
-    //     let csrfToken = $('meta[name="csrf-token"]').attr("content");
-    //     $.ajax({
-    //         url: '/orders/change-manager',
-    //         method: 'get',
-    //         datatype: 'json',
-    //         data: {
-    //             managerId: managerId,
-    //             _csrf: csrfToken
-    //         },
-    //         success: function (data) {
-    //
-    //         }
-    //     })
-    // })
+    $('body').on('change', '.filterClientsChart', function () {
+        let clientsId = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        let getHref = window.location.href
+        $.ajax({
+            url: '/dashboard/change-clients',
+            method: 'get',
+            datatype: 'html',
+            data: {
+                clientsId: clientsId,
+                getHref:getHref,
+                _csrf: csrfToken
+            },
+            success: function (data) {
+                $('body').find('.paymentsPart').html(data)
+            }
+        })
+    })
 
 
 });

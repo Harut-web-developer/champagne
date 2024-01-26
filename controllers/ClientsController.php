@@ -208,6 +208,10 @@ class ClientsController extends Controller
 
     public function actionCreateFields()
     {
+        $have_access = Users::checkPremission(70);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $sub_page = [];
         $date_tab = [];
 

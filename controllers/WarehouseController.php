@@ -163,6 +163,10 @@ class WarehouseController extends Controller
 
     public function actionCreateFields()
     {
+        $have_access = Users::checkPremission(73);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $sub_page = [
             ['name' => 'Պահեստ','address' => '/warehouse'],
             ['name' => 'Փաստաթղթեր','address' => '/documents'],

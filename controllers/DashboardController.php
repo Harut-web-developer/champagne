@@ -43,6 +43,113 @@ class DashboardController extends Controller
         }
         return parent::beforeAction($action);
     }
+    public  function actionChangeClients(){
+        if ($this->request->isGet) {
+            $client_id = $this->request->get('clientsId');
+            $href = $this->request->get('getHref');
+            if (strpos($href, '?') !== false){
+                $queryString = parse_url($href, PHP_URL_QUERY);
+                parse_str($queryString, $queryParams);
+                if (isset($queryParams['date']) && $queryParams['date'] === 'day') {
+                    if ($client_id == 'null'){
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['=', 'DATE(payments.pay_date)', date('Y-m-d')])
+                            ->asArray()
+                            ->all();
+                    }else{
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['=', 'DATE(payments.pay_date)', date('Y-m-d')])
+                            ->andWhere(['=','clients.id',intval($client_id)])
+                            ->asArray()
+                            ->all();
+                    }
+                }elseif (isset($queryParams['date']) && $queryParams['date'] === 'monthly'){
+                    if ($client_id == 'null'){
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['=', 'MONTH(payments.pay_date)', date('m')])
+                            ->andWhere(['=', 'YEAR(payments.pay_date)', date('Y')])
+                            ->asArray()
+                            ->all();
+                    }else{
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['=', 'MONTH(payments.pay_date)', date('m')])
+                            ->andWhere(['=', 'YEAR(payments.pay_date)', date('Y')])
+                            ->andWhere(['=','clients.id',intval($client_id)])
+                            ->asArray()
+                            ->all();
+                    }
+                }elseif (isset($queryParams['date']) && $queryParams['date'] === 'year'){
+                    if ($client_id == 'null'){
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['=', 'YEAR(payments.pay_date)', date('Y')])
+                            ->asArray()
+                            ->all();
+                    }else{
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['=', 'YEAR(payments.pay_date)', date('Y')])
+                            ->andWhere(['=','clients.id',intval($client_id)])
+                            ->asArray()
+                            ->all();
+                    }
+                }elseif (isset($queryParams['start_date']) && isset($queryParams['end_date'])){
+                    $start = $queryParams['start_date'];
+                    $end = $queryParams['end_date'];
+                    if ($client_id == 'null'){
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['>=', 'DATE(payments.pay_date)', $start])
+                            ->andWhere(['<=', 'DATE(payments.pay_date)', $end])
+                            ->asArray()
+                            ->all();
+                    }else{
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['>=', 'DATE(payments.pay_date)', $start])
+                            ->andWhere(['<=', 'DATE(payments.pay_date)', $end])
+                            ->andWhere(['=','clients.id',intval($client_id)])
+                            ->asArray()
+                            ->all();
+                    }
+                }
+            }else{
+                if ($client_id == 'null'){
+                    $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                        ->leftJoin('clients', 'payments.client_id = clients.id')
+                        ->where(['payments.status' => '1'])
+                        ->andWhere(['=', 'DATE(payments.pay_date)', date('Y-m-d')])
+                        ->asArray()
+                        ->all();
+                }else{
+                    $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                        ->leftJoin('clients', 'payments.client_id = clients.id')
+                        ->where(['payments.status' => '1'])
+                        ->andWhere(['=', 'DATE(payments.pay_date)', date('Y-m-d')])
+                        ->andWhere(['=','clients.id',intval($client_id)])
+                        ->asArray()
+                        ->all();
+                }
+
+            }
+            return $this->renderAjax('payments_file', [
+                'clients_payment' => $clients_payment,
+            ]);
+        }
+
+    }
     public function actionIndex(){
         $have_access = Users::checkPremission(57);
         if(!$have_access){
@@ -52,9 +159,10 @@ class DashboardController extends Controller
         $sale = 0;
         $deal = 0;
         $chart_round_total = 0;
+
         if (empty($_GET) || isset($_GET['date']) && !isset($_GET['start_date']) && !isset($_GET['end_date'])){
             if (empty($_GET) || $_GET['date'] === 'day'){
-//                echo "<pre>";
+                $get_clients = Clients::find()->select('id,name')->asArray()->all();
                 $order_payment = Payments::find()->select('SUM(payment_sum) as payment')
                     ->where(['status' => '1'])
                     ->andWhere(['=', 'DATE(pay_date)', date('Y-m-d')])
@@ -117,12 +225,12 @@ class DashboardController extends Controller
                 }else{
                     array_push($round_chart_percent,0);
                 }
-                $clients_payment = Orders::find()->select('clients.name, total_price')
-                    ->leftJoin('clients', 'orders.clients_id = clients.id')
-                    ->where(['orders.status' => '3'])
-                    ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
-                    ->asArray()
-                    ->all();
+                    $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                        ->leftJoin('clients', 'payments.client_id = clients.id')
+                        ->where(['payments.status' => '1'])
+                        ->andWhere(['=', 'DATE(payments.pay_date)', date('Y-m-d')])
+                        ->asArray()
+                        ->all();
                 $line_chart_debt = Orders::find()->select('SUM(total_price) as debt')
                     ->where(['orders.status' => '2'])
                     ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
@@ -172,7 +280,7 @@ class DashboardController extends Controller
                     array_push($line_chart_orders_label,'Այսօր');
                 }
             }elseif ($_GET['date'] === 'monthly'){
-//        echo "<pre>";
+                $get_clients = Clients::find()->select('id,name')->asArray()->all();
                 $order_payment = Payments::find()->select('SUM(payment_sum) as payment')
                     ->where(['status' => '1'])
                     ->andWhere(['=', 'MONTH(pay_date)', date('m')])
@@ -241,11 +349,11 @@ class DashboardController extends Controller
                 }else{
                     array_push($round_chart_percent,0);
                 }
-                $clients_payment = Orders::find()->select('clients.name, total_price')
-                    ->leftJoin('clients', 'orders.clients_id = clients.id')
-                    ->where(['orders.status' => '3'])
-                    ->andWhere(['=', 'MONTH(orders_date)', date('m')])
-                    ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                    ->leftJoin('clients', 'payments.client_id = clients.id')
+                    ->where(['payments.status' => '1'])
+                    ->andWhere(['=', 'MONTH(payments.pay_date)', date('m')])
+                    ->andWhere(['=', 'YEAR(payments.pay_date)', date('Y')])
                     ->asArray()
                     ->all();
                 $line_chart_debt = Orders::find()->select('SUM(total_price) as debt, DATE(orders_date) as orders_date')
@@ -352,8 +460,10 @@ class DashboardController extends Controller
                         $line_chart_orders_label[] = $day;
                     }
 
-            }elseif ($_GET['date'] === 'year'){
+            }
+            elseif ($_GET['date'] === 'year'){
 //                echo "<pre>";
+                $get_clients = Clients::find()->select('id,name')->asArray()->all();
                 $order_payment = Payments::find()->select('SUM(payment_sum) as payment')
                     ->where(['status' => '1'])
                     ->andWhere(['=', 'YEAR(pay_date)', date('Y-m-d')])
@@ -416,10 +526,10 @@ class DashboardController extends Controller
                 }else{
                     array_push($round_chart_percent,0);
                 }
-                $clients_payment = Orders::find()->select('clients.name, total_price')
-                    ->leftJoin('clients', 'orders.clients_id = clients.id')
-                    ->where(['orders.status' => '3'])
-                    ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                    ->leftJoin('clients', 'payments.client_id = clients.id')
+                    ->where(['payments.status' => '1'])
+                    ->andWhere(['=', 'YEAR(payments.pay_date)', date('Y')])
                     ->asArray()
                     ->all();
                 $line_chart_debt = Orders::find()->select('SUM(total_price) as debt, DATE(orders_date) as orders_date')
@@ -522,10 +632,11 @@ class DashboardController extends Controller
                 }
 
             }
-        }elseif (!isset($_GET['date']) && isset($_GET['start_date']) && isset($_GET['end_date'])){
-//            echo "<pre>";
+        }
+        elseif (!isset($_GET['date']) && isset($_GET['start_date']) && isset($_GET['end_date'])){
             $start = $_GET['start_date'];
             $end = $_GET['end_date'];
+            $get_clients = Clients::find()->select('id,name')->asArray()->all();
             $order_payment = Payments::find()->select('SUM(payment_sum) as payment')
                 ->where(['status' => '1'])
                 ->andWhere(['>=', 'DATE(pay_date)', $start])
@@ -595,11 +706,11 @@ class DashboardController extends Controller
             }else{
                 array_push($round_chart_percent,0);
             }
-            $clients_payment = Orders::find()->select('clients.name, total_price')
-                ->leftJoin('clients', 'orders.clients_id = clients.id')
-                ->where(['orders.status' => '3'])
-                ->andWhere(['>=', 'DATE(orders_date)', $start])
-                ->andWhere(['<=', 'DATE(orders_date)', $end])
+            $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                ->leftJoin('clients', 'payments.client_id = clients.id')
+                ->where(['payments.status' => '1'])
+                ->andWhere(['>=', 'DATE(payments.pay_date)', $start])
+                ->andWhere(['<=', 'DATE(payments.pay_date)', $end])
                 ->asArray()
                 ->all();
             $line_chart_debt = Orders::find()->select('SUM(total_price) as debt, DATE(orders_date) as orders_date')
@@ -1016,9 +1127,11 @@ class DashboardController extends Controller
             ['name' => 'Ամսական','address' => '/dashboard/index?date=monthly'],
             ['name' => 'Տարեկան','address' => '/dashboard/index?date=year'],
         ];
+        $chart_round_products = $chart_round_products ?? 11;
         return $this->render('index',[
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'get_clients' => $get_clients,
             'payment' => $payment,
             'sale' => $sale,
             'deal' => $deal,

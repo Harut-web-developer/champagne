@@ -206,6 +206,10 @@ class UsersController extends Controller
 
     public function actionCreateFields()
     {
+        $have_access = Users::checkPremission(74);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $sub_page = [
             ['name' => 'Կարգավիճակ','address' => '/roles'],
             ['name' => 'Թույլտվություն','address' => '/premissions'],

@@ -251,7 +251,7 @@ class OrdersController extends Controller
             ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
             ->offset(0)
             ->groupBy('products.nomenclature_id')
-            ->orderBy(['products.created_at' => SORT_DESC])
+//            ->orderBy(['products.created_at' => SORT_DESC])
             ->limit(10)
             ->asArray()
             ->all();
@@ -303,8 +303,8 @@ class OrdersController extends Controller
             ->select('products.id, products.count, products.price, nomenclature.id as nomenclature_id, nomenclature.image, nomenclature.name, nomenclature.cost')
             ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
             ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
-            ->groupBy('products.nomenclature_id')
-            ->orderBy(['products.created_at' => SORT_DESC]);
+            ->groupBy('products.nomenclature_id');
+//            ->orderBy(['products.created_at' => SORT_DESC]);
             if ($search_name){
                 $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
                     ->offset(0);
@@ -318,7 +318,7 @@ class OrdersController extends Controller
                 ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
                 ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
                 ->groupBy('products.nomenclature_id')
-                ->orderBy(['products.created_at' => SORT_DESC])
+//                ->orderBy(['products.created_at' => SORT_DESC])
                 ->asArray()
                 ->all();
         $total = count($product_count);
@@ -468,7 +468,7 @@ class OrdersController extends Controller
             ->offset(0)
             ->limit(10)
             ->groupBy('products.nomenclature_id')
-            ->orderBy(['products.created_at' => SORT_DESC])
+//            ->orderBy(['products.created_at' => SORT_DESC])
             ->asArray()
             ->all();
 
@@ -478,7 +478,7 @@ class OrdersController extends Controller
             ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
             ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
             ->groupBy('products.nomenclature_id')
-            ->orderBy(['products.created_at' => SORT_DESC])
+//            ->orderBy(['products.created_at' => SORT_DESC])
             ->asArray()
             ->all();
         $total = count($product_count);
@@ -594,7 +594,6 @@ class OrdersController extends Controller
             }elseif ($_GET['numberVal'] == 1){
                 $approved = 1;
             }
-
             return $this->renderAjax('widget', [
                 'sub_page' => $sub_page,
                 'date_tab' => $date_tab,

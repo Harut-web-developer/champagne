@@ -162,6 +162,11 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                             ['id' => 67, 'name' => 'Տեսնել փնտրվածը', 'label_id' => 'premission67'],
                             ['id' => 68, 'name' => 'Տեսնել պատվերների վճարները', 'label_id' => 'premission68'],
                             ['id' => 69, 'name' => 'Տեսնել անցած երթուղին', 'label_id' => 'premission69'],
+                            ['id' => 70, 'name' => 'Ստեղծել հաճախորդի դաշտ', 'label_id' => 'premission70'],
+                            ['id' => 71, 'name' => 'Ստեղծել փաստաթղթի դաշտ', 'label_id' => 'premission71'],
+                            ['id' => 72, 'name' => 'Ստեղծել անվանակարգի դաշտ', 'label_id' => 'premission72'],
+                            ['id' => 73, 'name' => 'Ստեղծել պահեստի դաշտ', 'label_id' => 'premission73'],
+                            ['id' => 74, 'name' => 'Ստեղծել օգտատիրոջ դաշտ', 'label_id' => 'premission74'],
 
                         ];
 
@@ -463,8 +468,28 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                             <input id="premission68" type="checkbox" value="68" name="premission[]">
                         </div>
                         <div class="premission-content-items">
-                            <label for="9" class="items-title">Տեսնել անցած երթուղին</label>
+                            <label for="premission69" class="items-title">Տեսնել անցած երթուղին</label>
                             <input id="premission69" type="checkbox" value="69" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission70" class="items-title">Ստեղծել հաճախորդի դաշտ</label>
+                            <input id="premission70" type="checkbox" value="70" name="premission[]">
+                        </div
+                        <div class="premission-content-items">
+                            <label for="premission71" class="items-title">Ստեղծել փաստաթղթի դաշտ</label>
+                            <input id="premission71" type="checkbox" value="71" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission72" class="items-title">Ստեղծել անվանակարգի դաշտ</label>
+                            <input id="premission72" type="checkbox" value="72" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission73" class="items-title">Ստեղծել պահեստի դաշտ</label>
+                            <input id="premission73" type="checkbox" value="73" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission74" class="items-title">Ստեղծել օգտատիրոջ դաշտ</label>
+                            <input id="premission74" type="checkbox" value="74" name="premission[]">
                         </div>
                     </div>
                 </div>

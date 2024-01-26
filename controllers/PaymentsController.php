@@ -100,10 +100,13 @@ class PaymentsController extends Controller
             ->leftJoin('orders','orders.clients_id = payments.client_id')
             ->leftJoin('clients', 'clients.id = payments.client_id')
             ->where(['orders.status' => '2'])
+            ->andWhere(['payments.status' => '1'])
             ->groupBy('payments.client_id')
             ->orderBy(['payments.created_at'=> SORT_DESC])
             ->asArray()
             ->all();
+//        var_dump($statistics);
+//        exit();
         $sub_page = [
             ['name' => 'Վճարումներ','address' => '/payments'],
             ['name' => 'Փոխարժեք','address' => '/rates']

@@ -18,7 +18,6 @@ $this->title = 'Ապրանքներ';
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
 $this->params['date_tab'] = $date_tab;
-
 $have_access_create = Users::checkPremission(17);
 $have_access_update = Users::checkPremission(18);
 $have_access_delete = Users::checkPremission(19);
@@ -58,12 +57,12 @@ if ($have_access_update && $have_access_delete){
             <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
             <h3><?= Html::encode($this->title) ?></h3>
         </div>
-        <h3><?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h3>
+<!--        <h3>--><?php //= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?><!--</h3>-->
     </div>
     <p>
-        <?php if($have_access_create){ ?>
-            <?= Html::a('Ստեղծել ապրանք', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
-        <?php } ?>
+<!--        --><?php //if($have_access_create){ ?>
+<!--            --><?php //= Html::a('Ստեղծել ապրանք', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+<!--        --><?php //} ?>
     </p>
     <div class="card pageStyle">
     <?= CustomGridView::widget([
@@ -101,15 +100,21 @@ if ($have_access_update && $have_access_delete){
             [
                 'attribute' => 'Քանակ',
                 'value' => function ($model) {
-                    if ($model->count < 0) {
-                        return $model->count * (-1);
-                    } else {
+//                    if ($model->count < 0) {
+//                        return $model->count * (-1);
+//                    } else {
                         return $model->count;
-                    }
+//                    }
                 }
             ],
-            'price',
-            ...$action_column,
+            [
+                'attribute' => 'Գին',
+                'value' => function ($model) {
+                    return round($model->price);
+                }
+            ],
+//            'price',
+//            ...$action_column,
         ],
     ]); ?>
     </div>

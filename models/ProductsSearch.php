@@ -41,7 +41,7 @@ class ProductsSearch extends Products
      */
     public function search($params)
     {
-        $query = Products::find();
+        $query = Products::find()->select('id,warehouse_id,nomenclature_id,SUM(count) as count,AVG(price) as price')->groupBy('nomenclature_id');
 
         // add conditions that should always apply here
 

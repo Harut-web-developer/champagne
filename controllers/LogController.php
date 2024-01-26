@@ -60,28 +60,28 @@ class LogController extends Controller
      */
     public function actionIndex()
     {
-        $have_access = Users::checkPremission(28);
-        if(!$have_access){
-            $this->redirect('/site/403');
-        }
-        $sub_page = [
-            ['name' => 'Պահեստ','address' => '/warehouse'],
-            ['name' => 'Փաստաթղթեր','address' => '/documents'],
-            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-            ['name' => 'Ապրանք','address' => '/products'],
-        ];
-        $date_tab = [];
+            $have_access = Users::checkPremission(28);
+            if(!$have_access){
+                $this->redirect('/site/403');
+            }
+            $sub_page = [
+                ['name' => 'Պահեստ','address' => '/warehouse'],
+                ['name' => 'Փաստաթղթեր','address' => '/documents'],
+                ['name' => 'Անվանակարգ','address' => '/nomenclature'],
+                ['name' => 'Ապրանք','address' => '/products'],
+            ];
+            $date_tab = [];
 
-        $searchModel = new LogSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+            $searchModel = new LogSearch();
+            $dataProvider = $searchModel->search($this->request->queryParams);
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'sub_page' => $sub_page,
-            'date_tab' => $date_tab,
+            return $this->render('index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+                'sub_page' => $sub_page,
+                'date_tab' => $date_tab,
 
-        ]);
+            ]);
     }
 
     /**

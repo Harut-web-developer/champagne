@@ -21,6 +21,7 @@ $have_access_create = Users::checkPremission(5);
 $have_access_update = Users::checkPremission(6);
 $have_access_delete = Users::checkPremission(7);
 $have_access_debt_statistic = Users::checkPremission(68);
+$have_access_custom_field = Users::checkPremission(70);
 $action_column = [];
 if ($have_access_update && $have_access_delete && $have_access_debt_statistic){
     $action_column[] = [
@@ -133,7 +134,10 @@ if ($have_access_update && $have_access_delete && $have_access_debt_statistic){
             <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
             <h3><?= Html::encode($this->title) ?></h3>
         </div>
-        <h3><?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h3>
+        <?php if($have_access_custom_field){ ?>
+            <h3><?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h3>
+        <?php } ?>
+
     </div>
     <p>
         <?php if($have_access_create){ ?>

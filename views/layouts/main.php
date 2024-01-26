@@ -131,11 +131,18 @@ $date_tab = $this->params['date_tab'];
                                         <div data-i18n="products">Ապրանքներ</div>
                                     </a>
                                 </li>
-                                <li class="menu-item">
-                                    <a href="/log" class="menu-link">
-                                        <div data-i18n="log">Տեղեկամատյան</div>
-                                    </a>
-                                </li>
+                                <?php
+                                if ($session['role_id'] == 1){
+                                    ?>
+                                    <li class="menu-item">
+                                        <a href="/log" class="menu-link">
+                                            <div data-i18n="log">Տեղեկամատյան</div>
+                                        </a>
+                                    </li>
+                                <?php
+                                }
+                                ?>
+
                                 <li class="menu-item">
                                     <a href="/warehouse" class="menu-link">
                                         <div data-i18n="Blank">Պահեստներ</div>
@@ -173,11 +180,11 @@ $date_tab = $this->params['date_tab'];
                                         <div data-i18n="roles">Կարգավիճակ</div>
                                     </a>
                                 </li>
-                                <li class="menu-item">
-                                    <a href="/premissions" class="menu-link">
-                                        <div data-i18n="premissions">Թույլտվություններ</div>
-                                    </a>
-                                </li>
+<!--                                <li class="menu-item">-->
+<!--                                    <a href="/premissions" class="menu-link">-->
+<!--                                        <div data-i18n="premissions">Թույլտվություններ</div>-->
+<!--                                    </a>-->
+<!--                                </li>-->
                                 <li class="menu-item">
                                     <a href="/users" class="menu-link">
                                         <div data-i18n="users">Օգտատեր</div>

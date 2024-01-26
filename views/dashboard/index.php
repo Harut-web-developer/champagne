@@ -49,10 +49,20 @@ $this->params['date_tab'] = $date_tab;
         <!-- Transactions -->
         <div class="col-md-6 col-lg-4 order-1 mb-4">
             <div class="card h-100">
-                <div class="card-header d-flex align-items-center justify-content-between">
+                <div class="card-header">
                     <h5 class="card-title m-0 me-2">Վճարումներ</h5>
+                    <select class="form-control mt-2 filterClientsChart">
+                        <option value="null">Ընտրել հաճախորդին</option>
+                        <?php
+                        foreach ($get_clients as $client){
+                            ?>
+                            <option value="<?=$client['id']?>"><?=$client['name']?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
                 </div>
-                <div class="card-body">
+                <div class="card-body  paymentsPart">
                     <ul class="p-0 m-0">
                         <?php
                         if (!empty($clients_payment)){
@@ -68,7 +78,7 @@ $this->params['date_tab'] = $date_tab;
                                             <small class="text-muted d-block mb-1">Վճարված</small>
                                         </div>
                                         <div class="user-progress d-flex align-items-center gap-1">
-                                            <h6 class="mb-0"><?=number_format($item['total_price']) . ' դր.'?></h6>
+                                            <h6 class="mb-0"><?=number_format($item['payment_sum']) . ' դր.'?></h6>
 <!--                                            <span class="text-muted">դր.</span>-->
                                         </div>
                                     </div>
