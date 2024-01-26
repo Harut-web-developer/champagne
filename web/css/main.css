@@ -454,6 +454,11 @@
     cursor: pointer;
     height: 40px;
 }
+.print_orders_table{
+    width: 40px;
+    height: 40px;
+    cursor:pointer;
+}
 .downloadUpdateXLSX{
     cursor: pointer;
 }
@@ -608,16 +613,34 @@
 .changeManager{
     margin: 10px 0px 10px 5px;
 }
-@media screen and (min-width: 395px) and (max-width: 406px) {
-    .filtersField {
-        display: flex;
-        align-items: end;
+/*@media screen and (min-width: 395px) and (max-width: 446px) {*/
+/*    .filtersField {*/
+/*        display: flex;*/
+/*        align-items: end;*/
+/*    }*/
+/*}*/
+@media only screen and (min-width: 447px) {
+    .iconsPrintAndXlsx{
+        display:flex;
+        flex-direction:row;
     }
 }
-@media only screen and (max-width: 394px) {
+
+@media only screen and (max-width: 446px) {
+    .filtersParentsField{
+        display:flex;
+        flex-direction:column;
+    }
     .filtersField {
         display:flex;
         flex-direction:column;
         justify-content:end;
     }
+    .iconsPrintAndXlsx{
+        display:flex;
+        flex-direction:row;
+    }
+}
+.iconsPrintAndXlsx{
+    margin-bottom:10px;
 }

@@ -80,24 +80,11 @@ class OrdersController extends Controller
 
         $searchModel = new OrdersSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-
-        if($_POST){
-            return $this->renderAjax('index', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-                'data_size' => 'max',
-                'sub_page' => $sub_page,
-                'date_tab' => $date_tab,
-
-            ]);
-        }
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
         ]);
     }
 
@@ -107,6 +94,21 @@ class OrdersController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
+    public function actionPrintDoc($id){
+        $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
+        order_items.price_before_discount as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
+        order_items.price as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
+            ->leftJoin('products','products.id = order_items.product_id')
+            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
+            ->where(['order_id' => $id])
+            ->asArray()
+            ->all();
+
+        return $this->renderAjax('get-update-trs', [
+            'order_items' => $order_items,
+        ]);
+
+    }
     public function actionView($id)
     {
         $sub_page = [];
@@ -440,13 +442,16 @@ class OrdersController extends Controller
             $order->total_price = $total_price;
             $order->total_count = $quantity;
             $order->save(false);
-            foreach ($post['discount_client_id_check'] as $key => $value){
-                if ($key != 'empty'){
-                    $discount_client_check_id = Discount::findOne($key);
-                    $discount_client_check_id->discount_option_check_client_id = $value;
-                    $discount_client_check_id->save(false);
+            if(isset($post['discount_client_id_check'])){
+                foreach ($post['discount_client_id_check'] as $key => $value){
+                    if ($key != 'empty'){
+                        $discount_client_check_id = Discount::findOne($key);
+                        $discount_client_check_id->discount_option_check_client_id = $value;
+                        $discount_client_check_id->save(false);
+                    }
                 }
             }
+
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
@@ -530,7 +535,6 @@ class OrdersController extends Controller
             'total' => $total,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
         ]);
     }
 
@@ -577,10 +581,8 @@ class OrdersController extends Controller
     }
     public  function actionFilterStatus(){
         if ($_GET){
-//            var_dump($_GET);
             $searchModel = new OrdersSearch();
             $dataProvider = $searchModel->search($this->request->queryParams);
-//            var_dump($dataProvider);
             $sub_page = [];
             $date_tab = [];
 
@@ -594,14 +596,24 @@ class OrdersController extends Controller
             }elseif ($_GET['numberVal'] == 1){
                 $approved = 1;
             }
-            return $this->renderAjax('widget', [
-                'sub_page' => $sub_page,
-                'date_tab' => $date_tab,
-
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-                'approved' => $approved
-            ]);
+            if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
+                return $this->renderAjax('widget', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'data_size' => 'max',
+                    'sub_page' => $sub_page,
+                    'date_tab' => $date_tab,
+                    'approved' => $approved,
+                ]);
+            } else {
+                return $this->renderAjax('widget', [
+                    'sub_page' => $sub_page,
+                    'date_tab' => $date_tab,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'approved' => $approved,
+                ]);
+            }
         }
     }
 

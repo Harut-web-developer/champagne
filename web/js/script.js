@@ -271,18 +271,23 @@ $(document).ready(function() {
         var tables = '';
         var sheetNumber = 1;
         var PromiseArray = [];
+        let managerId = $('.content-wrapper').find('.changeManager').val();
+        let numberVal = $('.content-wrapper').find('.orderStatus').val();
+        let clickXLSX = 'clickXLSX';
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
-            url: 'orders',
-            method: 'post',
+            url:'/orders/filter-status',
+            method: 'get',
             data: {
                 _csrf: csrfToken,
                 action: 'xls-alldata',
+                numberVal:numberVal,
+                managerId:managerId,
+                clickXLSX:clickXLSX,
             },
             dataType: "html",
             success: function(data) {
                 $('body').append(data);
-                console.log(data)
                 tables = document.getElementsByClassName("chatgbti_");
                 $(".chatgbti_").hide();
                 $(".deletesummary").hide();
@@ -553,6 +558,74 @@ $(document).ready(function() {
         })
     })
 
+
+    //print orders table
+    $('body').on('click','.print_orders_table',function (){
+        printTable('/orders/print-doc');
+    });
+    function printTable(url) {
+        var t_length = $('body').find('#w0 table tbody tr').length;
+        var table = '<table id="ele4">';
+        $('body').find('table tbody tr').each(function () {
+            var el = $(this).clone();
+            var thead = `
+                                    <tr>
+                                        <th>Օգտատեր</th>
+                                        <th>Հաճախորդ</th>
+                                        <th>Մեկնաբանություն</th>
+                                        <th>Ընդհանուր զեղչված գումար</th>
+                                        <th>Ընդհանուր քանակ</th>
+                                        <th>Պատվերի ամսաթիվ</th>
+                                    </tr>
+                                `;
+            var tdToHide = el.find('td:nth-child(1), td:nth-child(8)').remove();
+            let id = $(this).data('key');
+            if (id) {
+                $.ajax({
+                    url: url,
+                    method: 'get',
+                    dataType: 'html',
+                    data: { id: id },
+                    success: function (data) {
+                        table += thead;
+                        table += '<tr>' + el.html() + '</tr>';
+                        table += data;
+                        for (let i = 0; i < 20; i++){
+                            table += '<tr><td colspan="7"></td></tr>';
+                        }
+                        if (--t_length == 0) {
+                            table += '</table>';
+                            var $table = $(table);
+                            $table.print({
+                                globalStyles: false,
+                                mediaPrint: false,
+                                stylesheet: "http://fonts.googleapis.com/css?family=Inconsolata",
+                                iframe: false,
+                                noPrintSelector: ".avoid-this",
+                                deferred: $.Deferred().done(function () {
+                                    console.log('Printing done', arguments);
+                                })
+                            });
+                        }
+                    }
+
+                })
+            }
+        })
+    }
+
+    // var csrfToken = $('meta[name="csrf-token"]').attr("content");
+    // $.ajax({
+    //     url:"/map/index",
+    //     method: 'post',
+    //     dataType:'json',
+    //     data:{
+    //         _csrf : csrfToken
+    //     },
+    //     success:function(data){
+    //         alert(data)
+    //     }
+    // })
 
 });
 

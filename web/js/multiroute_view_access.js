@@ -77,7 +77,6 @@ function init () {
                                 },
                             });
                         });
-
                     }, 60 * 1000);
                 }
             }
@@ -85,72 +84,3 @@ function init () {
     });
 }
 ymaps.ready(init);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// function init () {
-//     $('#routeSelect, #myLocalDate').on('change', function() {
-//         var location_value = $('#routeSelect').val();
-//         var date = $("#myLocalDate").val();
-//         var csrfToken = $('meta[name="csrf-token"]').attr("content");
-//         $.ajax({
-//             url:"/map/location-value",
-//             method: 'get',
-//             dataType:'json',
-//             data:{
-//                 locationvalue: location_value,
-//                 date:date,
-//                 _csrf:csrfToken,
-//             },
-//             success:function(data){
-//                 if (data['location'].length != 0) {
-//                     // setInterval(function () {
-//                     var geolocation = ymaps.geolocation,
-//                         myMap = new ymaps.Map('map', {
-//                             center: [55, 34],
-//                             zoom: 10
-//                         }, {
-//                             searchControlProvider: 'yandex#search'
-//                         });
-//                     geolocation.get({
-//                         provider: 'yandex',
-//                         mapStateAutoApply: true
-//                     }).then(function (result) {
-//                         result.geoObjects.options.set('preset', 'islands#redCircleIcon');
-//                         result.geoObjects.get(0).properties.set({
-//                             balloonContentBody: 'Мое местоположение'
-//                         });
-//                         myMap.geoObjects.add(result.geoObjects);
-//                     });
-//
-//                     geolocation.get({
-//                         provider: 'browser',
-//                         mapStateAutoApply: true
-//                     }).then(function (result) {
-//                         console.log(result)
-//                         result.geoObjects.options.set('preset', 'islands#blueCircleIcon');
-//                         myMap.geoObjects.add(result.geoObjects);
-//                     }, function (err) {
-//                         console.log(err);
-//                     });
-//
-//                 }
-//             }
-//         })
-//     });
-// }
-//
-// ymaps.ready(init);

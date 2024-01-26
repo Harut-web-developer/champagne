@@ -33,6 +33,8 @@ class AppAsset extends AssetBundle
 //        '/js/dashboards-analytics.js',
 //        '/js/jquery.js',
         '/js/script.js',
+        '/js/plugins/html5-3.6-respond-1.1.0.min.js',
+        '/js/plugins/jQuery.print.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.2.1/exceljs.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js',
         '/js/select2.min.js',
