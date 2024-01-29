@@ -614,6 +614,25 @@ $(document).ready(function() {
         })
     }
 
+    $('body').on('change', '.documentStatus', function () {
+        let numberVal = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        console.log(numberVal)
+        $.ajax({
+            url:'/documents/document-filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                numberVal:numberVal,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+            }
+        })
+    })
+
+
     // var csrfToken = $('meta[name="csrf-token"]').attr("content");
     // $.ajax({
     //     url:"/map/index",

@@ -18,6 +18,7 @@ $this->title = 'Փաստաթուղթ';
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
 $this->params['date_tab'] = $date_tab;
+$session = Yii::$app->session;
 
 $have_access_create = Users::checkPremission(37);
 $have_access_update = Users::checkPremission(38);
@@ -62,13 +63,28 @@ if ($have_access_update && $have_access_delete){
         <?php if($have_access_custom_field){ ?>
             <h3><?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h3>
         <?php } ?>
-
     </div>
-    <p>
-        <?php if($have_access_create){ ?>
-            <?= Html::a('Ստեղծել փաստաթուղթ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
-        <?php } ?>
-    </p>
+
+    <div class="filtersParentsField" style="display: flex; justify-content: space-between; align-items: baseline;flex-wrap: wrap">
+        <p>
+            <?php if($have_access_create){ ?>
+                <?= Html::a('Ստեղծել փաստաթուղթ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
+            <?php } ?>
+        </p>
+        <div class="filtersField" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
+            <select class="form-select documentStatus" aria-label="Default select example" style="width: 150px; margin: 0px 10px 15px 5px;">
+                <?php
+                if($session['role_id'] == '1'){?>
+                    <option selected value="0">Ընդհանուր</option>
+                    <option value="1">Մուտք</option>
+                    <option value="2">Ելք</option>
+                    <option value="3">Տեղափոխություն</option>
+                    <option value="4">Խոտան</option>
+                <?php }?>
+            </select>
+        </div>
+    </div>
+
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     <div class="card">
     <?= CustomGridView::widget([

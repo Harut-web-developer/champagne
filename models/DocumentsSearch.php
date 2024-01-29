@@ -41,11 +41,21 @@ class DocumentsSearch extends Documents
     public function search($params)
     {
         $query = Documents::find();
-
+        if(isset($params['numberVal']) == 0) {
+            $query->andWhere(['status' => '1'])->orderBy(['created_at'=> SORT_DESC]);
+        }elseif (isset($params['numberVal']) == 1){
+            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']])->orderBy(['created_at'=> SORT_DESC]);
+        }elseif (isset($params['numberVal']) == 2){
+            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']])->orderBy(['created_at'=> SORT_DESC]);
+        }elseif (isset($params['numberVal']) == 3){
+            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']])->orderBy(['created_at'=> SORT_DESC]);
+        }elseif (isset($params['numberVal']) == 4){
+            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']])->orderBy(['created_at'=> SORT_DESC]);
+        }
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query->orderBy(['created_at'=> SORT_DESC]),
+            'query' => $query,
         ]);
 
         $this->load($params);
