@@ -371,6 +371,7 @@ $(document).ready(function() {
     $('body').on('change', '.orderStatus', function () {
         let managerId = $('.changeManager').val();
         let numberVal = $(this).val();
+        let clientsVal = $('.changeClients').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         // console.log(managerId,numberVal)
         $.ajax({
@@ -380,6 +381,7 @@ $(document).ready(function() {
             data:{
                 numberVal:numberVal,
                 managerId:managerId,
+                clientsVal:clientsVal,
                 _csrf: csrfToken,
             },
             success:function (data){
@@ -390,6 +392,7 @@ $(document).ready(function() {
     $('body').on('change', '.changeManager', function () {
         let managerId = $(this).val();
         let numberVal = $('.orderStatus').val();
+        let clientsVal = $('.changeClients').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         // console.log(managerId,numberVal)
         $.ajax({
@@ -399,6 +402,29 @@ $(document).ready(function() {
             data:{
                 numberVal:numberVal,
                 managerId:managerId,
+                clientsVal:clientsVal,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+            }
+        })
+    })
+
+    $('body').on('change', '.changeClients', function () {
+        let managerId = $('.changeManager').val();
+        let numberVal = $('.orderStatus').val();
+        let clientsVal = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        console.log(managerId,numberVal,clientsVal)
+        $.ajax({
+            url:'/orders/filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                numberVal:numberVal,
+                managerId:managerId,
+                clientsVal:clientsVal,
                 _csrf: csrfToken,
             },
             success:function (data){

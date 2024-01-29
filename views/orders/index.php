@@ -323,6 +323,16 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                 <?php }elseif ($session['role_id'] == '2'){ ?>
                     <input class="changeManager" type="hidden" value="<?=$session['user_id']?>">
                 <?php }?>
+                <select class="form-control changeClients" style="width: 210px; margin: 0px 10px 15px 5px;">
+                    <option value="null">Բոլոր հաճախորդները</option>
+                    <?php
+                    foreach ($clients as $client){
+                        ?>
+                        <option value="<?=$client['id']?>"><?=$client['name']?></option>
+                        <?php
+                    }
+                    ?>
+                </select>
                 <select class="form-select orderStatus" aria-label="Default select example" style="width: 150px; margin: 0px 10px 15px 5px;">
                     <?php
                     if($session['role_id'] == '1'){?>
