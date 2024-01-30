@@ -294,8 +294,6 @@ $session = Yii::$app->session;
                 <div class="panel-title premission">
                     <span class="non-active">Վաճառք</span>
                 </div>
-                <!--            <div class="card-body formDesign">-->
-
                 <div class="clientSelectSingle">
                     <label for="singleClients">Հաճախորդ</label>
                     <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">

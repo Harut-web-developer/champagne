@@ -371,6 +371,7 @@ $(document).ready(function() {
     $('body').on('change', '.orderStatus', function () {
         let managerId = $('.changeManager').val();
         let numberVal = $(this).val();
+        let clientsVal = $('.changeClients').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         // console.log(managerId,numberVal)
         $.ajax({
@@ -380,6 +381,7 @@ $(document).ready(function() {
             data:{
                 numberVal:numberVal,
                 managerId:managerId,
+                clientsVal:clientsVal,
                 _csrf: csrfToken,
             },
             success:function (data){
@@ -390,6 +392,7 @@ $(document).ready(function() {
     $('body').on('change', '.changeManager', function () {
         let managerId = $(this).val();
         let numberVal = $('.orderStatus').val();
+        let clientsVal = $('.changeClients').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         // console.log(managerId,numberVal)
         $.ajax({
@@ -399,6 +402,29 @@ $(document).ready(function() {
             data:{
                 numberVal:numberVal,
                 managerId:managerId,
+                clientsVal:clientsVal,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+            }
+        })
+    })
+
+    $('body').on('change', '.changeClients', function () {
+        let managerId = $('.changeManager').val();
+        let numberVal = $('.orderStatus').val();
+        let clientsVal = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        console.log(managerId,numberVal,clientsVal)
+        $.ajax({
+            url:'/orders/filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                numberVal:numberVal,
+                managerId:managerId,
+                clientsVal:clientsVal,
                 _csrf: csrfToken,
             },
             success:function (data){
@@ -614,6 +640,31 @@ $(document).ready(function() {
         })
     }
 
+    $('body').on('change', '.documentStatus', function () {
+        let numberVal = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        console.log(numberVal)
+        $.ajax({
+            url:'/documents/document-filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                numberVal:numberVal,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+            }
+        })
+    })
+
+    $('.js-example-basic-single').select2();
+    $('body').on('change','#orders-orders_date, #singleClients',function(){
+        if($('#orders-orders_date').val() != '' && $('#singleClients').val() != ''){
+            $('body').find('.addOrders').attr('disabled',false);
+        }
+    })
+
     // var csrfToken = $('meta[name="csrf-token"]').attr("content");
     // $.ajax({
     //     url:"/map/index",
@@ -626,6 +677,7 @@ $(document).ready(function() {
     //         alert(data)
     //     }
     // })
+
 
 });
 

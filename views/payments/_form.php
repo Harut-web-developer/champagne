@@ -15,9 +15,29 @@ use yii\widgets\ActiveForm;
                 <div class="panel-title premission">
                     <span class="non-active">Վճար</span>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
-                    <?= $form->field($model, 'client_id')->dropDownList($client) ?>
+                <?php if ($model->id){ ?>
+                    <div class="clientSelectSingle">
+                        <label for="singleClients">Հաճախորդ</label>
+                        <select id="singleClients" class="js-example-basic-single form-control" name="client_id">
+                            <option  value=""></option>
+                            <?php foreach ($clients as $client){
+                                $isSelected = in_array($client['id'], $payment_clients);
+                                ?>
+                                <option <?= $isSelected ? 'selected' : '' ?> value="<?= $client['id'] ?>"><?= $client['name'] ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                <?php } else {?>
+                <div class="clientSelectSingle">
+                    <label for="singleClients">Հաճախորդ</label>
+                    <select id="singleClients" class="js-example-basic-single form-control" name="client_id">
+                        <option  value=""></option>
+                        <?php foreach ($client as $cl){ ?>
+                            <option value="<?= $cl['id'] ?>"><?= $cl['name'] ?></option>
+                        <?php } ?>
+                    </select>
                 </div>
+                <?php } ?>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
                     <?= $form->field($model, 'payment_sum')->input('number') ?>
                 </div>

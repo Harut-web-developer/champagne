@@ -77,14 +77,17 @@ class OrdersController extends Controller
         }
         $sub_page = [];
         $date_tab = [];
+        $clients = Clients::find()->select('id, name')->where(['=','status',1])->asArray()->all();
 
         $searchModel = new OrdersSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'clients' => $clients,
         ]);
     }
 

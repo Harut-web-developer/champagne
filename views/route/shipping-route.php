@@ -62,7 +62,7 @@ $this->params['date_tab'] = $date_tab;
                     _csrf:csrfToken,
                 },
                 success:function(data){
-                    console.log(data);
+                    // console.log(data);
                     if (data['location'].length != 0) {
                         var arr = [];
                         var clients = [];
@@ -98,15 +98,15 @@ $this->params['date_tab'] = $date_tab;
                             for (var d = 0; d < data['coordinatesUser'].length; d++) {
                                 var latitude = data['coordinatesUser'][d]['latitude'];
                                 var longitude = data['coordinatesUser'][d]['longitude'];
-                                console.log(latitude, longitude, latitude1, longitude2)
+                                // console.log(latitude, longitude, latitude1, longitude2)
                                 distance = getDistanceFromLatLonInKm(latitude, longitude, latitude1, longitude2).toFixed(1);
-                                console.log(distance)
+                                // console.log(distance)
                                 if (distance < 300) {
                                     var csrfToken = $('meta[name="csrf-token"]').attr("content");
                                     var coord_id = data['coordinatesUser'][d]['id'];
                                     visit++;
                                     temp = visit;
-                                    console.log(visit,temp)
+                                    // console.log(visit,temp)
                                     $.ajax({
                                         url: "/route/update-visit",
                                         method: 'get',
@@ -118,7 +118,7 @@ $this->params['date_tab'] = $date_tab;
                                         },
                                     })
                                 }
-                                console.log(d == (data['coordinatesUser'].length - 1))
+                                // console.log(d == (data['coordinatesUser'].length - 1))
                                 if( d == (data['coordinatesUser'].length -1 ) ){
                                     if (temp >= visit){
                                         time_visit[String(y)] = {
@@ -143,7 +143,7 @@ $this->params['date_tab'] = $date_tab;
                                     _csrf:csrfToken,
                                 },
                             })
-                            console.log(time_visit)
+                            // console.log(time_visit)
                         }
 
                         var arr2 = [];
@@ -194,7 +194,7 @@ $this->params['date_tab'] = $date_tab;
                             searchControlProvider: 'yandex#search'
                         });
                         Object.values(time_visit).forEach(item => {
-                            console.log(item.location);
+                            // console.log(item.location);
                             let [latitude, longitude] = item.location.split(',').map(parseFloat);
                             let switchedLocation = [latitude, longitude];
                             var myPlacemark = new ymaps.Placemark(switchedLocation, {
@@ -222,5 +222,11 @@ $this->params['date_tab'] = $date_tab;
 <style>
     body, #map {
         width: 100%; height: 100%; padding: 0; margin: 0;
+    }
+    .ymaps-2-1-79-balloon__layout, .ymaps-2-1-79-balloon__tail{
+        display: none !important;
+    }
+    .ymaps-multi-route__stop-label {
+        display: none !important;
     }
 </style>

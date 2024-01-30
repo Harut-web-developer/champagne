@@ -308,7 +308,10 @@ class RouteController extends Controller
             ->where(['id' => $id])
             ->asArray()
             ->one();
-        $users = Users::find()->select('id, name')
+        $users = Users::find()->select('users.id, users.name')
+            ->leftJoin('orders', 'orders.user_id = users.id')
+            ->leftJoin('clients', 'clients.id = orders.clients_id')
+            ->where(['clients.route_id' => $id])
             ->asArray()
             ->all();
         return $this->render('shipping-route', [
