@@ -12,6 +12,8 @@ use Yii;
  * @property int $clients_id
  * @property string $status
  * @property float $total_price
+ * @property float $total_price_before_discount
+ * @property float $total_discount
  * @property int $total_count
  * @property string $created_at
  * @property string $updated_at
@@ -35,7 +37,7 @@ class Orders extends \yii\db\ActiveRecord
             [['user_id','clients_id', 'total_price', 'total_count','comment','orders_date'], 'required'],
             [['user_id','clients_id', 'total_count'], 'integer'],
             [['status','comment'], 'string'],
-            [['total_price'], 'number'],
+            [['total_price','total_price_before_discount','total_discount'], 'number'],
             [['created_at', 'updated_at','orders_date'], 'safe'],
         ];
     }

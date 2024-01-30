@@ -94,30 +94,30 @@ $session = Yii::$app->session;
                                             <?php
                                             if ($item['discount'] == 0){
                                             ?>
-                                                <span>0</span>
-                                                <input type="hidden" name="discount[]" value="0">
+                                                <span>0.00</span>
+                                                <input type="hidden" name="discount[]" value="0.00">
                                             <?php
                                             }else{
                                             ?>
-                                                <span><?=$item['discount'] / $item['count']?></span>
-                                                <input type="hidden" name="discount[]" value="<?=$item['discount'] / $item['count']?>">
+                                                <span><?= number_format($item['discount'] / $item['count'],2,'.','')?></span>
+                                                <input type="hidden" name="discount[]" value="<?=number_format($item['discount'] / $item['count'],2,'.','')?>">
                                             <?php
                                             }
                                             ?>
                                         </td>
-                                        <td class="beforePrice"><span><?=$item['beforePrice']?></span>
-                                            <input type="hidden" name="beforePrice[]" value="<?=$item['beforePrice']?>">
+                                        <td class="beforePrice"><span><?=number_format($item['beforePrice'],2,'.','')?></span>
+                                            <input type="hidden" name="beforePrice[]" value="<?=number_format($item['beforePrice'],2,'.','')?>">
                                         </td>
-                                        <td class="price"><span><?=$item['price']?></span>
-                                            <input type="hidden" name="price[]" value="<?=$item['price']?>">
+                                        <td class="price"><span><?=number_format($item['price'],2,'.','')?></span>
+                                            <input type="hidden" name="price[]" value="<?=number_format($item['price'],2,'.','')?>">
                                         </td>
                                         <td class="totalBeforePrice">
-                                            <span><?=$item['totalBeforePrice']?></span>
-                                            <input type="hidden" name="total_before_price[]" value="<?=$item['totalBeforePrice']?>">
+                                            <span><?=number_format($item['totalBeforePrice'],2,'.','')?></span>
+                                            <input type="hidden" name="total_before_price[]" value="<?=number_format($item['totalBeforePrice'],2,'.','')?>">
                                         </td>
                                         <td class="totalPrice">
-                                            <span><?=$item['total_price']?></span>
-                                            <input type="hidden" name="total_price[]" value="<?=$item['total_price']?>">
+                                            <span><?=number_format($item['total_price'],2,'.','')?></span>
+                                            <input type="hidden" name="total_price[]" value="<?=number_format($item['total_price'],2,'.','')?>">
                                         </td>
                                         <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsFromDB">Ջնջել</button></td>
                                     </tr>
@@ -268,13 +268,13 @@ $session = Yii::$app->session;
                     <span class="non-active">Վաճառք</span>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
-                    <?= $form->field($model, 'total_price_before_discount')->textInput(['readonly'=> true]) ?>
+                    <?= $form->field($model, 'total_price_before_discount')->textInput(['readonly'=> true,'value' => number_format($model->total_price_before_discount, 2, '.', ''),]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalPrice">
-                    <?= $form->field($model, 'total_price')->textInput(['readonly'=> true]) ?>
+                    <?= $form->field($model, 'total_price')->textInput(['readonly'=> true,'value' => number_format($model->total_price, 2, '.', ''),]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
-                    <?= $form->field($model, 'total_discount')->textInput(['readonly'=> true]) ?>
+                    <?= $form->field($model, 'total_discount')->textInput(['readonly'=> true,'value' => number_format($model->total_discount, 2, '.', ''),]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'total_count')->textInput(['readonly'=> true]) ?>

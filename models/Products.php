@@ -109,6 +109,7 @@ class Products extends \yii\db\ActiveRecord
                 ->orderBy(['discount.discount_sortable' => SORT_ASC])
                 ->asArray()
                 ->all();
+//            return $discount;
             if ($discount) {
                 $desc = [];
                 $arr = [];
@@ -142,6 +143,7 @@ class Products extends \yii\db\ActiveRecord
                                                 $price = $price - $discount[$j]['discount'];
                                             }
                                         }
+                                        $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                     } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
@@ -161,6 +163,7 @@ class Products extends \yii\db\ActiveRecord
                                                 $price = $price - $discount[$j]['discount'];
                                             }
                                         }
+                                        $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                     } elseif (empty($discount[$j]['discount_filter_type'])) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
@@ -180,14 +183,14 @@ class Products extends \yii\db\ActiveRecord
                                                 $price = $price - $discount[$j]['discount'];
                                             }
                                         }
+                                        $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                     }
                                     array_push($arr, $client_id);
-                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 }else{
                                     $desc = 'empty';
                                 }
                             } else {
-                                if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $orders_total_count && $discount[$j]['max'] > $orders_total_count) {
+                                if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
                                     if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                         $count++;
                                         if ($discount[$j]['type'] == 'percent') {
@@ -206,7 +209,8 @@ class Products extends \yii\db\ActiveRecord
                                             $price = $price - $discount[$j]['discount'];
                                         }
                                     }
-                                } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $orders_total_sum && $discount[$j]['max'] > $orders_total_sum) {
+                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
+                                } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
                                     if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                         $count++;
                                         if ($discount[$j]['type'] == 'percent') {
@@ -225,6 +229,7 @@ class Products extends \yii\db\ActiveRecord
                                             $price = $price - $discount[$j]['discount'];
                                         }
                                     }
+                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 } elseif (empty($discount[$j]['discount_filter_type'])) {
                                     if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                         $count++;
@@ -244,15 +249,15 @@ class Products extends \yii\db\ActiveRecord
                                             $price = $price - $discount[$j]['discount'];
                                         }
                                     }
+                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 }
                                 array_push($arr, $client_id);
-                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             }
                             $uniq = array_unique($arr);
                             $string_row = implode(',', $uniq);
                             $discount_client_id = ['id' => $discount[$j]['id'], 'clients_id' => $string_row];
                         } elseif ($discount[$j]['discount_option'] == 2) {//bazmaki
-                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] < $orders_total_count && $discount[$j]['max'] > $orders_total_count) {
+                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                     $count++;
                                     if ($discount[$j]['type'] == 'percent') {
@@ -271,7 +276,8 @@ class Products extends \yii\db\ActiveRecord
                                         $price = $price - $discount[$j]['discount'];
                                     }
                                 }
-                            }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] < $orders_total_sum && $discount[$j]['max'] > $orders_total_sum) {
+                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
+                            }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                     $count++;
                                     if ($discount[$j]['type'] == 'percent') {
@@ -290,6 +296,7 @@ class Products extends \yii\db\ActiveRecord
                                         $price = $price - $discount[$j]['discount'];
                                     }
                                 }
+                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             }elseif (empty($discount[$j]['discount_filter_type'])) {
                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                     $count++;
@@ -309,9 +316,9 @@ class Products extends \yii\db\ActiveRecord
                                         $price = $price - $discount[$j]['discount'];
                                     }
                                 }
+                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             }
                             $discount_client_id = 'empty';
-                            $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                         }
                         array_push($discount_client_id_check,$discount_client_id);
                         array_push($discount_desc, $desc);
@@ -341,6 +348,7 @@ class Products extends \yii\db\ActiveRecord
                                                 $price = $price - $discount[$j]['discount'];
                                             }
                                         }
+                                        $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                     } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
@@ -360,6 +368,7 @@ class Products extends \yii\db\ActiveRecord
                                                 $price = $price - $discount[$j]['discount'];
                                             }
                                         }
+                                        $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                     } elseif (empty($discount[$j]['discount_filter_type'])) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
@@ -379,9 +388,9 @@ class Products extends \yii\db\ActiveRecord
                                                 $price = $price - $discount[$j]['discount'];
                                             }
                                         }
+                                        $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                     }
                                     array_push($arr, $client_id);
-                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 }else{
                                     $desc = 'empty';
                                 }
@@ -405,6 +414,7 @@ class Products extends \yii\db\ActiveRecord
                                             $price = $price - $discount[$j]['discount'];
                                         }
                                     }
+                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
                                     if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                         $count++;
@@ -424,6 +434,7 @@ class Products extends \yii\db\ActiveRecord
                                             $price = $price - $discount[$j]['discount'];
                                         }
                                     }
+                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 } elseif (empty($discount[$j]['discount_filter_type'])) {
                                     if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                         $count++;
@@ -443,9 +454,9 @@ class Products extends \yii\db\ActiveRecord
                                             $price = $price - $discount[$j]['discount'];
                                         }
                                     }
+                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 }
                                 array_push($arr, $client_id);
-                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             }
                                     $uniq = array_unique($arr);
                                     $string_row = implode(',', $uniq);
@@ -470,6 +481,7 @@ class Products extends \yii\db\ActiveRecord
                                         $price = $price - $discount[$j]['discount'];
                                     }
                                 }
+                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                     $count++;
@@ -489,6 +501,7 @@ class Products extends \yii\db\ActiveRecord
                                         $price = $price - $discount[$j]['discount'];
                                     }
                                 }
+                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             } elseif (empty($discount[$j]['discount_filter_type'])) {
                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                     $count++;
@@ -508,9 +521,9 @@ class Products extends \yii\db\ActiveRecord
                                         $price = $price - $discount[$j]['discount'];
                                     }
                                 }
+                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             }
                             $discount_client_id = 'empty';
-                            $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                         }
                         array_push($discount_client_id_check,$discount_client_id);
                         array_push($discount_desc, $desc);
@@ -540,6 +553,7 @@ class Products extends \yii\db\ActiveRecord
                                                 $price = $price - $discount[$j]['discount'];
                                             }
                                         }
+                                        $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                     } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
@@ -559,6 +573,7 @@ class Products extends \yii\db\ActiveRecord
                                                 $price = $price - $discount[$j]['discount'];
                                             }
                                         }
+                                        $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                     } elseif (empty($discount[$j]['discount_filter_type'])) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
@@ -578,9 +593,9 @@ class Products extends \yii\db\ActiveRecord
                                                 $price = $price - $discount[$j]['discount'];
                                             }
                                         }
+                                        $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                     }
                                     array_push($arr, $client_id);
-                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 }else{
                                     $desc = 'empty';
                                 }
@@ -604,6 +619,7 @@ class Products extends \yii\db\ActiveRecord
                                             $price = $price - $discount[$j]['discount'];
                                         }
                                     }
+                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
                                     if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                         $count++;
@@ -623,6 +639,7 @@ class Products extends \yii\db\ActiveRecord
                                             $price = $price - $discount[$j]['discount'];
                                         }
                                     }
+                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 } elseif (empty($discount[$j]['discount_filter_type'])) {
                                     if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                         $count++;
@@ -642,9 +659,9 @@ class Products extends \yii\db\ActiveRecord
                                             $price = $price - $discount[$j]['discount'];
                                         }
                                     }
+                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 }
                                 array_push($arr, $client_id);
-                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             }
                             $uniq = array_unique($arr);
                             $string_row = implode(',', $uniq);
@@ -670,6 +687,7 @@ class Products extends \yii\db\ActiveRecord
                                         $price = $price - $discount[$j]['discount'];
                                     }
                                 }
+                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                     $count++;
@@ -689,6 +707,7 @@ class Products extends \yii\db\ActiveRecord
                                         $price = $price - $discount[$j]['discount'];
                                     }
                                 }
+                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             } elseif (empty($discount[$j]['discount_filter_type'])) {
                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                     $count++;
@@ -708,9 +727,9 @@ class Products extends \yii\db\ActiveRecord
                                         $price = $price - $discount[$j]['discount'];
                                     }
                                 }
+                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             }
                             $discount_client_id = 'empty';
-                            $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                         }
                         array_push($discount_client_id_check,$discount_client_id);
                         array_push($discount_desc, $desc);
@@ -740,6 +759,7 @@ class Products extends \yii\db\ActiveRecord
                                                 $price = $price - $discount[$j]['discount'];
                                             }
                                         }
+                                        $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                     } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
@@ -759,6 +779,7 @@ class Products extends \yii\db\ActiveRecord
                                                 $price = $price - $discount[$j]['discount'];
                                             }
                                         }
+                                        $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                     } elseif (empty($discount[$j]['discount_filter_type'])) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
@@ -778,9 +799,9 @@ class Products extends \yii\db\ActiveRecord
                                                 $price = $price - $discount[$j]['discount'];
                                             }
                                         }
+                                        $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                     }
                                     array_push($arr, $client_id);
-                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 }else{
                                     $desc = 'empty';
                                 }
@@ -804,6 +825,7 @@ class Products extends \yii\db\ActiveRecord
                                             $price = $price - $discount[$j]['discount'];
                                         }
                                     }
+                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
                                     if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                         $count++;
@@ -823,6 +845,7 @@ class Products extends \yii\db\ActiveRecord
                                             $price = $price - $discount[$j]['discount'];
                                         }
                                     }
+                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 } elseif (empty($discount[$j]['discount_filter_type'])) {
                                     if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                         $count++;
@@ -842,9 +865,9 @@ class Products extends \yii\db\ActiveRecord
                                             $price = $price - $discount[$j]['discount'];
                                         }
                                     }
+                                    $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                                 }
                                 array_push($arr, $client_id);
-                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             }
                             $uniq = array_unique($arr);
                             $string_row = implode(',', $uniq);
@@ -870,6 +893,7 @@ class Products extends \yii\db\ActiveRecord
                                         $price = $price - $discount[$j]['discount'];
                                     }
                                 }
+                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                     $count++;
@@ -889,6 +913,7 @@ class Products extends \yii\db\ActiveRecord
                                         $price = $price - $discount[$j]['discount'];
                                     }
                                 }
+                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             } elseif (empty($discount[$j]['discount_filter_type'])) {
                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                     $count++;
@@ -908,9 +933,9 @@ class Products extends \yii\db\ActiveRecord
                                         $price = $price - $discount[$j]['discount'];
                                     }
                                 }
+                                $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                             }
                             $discount_client_id = 'empty';
-                            $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
                         }
                         array_push($discount_client_id_check,$discount_client_id);
                         array_push($discount_desc, $desc);
