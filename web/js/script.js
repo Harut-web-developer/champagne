@@ -658,6 +658,12 @@ $(document).ready(function() {
         })
     })
 
+    $('.js-example-basic-single').select2();
+    $('body').on('change','#orders-orders_date, #singleClients',function(){
+        if($('#orders-orders_date').val() != '' && $('#singleClients').val() != ''){
+            $('body').find('.addOrders').attr('disabled',false);
+        }
+    })
 
     // var csrfToken = $('meta[name="csrf-token"]').attr("content");
     // $.ajax({
@@ -671,6 +677,7 @@ $(document).ready(function() {
     //         alert(data)
     //     }
     // })
+
 
 });
 

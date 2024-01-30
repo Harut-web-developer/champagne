@@ -105,8 +105,7 @@ class PaymentsController extends Controller
             ->orderBy(['payments.created_at'=> SORT_DESC])
             ->asArray()
             ->all();
-//        var_dump($statistics);
-//        exit();
+
         $sub_page = [
             ['name' => 'Վճարումներ','address' => '/payments'],
             ['name' => 'Փոխարժեք','address' => '/rates']
@@ -150,7 +149,7 @@ class PaymentsController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-            $model->client_id = $post['Payments']['client_id'];
+            $model->client_id = $post['client_id'];
             $model->payment_sum = $post['Payments']['payment_sum'];
             $model->pay_date = $post['Payments']['pay_date'];
             $model->rate_id = $post['Payments']['rate_id'];
@@ -170,7 +169,7 @@ class PaymentsController extends Controller
 
 //        echo "<pre>";
         $client = Clients::find()->select('id,name')->asArray()->all();
-        $client = ArrayHelper::map($client,'id','name');
+//        $client = ArrayHelper::map($client,'id','name');
         $rates = Rates::find()->select('id,name')->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
 //        var_dump($client);
@@ -202,7 +201,7 @@ class PaymentsController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-            $model->client_id = $post['Payments']['client_id'];
+            $model->client_id = $post['client_id'];
             $model->payment_sum = $post['Payments']['payment_sum'];
             $model->pay_date = $post['Payments']['pay_date'];
             $model->rate_id = $post['Payments']['rate_id'];
@@ -216,7 +215,9 @@ class PaymentsController extends Controller
             ['name' => 'Վիճակագրություն','address' => '/payments/statistics']
         ];
         $date_tab = [];
-
+        $payment_clients = Payments::find()->select('client_id')->where(['=','id',$id])->asArray()->all();
+        $payment_clients = array_column($payment_clients,'client_id');
+        $clients = Clients::find()->select('id, name')->Where(['=','status',1])->asArray()->all();
         $rates = Rates::find()->select('id,name')->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
         $client = Clients::find()->select('id,name')->asArray()->all();
@@ -227,8 +228,8 @@ class PaymentsController extends Controller
             'rates' => $rates,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
-
+            'payment_clients' => $payment_clients,
+            'clients' => $clients,
         ]);
     }
 
