@@ -29,7 +29,7 @@ $this->params['date_tab'] = $date_tab;
         </div>
         <div class="form-group col-md-6 col-lg-6 col-sm-6 logAction">
             <label for="myLocalDate">Ընտրել ամսաթիվը</label>
-            <input id="myLocalDate" class="fil-input form-control valuemap" type="datetime-local" name="date">
+            <input id="myLocalDate" class="fil-input form-control valuemap" type="date" name="date">
         </div>
     </div>
     <div id="map">

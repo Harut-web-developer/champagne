@@ -51,13 +51,13 @@ $this->params['date_tab'] = $date_tab;
             <div class="card h-100">
                 <div class="card-header">
                     <h5 class="card-title m-0 me-2">Վճարումներ</h5>
-                    <select class="form-control mt-2 filterClientsChart">
+                    <select id="singleClients" class="js-example-basic-single form-control mt-2 filterClientsChart" name="client_id">
                         <option value="null">Ընտրել հաճախորդին</option>
                         <?php
                         foreach ($get_clients as $client){
                             ?>
                             <option value="<?=$client['id']?>"><?=$client['name']?></option>
-                        <?php
+                            <?php
                         }
                         ?>
                     </select>

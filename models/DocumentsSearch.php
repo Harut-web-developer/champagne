@@ -40,24 +40,35 @@ class DocumentsSearch extends Documents
      */
     public function search($params)
     {
+//        echo "<pre>";
         $query = Documents::find();
-        if(isset($params['numberVal']) == 0) {
-            $query->andWhere(['status' => '1'])->orderBy(['created_at'=> SORT_DESC]);
-        }elseif (isset($params['numberVal']) == 1){
-            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']])->orderBy(['created_at'=> SORT_DESC]);
-        }elseif (isset($params['numberVal']) == 2){
-            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']])->orderBy(['created_at'=> SORT_DESC]);
-        }elseif (isset($params['numberVal']) == 3){
-            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']])->orderBy(['created_at'=> SORT_DESC]);
-        }elseif (isset($params['numberVal']) == 4){
-            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']])->orderBy(['created_at'=> SORT_DESC]);
+        if (isset($params['numberVal']) && $params['numberVal'] != 0){
+            if ($params['numberVal'] == 1){
+                $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
+            }elseif ($params['numberVal'] == 2){
+                $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
+            }elseif ($params['numberVal'] == 3){
+                $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
+            }elseif ($params['numberVal'] == 4){
+                $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
+            }
+        }else{
+            $query->andWhere(['status' => '1']);
         }
-        // add conditions that should always apply here
+//            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
+//        }elseif (isset($params['numberVal']) == 2){
+//            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
+//        }elseif (isset($params['numberVal']) == 3){
+//            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
+//        }elseif (isset($params['numberVal']) == 4){
+//            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
+//        }elseif (isset($params['numberVal']) == 0){
+//            $query->andWhere(['status' => '1']);
+//        }
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $query->orderBy(['created_at'=> SORT_DESC]),
         ]);
-
         $this->load($params);
 
         if (!$this->validate()) {

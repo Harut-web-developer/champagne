@@ -82,7 +82,6 @@ class DocumentsController extends Controller
 
         $searchModel = new DocumentsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -699,23 +698,12 @@ class DocumentsController extends Controller
             $dataProvider = $searchModel->search($this->request->queryParams);
             $sub_page = [];
             $date_tab = [];
-            $approved = null;
-            if ($_GET['numberVal'] == 2){
-                $approved = 2;
-            }elseif ($_GET['numberVal'] == 0){
-                $approved = 0;
-            }elseif ($_GET['numberVal'] == 3 || $_GET['numberVal'] == 4){
-                $approved = 3;
-            }elseif ($_GET['numberVal'] == 1){
-                $approved = 1;
-            }
 
             return $this->renderAjax('widget', [
                 'sub_page' => $sub_page,
                 'date_tab' => $date_tab,
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
-                'approved' => $approved,
             ]);
         }
     }
