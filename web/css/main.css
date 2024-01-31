@@ -644,3 +644,9 @@
 .iconsPrintAndXlsx{
     margin-bottom:10px;
 }
+.toWarehouse{
+    display:none;
+}
+.activeForInput{
+    display:block;
+}

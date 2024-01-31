@@ -35,8 +35,8 @@ class Documents extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'warehouse_id', 'rate_id', 'rate_value', 'document_type', 'comment', 'date'], 'required'],
-            [['user_id', 'warehouse_id', 'rate_id', 'rate_value'], 'integer'],
+            [['user_id', 'warehouse_id', 'rate_id', 'rate_value', 'document_type', 'date'], 'required'],
+            [['user_id', 'warehouse_id', 'rate_id', 'rate_value','to_warehouse'], 'integer'],
             [['date', 'created_at', 'updated_at'], 'safe'],
             [['status'], 'string'],
             [['comment'], 'string', 'max' => 255],
@@ -52,6 +52,7 @@ class Documents extends \yii\db\ActiveRecord
             'id' => 'ID',
             'user_id' => 'Օգտատեր',
             'warehouse_id' => 'Պահեստ',
+            'to_warehouse' => 'Տեղափոխվող պահեստ',
             'rate_id' => 'Փոխարժեք',
             'rate_value' => 'Տոկոսադրույք',
             'document_type' => 'Փաստաթղթի տեսակ',

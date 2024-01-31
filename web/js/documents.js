@@ -52,7 +52,12 @@ $(document).ready(function () {
     })
 
     $('body').on('click', '.deleteItems', function () {
-        $(this).closest('.tableDocuments').remove();
+        let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
+        if (confirmed){
+            $(this).closest('.tableDocuments').remove();
+        }
+        alert('Հաջողությամբ ջնջված է:');
+
     })
 
     var old_table = $('.table.documentsAddingTable').find('.old_tbody').html();
@@ -77,7 +82,7 @@ $(document).ready(function () {
                 trs[nom_id.trim()] = `<tr class="tableDocuments oldTr">
                                          <td>
                                             <span>`+ nom_id +`</span>
-                                            <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
+                                            <input type="hidden" name="document_items[]" value="null">
                                             <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
@@ -120,7 +125,7 @@ $(document).ready(function () {
                 trs[nom_id.trim()] = `<tr class="tableDocuments oldTr">
                                          <td>
                                             <span>` + nom_id +`</span>
-                                            <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
+                                            <input type="hidden" name="document_items[]" value="null">
                                             <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
@@ -133,29 +138,34 @@ $(document).ready(function () {
         // console.log('by_ajax_update')
 
     })
-
     $('body').on('click', '.deleteDocumentItems', function () {
+        let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
         var this_ = $(this);
-        let id = this_.closest('.oldTr').find('.itemsId').val()
+        let docItemsId = this_.closest('.oldTr').find('.docItemsId').val()
+        let nomId = this_.closest('.oldTr').find('.itemsId').val()
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         let url_id = window.location.href;
         let url = new URL(url_id);
         let urlId = url.searchParams.get("id");
-        $.ajax({
-            url: '/documents/delete-document-items',
-            method: 'post',
-            datatype: 'post',
-            data: {
-                id: id,
-                urlId: urlId,
-                _csrf: csrfToken
-            },
-            success: function (data) {
-                if (data === 'true') {
-                    this_.closest('.oldTr').remove();
+        if (confirmed){
+            $.ajax({
+                url: '/documents/delete-document-items',
+                method: 'post',
+                datatype: 'json',
+                data: {
+                    docItemsId: docItemsId,
+                    nomId:nomId,
+                    urlId: urlId,
+                    _csrf: csrfToken
+                },
+                success: function (data) {
+                    if (data === 'true') {
+                        this_.closest('.oldTr').remove();
+                    }
                 }
-            }
-        })
+            })
+        }
+        alert('Հաջողությամբ ջնջված է:');
     })
 
     $('body').on('click', '.PriceDocuments', function () {
@@ -226,7 +236,7 @@ $(document).ready(function () {
                 trs[nom_id.trim()] = `<tr class="tableDocuments oldTr">
                                          <td>
                                             <span>` + nom_id +`</span>
-                                            <input type="hidden" name="document_items[]" value="new_`+ nom_id +`">
+                                            <input type="hidden" name="document_items[]" value="null">
                                             <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
@@ -294,7 +304,6 @@ $(document).ready(function () {
             success: function (data) {
                 let param = JSON.parse(data)
                 if (param == 'others') {
-                    // alert(2222)
                     $('body').find('#documents-rate_value').attr('readonly', false);
                     $('body').find('#documents-rate_value').val('');
                 }else if(param == 'amd'){
@@ -304,10 +313,28 @@ $(document).ready(function () {
             }
         })
     })
+    $('body').on('change','#documents-document_type', function () {
+        if ($(this).val() == 3){
+            $('body').find('.toWarehouse').addClass('activeForInput');
+
+        }else {
+            $('body').find('.toWarehouse').removeClass('activeForInput');
+        }
+    })
+
     function trCounter(table){
         let i = 0;
         table.find('tbody').find('tr').each(function () {
             $(this).find('td:first').find('span').text(++i);
         })
+    }
+    let currentUrl = window.location.href;
+    let hasUpdate = currentUrl.includes('update');
+    if (hasUpdate){
+        if ($('body').find('#documents-document_type').val() == 'Տեղափոխություն'){
+            $('body').find('.toWarehouse').addClass('activeForInput');
+        }else {
+            $('body').find('.toWarehouse').removeClass('activeForInput');
+        }
     }
 })

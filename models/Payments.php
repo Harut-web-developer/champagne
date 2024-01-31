@@ -47,6 +47,7 @@ class Payments extends \yii\db\ActiveRecord
             'id' => 'ID',
             'client_id' => 'Հաճախորդ',
             'payment_sum' => 'Վճարման գումար',
+            'comment' => 'Մեկնաբանություն',
             'pay_date' => 'Վճարման օր',
             'rate_id' => 'Փոխարժեք',
             'rate_value' => 'Փոխարժեքի չափ',

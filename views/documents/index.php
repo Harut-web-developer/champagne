@@ -130,7 +130,16 @@ if ($have_access_update && $have_access_delete){
                     }
                 }
             ],
-            'comment',
+            [
+                'attribute' => 'Մեկնաբանություն',
+                'value' => function ($model) {
+                    if ($model->comment) {
+                        return $model->comment;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
             'date',
             ...$action_column,
         ],

@@ -388,7 +388,16 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                     }
                 }
             ],
-            'comment',
+            [
+                'attribute' => 'Մեկնաբանություն',
+                'value' => function ($model) {
+                    if ($model->comment) {
+                        return $model->comment;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
             'total_price',
             'total_count',
             'orders_date',
@@ -433,7 +442,16 @@ else{ ?>
                     }
                 }
             ],
-            'comment',
+            [
+                'attribute' => 'Մեկնաբանություն',
+                'value' => function ($model) {
+                    if ($model->comment) {
+                        return $model->comment;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
             'total_price',
             'total_count',
             'orders_date',

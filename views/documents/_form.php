@@ -22,7 +22,7 @@ if(isset($action__)){
         $value = 'Ելք';
     }elseif ($model->document_type === '3'){
         $value = 'Տեղափոխություն';
-    }else{
+    }elseif ($model->document_type === '4'){
         $value = 'Խոտան';
     }
     ?>
@@ -34,14 +34,18 @@ if(isset($action__)){
                     <span class="non-active">Փաստաթուղթ</span>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'document_type')->textInput(['value' => $value, 'readonly' => true]) ?>
+                    <?= $form->field($model, 'warehouse_id')->dropDownList($warehouse) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                    <?= $form->field($model, 'document_type')->textInput([ 'value' => $value, 'readonly' => true ]) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName toWarehouse">
+                    <?= $form->field($model, 'to_warehouse')->dropDownList($to_warehouse) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <?= $form->field($model, 'user_id')->dropDownList($users) ?>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'warehouse_id')->dropDownList($warehouse) ?>
-                </div>
+
                 <label class="rateLabel" for="rate">Փոխարժեք</label>
                 <div id="rate" class="form-group col-md-12 col-lg-12 col-sm-12 rateDocument">
                     <div class="rateType">
@@ -60,7 +64,7 @@ if(isset($action__)){
                     </select>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <?= $form->field($model, 'date')->input('datetime-local') ?>
@@ -132,7 +136,7 @@ if(isset($action__)){
                                 <tr class="oldTr" id="tr_<?=$document_item['nom_id']?>">
                                     <td>
                                         <span><?=$keys + 1?></span>
-                                        <input type="hidden" name="document_items[]" value="<?=$document_item['id']?>">
+                                        <input class="docItemsId" type="hidden" name="document_items[]" value="<?=$document_item['id']?>">
                                         <input class="itemsId" type="hidden" name="items[]" value="<?=$document_item['nom_id']?>">
 <!--                                        <input class="itemsId" type="hidden" name="nom_id[]" value="--><?php //=$document_item['nom_id']?><!--">-->
                                     </td>
@@ -241,14 +245,29 @@ if(isset($action__)){
                     <span class="non-active">Փաստաթուղթ</span>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                    <?= $form->field($model, 'warehouse_id')->dropDownList($warehouse) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <?= $form->field($model, 'document_type')->dropDownList([ '1' => 'Մուտք', '2' => 'Ելք','3' => 'Տեղափոխություն','4' => 'Խոտան', ]) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName toWarehouse">
+                    <?= $form->field($model, 'to_warehouse')->dropDownList($to_warehouse) ?>
+
+<!--                    <label class="toWarehouse" for="toWarehouse">Տեղափոխվող պահեստ</label>-->
+<!--                    <select id="toWarehouse" class="form-control toWarehouse" name="to_warehouse">-->
+<!--                        --><?php
+//                        foreach ($to_warehouse as $value){
+//                            ?>
+<!--                            <option value="--><?php //=$value['id']?><!--">--><?php //=$value['name']?><!--</option>-->
+<!--                        --><?php
+//                        }
+//                        ?>
+<!--                    </select>-->
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <?= $form->field($model, 'user_id')->dropDownList($users) ?>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'warehouse_id')->dropDownList($warehouse) ?>
-                </div>
+
                 <label class="rateLabel" for="rate">Փոխարժեք</label>
                 <div id="rate" class="form-group col-md-12 col-lg-12 col-sm-12 rateDocument">
                     <div class="rateType">

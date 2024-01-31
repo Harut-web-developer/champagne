@@ -34,7 +34,7 @@ class Orders extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id','clients_id', 'total_price', 'total_count','comment','orders_date'], 'required'],
+            [['user_id','clients_id', 'total_price', 'total_count','orders_date'], 'required'],
             [['user_id','clients_id', 'total_count'], 'integer'],
             [['status','comment'], 'string'],
             [['total_price','total_price_before_discount','total_discount'], 'number'],
