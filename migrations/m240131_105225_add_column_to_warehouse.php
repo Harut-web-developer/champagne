@@ -12,6 +12,7 @@ class m240131_105225_add_column_to_warehouse extends Migration
      */
     public function safeUp()
     {
+
         $this->addColumn('documents', 'to_warehouse', $this->integer(11)->defaultValue(null)->after('warehouse_id'));
     }
 
