@@ -352,6 +352,8 @@ class RouteController extends Controller
             $coordinatesUser = CoordinatesUser::find()
                 ->select('id, latitude, longitude')
                 ->where(['=', 'user_id', $userId])
+                 ->orderBy(['created_at'=>SORT_ASC])
+                ->groupBy('latitude')
                 ->asArray()
                 ->all();
             date_default_timezone_set('UTC');
