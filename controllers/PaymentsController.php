@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Clients;
+use app\models\Orders;
 use app\models\Payments;
 use app\models\PaymentsSearch;
 use app\models\Rates;
@@ -94,7 +95,6 @@ class PaymentsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-//        echo "<pre>";
         $statistics = Payments::find()->select('orders.id as orders_id,SUM(orders.total_price) as debt,orders.status,
          clients.name, payments.id as payment_id,payments.payment_sum,')
             ->leftJoin('orders','orders.clients_id = payments.client_id')
@@ -157,8 +157,40 @@ class PaymentsController extends Controller
             $model->comment = $post['Payments']['comment'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
-            $model->save();
-            return $this->redirect(['index', 'id' => $model->id]);
+            if ($model->save()) {
+                $client_orders = Orders::find()
+                    ->select(['orders.id', 'orders.total_price as debt'])
+                    ->leftJoin('clients', 'orders.clients_id = clients.id')
+                    ->where(['orders.clients_id' => $post['client_id']])
+                    ->andWhere(['or',['orders.status' => '2'],['orders.status' => '3']])
+                    ->groupBy('orders.id')
+                    ->asArray()
+                    ->all();
+
+                $payments = Payments::find()
+                    ->select('SUM(payment_sum) as payments_total')
+                    ->where(['client_id'=> $post['client_id']])
+                    ->andWhere(['status' => '1'])
+                    ->asArray()->one();
+                $payments = $payments['payments_total'];
+                $debt_total = 0;
+                foreach ($client_orders as $keys => $client_order) {
+                    if ($payments) {
+                        if ($payments >= intval($client_order['debt'])) {
+                            $payments -= intval($client_order['debt']);
+                            $orders = Orders::findOne($client_order['id']);
+                            $orders->status = '3';
+                            $orders->save(false);
+                        } else {
+                            $debt_total += intval($client_order['debt']) - $payments;
+                            $payments = 0;
+                        }
+                    } else {
+                        $debt_total += intval($client_order['debt']) - $payments;
+                    }
+                }
+                return $this->redirect(['index', 'id' => $model->id]);
+            }
         } else {
             $model->loadDefaultValues();
         }
@@ -167,12 +199,10 @@ class PaymentsController extends Controller
         ];
         $date_tab = [];
 
-//        echo "<pre>";
         $client = Clients::find()->select('id,name')->asArray()->all();
 //        $client = ArrayHelper::map($client,'id','name');
         $rates = Rates::find()->select('id,name')->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
-//        var_dump($client);
         return $this->render('create', [
             'model' => $model,
             'client' => $client,

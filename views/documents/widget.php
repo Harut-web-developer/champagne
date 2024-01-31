@@ -21,15 +21,11 @@ $this->params['date_tab'] = $date_tab;
 $have_access_create = Users::checkPremission(37);
 $have_access_update = Users::checkPremission(38);
 $have_access_delete = Users::checkPremission(39);
-$action_column = [];
-if ($approved == 0 || $approved == 1 || $approved == 2 || $approved == 3 || $approved == 4){
-    $btn = '{update} {delete}';
-}
 if ($have_access_update && $have_access_delete){
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
-        'template' => $btn,
+        'template' => '{update} {delete}',
         'urlCreator' => function ($action, Documents $model, $key, $index, $column) {
             return Url::toRoute([$action, 'id' => $model->id]);
         }

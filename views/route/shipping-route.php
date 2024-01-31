@@ -33,7 +33,7 @@ $this->params['date_tab'] = $date_tab;
         </div>
         <div class="form-group col-md-6 col-lg-6 col-sm-6 logAction">
             <label for="myDate">Ընտրել ամսաթիվը</label>
-            <input id="myDate" class="fil-input form-control valuemap" type="datetime-local" name="date">
+            <input id="myDate" class="fil-input form-control valuemap" type="date" name="date">
         </div>
     </div>
 </div>
@@ -62,7 +62,7 @@ $this->params['date_tab'] = $date_tab;
                     _csrf:csrfToken,
                 },
                 success:function(data){
-                    // console.log(data);
+                    console.log(data);
                     if (data['location'].length != 0) {
                         var arr = [];
                         var clients = [];
@@ -206,6 +206,7 @@ $this->params['date_tab'] = $date_tab;
                             myMap.geoObjects.add(myPlacemark);
                             myPlacemark.balloon.open();
                             myPlacemark.hint.open();
+                            console.log(myPlacemark)
                         });
                         myMap.geoObjects.add(multiRoute);
                         for (let k = 0;  k< Math.ceil(arr2.length / size); k++) {
@@ -222,11 +223,5 @@ $this->params['date_tab'] = $date_tab;
 <style>
     body, #map {
         width: 100%; height: 100%; padding: 0; margin: 0;
-    }
-    .ymaps-2-1-79-balloon__layout, .ymaps-2-1-79-balloon__tail{
-        display: none !important;
-    }
-    .ymaps-multi-route__stop-label {
-        display: none !important;
     }
 </style>
