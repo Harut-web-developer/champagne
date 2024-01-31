@@ -245,24 +245,13 @@ if(isset($action__)){
                     <span class="non-active">Փաստաթուղթ</span>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'warehouse_id')->dropDownList($warehouse) ?>
+                    <?= $form->field($model, 'warehouse_id')->dropDownList(['' => 'Ընտրել պահեստը'] + $warehouse) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <?= $form->field($model, 'document_type')->dropDownList([ '1' => 'Մուտք', '2' => 'Ելք','3' => 'Տեղափոխություն','4' => 'Խոտան', ]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName toWarehouse">
-                    <?= $form->field($model, 'to_warehouse')->dropDownList($to_warehouse) ?>
-
-<!--                    <label class="toWarehouse" for="toWarehouse">Տեղափոխվող պահեստ</label>-->
-<!--                    <select id="toWarehouse" class="form-control toWarehouse" name="to_warehouse">-->
-<!--                        --><?php
-//                        foreach ($to_warehouse as $value){
-//                            ?>
-<!--                            <option value="--><?php //=$value['id']?><!--">--><?php //=$value['name']?><!--</option>-->
-<!--                        --><?php
-//                        }
-//                        ?>
-<!--                    </select>-->
+                    <?= $form->field($model, 'to_warehouse')->dropDownList(['' => 'Ընտրել պահեստը'] + $to_warehouse) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <?= $form->field($model, 'user_id')->dropDownList($users) ?>
