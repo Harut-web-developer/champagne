@@ -13,11 +13,13 @@ function init () {
                 _csrf:csrfToken,
             },
             success:function(data){
+
                 if (data['location'].length != 0) {
                     var arr = [];
                     for (var i = 0; i < data['location'].length; i++) {
                         arr.push(data['location'][i]['location']);
                     }
+                    var start = data['location'][0]['location'];
                     arr.unshift(data['warehouse']['location']);
                     var multiRoute = new ymaps.multiRouter.MultiRoute({
                         referencePoints: arr,
