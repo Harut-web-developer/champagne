@@ -271,6 +271,7 @@ $(document).ready(function() {
         var tables = '';
         var sheetNumber = 1;
         var PromiseArray = [];
+        let clientsVal = $('.content-wrapper').find('.changeClients').val();
         let managerId = $('.content-wrapper').find('.changeManager').val();
         let numberVal = $('.content-wrapper').find('.orderStatus').val();
         let clickXLSX = 'clickXLSX';
@@ -282,6 +283,7 @@ $(document).ready(function() {
                 _csrf: csrfToken,
                 action: 'xls-alldata',
                 numberVal:numberVal,
+                clientsVal:clientsVal,
                 managerId:managerId,
                 clickXLSX:clickXLSX,
             },
@@ -416,7 +418,6 @@ $(document).ready(function() {
         let numberVal = $('.orderStatus').val();
         let clientsVal = $(this).val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
-        console.log(managerId,numberVal,clientsVal)
         $.ajax({
             url:'/orders/filter-status',
             method:'get',

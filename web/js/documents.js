@@ -138,36 +138,19 @@ $(document).ready(function () {
         // console.log('by_ajax_update')
 
     })
-    // $('body').on('change','#documents-warehouse_id',function(){
-    //     checkWarehouse($(this));
-    // })
-    // $('body').on('change','#documents-warehouse_id , #documents-to_warehouse',function(){
-    //     checkWarehouse($(this));
-    // })
-    // function checkWarehouse(el){
-    //     console.log(el)
-    //     if('documents-warehouse_id' === el.attr('id')){
-    //         let first = $('body').find('#documents-warehouse_id').val();
-    //
-    //         $('body').find('#documents-to_warehouse option').removeAttr('disabled');
-    //         $('body').find('#documents-to_warehouse').find('option[value="'+first+'"]').attr('disabled',true);
-    //     }
-    //     // else if('#documents-to_warehouse' === el.attr(id)){
-    //     //     let first = $('body').find('#documents-to_warehouse').val();
-    //     //
-    //     //     $('body').find('#documents-warehouse_id option').removeAttr('disabled');
-    //     //     $('body').find('#documents-warehouse_id').find('option[value="'+first+'"]').attr('disabled',true);
-    //     // }
-    // }
-    $('body').on('change','#documents-warehouse_id',function(){
-        checkWarehouse($(this));
+
+    $('body').on('change','#documents-warehouse_id, #documents-to_warehouse',function(){
+        if('documents-warehouse_id' === $(this).attr('id')){
+            let first = $('body').find('#documents-warehouse_id').val();
+            $('body').find('#documents-to_warehouse option').removeAttr('disabled');
+            $('body').find('#documents-to_warehouse').find('option[value="'+first+'"]').attr('disabled',true);
+        }
+        else if('documents-to_warehouse' === $(this).attr('id')){
+            let first = $('body').find('#documents-to_warehouse').val();
+            $('body').find('#documents-warehouse_id option').removeAttr('disabled');
+            $('body').find('#documents-warehouse_id').find('option[value="'+first+'"]').attr('disabled',true);
+        }
     })
-    function checkWarehouse(el){
-        let first = $('body').find('#documents-warehouse_id').val();
-        let second = $('body').find('#documents-to_warehouse');
-        $('body').find('#documents-to_warehouse option').removeAttr('disabled');
-        $('body').find('#documents-to_warehouse').find('option[value="'+first+'"]').attr('disabled',true);
-    }
     $('body').on('click', '.deleteDocumentItems', function () {
         let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
         var this_ = $(this);
@@ -346,9 +329,10 @@ $(document).ready(function () {
     $('body').on('change','#documents-document_type', function () {
         if ($(this).val() == 3){
             $('body').find('.toWarehouse').addClass('activeForInput');
-
+            $("#documents-to_warehouse").attr('required',true);
         }else {
             $('body').find('.toWarehouse').removeClass('activeForInput');
+            $("#documents-to_warehouse").removeAttr('required');
         }
     })
 

@@ -137,9 +137,9 @@ class DocumentsController extends Controller
             ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
-            echo "<pre>";
-            var_dump($post);
-            exit();
+//            echo "<pre>";
+//            var_dump($post);
+//            exit();
             date_default_timezone_set('Asia/Yerevan');
             $model->user_id = $post['Documents']['user_id'];
             $model->warehouse_id = $post['Documents']['warehouse_id'];
@@ -251,7 +251,7 @@ class DocumentsController extends Controller
             $model->loadDefaultValues();
         }
 
-        $users = Users::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
+        $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['or', ['role_id' => '1'], ['role_id' => '4']])->asArray()->all();
         $users = ArrayHelper::map($users,'id','name');
         $warehouse = Warehouse::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
         $warehouse =  ArrayHelper::map($warehouse,'id','name');
