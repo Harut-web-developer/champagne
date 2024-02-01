@@ -14,6 +14,7 @@ use app\models\OrdersSearch;
 use app\models\Premissions;
 use app\models\Products;
 use app\models\Users;
+use app\models\Warehouse;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
@@ -176,7 +177,7 @@ class OrdersController extends Controller
 //            OrdersSearch::getManagerForOrders($manager_id);
         }
     }
-    public function actionCreate()
+    public function actionCreate($warehouse_id = 1)
     {
         $have_access = Users::checkPremission(21);
         if(!$have_access){
@@ -210,6 +211,7 @@ class OrdersController extends Controller
             for ($i = 0; $i < count($post['order_items']); $i++){
                 $order_items_create = new OrderItems();
                 $order_items_create->order_id = $model->id;
+                $order_items_create->warehouse_id = $post['warehouse'];
                 $order_items_create->product_id = intval($post['order_items'][$i]);
                 $order_items_create->nom_id_for_name = intval($post['nom_id'][$i]);
                 $order_items_create->price = floatval($post['price'][$i]) * intval($post['count_'][$i]);
@@ -253,11 +255,16 @@ class OrdersController extends Controller
 
         $query = Products::find();
         $countQuery = clone $query;
-        $total = $countQuery->where(['and',['products.status' => 1,'products.type' => 1]])->groupBy('products.nomenclature_id')->count();
+        $total = $countQuery
+            ->where(['and',['products.status' => 1,'products.type' => 1]])
+            ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
+            ->groupBy('products.nomenclature_id')
+            ->count();
         $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,
         nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
+            ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
             ->offset(0)
             ->groupBy('products.nomenclature_id')
 //            ->orderBy(['products.created_at' => SORT_DESC])
@@ -273,6 +280,10 @@ class OrdersController extends Controller
             $users = Users::find()->select('id, name')->where(['=','id',$session['user_id']])->andWhere(['=','status',1])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
         }
+        $warehouse = Warehouse::find()
+            ->select('id, name')
+            ->asArray()
+            ->all();
         return $this->render('create', [
             'model' => $model,
             'users' => $users,
@@ -281,12 +292,44 @@ class OrdersController extends Controller
             'total' => $total,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
+            'warehouse' => $warehouse,
 //            'pagination' => $pagination,
 //            'count' => $count,
         ]);
     }
 
+    public function actionCreateGetNom(){
+        if (isset($_GET['warehouse_id'])){
+            $warehouse_id = $_GET['warehouse_id'];
+            var_dump($warehouse_id);
+            $this->actionCreate($warehouse_id);
+//            $this->actionGetNomiclature($warehouse_id);
+        }
+//        $query = Products::find();
+//        $countQuery = clone $query;
+//        $total = $countQuery
+//            ->andWhere(['products.warehouse_id' => $warehouse_id])
+//            ->where(['and',['products.status' => 1,'products.type' => 1]])
+//            ->groupBy('products.nomenclature_id')
+//            ->count();
+//        $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,
+//        nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
+//            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
+//            ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
+//            ->andWhere(['products.warehouse_id' => $warehouse_id])
+//            ->offset(0)
+//            ->groupBy('products.nomenclature_id')
+//            ->limit(10)
+//            ->asArray()
+//            ->all();
+//        echo "<pre>";
+//        var_dump($nomenclatures);
+//        die;
+//        return $this->render('get-nom', [
+//            'nomenclatures' => $nomenclatures,
+//            'total' => $total,
+//        ]);
+    }
     /**
      * Updates an existing Orders model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -365,9 +408,13 @@ class OrdersController extends Controller
             ->where(['id' => 22])
             ->asArray()
             ->one();
+        $warehouse_value_update = OrderItems::find()->select('warehouse_id')->where(['order_id' => $id])->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+//            echo "<pre>";
+//            var_dump($post);
+//            die;
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price_before_discount = $post['Orders']['total_price_before_discount'];
@@ -387,6 +434,7 @@ class OrdersController extends Controller
                 $order_item = OrderItems::findOne(intval($item));
                 if($order_item !== null){
                     $order_item->order_id = $id;
+                    $order_item->warehouse_id = intval($post['warehouse']);
                     $order_item->product_id = $post['product_id'][$k];
                     $order_item->nom_id_for_name = intval($post['nom_id'][$k]);
                     $order_item->price = floatval($post['price'][$k]) * intval($post['count_'][$k]);
@@ -414,6 +462,7 @@ class OrdersController extends Controller
                 } else {
                     $order_items_create = new OrderItems();
                     $order_items_create->order_id = $model->id;
+                    $order_items_create->warehouse_id = intval($post['warehouse']);
                     $order_items_create->product_id = intval($post['product_id'][$k]);
                     $order_items_create->nom_id_for_name = intval($post['nom_id'][$k]);
                     $order_items_create->price = floatval($post['price'][$k]) * intval($post['count_'][$k]);
@@ -467,10 +516,12 @@ class OrdersController extends Controller
 
         $query = Products::find();
         $countQuery = clone $query;
+        $warehouse_id_update = $warehouse_value_update["warehouse_id"];
         $orders_items_update = OrderItems::find()
             ->select('order_items.*,nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.cost')
             ->leftJoin('nomenclature','order_items.nom_id_for_name = nomenclature.id')
             ->where(['order_items.order_id' => $id])
+            ->andWhere(['order_items.warehouse_id' => $warehouse_id_update])
             ->asArray()
             ->all();
         $nomenclatures = $query->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
@@ -483,7 +534,10 @@ class OrdersController extends Controller
 //            ->orderBy(['products.created_at' => SORT_DESC])
             ->asArray()
             ->all();
-
+//        echo "<pre>";
+//        var_dump($orders_items_update);
+//        var_dump($nomenclatures);
+//        die;
         $product_count =
             $countQuery
                 ->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
@@ -530,6 +584,10 @@ class OrdersController extends Controller
             $users = Users::find()->select('id, name')->where(['=','id',$session['user_id']])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
         }
+        $warehouse = Warehouse::find()
+            ->select('id, name')
+            ->asArray()
+            ->all();
         return $this->render('update', [
             'model' => $model,
             'users' => $users,
@@ -542,6 +600,8 @@ class OrdersController extends Controller
             'total' => $total,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'warehouse' => $warehouse,
+            'warehouse_value_update' => $warehouse_value_update,
         ]);
     }
 

@@ -18,6 +18,8 @@ $this->title = 'Ապրանքներ';
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
 $this->params['date_tab'] = $date_tab;
+$session = Yii::$app->session;
+
 $have_access_create = Users::checkPremission(17);
 $have_access_update = Users::checkPremission(18);
 $have_access_delete = Users::checkPremission(19);
@@ -57,6 +59,16 @@ if ($have_access_update && $have_access_delete){
             <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
             <h3><?= Html::encode($this->title) ?></h3>
         </div>
+        <div class="filtersField" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
+            <select class="form-select productStatus" aria-label="Default select example" style="width: auto; margin: 0px 10px 15px 5px;">
+                <?php if($session['role_id'] == '1'){ ?>
+                    <option selected value="0">Ընդհանուր</option>
+                    <?php foreach ($warehouse as $item => $value){ ?>
+                        <option value="<?=$value['id']?>"><?=$value['name']?></option>
+                    <?php } ?>
+                <?php }?>
+            </select>
+        </div>
 <!--        <h3>--><?php //= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?><!--</h3>-->
     </div>
     <p>
@@ -64,6 +76,7 @@ if ($have_access_update && $have_access_delete){
 <!--            --><?php //= Html::a('Ստեղծել ապրանք', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
 <!--        --><?php //} ?>
     </p>
+
     <div class="card pageStyle">
     <?= CustomGridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',

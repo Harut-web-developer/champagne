@@ -54,6 +54,32 @@ $(document).ready(function () {
             $('body').find('.addOrders').attr('disabled',false);
         }
     })
+
+    $('body').on('click', '.addOrders_get_warh_id', function (e) {
+        var warehouse_id = $('.warehouse_id').val();
+        console.log(warehouse_id)
+
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/orders/create-get-nom',
+            method:'get',
+            datatype:'json',
+            data:{
+                warehouse_id:warehouse_id,
+                csrfToken:csrfToken,
+            },
+        })
+        // $.ajax({
+        //     url:'/orders/get-nomiclature',
+        //     method:'get',
+        //     datatype:'json',
+        //     data:{
+        //         warehouse_id:warehouse_id,
+        //         csrfToken:csrfToken,
+        //     },
+        // })
+    })
+
     var newTbody = $('<tbody></tbody>');
     var trss = {};
     var trs = {};

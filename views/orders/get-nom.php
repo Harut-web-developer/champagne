@@ -50,7 +50,7 @@ if (@$_GET['nomenclature'] != ''){
     $count = 1 ;
 }
 ?>
-<?php if($urlId){ ?>
+<?php if(isset($urlId)){ ?>
 <nav aria-label="Page navigation example" class="pagination">
     <ul class="pagination pagination-sm">
         <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
@@ -118,28 +118,3 @@ if (@$_GET['nomenclature'] != ''){
         </ul>
     </nav>
 <?php } ?>
-
-
-
-
-<!--<nav aria-label="Page navigation example" class="pagination">-->
-<!--    <ul class="pagination pagination-sm">-->
-<!--        <li class="page-item prev --><?php //= ($page <= 1) ? 'disabled' : '' ?><!--">-->
-<!--            <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=--><?php //= $page-1 ?><!--"><i class="tf-icon bx bx-chevrons-left"></i></a>-->
-<!--        </li>-->
-<!--        --><?php //for ($i = 1;$i <= $count; $i++){ ?>
-<!--            --><?php //if($i > 0 && $i <= $count+1){ ?>
-<!--                <li class="page-item --><?php //= ($page==$i) ? 'active' : '' ?><!--">-->
-<!--                    <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=--><?php //= $i ?><!--">--><?php //= $i ?>
-<!--                    </a>-->
-<!--                </li>-->
-<!--            --><?php //} ?>
-<!--        --><?php //} ?>
-
-<!--        --><?php //if(intval($page) < $count){ ?>
-<!--            <li class="page-item next">-->
-<!--                <a class="page-link by_ajax" href="#" data-href="/orders/get-nomiclature?paging=--><?php //= $page+1 ?><!--"><i class="tf-icon bx bx-chevrons-right"></i></a>-->
-<!--            </li>-->
-<!--        --><?php //} ?>
-<!--    </ul>-->
-<!--</nav>-->

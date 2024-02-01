@@ -40,7 +40,6 @@ class DocumentsSearch extends Documents
      */
     public function search($params)
     {
-//        echo "<pre>";
         $query = Documents::find();
         if (isset($params['numberVal']) && $params['numberVal'] != 0){
             if ($params['numberVal'] == 1){
@@ -55,16 +54,6 @@ class DocumentsSearch extends Documents
         }else{
             $query->andWhere(['status' => '1']);
         }
-//            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
-//        }elseif (isset($params['numberVal']) == 2){
-//            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
-//        }elseif (isset($params['numberVal']) == 3){
-//            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
-//        }elseif (isset($params['numberVal']) == 4){
-//            $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
-//        }elseif (isset($params['numberVal']) == 0){
-//            $query->andWhere(['status' => '1']);
-//        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query->orderBy(['created_at'=> SORT_DESC]),

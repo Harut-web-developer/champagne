@@ -41,12 +41,19 @@ class ProductsSearch extends Products
      */
     public function search($params)
     {
-        $query = Products::find()->select('id,warehouse_id,nomenclature_id,SUM(count) as count,AVG(price) as price')->groupBy('nomenclature_id');
-
+        $query = Products::find()
+            ->select('id,warehouse_id,nomenclature_id,SUM(count) as count,AVG(price) as price');
+        if (isset($params['numberVal']) && $params['numberVal'] != 0){
+            $query->andWhere(['status' => '1'])->andWhere(['warehouse_id' => $params['numberVal']]);
+        }else{
+            $query->andWhere(['status' => '1']);
+        }
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query->orderBy(['created_at'=> SORT_DESC]),
+            'query' => $query
+                ->groupBy('nomenclature_id')
+                ->orderBy(['created_at'=> SORT_DESC]),
         ]);
 
         $this->load($params);

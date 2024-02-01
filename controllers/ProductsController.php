@@ -74,13 +74,16 @@ class ProductsController extends Controller
 
         $searchModel = new ProductsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-
+        $warehouse = Warehouse::find()
+            ->select('id, name')
+            ->asArray()
+            ->all();
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
+            'warehouse' => $warehouse,
         ]);
     }
 
@@ -276,5 +279,21 @@ class ProductsController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public  function actionProductsFilterStatus(){
+        if ($_GET){
+            $searchModel = new ProductsSearch();
+            $dataProvider = $searchModel->search($this->request->queryParams);
+            $sub_page = [];
+            $date_tab = [];
+
+            return $this->renderAjax('widget', [
+                'sub_page' => $sub_page,
+                'date_tab' => $date_tab,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
     }
 }
