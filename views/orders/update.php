@@ -26,6 +26,9 @@ $this->params['date_tab'] = $date_tab;
         'nomenclatures' => $nomenclatures,
         'order_items' => $order_items,
         'total' => $total,
+        'warehouse' => $warehouse,
+        'warehouse_value_update' => $warehouse_value_update,
+
     ]) ?>
 
 </div>

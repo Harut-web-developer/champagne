@@ -22,6 +22,8 @@ $this->params['date_tab'] = $date_tab;
         'clients' => $clients,
         'nomenclatures' => $nomenclatures,
         'total' => $total,
+        'warehouse' => $warehouse,
+
 //        'pagination' => $pagination,
 //        'count' => $count,
     ]) ?>
