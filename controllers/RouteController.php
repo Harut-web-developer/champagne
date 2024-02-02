@@ -348,24 +348,27 @@ class RouteController extends Controller
             $get = $this->request->get();
             $valueurlId = intval($get['urlId']);
             $valuedate = $get['date'];
+            $formattedSelectedDate = Yii::$app->formatter->asDatetime($valuedate, 'yyyy-MM-dd');
             $userId =  intval($get['user']);
             $coordinatesUser = CoordinatesUser::find()
                 ->select('id, latitude, longitude')
                 ->where(['=', 'user_id', $userId])
+                ->andWhere(['route_id' => $valueurlId])
+                ->andWhere(['and',['>=','created_at', $valuedate.' 00:00:00'],
+                    ['<','created_at', $valuedate.' 23:59:59']])
                  ->orderBy(['created_at'=>SORT_ASC])
                 ->groupBy('latitude')
                 ->asArray()
                 ->all();
             date_default_timezone_set('UTC');
             $warehouse = Warehouse::find()->select('location')->where(['id' => 1])->asArray()->one();
-            $formattedSelectedDate = Yii::$app->formatter->asDatetime($valuedate, 'yyyy-MM-dd');
             $locations = Orders::find()
                 ->select(["clients.location", 'clients.name', 'DATE_FORMAT(orders.orders_date, "%Y-%m-%d") as orders_date'])
                 ->leftJoin('clients','clients.id = orders.clients_id')
                 ->where(['route_id' => $valueurlId])
                 ->andWhere(['and',['>=','orders.orders_date', $formattedSelectedDate.' 00:00:00'],
                     ['<','orders.orders_date', $formattedSelectedDate.' 23:59:59']])
-                ->andWhere(['orders.status' => '1'])
+//                ->andWhere(['orders.status' => '1'])
 //                ->andwhere(['=', 'orders.user_id', $userId])
                 ->asArray()
                 ->orderBy('clients.sort_',SORT_DESC)

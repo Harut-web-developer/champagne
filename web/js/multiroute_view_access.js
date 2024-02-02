@@ -75,6 +75,7 @@ function init () {
                                 data: {
                                     myLatitude: myLatitude,
                                     myLongitude: myLongitude,
+                                    route_id: location_value,
                                     _csrf: csrfToken,
                                 },
                             });
