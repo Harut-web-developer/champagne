@@ -297,9 +297,6 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
             <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
             <h3><?= Html::encode($this->title) ?></h3>
         </div>
-<!--        --><?php
-//        $dataProvider->pagination->pageSize = 10;
-//        ?>
         <div class="filtersParentsField" style="display: flex; justify-content: space-between; align-items: baseline;flex-wrap: wrap">
             <p>
                 <?php if ($have_access_create) { ?>
@@ -354,11 +351,9 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                         <img class="print_orders_table" src="/upload/icons8-print-94.png">
                     </div>
                 </div>
-
             </div>
-
         </div>
-        <div class="card">
+        <div class="card pageStyle">
             <?= CustomGridView::widget([
                 'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
                 'summaryOptions' => ['class' => 'summary'],

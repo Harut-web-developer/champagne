@@ -20,7 +20,7 @@ $this->title = 'Վաճառքներ';
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
 $this->params['date_tab'] = $date_tab;
-
+$session = Yii::$app->session;
 
 $have_access_create = Users::checkPremission(21);
 $have_access_update = Users::checkPremission(22);
@@ -327,40 +327,6 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
 }
 ?>
 
-<!--    --><?php //= CustomGridView::widget([
-//        'dataProvider' => $dataProvider,
-//        'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
-//        'summaryOptions' => ['class' => 'summary'],
-//        'columns' => [
-//            ['class' => 'yii\grid\SerialColumn'],
-//            [
-//                'attribute' => 'Օգտատեր',
-//                'value' => function ($model) {
-//                    if ($model->usersName) {
-//                        return $model->usersName->name;
-//                    } else {
-//                        return 'Դատարկ';
-//                    }
-//                }
-//            ],
-//            [
-//                'attribute' => 'Հաճախորդ',
-//                'value' => function ($model) {
-//                    if ($model->clientsName) {
-//                        return $model->clientsName->name;
-//                    } else {
-//                        return 'Դատարկ';
-//                    }
-//                }
-//            ],
-//            'comment',
-//            'total_price',
-//            'total_count',
-//            'orders_date',
-//            ...$action_column,
-//        ],
-//    ]); ?>
-
 <?php if(!isset($data_size)){ ?>
     <?= CustomGridView::widget([
         'dataProvider' => $dataProvider,
@@ -404,7 +370,6 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
             ...$action_column,
         ],
     ]); ?>
-
 <?php
 }
 else{ ?>
