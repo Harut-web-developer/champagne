@@ -18,7 +18,7 @@ $this->params['date_tab'] = $date_tab;
 
 
                         <div class="resize-triggers"><div class="expand-trigger"><div style="width: 398px; height: 139px;"></div></div><div class="contract-trigger"></div></div></div>
-                    <ul class="p-0 m-0">
+                    <ul class="p-0 m-0" style="max-height: 160px;overflow-y: scroll;">
                         <?php
                         if (!empty($chart_round_products)){
                             foreach ($chart_round_products as $item){
@@ -48,7 +48,7 @@ $this->params['date_tab'] = $date_tab;
         </div>
         <!-- Transactions -->
         <div class="col-md-6 col-lg-4 order-1 mb-4">
-            <div class="card h-100">
+            <div class="card h-100" style="max-height: 610px;">
                 <div class="card-header">
                     <h5 class="card-title m-0 me-2">Վճարումներ</h5>
                     <select id="singleClients" class="js-example-basic-single form-control mt-2 filterClientsChart" name="client_id">
@@ -62,7 +62,7 @@ $this->params['date_tab'] = $date_tab;
                         ?>
                     </select>
                 </div>
-                <div class="card-body  paymentsPart">
+                <div class="card-body  paymentsPart" style="overflow-y: scroll;">
                     <ul class="p-0 m-0">
                         <?php
                         if (!empty($clients_payment)){
@@ -91,7 +91,6 @@ $this->params['date_tab'] = $date_tab;
                             <?php
                         }
                         ?>
-
                     </ul>
                 </div>
             </div>
@@ -211,7 +210,7 @@ $this->params['date_tab'] = $date_tab;
                         label: 'Ընդհանուր',
                         formatter: function (w) {
                             // By default this function returns the average of all series. The below is just an example to show the use of custom formatter function
-                            return <?php echo $chart_round_total ?>
+                            return '<?php echo number_format($chart_round_total,'0',',',',') ?>'
                         }
                     }
                 }

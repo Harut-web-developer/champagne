@@ -647,6 +647,9 @@
 .toWarehouse{
     display:none;
 }
+.warehouseCheck{
+    display:none;
+}
 .activeForInput{
     display:block;
 }

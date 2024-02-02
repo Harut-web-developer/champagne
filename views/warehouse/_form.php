@@ -10,6 +10,8 @@ use app\models\CustomfieldsBlocksInputs;
 /** @var yii\widgets\ActiveForm $form */
 $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'warehouse','block_type'=>1])->orderBy(['order_number'=>SORT_ASC])->all();
 ?>
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=e243c296-f6a7-46b7-950a-bd42eb4b2684" type="text/javascript"></script>
+<script src="/js/event_reverse_geocode_warehouse.js" type="text/javascript"></script>
 
 <div class="warehouse-form">
     <div class="card card-primary">
@@ -28,6 +30,8 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'warehouse','block_typ
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseLocation">
                     <?= $form->field($model, 'location')->textInput(['required'=>true]) ?>
+                </div>
+                <div id="map">
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseType">
                     <?= $form->field($model, 'type')->dropDownList([ 'usual' => 'Սովորական', 'virtual' => 'Վիրտուալ', ], ['prompt' => 'Ընտրել տեսակը','options' => ['required' => true,]]) ?>
@@ -83,4 +87,10 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'warehouse','block_typ
     <?php ActiveForm::end(); ?>
     </div>
 </div>
+<style>
+    #map {
+        width: 100%;
+        height: 400px;
+    }
+</style>
 

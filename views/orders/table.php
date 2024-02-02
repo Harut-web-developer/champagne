@@ -31,10 +31,10 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                     <td><?=$users[$model->user_id]; ?></td>
                     <td><?=$clients[$model['clients_id']]; ?></td>
                     <td><?=$model['comment']?></td>
-                    <td><?=$model['total_price_before_discount']?></td>
-                    <td><?=$model['total_price']?></td>
-                    <td><?=$model['total_discount']?></td>
-                    <td><?=$model['total_count']?></td>
+                    <td><?=number_format($model['total_price_before_discount'],2) . " դր"?></td>
+                    <td><?=number_format($model['total_price'],2) . " դր"?></td>
+                    <td><?=number_format($model['total_discount'],2) . " դր"?></td>
+                    <td><?=$model['total_count'] . " հատ"?></td>
                     <td><?=$model['orders_date']?></td>
                 </tr>
                 </tbody>
@@ -61,13 +61,13 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                     <tr>
                         <td><?=$j++; ?></td>
                         <td><?=$order_items[$i]['name']; ?></td>
-                        <td><?=$order_items[$i]['count']; ?></td>
-                        <td><?=$order_items[$i]['discount']/$order_items[$i]['count']; ?></td>
-                        <td><?=$order_items[$i]['price'] + ($order_items[$i]['discount']/$order_items[$i]['count']); ?></td>
-                        <td><?=$order_items[$i]['price']; ?></td>
-                        <td><?=$order_items[$i]['price_before_discount']; ?></td>
+                        <td><?=$order_items[$i]['count'] . " հատ"; ?></td>
+                        <td><?=number_format($order_items[$i]['discount']/$order_items[$i]['count'],2) . " դր" ?></td>
+                        <td><?=number_format($order_items[$i]['price'] + ($order_items[$i]['discount']/$order_items[$i]['count']),2) . " դր" ?></td>
+                        <td><?=number_format($order_items[$i]['price'],2) . " դր" ?></td>
+                        <td><?=number_format($order_items[$i]['price_before_discount'],2) . " դր" ?></td>
 <!--                        <td>--><?php //=$order_items[$i]['total_price']; ?><!--</td>-->
-                        <td><?=$order_items[$i]['count']*$order_items[$i]['price']; ?></td>
+                        <td><?=number_format($order_items[$i]['count']*$order_items[$i]['price'],2) . " դր" ?></td>
                     </tr>
                 <?php } ?>
                 </tbody>

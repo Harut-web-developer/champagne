@@ -7,6 +7,7 @@ use app\models\Log;
 use app\models\Premissions;
 use app\models\User;
 use app\models\UserPremissions;
+use app\models\Warehouse;
 use Yii;
 use app\models\Users;
 use app\models\UsersSearch;
@@ -163,9 +164,17 @@ class UsersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+//            echo "<pre>";
+//            var_dump($post);
+//            exit();
             $model->name = $post['Users']['name'];
             $model->username = $post['Users']['username'];
             $model->role_id = $post['Users']['role_id'];
+            if ($post['Users']['role_id'] == 4){
+                $model->warehouse_id = $post['Users']['warehouse_id'];
+            }else{
+                $model->warehouse_id = null;
+            }
             $model->auth_key = $this->generateRandomString();
             $model->password = $post['Users']['password'];
             $model->email = $post['Users']['email'];
@@ -195,11 +204,14 @@ class UsersController extends Controller
         }
         $roles = Roles::find()->select('id,name')->asArray()->all();
         $roles = ArrayHelper::map($roles,'id','name');
+        $warehouse = Warehouse::find()->select('id,name')->where(['status' => 1])->asArray()->all();
+        $warehouse = ArrayHelper::map($warehouse,'id','name');
         return $this->render('create', [
             'model' => $model,
             'roles' => $roles,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'warehouse' => $warehouse,
 
         ]);
     }
@@ -271,9 +283,17 @@ class UsersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            if ($post['Users']['role_id'] == 4){
+                $model->warehouse_id = $post['Users']['warehouse_id'];
+            }else{
+                $model->warehouse_id = null;
+            }
             $model->name = $post['Users']['name'];
             $model->username = $post['Users']['username'];
             $model->role_id = $post['Users']['role_id'];
+            if ($post['Users']['role_id'] == 4){
+                $model->warehouse_id = $post['Users']['warehouse_id'];
+            }
             $model->auth_key = $this->generateRandomString();
             $model->password = $post['Users']['password'];
             $model->email = $post['Users']['email'];
@@ -298,8 +318,10 @@ class UsersController extends Controller
             }
             return $this->redirect(['index', 'id' => $model->id]);
         }
-        $roles = Roles::find()->select('id,name')->asArray()->all();
+        $roles = Roles::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
         $roles = ArrayHelper::map($roles,'id','name');
+        $warehouse = Warehouse::find()->select('id,name')->where(['status' => 1])->asArray()->all();
+        $warehouse = ArrayHelper::map($warehouse,'id','name');
         $user_premission_select = UserPremissions::find()->select('id,premission_id')->where(['user_id' => $id])->asArray()->all();
 //        $user_premission_select = array_column($user_premission_select,'premission_id');
         return $this->render('update', [
@@ -308,6 +330,7 @@ class UsersController extends Controller
             'user_premission_select' => $user_premission_select,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'warehouse' => $warehouse,
 
         ]);
     }

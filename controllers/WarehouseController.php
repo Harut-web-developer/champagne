@@ -282,7 +282,14 @@ class WarehouseController extends Controller
         Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }
-
+    public function actionCoordsLocation()
+    {
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            $latlong = $post['coords'][0].','.$post['coords'][1];
+            return json_encode($latlong);
+        }
+    }
     /**
      * Finds the Warehouse model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

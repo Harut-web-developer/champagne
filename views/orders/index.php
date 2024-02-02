@@ -28,6 +28,7 @@ $have_access_delete = Users::checkPremission(23);
 $have_access_delivered = Users::checkPremission(55);
 $have_access_available = Users::checkPremission(56);
 $action_column = [];
+
 if ($have_access_update && $have_access_delete && $have_access_delivered && $have_access_available){
     $action_column[] = [
         'header' => 'Գործողություն',
@@ -363,7 +364,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                 'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
                 'summaryOptions' => ['class' => 'summary'],
                 'dataProvider' => new ActiveDataProvider([
-                    'query' => $dataProvider->query->andWhere(['status' => 1]),
+                    'query' => $dataProvider->query,
                 ]),
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
@@ -397,6 +398,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                             }
                         }
                     ],
+                    'status',
                     'total_price',
                     'total_count',
                     'orders_date',
@@ -405,3 +407,13 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
             ]); ?>
         </div>
     </div>
+<script>
+    window.onload = function (){
+        $("#w0 tbody tr").each(function(){
+            let status_ = $(this).find('td:nth-child(5)').text();
+            if(status_ == 2){
+                $(this).find('td:nth-child(9) .bxs-check-circle').remove();
+            }
+        });
+    }
+</script>

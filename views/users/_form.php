@@ -32,6 +32,9 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 usersUsername">
                     <?= $form->field($model, 'role_id')->dropDownList($roles,['required' => true]) ?>
                 </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 usersUsername warehouseCheck">
+                    <?= $form->field($model, 'warehouse_id')->dropDownList($warehouse) ?>
+                </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 usersPassword">
                     <?= $form->field($model, 'password')->passwordInput(['required' => true]) ?>
                 </div>
@@ -475,6 +478,9 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                             <label for="premission70" class="items-title">Ստեղծել հաճախորդի դաշտ</label>
                             <input id="premission70" type="checkbox" value="70" name="premission[]">
                         </div
+
+                    </div>
+                    <div class="rows-checkbox">
                         <div class="premission-content-items">
                             <label for="premission71" class="items-title">Ստեղծել փաստաթղթի դաշտ</label>
                             <input id="premission71" type="checkbox" value="71" name="premission[]">

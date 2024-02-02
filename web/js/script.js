@@ -681,6 +681,24 @@ $(document).ready(function() {
             }
         })
     })
+    $('body').on('change','#users-role_id', function () {
+        if ($(this).val() == 4){
+            $('body').find('.warehouseCheck').addClass('activeForInput');
+            // $("#documents-to_warehouse").attr('required',true);
+        }else {
+            $('body').find('.warehouseCheck').removeClass('activeForInput');
+            // $("#documents-to_warehouse").removeAttr('required');
+        }
+    })
+    let currentUrl = window.location.href;
+    let hasUpdate = currentUrl.includes('users/update');
+    if (hasUpdate){
+        if ($('body').find('#users-role_id').val() == '4'){
+            $('body').find('.warehouseCheck').addClass('activeForInput');
+        }else {
+            $('body').find('.warehouseCheck').removeClass('activeForInput');
+        }
+    }
 
     // var csrfToken = $('meta[name="csrf-token"]').attr("content");
     // $.ajax({

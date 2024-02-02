@@ -86,6 +86,7 @@ class Products extends \yii\db\ActiveRecord
             $orders_total_count = $data['orders_total_count'];
             $orders_total_sum = $data['orders_total_sum'];
             $discount_desc = [];
+            $discount_client_id_check = [];
             $res = [];
             $discount = Discount::find()
                 ->with([
@@ -114,7 +115,6 @@ class Products extends \yii\db\ActiveRecord
                 $desc = [];
                 $arr = [];
                 $count = 0;
-                $discount_client_id_check = [];
                 $count_discount_id = '';
                 $price = $orders_price;
                 for ($j = 0; $j < count($discount); $j++) {
@@ -960,7 +960,22 @@ class Products extends \yii\db\ActiveRecord
                 $res['format_before_price'] = $orders_price;
                 return json_encode($res);
             }else{
-                    $res = false;
+                $desc = 'empty';
+                array_push($discount_desc, $desc);
+                $discount_client_id = 'empty';
+                array_push($discount_client_id_check,$discount_client_id);
+                $res['nomenclature_id'] = $nom_id;
+                $res['name'] = $name;
+                $res['cost'] = $orders_cost;
+                $res['product_id'] = $product_id;
+                $res['discount_name'] = 'empty';
+                $res['discount_desc'] = $discount_desc;
+                $res['discount_client_id_check'] = $discount_client_id_check;
+                $res['price'] = $orders_price;
+                $res['count'] = $orders_count;
+                $res['discount'] = $orders_price - $orders_price;//gin - zexchvac gin
+                $res['count_discount_id'] = 'չկա';
+                $res['format_before_price'] = $orders_price;
                     return json_encode($res);
             }
         }

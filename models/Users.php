@@ -38,6 +38,7 @@ class Users extends ActiveRecord implements IdentityInterface
         return [
             [['name', 'username','role_id'], 'required'],
             [['role_id'], 'string'],
+            [['warehouse_id'],'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'username', 'password', 'auth_key'], 'string', 'max' => 255],
         ];
@@ -52,6 +53,7 @@ class Users extends ActiveRecord implements IdentityInterface
             'id' => 'ID',
             'name' => 'Անուն',
             'username' => 'Օգտանուն',
+            'warehouse_id' => 'Պահեստներ',
             'password' => 'Գաղտնաբառ',
             'role_id' => 'Կարգավիճակ',
             'auth_key' => 'Auth Key',

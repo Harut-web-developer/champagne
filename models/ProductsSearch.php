@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Products;
@@ -41,13 +42,22 @@ class ProductsSearch extends Products
      */
     public function search($params)
     {
+        $session = Yii::$app->session;
         $query = Products::find()
             ->select('id,warehouse_id,nomenclature_id,SUM(count) as count,AVG(price) as price');
-        if (isset($params['numberVal']) && $params['numberVal'] != 0){
-            $query->andWhere(['status' => '1'])->andWhere(['warehouse_id' => $params['numberVal']]);
+        if ($session['role_id'] == '1' || $session['role_id'] == '2'){
+            if (isset($params['numberVal']) && $params['numberVal'] != 0){
+                $query->andWhere(['status' => '1'])->andWhere(['warehouse_id' => $params['numberVal']]);
+            }else{
+                $query->andWhere(['status' => '1']);
+            }
+        } elseif ($session['role_id'] == '4'){
+            $users = Users::findOne($session['user_id']);
+            $query->andWhere(['status' => '1'])->andWhere(['warehouse_id' => $users->warehouse_id]);
         }else{
             $query->andWhere(['status' => '1']);
         }
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([

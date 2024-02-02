@@ -60,14 +60,14 @@ if ($have_access_update && $have_access_delete){
             <h3><?= Html::encode($this->title) ?></h3>
         </div>
         <div class="filtersField" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
+            <?php if($session['role_id'] == '1' || $session['role_id'] == '2'){ ?>
             <select class="form-select productStatus" aria-label="Default select example" style="width: auto; margin: 0px 10px 15px 5px;">
-                <?php if($session['role_id'] == '1'){ ?>
                     <option selected value="0">Ընդհանուր</option>
                     <?php foreach ($warehouse as $item => $value){ ?>
                         <option value="<?=$value['id']?>"><?=$value['name']?></option>
                     <?php } ?>
-                <?php }?>
             </select>
+            <?php }?>
         </div>
 <!--        <h3>--><?php //= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?><!--</h3>-->
     </div>
@@ -113,11 +113,11 @@ if ($have_access_update && $have_access_delete){
             [
                 'attribute' => 'Քանակ',
                 'value' => function ($model) {
-//                    if ($model->count < 0) {
-//                        return $model->count * (-1);
-//                    } else {
+                    if ($model->count < 0) {
+                        return $model->count * (-1);
+                    } else {
                         return $model->count;
-//                    }
+                    }
                 }
             ],
             [

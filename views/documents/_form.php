@@ -123,7 +123,8 @@ if(isset($action__)){
                                 <th>#</th>
                                 <th>Անուն</th>
                                 <th>Քանակ</th>
-                                <th>Գին</th>
+                                <th>Գինը առանց ԱԱՀ-ի</th>
+                                <th>Գինը ներառյալ ԱԱՀ-ն</th>
                                 <th>Գործողություն</th>
                             </tr>
                             </thead>
@@ -143,6 +144,10 @@ if(isset($action__)){
                                     <td class="name"><?=$document_item['name']?></td>
                                     <td class="count"><input type="number" name="count_[]" value="<?=$document_item['count']?>" class="form-control countDocuments"></td>
                                     <td class="price"><input type="number" name="price[]" value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>
+                                    <td class="pricewithaah">
+                                        <span><?=number_format($document_item['price_with_aah'],2,'.', '')?></span>
+                                        <input type="hidden" name="pricewithaah[]" value="<?=number_format($document_item['price_with_aah'],2,'.', '')?>" class="form-control PriceWithaah">
+                                    </td>
                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteDocumentItems">Ջնջել</button></td>
                                 </tr>
                                 <?php
@@ -337,7 +342,8 @@ if(isset($action__)){
                                 <th>#</th>
                                 <th>Անուն</th>
                                 <th>Քանակ</th>
-                                <th>Գին</th>
+                                <th>Գինը առանց ԱԱՀ-ի</th>
+                                <th>Գինը ներառյալ ԱԱՀ-ն</th>
                                 <th>Գործողություն</th>
                             </tr>
                             </thead>

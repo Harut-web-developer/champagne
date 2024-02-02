@@ -57,7 +57,7 @@ $(document).ready(function () {
 
     $('body').on('click', '.addOrders_get_warh_id', function (e) {
         var warehouse_id = $('.warehouse_id').val();
-        console.log(warehouse_id)
+        // console.log(warehouse_id)
 
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({

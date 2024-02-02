@@ -85,7 +85,11 @@ if ($have_access_update && $have_access_delete){
         [
             'attribute' => 'Քանակ',
             'value' => function ($model) {
-                return $model->count;
+                if ($model->count < 0) {
+                    return $model->count * (-1);
+                } else {
+                    return $model->count;
+                }
             }
         ],
         [
