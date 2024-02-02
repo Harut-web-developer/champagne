@@ -177,7 +177,7 @@ class OrdersController extends Controller
 //            OrdersSearch::getManagerForOrders($manager_id);
         }
     }
-    public function actionCreate($warehouse_id = 1)
+    public function actionCreate()
     {
         $have_access = Users::checkPremission(21);
         if(!$have_access){
@@ -254,23 +254,23 @@ class OrdersController extends Controller
         $date_tab = [];
 
         $query = Products::find();
-        $countQuery = clone $query;
-        $total = $countQuery
-            ->where(['and',['products.status' => 1,'products.type' => 1]])
-            ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
-            ->groupBy('products.nomenclature_id')
-            ->count();
-        $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,
-        nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
-            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
-            ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
-            ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
-            ->offset(0)
-            ->groupBy('products.nomenclature_id')
-//            ->orderBy(['products.created_at' => SORT_DESC])
-            ->limit(10)
-            ->asArray()
-            ->all();
+//        $countQuery = clone $query;
+//        $total = $countQuery
+//            ->where(['and',['products.status' => 1,'products.type' => 1]])
+//            ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
+//            ->groupBy('products.nomenclature_id')
+//            ->count();
+//        $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,
+//        nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
+//            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
+//            ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
+//            ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
+//            ->offset(0)
+//            ->groupBy('products.nomenclature_id')
+////            ->orderBy(['products.created_at' => SORT_DESC])
+//            ->limit(10)
+//            ->asArray()
+//            ->all();
         $clients = Clients::find()->select('id, name')->where(['=','status',1])->asArray()->all();
         $session = Yii::$app->session;
         if($session['role_id'] == 1){
@@ -288,47 +288,14 @@ class OrdersController extends Controller
             'model' => $model,
             'users' => $users,
             'clients' => $clients,
-            'nomenclatures' => $nomenclatures,
-            'total' => $total,
+//            'nomenclatures' => $nomenclatures,
+//            'total' => $total,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'warehouse' => $warehouse,
 //            'pagination' => $pagination,
 //            'count' => $count,
         ]);
-    }
-
-    public function actionCreateGetNom(){
-        if (isset($_GET['warehouse_id'])){
-            $warehouse_id = $_GET['warehouse_id'];
-            var_dump($warehouse_id);
-            $this->actionCreate($warehouse_id);
-//            $this->actionGetNomiclature($warehouse_id);
-        }
-//        $query = Products::find();
-//        $countQuery = clone $query;
-//        $total = $countQuery
-//            ->andWhere(['products.warehouse_id' => $warehouse_id])
-//            ->where(['and',['products.status' => 1,'products.type' => 1]])
-//            ->groupBy('products.nomenclature_id')
-//            ->count();
-//        $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,
-//        nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
-//            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
-//            ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
-//            ->andWhere(['products.warehouse_id' => $warehouse_id])
-//            ->offset(0)
-//            ->groupBy('products.nomenclature_id')
-//            ->limit(10)
-//            ->asArray()
-//            ->all();
-//        echo "<pre>";
-//        var_dump($nomenclatures);
-//        die;
-//        return $this->render('get-nom', [
-//            'nomenclatures' => $nomenclatures,
-//            'total' => $total,
-//        ]);
     }
     /**
      * Updates an existing Orders model.
@@ -339,7 +306,47 @@ class OrdersController extends Controller
      */
     public function actionGetNomiclature(){
         $page = $_GET['paging'] ?? 1;
+        $_GET['warehouse_id'] = $_GET['warehouse_id'] ?? $_POST['warehouse_id'];
+        $_POST['warehouse_id'] = $_POST['warehouse_id'] ?? $_GET['warehouse_id'];
+        $warehouse_id = $_POST['warehouse_id'] ?? $_GET['warehouse_id'];
+        $search_name = $_GET['nomenclature'] ?? false;
+        $pageSize = 10;
+        $offset = ($page-1) * $pageSize;
+        $query = Products::find();
+
+        $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,
+                nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
+            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
+            ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
+            ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
+            ->groupBy('products.nomenclature_id');
+        if ($search_name){
+            $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name]);
+            $offset = 0;
+            $pageSize = false;
+        }
+
+        $countQuery = clone $query;
+        $total = $countQuery->count();
+
+        $nomenclatures = $nomenclatures->offset($offset)
+            ->limit($pageSize)
+            ->asArray()
+            ->all();
+        $id_count = $_POST['id_count'] ?? [];
+        return $this->renderAjax('get-nom', [
+            'nomenclatures' => $nomenclatures,
+            'id_count' => $id_count ,
+            'total' => $total,
+            'search_name' => $search_name,
+        ]);
+    }
+    public function actionGetNomiclatureUpdate(){
+        $page = $_GET['paging'] ?? 1;
         $urlId = intval($_POST['urlId']);
+        $_GET['warehouse_id'] = $_GET['warehouse_id'] ?? $_POST['warehouse_id'];
+        $_POST['warehouse_id'] = $_POST['warehouse_id'] ?? $_GET['warehouse_id'];
+        $warehouse_id = $_POST['warehouse_id'] ?? $_GET['warehouse_id'];
         $search_name = $_GET['nomenclature'] ?? false;
         $pageSize = 10;
         $offset = ($page-1) * $pageSize;
@@ -348,33 +355,33 @@ class OrdersController extends Controller
         $orders_items_update = OrderItems::find()
             ->select('order_items.*,nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.cost')
             ->leftJoin('nomenclature','order_items.nom_id_for_name = nomenclature.id')
+            ->andWhere(['order_items.warehouse_id' => intval($warehouse_id)])
             ->where(['order_items.order_id' => $urlId])
             ->asArray()
             ->all();
         $nomenclatures = $query->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
-            ->select('products.id, products.count, products.price, nomenclature.id as nomenclature_id, nomenclature.image, nomenclature.name, nomenclature.cost')
+            ->select('products.id, products.count, products.price,products.warehouse_id, nomenclature.id as nomenclature_id, nomenclature.image, nomenclature.name, nomenclature.cost')
             ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
             ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
+            ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
             ->groupBy('products.nomenclature_id');
-//            ->orderBy(['products.created_at' => SORT_DESC]);
-            if ($search_name){
-                $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
-                    ->offset(0);
-            }else{
-                $nomenclatures->offset($offset)
-                    ->limit($pageSize);
-            }
+        if ($search_name){
+            $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name]);
+            $offset = 0;
+            $pageSize = false;
+        }
         $product_count =
             $countQuery
                 ->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
                 ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
                 ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
+                ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
                 ->groupBy('products.nomenclature_id')
-//                ->orderBy(['products.created_at' => SORT_DESC])
                 ->asArray()
                 ->all();
         $total = count($product_count);
-        $nomenclatures = $nomenclatures
+        $nomenclatures = $nomenclatures->offset($offset)
+            ->limit($pageSize)
             ->asArray()
             ->all();
         $id_count = $_POST['id_count'] ?? [];
@@ -388,7 +395,6 @@ class OrdersController extends Controller
     }
     public function actionUpdate($id)
     {
-//        echo "<pre>";
         $have_access = Users::checkPremission(22);
         if(!$have_access){
             $this->redirect('/site/403');
@@ -412,9 +418,6 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-//            echo "<pre>";
-//            var_dump($post);
-//            die;
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price_before_discount = $post['Orders']['total_price_before_discount'];
@@ -514,40 +517,6 @@ class OrdersController extends Controller
         $sub_page = [];
         $date_tab = [];
 
-        $query = Products::find();
-        $countQuery = clone $query;
-        $warehouse_id_update = $warehouse_value_update["warehouse_id"];
-        $orders_items_update = OrderItems::find()
-            ->select('order_items.*,nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.cost')
-            ->leftJoin('nomenclature','order_items.nom_id_for_name = nomenclature.id')
-            ->where(['order_items.order_id' => $id])
-            ->andWhere(['order_items.warehouse_id' => $warehouse_id_update])
-            ->asArray()
-            ->all();
-        $nomenclatures = $query->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
-            ->select('products.id, products.count, products.price, nomenclature.id as nom_id, nomenclature.image, nomenclature.name, nomenclature.cost')
-            ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
-            ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
-            ->offset(0)
-            ->limit(10)
-            ->groupBy('products.nomenclature_id')
-//            ->orderBy(['products.created_at' => SORT_DESC])
-            ->asArray()
-            ->all();
-//        echo "<pre>";
-//        var_dump($orders_items_update);
-//        var_dump($nomenclatures);
-//        die;
-        $product_count =
-            $countQuery
-                ->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
-            ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
-            ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
-            ->groupBy('products.nomenclature_id')
-//            ->orderBy(['products.created_at' => SORT_DESC])
-            ->asArray()
-            ->all();
-        $total = count($product_count);
         $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
         order_items.price_before_discount as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
         order_items.price as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
@@ -595,9 +564,9 @@ class OrdersController extends Controller
             'active_discount' => $active_discount,
             'clients' => $clients,
             'orders_clients' => $orders_clients,
-            'nomenclatures' => $nomenclatures,
+//            'nomenclatures' => $nomenclatures,
             'order_items' => $order_items,
-            'total' => $total,
+//            'total' => $total,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'warehouse' => $warehouse,
@@ -663,6 +632,7 @@ class OrdersController extends Controller
             }elseif ($_GET['numberVal'] == 1){
                 $approved = 1;
             }
+            $clients = Clients::find()->select('id, name')->where(['=','status',1])->asArray()->all();
             if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
                 return $this->renderAjax('widget', [
                     'searchModel' => $searchModel,
@@ -671,6 +641,7 @@ class OrdersController extends Controller
                     'sub_page' => $sub_page,
                     'date_tab' => $date_tab,
                     'approved' => $approved,
+                    'clients' => $clients,
                 ]);
             } else {
                 return $this->renderAjax('widget', [
@@ -679,6 +650,7 @@ class OrdersController extends Controller
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'approved' => $approved,
+                    'clients' => $clients,
                 ]);
             }
         }

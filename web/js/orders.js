@@ -1,5 +1,9 @@
 $(document).ready(function () {
     var id_count = {};
+    var warehouse_id = $('body').find('.warehouse_id').val();
+    $('body').on('change','.warehouse_id',function () {
+        warehouse_id = $(this).val();
+    })
     $('body').on('input', '.ordersCountInput', function () {
         count_id($(this));
     });
@@ -56,28 +60,41 @@ $(document).ready(function () {
     })
 
     $('body').on('click', '.addOrders_get_warh_id', function (e) {
-        var warehouse_id = $('.warehouse_id').val();
-        // console.log(warehouse_id)
-
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
-            url:'/orders/create-get-nom',
-            method:'get',
-            datatype:'json',
+            url:'/orders/get-nomiclature',
+            method:'post',
+            datatype:'html',
             data:{
                 warehouse_id:warehouse_id,
+                id_count:id_count,
                 csrfToken:csrfToken,
             },
+            success:function(data){
+                $('#ajax_content').html(data);
+            }
         })
-        // $.ajax({
-        //     url:'/orders/get-nomiclature',
-        //     method:'get',
-        //     datatype:'json',
-        //     data:{
-        //         warehouse_id:warehouse_id,
-        //         csrfToken:csrfToken,
-        //     },
-        // })
+    })
+
+    $('body').on('click', '.addOrders_get_warh_id_update', function (e) {
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        let url_id = window.location.href;
+        let url = new URL(url_id);
+        let urlId = url.searchParams.get("id");
+        $.ajax({
+            url:'/orders/get-nomiclature-update',
+            method:'post',
+            datatype:'html',
+            data:{
+                warehouse_id:warehouse_id,
+                id_count:id_count,
+                urlId: urlId,
+                csrfToken:csrfToken,
+            },
+            success:function(data){
+                $('#ajax_content').html(data);
+            }
+        })
     })
 
     var newTbody = $('<tbody></tbody>');
@@ -1104,8 +1121,6 @@ $(document).ready(function () {
         var ordersBeforTotalPriceSum = 0;
         var totalDiscount = 0;
         var discountBody = '';
-        // $('body').find('.loader').toggleClass('d-none');
-        // $('body').find('.ordersAddingTable').addClass('d-none');
         var ordersTableLength = 0;
         var sequenceNumber = 0;
         $('.addOrdersTableTr').each(function () {
@@ -1246,7 +1261,7 @@ $(document).ready(function () {
         let url = new URL(url_id);
         let urlId = url.searchParams.get("id");
         $.ajax({
-            url:href_,
+            url:href_+'&warehouse_id='+warehouse_id,
             method:'post',
             datatype:'html',
             data:{
