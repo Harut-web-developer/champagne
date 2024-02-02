@@ -29,8 +29,9 @@ $(document).ready(function () {
                 let name = $(this).children(".documentsName").text();
                 let count = parseFloat($(this).children('.documentsCount').find('.documentsCountInput').val());
                 let price = +parseFloat($(this).children('.documentsCount').find('.documentsPriceInput').val()).toFixed(2);
-                let priceWithaah = +parseFloat(price + (price * 20) / 100).toFixed(2);
-
+                let priceWithaah = +parseFloat(price + (price * 20) / 100);
+                priceWithaah = priceWithaah.toFixed(2)
+                console.log(priceWithaah)
                 trs[id.trim()] = `<tr class="tableDocuments oldTr">
                                      <td>
                                         <span>` + id + `</span>
