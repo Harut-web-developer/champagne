@@ -50,18 +50,10 @@ function init () {
                         myMap.geoObjects.add(multiRoute);
                        
                     }
-  
                     var start = data['location'][0]['location'];
                     arr.unshift(data['warehouse']['location']);
 
-              
-               
-                 
-               
-
                     myMap.setZoom(8, {duration: 300});
-
-<<<<<<< Updated upstream
                     setInterval(function () {
                         var myLatitude = 40;
                         var myLongitude = 44;
@@ -97,42 +89,7 @@ function init () {
                             });
                         });
                     }, 60 * 1000);
-=======
-                    // setInterval(function () {
-                    //     var myLatitude = 40;
-                    //     var myLongitude = 44;
-                    //     geolocation.get({
-                    //         provider: 'yandex',
-                    //         mapStateAutoApply: true
-                    //     }).then(function (result) {
-                    //         result.geoObjects.options.set('preset', 'islands#redCircleIcon');
-                    //         result.geoObjects.get(0).properties.set({
-                    //             balloonContentBody: 'Мое местоположение'
-                    //         });
-                    //         myMap.geoObjects.add(result.geoObjects);
-                    //     });
-                    //     geolocation.get({
-                    //         provider: 'browser',
-                    //         mapStateAutoApply: true
-                    //     }).then(function (result) {
-                    //         myLatitude = result.geoObjects.get(0).geometry.getCoordinates()[0];
-                    //         myLongitude = result.geoObjects.get(0).geometry.getCoordinates()[1];
-                    //         result.geoObjects.options.set('preset', 'islands#blueCircleIcon');
-                    //         myMap.geoObjects.add(result.geoObjects);
-                    //         var csrfToken = $('meta[name="csrf-token"]').attr("content");
-                    //         $.ajax({
-                    //             url: "/map/coordinates-user",
-                    //             method: 'post',
-                    //             dataType: 'json',
-                    //             data: {
-                    //                 myLatitude: myLatitude,
-                    //                 myLongitude: myLongitude,
-                    //                 _csrf: csrfToken,
-                    //             },
-                    //         });
-                    //     });
-                    // }, 60 * 1000);
->>>>>>> Stashed changes
+
                 }
             }
         })
