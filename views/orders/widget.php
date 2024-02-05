@@ -419,6 +419,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                             }
                         }
                     ],
+                    'status',
                     'total_price',
                     'total_count',
                     'orders_date',
@@ -527,6 +528,7 @@ else { ?>
                             }
                         }
                     ],
+                    'status',
                     'total_price',
                     'total_count',
                     'orders_date',
