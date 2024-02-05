@@ -85,12 +85,12 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
             'reports' => function ($url, $model, $key) {
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -107,7 +107,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
         ],
@@ -123,12 +123,12 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
             'reports' => function ($url, $model, $key) {
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -145,7 +145,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'buttons' => [
             'reports' => function ($url, $model, $key) {
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -162,12 +162,12 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
             'reports' => function ($url, $model, $key) {
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -184,7 +184,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
         ],
@@ -209,7 +209,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'buttons' => [
             'reports' => function ($url, $model, $key) {
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -226,7 +226,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
         ],
@@ -242,12 +242,12 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
             'reports' => function ($url, $model, $key) {
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -264,7 +264,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'buttons' => [
             'reports' => function ($url, $model, $key) {
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -290,7 +290,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'buttons' => [
             'reports' => function ($url, $model, $key) {
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -316,7 +316,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
         ],
@@ -364,6 +364,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                     }
                 }
             ],
+            'status',
             'total_price',
             'total_count',
             'orders_date',
@@ -424,3 +425,13 @@ else{ ?>
         ],
     ]); ?>
 <?php } ?>
+<script>
+        $("#w0 tbody tr").each(function(){
+            let status_ = $(this).find('td:nth-child(5)').text();
+            if (status_ == 2) {
+                $(this).find('td:nth-child(9) a:not([title="Հաշվետվություն"])').remove();
+            } else if (status_ == 0) {
+                $(this).find('td:nth-child(9) a[title="Ջնջել"]').remove();
+            }
+        });
+</script>

@@ -72,7 +72,7 @@ if ($have_access_update && $have_access_delete){
     <?= CustomGridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],
-        'dataProvider' => $dataProvider,
+//        'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'name',
@@ -91,9 +91,6 @@ if ($have_access_update && $have_access_delete){
         ],
         'dataProvider' => new ActiveDataProvider([
             'query' => $dataProvider->query->andWhere(['status' => '1']),
-//                'pagination' => [
-//                    'pageSize' => 20,
-//                ],
         ]),
     ]); ?>
     </div>

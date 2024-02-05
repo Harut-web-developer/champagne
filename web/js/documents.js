@@ -200,25 +200,64 @@ $(document).ready(function () {
     })
 
     $('body').on('click', '.PriceDocuments', function () {
-        let cleanedValue = $(this).val().replace(/[^0-9.]/g, '');
-        if (cleanedValue === '' || parseFloat(cleanedValue) < 1) {
-            cleanedValue = '1';
+        let input = $(this).val();
+        let cleanedValue = input.replace(/[^0-9.]/g, '');
+        if (parseFloat(cleanedValue) < 1) {
+            $(this).closest('tr').remove();
+        } else if(parseFloat(cleanedValue) == 0){
+            $(this).val(1)
+            let num = parseFloat(1) + (parseFloat(1) * 20) / 100;
+            $(this).closest('.oldTr').find('.pricewithaah').children('span').text(num.toFixed(2))
+            $(this).closest('.oldTr').find('.pricewithaah').children('input').val(num.toFixed(2))
+        } else {
+            let dotCount = cleanedValue.split('.').length - 1;
+            if (dotCount > 1) {
+                cleanedValue = cleanedValue.slice(0, cleanedValue.lastIndexOf('.'));
+            }
             $(this).val(cleanedValue);
+            let num = parseFloat(cleanedValue) + (parseFloat(cleanedValue) * 20) / 100;
+            $(this).closest('.oldTr').find('.pricewithaah').children('span').text(num.toFixed(2))
+            $(this).closest('.oldTr').find('.pricewithaah').children('input').val(num.toFixed(2))
+            if (isNaN($(this).closest('.oldTr').find('.pricewithaah').children('span').text())){
+                $(this).attr('required', true);
+                $(this).css('border-color', 'red');
+
+            }else {
+                $(this).attr('required', false);
+                $(this).css('border-color', '#D9DEE3');
+            }
         }
-        let num = parseFloat(cleanedValue) + (parseFloat(cleanedValue) * 20) / 100;
-        $(this).closest('.oldTr').find('.pricewithaah').children('span').text(num.toFixed(2))
-        $(this).closest('.oldTr').find('.pricewithaah').children('input').val(num.toFixed(2))
     })
 
     $('body').on('keyup', '.PriceDocuments', function () {
-        let cleanedValue = $(this).val().replace(/[^0-9.]/g, '');
-        if (cleanedValue === '' || parseFloat(cleanedValue) < 1) {
-            cleanedValue = '1';
+        let input = $(this).val();
+        let cleanedValue = input.replace(/[^0-9.]/g, '');
+        if (parseFloat(cleanedValue) < 0) {
+            $(this).closest('tr').remove();
+        } else if(parseFloat(cleanedValue) == 0){
+            $(this).val(1)
+            let num = parseFloat(1) + (parseFloat(1) * 20) / 100;
+            $(this).closest('.oldTr').find('.pricewithaah').children('span').text(num.toFixed(2))
+            $(this).closest('.oldTr').find('.pricewithaah').children('input').val(num.toFixed(2))
+        } else {
+            let dotCount = cleanedValue.split('.').length - 1;
+            if (dotCount > 1) {
+                cleanedValue = cleanedValue.slice(0, cleanedValue.lastIndexOf('.'));
+            }
             $(this).val(cleanedValue);
+            let num = parseFloat(cleanedValue) + (parseFloat(cleanedValue) * 20) / 100;
+            $(this).closest('.oldTr').find('.pricewithaah').children('span').text(num.toFixed(2))
+            $(this).closest('.oldTr').find('.pricewithaah').children('input').val(num.toFixed(2))
+            if (isNaN($(this).closest('.oldTr').find('.pricewithaah').children('span').text())){
+                $(this).attr('required', true);
+                $(this).css('border-color', 'red');
+
+            }else {
+                $(this).attr('required', false);
+                $(this).css('border-color', '#D9DEE3');
+            }
         }
-        let num = parseFloat(cleanedValue) + (parseFloat(cleanedValue) * 20) / 100;
-        $(this).closest('.oldTr').find('.pricewithaah').children('span').text(num.toFixed(2))
-        $(this).closest('.oldTr').find('.pricewithaah').children('input').val(num.toFixed(2))
+
     })
 
     var arr_carent_page = [];

@@ -699,7 +699,16 @@ $(document).ready(function() {
             $('body').find('.warehouseCheck').removeClass('activeForInput');
         }
     }
-
+    $(window).on('load',function (){
+        $('.ordersCard').find('tbody tr').each(function () {
+            let status_ = $(this).find('td:nth-child(5)').text();
+                if (status_ == 2) {
+                    $(this).find('td:nth-child(9) a:not(.reportsOrders)').remove();
+                } else if (status_ == 0) {
+                    $(this).find('td:nth-child(9) a[title="Ջնջել"]').remove();
+                }
+        })
+    })
     // var csrfToken = $('meta[name="csrf-token"]').attr("content");
     // $.ajax({
     //     url:"/map/index",

@@ -37,12 +37,13 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
             'reports' => function ($url, $model, $key) {
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
+                    'class' => 'reportsOrders',
                     'target' => '_blank',
                 ]);
             },
@@ -58,9 +59,8 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'template' => '{delivered} {update} {delete}',
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
         ],
@@ -75,15 +75,13 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'template' => '{update} {delivered} {reports}',
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
             'reports' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -99,9 +97,8 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'template' => '{update} {reports} {delete}',
         'buttons' => [
             'reports' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -119,13 +116,13 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
             'delivered' => function ($url, $model, $key) {
                 // The content of the new template with your SVG icon
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
             'reports' => function ($url, $model, $key) {
                 // The content of the new template with your SVG icon
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -141,9 +138,8 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'template' => '{update} {delivered}',
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
         ],
@@ -167,9 +163,8 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'template' => ' {reports} {update}',
         'buttons' => [
             'reports' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -185,9 +180,8 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'template' => '{delivered} {delete}',
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
         ],
@@ -202,15 +196,13 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
         'template' => '{delivered} {reports}',
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
             'reports' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -228,7 +220,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
             'reports' => function ($url, $model, $key) {
                 // The content of the new template with your SVG icon
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -255,7 +247,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
             'reports' => function ($url, $model, $key) {
                 // The content of the new template with your SVG icon
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'reports'),
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'target' => '_blank',
                 ]);
             },
@@ -282,7 +274,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
             'delivered' => function ($url, $model, $key) {
                 // The content of the new template with your SVG icon
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'delivered'), // Add a title if needed
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
             },
         ],
@@ -354,7 +346,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                 </div>
             </div>
         </div>
-        <div class="card pageStyle">
+        <div class="card pageStyle ordersCard">
             <?= CustomGridView::widget([
                 'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
                 'summaryOptions' => ['class' => 'summary'],
@@ -402,13 +394,3 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
             ]); ?>
         </div>
     </div>
-<script>
-    window.onload = function (){
-        $("#w0 tbody tr").each(function(){
-            let status_ = $(this).find('td:nth-child(5)').text();
-            if(status_ == 2){
-                $(this).find('td:nth-child(9) .bxs-check-circle').remove();
-            }
-        });
-    }
-</script>
