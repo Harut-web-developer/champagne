@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 $this->params['sub_page'] = $sub_page;
 $this->params['date_tab'] = $date_tab;
+$session = Yii::$app->session;
 
 ?>
 <div class="titleAndPrevPage">
@@ -18,7 +19,7 @@ $this->params['date_tab'] = $date_tab;
 
 <body>
     <div class="form-group col-md-12 col-lg-12 col-sm-12 mapFilter">
-        <div class="form-group col-md-6 col-lg-6 col-sm-6 loguser">
+        <div class="form-group col-md-4 col-lg-4 col-sm-4 loguser">
             <label for="routeSelect">Երթուղի</label>
             <select id="routeSelect" class="form-select form-control valuemap" aria-label="Default select example">
                 <option value="">Ընտրել երթուղին</option>
@@ -27,10 +28,23 @@ $this->params['date_tab'] = $date_tab;
                 <?php } ?>
             </select>
         </div>
-        <div class="form-group col-md-6 col-lg-6 col-sm-6 logAction">
+        <div class="form-group col-md-4 col-lg-4 col-sm-4 logAction">
             <label for="myLocalDate">Ընտրել ամսաթիվը</label>
             <input id="myLocalDate" class="fil-input form-control valuemap" type="date" name="date">
         </div>
+        <?php if($session['role_id'] == 1){ ?>
+            <div class="form-group col-md-4 col-lg-4 col-sm-4 loguser">
+                <label for="menegerSelect">Ընտրել մենեջերին</label>
+                <select id="menegerSelect" class="form-select form-control mapManagerId" aria-label="Default select example">
+                    <option value="">Ընտրել մենեջերին</option>
+                    <?php foreach ($all_manager as $manager ){ ?>
+                        <option value="<?= $manager['id'] ?>"><?= $manager['name'] ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+        <?php } else {?>
+            <input type="hidden" class="mapManagerId" value="<?= $session['user_id'] ?>">
+        <?php } ?>
     </div>
     <div id="map">
     </div>
