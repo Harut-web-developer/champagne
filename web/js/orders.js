@@ -889,6 +889,7 @@ $(document).ready(function () {
     })
     $('body').on('keyup','.ordersCountInput',function (){
         var this_ = $(this);
+        let warehouse_id = $('body').find('.warehouse_id').val();
         var id = this_.closest('.addOrdersTableTr').find(".nomId").attr('data-product');
         var count = this_.val();
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -898,6 +899,7 @@ $(document).ready(function () {
             datatype: 'json',
             data: {
                 itemId: id,
+                warehouse_id:warehouse_id,
                 count:count,
                 _csrf: csrfToken
             },
@@ -919,6 +921,7 @@ $(document).ready(function () {
     })
     $('body').on('click','.ordersCountInput',function (){
         var this_ = $(this);
+        let warehouse_id = $('body').find('.warehouse_id').val();
         var id = this_.closest('.addOrdersTableTr').find(".nomId").attr('data-product');
         var count = this_.val();
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -928,6 +931,7 @@ $(document).ready(function () {
             datatype: 'json',
             data: {
                 itemId: id,
+                warehouse_id:warehouse_id,
                 count:count,
                 _csrf: csrfToken
             },

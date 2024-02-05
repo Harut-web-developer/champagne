@@ -35,7 +35,7 @@ $session = Yii::$app->session;
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12">
                     <label for="warehouse">Պահեստներ</label>
-                    <select class="form-select form-control warehouse_id" aria-label="Default select example" name="warehouse">
+                    <select class="form-select form-control warehouse_id " aria-label="Default select example" name="warehouse">
                         <?php foreach ($warehouse as $key => $value) {
                             $isSelected = ($value['id'] == $warehouse_value_update["warehouse_id"]);
                             if ($isSelected == true){?>

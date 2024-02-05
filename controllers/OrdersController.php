@@ -164,20 +164,20 @@ class OrdersController extends Controller
 
         }
     }
-    public function actionChangeManager(){
-        if ($this->request->isGet){
-            $searchModel = new OrdersSearch();
-            $dataProvider = $searchModel->search($this->request->queryParams);
-            var_dump($dataProvider);
-//            if ($this->request->get('managerId') == 'null'){
-//                $manager_id = $this->request->get('managerId');
-//            }else{
-//                $manager_id = intval($this->request->get('managerId'));
-//            }
-//            var_dump($manager_id);
-//            OrdersSearch::getManagerForOrders($manager_id);
-        }
-    }
+//    public function actionChangeManager(){
+//        if ($this->request->isGet){
+//            $searchModel = new OrdersSearch();
+//            $dataProvider = $searchModel->search($this->request->queryParams);
+////            var_dump($dataProvider);
+////            if ($this->request->get('managerId') == 'null'){
+////                $manager_id = $this->request->get('managerId');
+////            }else{
+////                $manager_id = intval($this->request->get('managerId'));
+////            }
+////            var_dump($manager_id);
+////            OrdersSearch::getManagerForOrders($manager_id);
+//        }
+//    }
     public function actionCreate()
     {
         $have_access = Users::checkPremission(21);
@@ -195,6 +195,9 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+//            echo "<pre>";
+//            var_dump($post);
+//            exit();
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
@@ -223,7 +226,7 @@ class OrdersController extends Controller
                 $order_items_create->save(false);
 
                 $product_write_out = new Products();
-                $product_write_out->warehouse_id = 1;
+                $product_write_out->warehouse_id = $post['warehouse'];;
                 $product_write_out->nomenclature_id = intval($post['nom_id'][$i]);
                 $product_write_out->document_id = $model->id;
                 $product_write_out->type = 2;
@@ -433,7 +436,7 @@ class OrdersController extends Controller
 
                     $product_write_out = Products::find()->select('products.*')
                         ->where(['and',['document_id' => $model->id,'type' => 2,'nomenclature_id' => $post['nom_id'][$k]]])->one();
-                    $product_write_out->warehouse_id = 1;
+                    $product_write_out->warehouse_id = intval($post['warehouse']);
                     $product_write_out->nomenclature_id = $post['nom_id'][$k];
                     $product_write_out->price = floatval($post['price'][$k]);
                     $product_write_out->count = -intval($post['count_'][$k]);
@@ -462,7 +465,7 @@ class OrdersController extends Controller
                     $total_discount += floatval($post['discount'][$k]) * intval($post['count_'][$k]);
 
                     $product_write_out = new Products();
-                    $product_write_out->warehouse_id = 1;
+                    $product_write_out->warehouse_id = intval($post['warehouse']);
                     $product_write_out->nomenclature_id = $post['nom_id'][$k];
                     $product_write_out->document_id = $model->id;
                     $product_write_out->count = -intval($post['count_'][$k]);
