@@ -593,6 +593,7 @@ else { ?>
 </div>
 <?php } ?>
 <script>
+    window.onload = function (){
         $("#w0 tbody tr").each(function(){
             let status_ = $(this).find('td:nth-child(5)').text();
             if (status_ == 2) {
@@ -601,4 +602,5 @@ else { ?>
                 $(this).find('td:nth-child(9) a[title="Ջնջել"]').remove();
             }
         });
+    }
 </script>
