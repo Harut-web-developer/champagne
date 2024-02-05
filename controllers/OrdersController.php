@@ -22,6 +22,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\Pagination;
+use yii\web\View;
 use function React\Promise\all;
 
 /**
@@ -594,12 +595,18 @@ class OrdersController extends Controller
     }
     public  function actionFilterStatus(){
         if ($_GET){
-//            $this->template = 'index.php';
+            $page_value = null;
+            if(isset($_GET["page"]))
+                $page_value = intval($_GET["page"]);
 
             $searchModel = new OrdersSearch();
             $dataProvider = $searchModel->search($this->request->queryParams);
             $sub_page = [];
             $date_tab = [];
+
+            $is_filter = false;
+            if ($_GET['numberVal'] || $_GET['managerId'] || $_GET['clientsVal'])
+                $is_filter = true;
 
             $approved = null;
             if ($_GET['numberVal'] == 2){
@@ -613,26 +620,33 @@ class OrdersController extends Controller
             }
             $clients = Clients::find()->select('id, name')->where(['=','status',1])->asArray()->all();
 
-            if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
-                $this->layout = 'index.php';
-                return $this->renderAjax('widget', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-                    'data_size' => 'max',
-                    'sub_page' => $sub_page,
-                    'date_tab' => $date_tab,
-                    'approved' => $approved,
-                    'clients' => $clients,
-                ]);
-            } else {
-                return $this->renderAjax('widget', [
-                    'sub_page' => $sub_page,
-                    'date_tab' => $date_tab,
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-                    'approved' => $approved,
-                    'clients' => $clients,
-                ]);
+            $render_array = [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+                'sub_page' => $sub_page,
+                'date_tab' => $date_tab,
+                'approved' => $approved,
+                'clients' => $clients,
+                'page_value' => $page_value,
+                'is_filter' => $is_filter,
+            ];
+
+            if(Yii::$app->request->isAjax){
+                if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
+                    $this->layout = 'index.php';
+                    $render_array['data_size'] = 'max';
+                    return $this->renderAjax('widget', $render_array);
+                } else {
+                    return $this->renderAjax('widget', $render_array);
+                }
+            }else{
+                if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
+                    $this->layout = 'index.php';
+                    $render_array['data_size'] = 'max';
+                    return $this->render('widget', $render_array);
+                } else {
+                    return $this->render('widget', $render_array);
+                }
             }
         }
     }
