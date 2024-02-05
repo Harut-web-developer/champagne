@@ -11,6 +11,7 @@ use Yii;
  * @property float|null $latitude
  * @property float|null $longitude
  * @property int|null $user_id
+ * @property int|null $route_id
  * @property int $visit
  * @property string $created_at
  *

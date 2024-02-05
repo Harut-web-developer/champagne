@@ -22,6 +22,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\Pagination;
+use yii\web\View;
 use function React\Promise\all;
 
 /**
@@ -194,9 +195,6 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-//            echo "<pre>";
-//            var_dump($post);
-//            exit();
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
@@ -253,24 +251,6 @@ class OrdersController extends Controller
         $sub_page = [];
         $date_tab = [];
 
-        $query = Products::find();
-//        $countQuery = clone $query;
-//        $total = $countQuery
-//            ->where(['and',['products.status' => 1,'products.type' => 1]])
-//            ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
-//            ->groupBy('products.nomenclature_id')
-//            ->count();
-//        $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,
-//        nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
-//            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
-//            ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
-//            ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
-//            ->offset(0)
-//            ->groupBy('products.nomenclature_id')
-////            ->orderBy(['products.created_at' => SORT_DESC])
-//            ->limit(10)
-//            ->asArray()
-//            ->all();
         $clients = Clients::find()->select('id, name')->where(['=','status',1])->asArray()->all();
         $session = Yii::$app->session;
         if($session['role_id'] == 1){
@@ -288,8 +268,6 @@ class OrdersController extends Controller
             'model' => $model,
             'users' => $users,
             'clients' => $clients,
-//            'nomenclatures' => $nomenclatures,
-//            'total' => $total,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'warehouse' => $warehouse,
@@ -617,10 +595,18 @@ class OrdersController extends Controller
     }
     public  function actionFilterStatus(){
         if ($_GET){
+            $page_value = null;
+            if(isset($_GET["page"]))
+                $page_value = intval($_GET["page"]);
+
             $searchModel = new OrdersSearch();
             $dataProvider = $searchModel->search($this->request->queryParams);
             $sub_page = [];
             $date_tab = [];
+
+            $is_filter = false;
+            if ($_GET['numberVal'] || $_GET['managerId'] || $_GET['clientsVal'])
+                $is_filter = true;
 
             $approved = null;
             if ($_GET['numberVal'] == 2){
@@ -633,25 +619,34 @@ class OrdersController extends Controller
                 $approved = 1;
             }
             $clients = Clients::find()->select('id, name')->where(['=','status',1])->asArray()->all();
-            if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
-                return $this->renderAjax('widget', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-                    'data_size' => 'max',
-                    'sub_page' => $sub_page,
-                    'date_tab' => $date_tab,
-                    'approved' => $approved,
-                    'clients' => $clients,
-                ]);
-            } else {
-                return $this->renderAjax('widget', [
-                    'sub_page' => $sub_page,
-                    'date_tab' => $date_tab,
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-                    'approved' => $approved,
-                    'clients' => $clients,
-                ]);
+
+            $render_array = [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+                'sub_page' => $sub_page,
+                'date_tab' => $date_tab,
+                'approved' => $approved,
+                'clients' => $clients,
+                'page_value' => $page_value,
+                'is_filter' => $is_filter,
+            ];
+
+            if(Yii::$app->request->isAjax){
+                if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
+                    $this->layout = 'index.php';
+                    $render_array['data_size'] = 'max';
+                    return $this->renderAjax('widget', $render_array);
+                } else {
+                    return $this->renderAjax('widget', $render_array);
+                }
+            }else{
+                if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
+                    $this->layout = 'index.php';
+                    $render_array['data_size'] = 'max';
+                    return $this->render('widget', $render_array);
+                } else {
+                    return $this->render('widget', $render_array);
+                }
             }
         }
     }

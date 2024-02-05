@@ -307,8 +307,7 @@ $session = Yii::$app->session;
                     </div>
                 </div>
                 <!-- Button trigger modal -->
-                <!--disabled-->
-                <button type="button" class="btn rounded-pill btn-secondary addOrders addOrders_get_warh_id"  data-bs-toggle="modal" data-bs-target="#largeModal">Ավելացնել ապրանք</button>
+                <button type="button" class="btn rounded-pill btn-secondary addOrders addOrders_get_warh_id" disabled  data-bs-toggle="modal" data-bs-target="#largeModal">Ավելացնել ապրանք</button>
                 <!-- Modal -->
                 <div class="modal fade" id="largeModal" tabindex="-1" style="display: none;" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">

@@ -86,6 +86,7 @@ class MapController extends Controller
             date_default_timezone_set('Asia/Yerevan');
             $model = new CoordinatesUser();
             $model->user_id = $session['user_id'];
+            $model->route_id = $post['route_id'];
             $model->latitude = $post['myLatitude'];
             $model->longitude = $post['myLongitude'];
             $model->created_at = date('Y-m-d H:i:s');
