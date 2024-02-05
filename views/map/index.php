@@ -13,7 +13,7 @@ $this->params['date_tab'] = $date_tab;
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=e243c296-f6a7-46b7-950a-bd42eb4b2684" type="text/javascript"></script>
     <script src="/js/colorizer.js" type="text/javascript"></script>
-    <script src="/js/multiroute_view_access.js" type="text/javascript"></script>
+    <script src="/js/multiroute_view_access.js?v=<?php echo rand(0,1000);?>" type="text/javascript"></script>
 </head>
 
 <body>

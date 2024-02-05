@@ -75,7 +75,10 @@ class MapController extends Controller
                 ->asArray()
                 ->orderBy('clients.sort_',SORT_DESC)
                 ->all();
-            return json_encode(['location' => $locations, 'warehouse' => $warehouse]);
+            $locations = array_chunk($locations,20);
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            return ['location' => $locations, 'warehouse' => $warehouse];
         }
     }
     public function actionCoordinatesUser()
