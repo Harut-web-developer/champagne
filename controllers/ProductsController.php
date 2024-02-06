@@ -255,7 +255,7 @@ class ProductsController extends Controller
             $products_count = Products::find()->select('SUM(count) as count')->where(['nomenclature_id' => intval($post['itemId'])])
                 ->andWhere(['warehouse_id' => $post['warehouse_id']])
                 ->asArray()->all();
-//            var_dump($products_count);
+            var_dump($products_count);
 //            exit();
             if ($products_count[0]['count'] === null){
                 return json_encode(['count' => 'dontExists']);

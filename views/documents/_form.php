@@ -142,7 +142,7 @@ if(isset($action__)){
 <!--                                        <input class="itemsId" type="hidden" name="nom_id[]" value="--><?php //=$document_item['nom_id']?><!--">-->
                                     </td>
                                     <td class="name"><?=$document_item['name']?></td>
-                                    <td class="count"><input type="number" name="count_[]" value="<?=$document_item['count']?>" class="form-control countDocuments"></td>
+                                    <td class="count"><input type="number" name="count_[]" value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="any"></td>
                                     <td class="price"><input type="number" name="price[]" value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>
                                     <td class="pricewithaah">
                                         <span><?=number_format($document_item['price_with_aah'],2,'.', '')?></span>

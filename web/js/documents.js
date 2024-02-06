@@ -424,7 +424,62 @@ $(document).ready(function () {
             $("#documents-to_warehouse").removeAttr('required');
         }
     })
+    $('body').on('click','.countDocuments',function (){
+        // $(this).val(function (index,value){
+        //     return value.replace(/-/g, '')
+        // })
+        let itemId = $(this).closest('tr').find('.itemsId').val();
+        getCount($(this),itemId);
+    })
+    $('body').on('keyup','.countDocuments',function (){
+        // $(this).val(function (index,value){
+        //     return value.replace(/-/g, 1)
+        // })
+        let itemId = $(this).closest('tr').find('.itemsId').val();
+        getCount($(this),itemId);
+    })
+    $('body').on('click','.documentsCountInput',function (){
+        let itemId = $(this).closest('.documentsTableTr').find('.nom_id').data('id');
+        getCount($(this),itemId);
+    })
+    $('body').on('keyup','.documentsCountInput',function (){
+        let itemId = $(this).closest('.documentsTableTr').find('.nom_id').data('id');
+        getCount($(this),itemId);
+    })
+    function getCount(element,item){
+        let this_ = element;
+        let itemId = item;
+        let countProduct = element.val();
+            if ($('body').find('#documents-document_type').val() == 3 || $('body').find('#documents-document_type').val() == 'Տեղափոխություն'){
+                let fromWarehouseId = $('body').find('#documents-warehouse_id').val();
+                let csrfToken = $('meta[name="csrf-token"]').attr("content");
+                $.ajax({
+                    url:'/products/get-products',
+                    method:'post',
+                    datatype:'json',
+                    data:{
+                        itemId:itemId,
+                        warehouse_id:fromWarehouseId,
+                        count:countProduct,
+                        _csrf:csrfToken,
+                    },
+                    success:function (data) {
+                        let pars = JSON.parse(data)
+                        if (data){
+                            if (pars.count === 'nullable'){
+                                this_.val('')
+                            }else if (pars.count === 'countMore'){
+                                this_.val('')
+                                alert('Պահեստում նման քանակի ապրանք չկա');
+                            }else if (pars.count === 'dontExists'){
+                                alert('Նման ապրանք պահեստում գոյություն չունի')
+                            }
+                        }
+                    }
+                })
+            }
 
+    }
     function trCounter(table){
         let i = 0;
         table.find('tbody').find('tr').each(function () {
