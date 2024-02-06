@@ -251,12 +251,9 @@ class ProductsController extends Controller
     public function actionGetProducts(){
         if ($this->request->isPost){
             $post = $this->request->post();
-//            var_dump($post);
             $products_count = Products::find()->select('SUM(count) as count')->where(['nomenclature_id' => intval($post['itemId'])])
                 ->andWhere(['warehouse_id' => $post['warehouse_id']])
                 ->asArray()->all();
-            var_dump($products_count);
-//            exit();
             if ($products_count[0]['count'] === null){
                 return json_encode(['count' => 'dontExists']);
             }elseif ($post['count'] > intval($products_count[0]['count'])){

@@ -22,7 +22,7 @@
                     <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
                     <td class="nomenclatureName"><?=$nomenclature['name']?></td>
                     <td class="ordersAddCount">
-                        <input type="number" class="form-control ordersCountInput"  step="any" min="1" value="<?= $id_count[$nomenclature['id']] ?? '' ?>">
+                        <input type="number" class="form-control ordersCountInput" step="1" min="1" value="<?= $id_count[$nomenclature['id']] ?? '' ?>">
                         <input class="ordersPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
                         <input class="ordersCostInput" type="hidden" value="<?=$nomenclature['cost']?>">
                     </td>
