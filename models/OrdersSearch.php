@@ -76,7 +76,7 @@ class OrdersSearch extends Orders
                     }
                 }
             }
-        }else {
+        }else if ($session['role_id'] == 2) {
             if (empty($params)){
                 $query->where(['or',['status' => '1'],['status' => '2'],['status' => '0']])->andWhere(['user_id' => $session['user_id']])->orderBy(['created_at'=> SORT_DESC]);
             }else{
@@ -95,14 +95,7 @@ class OrdersSearch extends Orders
                 }
             }
         }
-//        if ($session['role_id'] == 1){
-//            $res =  $query->orderBy(['created_at'=> SORT_DESC]);
-//        }else{
-//            $res =  $query->andWhere(['user_id' => $session['user_id']])->orderBy(['created_at'=> SORT_DESC]);
-//        }
-//        if (isset($params['clientsVal'])){
-//            $query->andWhere(['clients_id' => $params['clientsVal']]);
-//        }
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);

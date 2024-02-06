@@ -310,7 +310,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                         }
                         ?>
                     </select>
-                <?php }elseif ($session['role_id'] == '2'){ ?>
+                <?php }elseif ($session['role_id'] == '2' || $session['role_id'] == '3'){ ?>
                     <input class="changeManager" type="hidden" value="<?=$session['user_id']?>">
                 <?php }?>
                 <select class="form-control changeClients" style="width: 210px; margin: 0px 10px 15px 5px;">

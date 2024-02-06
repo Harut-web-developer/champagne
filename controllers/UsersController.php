@@ -74,7 +74,8 @@ class UsersController extends Controller
         }
         $sub_page = [
             ['name' => 'Կարգավիճակ','address' => '/roles'],
-            ['name' => 'Թույլտվություն','address' => '/premissions'],
+            ['name' => 'Մենեջեր-առաքիչ','address' => '/manager-deliver-condition'],
+//            ['name' => 'Թույլտվություն','address' => '/premissions'], փակ մնա
 
         ];
         $date_tab = [];

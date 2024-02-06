@@ -190,6 +190,11 @@ $date_tab = $this->params['date_tab'];
                                         <div data-i18n="users">Օգտատեր</div>
                                     </a>
                                 </li>
+                                <li class="menu-item">
+                                    <a href="/manager-deliver-condition" class="menu-link">
+                                        <div data-i18n="users">Մենեջեր-առաքիչ</div>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         <li class="menu-item" style="">
