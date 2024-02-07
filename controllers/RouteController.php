@@ -360,6 +360,7 @@ class RouteController extends Controller
                 ->groupBy('latitude')
                 ->asArray()
                 ->all();
+            $coordinatesUserCopy = $coordinatesUser;
             date_default_timezone_set('UTC');
             $warehouse = Warehouse::find()->select('location')->where(['id' => 1])->asArray()->one();
             $locations = Orders::find()
@@ -373,15 +374,20 @@ class RouteController extends Controller
                 ->asArray()
                 ->orderBy('clients.sort_',SORT_DESC)
                 ->all();
+            $clients_locations = $locations;
             $visit = CoordinatesUser::find()
                 ->select('visit, id')
                 ->where(['=', 'user_id', $userId])
                 ->asArray()
                 ->all();
-            return json_encode([
+            $locations = array_chunk($locations,20);
+            $coordinatesUserCopy = array_chunk($coordinatesUserCopy,20);
+               return json_encode([
                 'location' => $locations,
+                'clients_locations' => $clients_locations,
                 'warehouse' => $warehouse,
                 'coordinatesUser' => $coordinatesUser,
+                'coordinatesUserCopy' => $coordinatesUserCopy,
                 'visit' => $visit,
             ]);
         }

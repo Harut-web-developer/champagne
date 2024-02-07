@@ -18,11 +18,9 @@ function init () {
             success:function(data){
                 // console.log(data)
                 if (data['location'].length != 0) {
-                   
                     $('#map').html('');
                     var geolocation = ymaps.geolocation,
                         myMap = new ymaps.Map('map', {
-
                             center: [40.2100725, 44.4987508],
                             zoom: 8
                         }, {
@@ -30,10 +28,8 @@ function init () {
                         }, {
                             buttonMaxWidth: 300
                         });
-
                     for (var i = 0; i < data['location'].length; i++) {
                         var arr = [];
-                        arr.unshift(data['warehouse']['location']);
                         for(var j = 0; j < data['location'][i].length; j++){
                             if(arr.length == 0 && i != 0){
                                 arr.push(data['location'][i-1][19]['location']);
@@ -44,19 +40,14 @@ function init () {
                             referencePoints: arr,
                             type: 'viaPoint',
                         });
-                        
+
                         ymaps.modules.require([
                             'MultiRouteColorizer'
                         ], function (MultiRouteColorizer) {
                             new MultiRouteColorizer(multiRoute);
                         });
-
                         myMap.geoObjects.add(multiRoute);
-                       
                     }
-                    console.log(arr)
-                    var start = data['location'][0]['location'];
-
                     myMap.setZoom(8, {duration: 300});
                     setInterval(function () {
                         var myLatitude = 40;

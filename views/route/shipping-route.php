@@ -62,16 +62,46 @@ $this->params['date_tab'] = $date_tab;
                     _csrf:csrfToken,
                 },
                 success:function(data){
-                    console.log(data);
                     if (data['location'].length != 0) {
-                        var arr = [];
                         var clients = [];
                         var time_visit = {};
-                        for (var i = 0; i < data['location'].length; i++) {
-                            arr.push(data['location'][i]['location']);
-                            clients.push(data['location'][i]['location']);
+                        $('#map').html('');
+                        var myMap = new ymaps.Map('map', {
+                            center: [40.2100725, 44.4987508],
+                            zoom: 11,
+                            controls: []
+                        }, {
+                            buttonMaxWidth: 300
+                        }, {
+                            searchControlProvider: 'yandex#search'
+                        });
+                        // arr.unshift(data['warehouse']['location']);
+                        for (let i = 0; i < data['location'].length; i++) {
+                            var arr = [];
+                            for(var j = 0; j < data['location'][i].length; j++){
+                                if(arr.length == 0 && i != 0){
+                                    arr.push(data['location'][i-1][19]['location']);
+                                }
+                                arr.push(data['location'][i][j]['location']);
+                            }
+                            var multiRoute = new ymaps.multiRouter.MultiRoute({
+                                referencePoints: arr,
+                                type: 'viaPoint',
+                                params: {
+                                    routingMode: 'masstransit',
+                                },
+                            });
+                            ymaps.modules.require([
+                                'MultiRouteColorizer'
+                            ], function (MultiRouteColorizer) {
+                                new MultiRouteColorizer(multiRoute);
+                            });
+                            myMap.geoObjects.add(multiRoute);
                         }
-                        arr.unshift(data['warehouse']['location']);
+                        for (var i = 0; i < data['clients_locations'].length; i++) {
+                            clients.push(data['clients_locations'][i]['location']);
+                        }
+                        // arr.unshift(data['warehouse']['location']);
                         function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
                             var R = 6371; // Radius of the earth in km
                             var dLat = deg2rad(lat2-lat1);  // deg2rad below
@@ -94,19 +124,15 @@ $this->params['date_tab'] = $date_tab;
                             var latitude1 = parseFloat(coordinates[0]);
                             var longitude2 = parseFloat(coordinates[1]);
                             var visit = 0;
-
                             for (var d = 0; d < data['coordinatesUser'].length; d++) {
                                 var latitude = data['coordinatesUser'][d]['latitude'];
                                 var longitude = data['coordinatesUser'][d]['longitude'];
-                                // console.log(latitude, longitude, latitude1, longitude2)
                                 distance = getDistanceFromLatLonInKm(latitude, longitude, latitude1, longitude2).toFixed(1);
-                                // console.log(distance)
                                 if (distance < 300) {
                                     var csrfToken = $('meta[name="csrf-token"]').attr("content");
                                     var coord_id = data['coordinatesUser'][d]['id'];
                                     visit++;
                                     temp = visit;
-                                    // console.log(visit,temp)
                                     $.ajax({
                                         url: "/route/update-visit",
                                         method: 'get',
@@ -118,19 +144,18 @@ $this->params['date_tab'] = $date_tab;
                                         },
                                     })
                                 }
-                                // console.log(d == (data['coordinatesUser'].length - 1))
                                 if( d == (data['coordinatesUser'].length -1 ) ){
                                     if (temp >= visit){
                                         time_visit[String(y)] = {
                                             time: temp, //qani vor 60 varkyan mek en koordinatnern galis
-                                            name: data['location'][y].name,
-                                            location: data['location'][y].location
+                                            name: data['clients_locations'][y].name,
+                                            location: data['clients_locations'][y].location
                                         };
                                     }else {
                                         time_visit[String(y)] = {
                                             time: visit, //qani vor 60 varkyan mek en koordinatnern galis
-                                            name: data['location'][y].name,
-                                            location: data['location'][y].location
+                                            name: data['clients_locations'][y].name,
+                                            location: data['clients_locations'][y].location
                                         };
                                     }
                                 }
@@ -143,58 +168,33 @@ $this->params['date_tab'] = $date_tab;
                                     _csrf:csrfToken,
                                 },
                             })
-                            // console.log(time_visit)
                         }
-
-                        var arr2 = [];
-                        for (let j = 0; j < data['coordinatesUser'].length; j++) {
-                            arr2.push(data['coordinatesUser'][j]['latitude'] + ',' + data['coordinatesUser'][j]['longitude']);
-                        }
-                        function deg2rad(deg) {
-                            return deg * (Math.PI/180)
-                        }
-                        var size = 25;
-                        var arrays2 = [];
-                        var t = 0;
-                        var multiRoute2 = [];
-                        for (let j = 0; j < Math.ceil(arr2.length / size); j++) {
-                            arrays2[j] = [];
-                            for (let i = 0; i < size && t < arr2.length; i += 1) {
-                                var val = arr2[t];
-                                arrays2[j].push(val);
-                                t += 1;
+                        for (let i = 0; i < data['coordinatesUserCopy'].length; i++) {
+                            var arr2 = [];
+                            for(var j = 0; j < data['coordinatesUserCopy'][i].length; j++){
+                                if(arr2.length == 0 && i != 0){
+                                    arr2.push(data['coordinatesUserCopy'][i-1][19]['latitude'] + ',' + data['coordinatesUserCopy'][i-1][19]['longitude']);
+                                }
+                                arr2.push(data['coordinatesUserCopy'][i][j]['latitude'] + ',' + data['coordinatesUserCopy'][i][j]['longitude']);
                             }
-                            multiRoute2[j] = new ymaps.multiRouter.MultiRoute({
-                                referencePoints: arrays2[j],
+                            var multiRoute2 = new ymaps.multiRouter.MultiRoute({
+                                referencePoints: arr2,
+                                type: 'viaPoint',
                                 params: {
                                     routingMode: 'masstransit',
                                 },
                             });
+                            ymaps.modules.require([
+                                'MultiRouteColorizer'
+                            ], function (MultiRouteColorizer) {
+                                new MultiRouteColorizer(multiRoute2);
+                            });
+                            myMap.geoObjects.add(multiRoute2);
                         }
-                        var multiRoute = new ymaps.multiRouter.MultiRoute({
-                            referencePoints: arr,
-                            params: {
-                                routingMode: 'masstransit',
-                            },
-                        },{
-                            routeStrokeColor: 'rgb(255,0,0)',
-                            routeActiveStrokeColor: 'rgb(255,0,0)',
-                            wayPointStartIconColor: 'rgba(255,0,0,0.5)',
-                            wayPointFinishIconColor: 'rgb(255,0,0)',
-                            routeMarkerIconColor: 'rgb(255,0,0)',
-                        });
-                        $('#map').html('');
-                        var myMap = new ymaps.Map('map', {
-                            center: [40.2100725, 44.4987508],
-                            zoom: 11,
-                            controls: []
-                        }, {
-                            buttonMaxWidth: 300
-                        }, {
-                            searchControlProvider: 'yandex#search'
-                        });
+                        function deg2rad(deg) {
+                            return deg * (Math.PI/180)
+                        }
                         Object.values(time_visit).forEach(item => {
-                            // console.log(item.location);
                             let [latitude, longitude] = item.location.split(',').map(parseFloat);
                             let switchedLocation = [latitude, longitude];
                             var myPlacemark = new ymaps.Placemark(switchedLocation, {
@@ -206,12 +206,7 @@ $this->params['date_tab'] = $date_tab;
                             myMap.geoObjects.add(myPlacemark);
                             myPlacemark.balloon.open();
                             myPlacemark.hint.open();
-                            console.log(myPlacemark)
                         });
-                        myMap.geoObjects.add(multiRoute);
-                        for (let k = 0;  k< Math.ceil(arr2.length / size); k++) {
-                            myMap.geoObjects.add(multiRoute2[k]);
-                        }
                         myMap.setZoom(11, { duration: 300 });
                     }
                 }
