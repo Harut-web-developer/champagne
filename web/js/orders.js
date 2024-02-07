@@ -1416,7 +1416,6 @@ $(document).ready(function () {
             alert('Հաջողությամբ ջնջված է:');
         }
     })
-
     function getNom(href_) {
         let url_id = window.location.href;
         let url = new URL(url_id);

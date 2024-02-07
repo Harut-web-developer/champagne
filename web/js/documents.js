@@ -35,6 +35,7 @@ $(document).ready(function () {
                                      <td>
                                         <span>` + id + `</span>
                                         <input type="hidden" name="document_items[]" value="` + id + `">
+                                        <input class="itemsId" type="hidden" name="items[]" value="` + id  + `">
                                      </td>
                                      <td class="name">` + name + `</td>
                                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
@@ -287,6 +288,8 @@ $(document).ready(function () {
                      <td>
                         <span>` + id + `</span>
                         <input type="hidden" name="document_items[]" value="` + id + `">
+                        <input class="itemsId" type="hidden" name="items[]" value="` + id  + `">
+                        
                      </td>
                      <td class="name">` + name + `</td>
                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
@@ -361,6 +364,7 @@ $(document).ready(function () {
                      <td>
                         <span>` + id + `</span>
                         <input type="hidden" name="document_items[]" value="` + id + `">
+                        <input class="itemsId" type="hidden" name="items[]" value="` + id  + `">
                      </td>
                      <td class="name">` + name + `</td>
                      <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
@@ -447,10 +451,11 @@ $(document).ready(function () {
         getCount($(this),itemId);
     })
     function getCount(element,item){
+        let document_type = $('body').find('#documents-document_type').val();
         let this_ = element;
         let itemId = item;
         let countProduct = element.val();
-            if ($('body').find('#documents-document_type').val() == 3 || $('body').find('#documents-document_type').val() == 'Տեղափոխություն'){
+            if (document_type == 3 || document_type == 'Տեղափոխություն' || document_type == 2 || document_type == 'Ելք' || document_type == 4 || document_type == 'Խոտան'){
                 let fromWarehouseId = $('body').find('#documents-warehouse_id').val();
                 let csrfToken = $('meta[name="csrf-token"]').attr("content");
                 $.ajax({
@@ -495,4 +500,9 @@ $(document).ready(function () {
             $('body').find('.toWarehouse').removeClass('activeForInput');
         }
     }
+    $('body').find('.card thead th').each(function () {
+        if ($(this).has('a')){
+            $(this).html( $(this).find('a').html())
+        }
+    })
 })

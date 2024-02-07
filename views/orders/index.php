@@ -28,261 +28,42 @@ $have_access_delete = Users::checkPremission(23);
 $have_access_delivered = Users::checkPremission(55);
 $have_access_available = Users::checkPremission(56);
 $action_column = [];
+$access_buttons = '';
+$access_buttons_code =[];
+if($have_access_delete){
+    $access_buttons .='{delete}';
 
-if ($have_access_update && $have_access_delete && $have_access_delivered && $have_access_available){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{reports} {delivered} {update} {delete}',
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-            'reports' => function ($url, $model, $key) {
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'class' => 'reportsOrders',
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-} else if($have_access_update && $have_access_delivered && $have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{delivered} {update} {delete}',
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_update && $have_access_delivered && $have_access_available){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{update} {delivered} {reports}',
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-            'reports' => function ($url, $model, $key) {
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_update && $have_access_delete && $have_access_available){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{update} {reports} {delete}',
-        'buttons' => [
-            'reports' => function ($url, $model, $key) {
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_delivered && $have_access_delete && $have_access_available){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{reports} {delivered} {delete}',
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-            'reports' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_update && $have_access_delivered){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{update} {delivered}',
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_update && $have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{update} {delete}',
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_update && $have_access_available){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => ' {reports} {update}',
-        'buttons' => [
-            'reports' => function ($url, $model, $key) {
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_delivered && $have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{delivered} {delete}',
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_delivered && $have_access_available){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{delivered} {reports}',
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-            'reports' => function ($url, $model, $key) {
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_available && $have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{reports} {delete}',
-        'buttons' => [
-            'reports' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_update){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{update}',
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_available){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{reports}',
-        'buttons' => [
-            'reports' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{delete}',
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_delivered){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{delivered}',
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                // The content of the new template with your SVG icon
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
 }
+if($have_access_update){
+    $access_buttons .='{update}';
+}
+if($have_access_delivered){
+    $access_buttons .='{delivered}';
+}
+if($have_access_available){
+    $access_buttons .='{reports}';
+}
+$action_column[] = [
+    'header' => 'Գործողություն',
+    'class' => ActionColumn::className(),
+    'template' => $access_buttons,
+    'buttons' =>['reports'=>function ($url, $model, $key) {
+        return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
+            'title' => Yii::t('yii', 'Հաշվետվություն'),
+            'class' => 'reportsOrders',
+            'target' => '_blank',
+        ]);
+    },'delivered'=>function ($url, $model, $key) {
+        return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
+            'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
+        ]);
+    }]
+    ,
+    'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
+        return Url::toRoute([$action, 'id' => $model->id]);
+    }
+];
+
 ?>
 
     <div class="orders-index">
@@ -297,6 +78,11 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                 <?php } ?>
             </p>
             <div class="filtersField" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
+                <select class="form-control byType">
+                    <option value="order">Ըստ պատվերի</option>
+                    <option value="product">Ըստ ապրանքի</option>
+                </select>
+                <input type="date" class="form-control ordersDate" style="margin: 0px 5px 0px 10px;">
                 <?php
                 $users = Users::find()->select('id,name')->where(['=','role_id',2])->asArray()->all();
                 if($session['role_id'] == '1'){?>
@@ -310,7 +96,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                         }
                         ?>
                     </select>
-                <?php }elseif ($session['role_id'] == '2' || $session['role_id'] == '3'){ ?>
+                <?php }elseif ($session['role_id'] == '2'){ ?>
                     <input class="changeManager" type="hidden" value="<?=$session['user_id']?>">
                 <?php }?>
                 <select class="form-control changeClients" style="width: 210px; margin: 0px 10px 15px 5px;">
@@ -385,7 +171,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                             }
                         }
                     ],
-                    'status',
+                        'status',
                     'total_price',
                     'total_count',
                     'orders_date',

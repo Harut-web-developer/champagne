@@ -91,6 +91,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
             'reports' => function ($url, $model, $key) {
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
                     'title' => Yii::t('yii', 'Հաշվետվություն'),
+                    'class' => 'reportsOrders',
                     'target' => '_blank',
                 ]);
             },
@@ -490,7 +491,7 @@ else { ?>
             </div>
         </div>
     </div>
-    <div class="card pageStyle">
+    <div class="card pageStyle ordersCard">
         <?php if(!isset($data_size)){ ?>
             <?= CustomGridView::widget([
                 'dataProvider' => $dataProvider,
@@ -593,14 +594,19 @@ else { ?>
 </div>
 <?php } ?>
 <script>
-    window.onload = function (){
-        $("#w0 tbody tr").each(function(){
-            let status_ = $(this).find('td:nth-child(5)').text();
-            if (status_ == 2) {
-                $(this).find('td:nth-child(9) a:not([title="Հաշվետվություն"])').remove();
-            } else if (status_ == 0) {
-                $(this).find('td:nth-child(9) a[title="Ջնջել"]').remove();
-            }
-        });
-    }
+    $('#w0 table tbody tr').each(function(){
+        let status_ = $(this).find('td:nth-child(5)').text();
+        if (status_ == 2) {
+            $(this).find('td:nth-child(9) a:not(.reportsOrders)').remove();
+        } else if (status_ == 0) {
+            $(this).find('td:nth-child(9) a[title="Ջնջել"]').remove();
+        }
+    });
+    $('body').find('.card thead th').each(function () {
+        if ($(this).has('a')){
+            $(this).html( $(this).find('a').html())
+        }
+    })
 </script>
+
+

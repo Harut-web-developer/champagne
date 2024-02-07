@@ -51,7 +51,7 @@ class Orders extends \yii\db\ActiveRecord
             'id' => 'ID',
             'user_id' => 'Օգտատեր',
             'clients_id' => 'Հաճախորդ',
-            'status' => 'Status',
+            'status' => 'Կարգավիճակ',
             'comment' => 'Մեկնաբանություն',
             'total_price_before_discount' => 'Ընդհանուր գումար',
             'total_price' => 'Ընդհանուր զեղչված գումար',

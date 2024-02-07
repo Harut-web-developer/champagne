@@ -131,12 +131,11 @@ class Users extends ActiveRecord implements IdentityInterface
     }
     public static function checkPremission($premission){
          $session = Yii::$app->session;
-         $have_access = false;
          $userPrem = UserPremissions::findOne(['user_id'=>$session->get('user_id'),'premission_id'=>$premission]);
          if($userPrem){
-             $have_access = true;
+             return true;
          }
-         return  $have_access;
+         return  false;
     }
     public function getDefaultTitle(){
         return CustomfieldsBlocksTitle::findOne(['id'=>18]);

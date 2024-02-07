@@ -271,6 +271,7 @@ $(document).ready(function() {
         var tables = '';
         var sheetNumber = 1;
         var PromiseArray = [];
+        let ordersDate = $('.content-wrapper').find('.ordersDate').val()
         let clientsVal = $('.content-wrapper').find('.changeClients').val();
         let managerId = $('.content-wrapper').find('.changeManager').val();
         let numberVal = $('.content-wrapper').find('.orderStatus').val();
@@ -369,8 +370,33 @@ $(document).ready(function() {
                 downloadURI(resuri, fileName);
             }
         });
-
+    $('body').on('change','.byType',function () {
+        let ordersDate = $('.ordersDate').val();
+        let managerId = $('.changeManager').val();
+        let numberVal = $('.orderStatus').val();
+        let clientsVal = $('.changeClients').val();
+        let type = $(this).val()
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        console.log(type)
+        $.ajax({
+            url:'/orders/filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                type:type,
+                ordersDate:ordersDate,
+                numberVal:numberVal,
+                managerId:managerId,
+                clientsVal:clientsVal,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+            }
+        })
+    })
     $('body').on('change', '.orderStatus', function () {
+        let ordersDate = $('.ordersDate').val();
         let managerId = $('.changeManager').val();
         let numberVal = $(this).val();
         let clientsVal = $('.changeClients').val();
@@ -381,6 +407,7 @@ $(document).ready(function() {
             method:'get',
             datatype:'json',
             data:{
+                ordersDate:ordersDate,
                 numberVal:numberVal,
                 managerId:managerId,
                 clientsVal:clientsVal,
@@ -392,6 +419,7 @@ $(document).ready(function() {
         })
     })
     $('body').on('change', '.changeManager', function () {
+        let ordersDate = $('.ordersDate').val();
         let managerId = $(this).val();
         let numberVal = $('.orderStatus').val();
         let clientsVal = $('.changeClients').val();
@@ -402,6 +430,7 @@ $(document).ready(function() {
             method:'get',
             datatype:'json',
             data:{
+                ordersDate:ordersDate,
                 numberVal:numberVal,
                 managerId:managerId,
                 clientsVal:clientsVal,
@@ -414,6 +443,7 @@ $(document).ready(function() {
     })
 
     $('body').on('change', '.changeClients', function () {
+        let ordersDate = $('.ordersDate').val();
         let managerId = $('.changeManager').val();
         let numberVal = $('.orderStatus').val();
         let clientsVal = $(this).val();
@@ -423,6 +453,29 @@ $(document).ready(function() {
             method:'get',
             datatype:'json',
             data:{
+                ordersDate:ordersDate,
+                numberVal:numberVal,
+                managerId:managerId,
+                clientsVal:clientsVal,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+            }
+        })
+    })
+    $('body').on('change', '.ordersDate', function () {
+        let ordersDate = $(this).val();
+        let managerId = $('.changeManager').val();
+        let numberVal = $('.orderStatus').val();
+        let clientsVal = $('.changeClients').val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/orders/filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                ordersDate:ordersDate,
                 numberVal:numberVal,
                 managerId:managerId,
                 clientsVal:clientsVal,
@@ -708,6 +761,11 @@ $(document).ready(function() {
                     $(this).find('td:nth-child(9) a[title="Ջնջել"]').remove();
                 }
         })
+    })
+    $('body').find('.card thead th').each(function () {
+        if ($(this).has('a')){
+            $(this).html( $(this).find('a').html())
+        }
     })
     // var csrfToken = $('meta[name="csrf-token"]').attr("content");
     // $.ajax({

@@ -598,6 +598,7 @@ class OrdersController extends Controller
     }
     public  function actionFilterStatus(){
         if ($_GET){
+            var_dump($_GET);
             $page_value = null;
             if(isset($_GET["page"]))
                 $page_value = intval($_GET["page"]);
@@ -608,8 +609,9 @@ class OrdersController extends Controller
             $date_tab = [];
 
             $is_filter = false;
-            if ($_GET['numberVal'] || $_GET['managerId'] || $_GET['clientsVal'])
+            if ($_GET['numberVal'] || $_GET['managerId'] || $_GET['clientsVal'] || $_GET['ordersDate']){
                 $is_filter = true;
+            }
 
             $approved = null;
             if ($_GET['numberVal'] == 2){
@@ -635,16 +637,31 @@ class OrdersController extends Controller
             ];
 
             if(Yii::$app->request->isAjax){
-                if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
-                    $this->layout = 'index.php';
-                    $render_array['data_size'] = 'max';
-                    return $this->renderAjax('widget', $render_array);
-                } else {
-                    return $this->renderAjax('widget', $render_array);
+                if (isset($_GET['type'])){
+                    if ($_GET['type'] == 'order'){
+                        if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
+//                    $this->layout = 'index.php';
+                            $render_array['data_size'] = 'max';
+                            return $this->renderAjax('widget', $render_array);
+                        } else {
+                            return $this->renderAjax('widget', $render_array);
+                        }
+                    }else{
+                        return $this->renderAjax('products', $render_array);
+                    }
+                }else{
+                    if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
+//                    $this->layout = 'index.php';
+                        $render_array['data_size'] = 'max';
+                        return $this->renderAjax('widget', $render_array);
+                    } else {
+                        return $this->renderAjax('widget', $render_array);
+                    }
                 }
+
             }else{
                 if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
-                    $this->layout = 'index.php';
+//                    $this->layout = 'index.php';
                     $render_array['data_size'] = 'max';
                     return $this->render('widget', $render_array);
                 } else {
