@@ -43,145 +43,43 @@ class OrdersSearch extends Orders
      */
     public function search($params)
     {
-//var_dump($params);
         $session = Yii::$app->session;
-
+//echo "<pre>";
         $query = Orders::find();
-        if ($session['role_id'] == 1){
-            if (empty($params)){
-                $query->where(['or',['status' => '1'],['status' => '2'],['status' => '0']])->orderBy(['created_at'=> SORT_DESC]);
-            }else{
-                if (isset($params['managerId']) && $params['managerId'] == 'null' && isset($params['clientsVal']) && $params['clientsVal'] == 'null') {
-                    if (empty($params['ordersDate'])){
-                        if (isset($params['numberVal']) && $params['numberVal'] != 3) {
-                            $query->andWhere(['status' => $params['numberVal']])->orderBy(['created_at' => SORT_DESC]);
-                        } elseif (isset($params['numberVal']) && $params['numberVal'] == 3) {
-                            $query->where(['or',['status' => '1'],['status' => '2'],['status' => '0']])->orderBy(['created_at' => SORT_DESC]);
-                        }
-                    }else{
-                        if (isset($params['numberVal']) && $params['numberVal'] != 3) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->orderBy(['created_at' => SORT_DESC]);
-                        } elseif (isset($params['numberVal']) && $params['numberVal'] == 3) {
-                            $query->where(['or',['status' => '1'],['status' => '2'],['status' => '0']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->orderBy(['created_at' => SORT_DESC]);
-                        }
-                    }
-                }elseif (isset($params['managerId']) && $params['managerId'] != 'null' && isset($params['clientsVal']) && $params['clientsVal'] == 'null'){
-                    if (empty($params['ordersDate'])){
-                        if(isset($params['numberVal']) && $params['numberVal'] != 3) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['user_id' => $params['managerId']])->orderBy(['created_at'=> SORT_DESC]);
-                        }elseif (isset($params['numberVal']) && $params['numberVal'] == 3){
-                            $query->where(['or',['status' => '1'],['status' => '2'],['status' => '0']])->andWhere(['user_id' => $params['managerId']])->orderBy(['created_at'=> SORT_DESC]);
-                        }
-                    }else{
-                        if(isset($params['numberVal']) && $params['numberVal'] != 3) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->andWhere(['user_id' => $params['managerId']])->orderBy(['created_at'=> SORT_DESC]);
-                        }elseif (isset($params['numberVal']) && $params['numberVal'] == 3){
-                            $query->where(['or',['status' => '1'],['status' => '2'],['status' => '0']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->andWhere(['user_id' => $params['managerId']])->orderBy(['created_at'=> SORT_DESC]);
-                        }
-                    }
-                }elseif (isset($params['managerId']) && $params['managerId'] == 'null' && isset($params['clientsVal']) && $params['clientsVal'] != 'null'){
-                    if (empty($params['ordersDate'])){
-                        if(isset($params['numberVal']) && $params['numberVal'] != 3) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }elseif (isset($params['numberVal']) && $params['numberVal'] == 3){
-                            $query->where(['or',['status' => '1'],['status' => '2'],['status' => '0']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }
-                    }else{
-                        if(isset($params['numberVal']) && $params['numberVal'] != 3) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }elseif (isset($params['numberVal']) && $params['numberVal'] == 3){
-                            $query->where(['or',['status' => '1'],['status' => '2'],['status' => '0']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }
-                    }
-                }elseif (isset($params['managerId']) && $params['managerId'] != 'null' && isset($params['clientsVal']) && $params['clientsVal'] != 'null'){
-                    if (empty($params['ordersDate'])){
-                        if(isset($params['numberVal']) && $params['numberVal'] != 3) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['user_id' => $params['managerId']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }elseif (isset($params['numberVal']) && $params['numberVal'] == 3){
-                            $query->where(['or',['status' => '1'],['status' => '2'],['status' => '0']])->andWhere(['user_id' => $params['managerId']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }
-                    }else{
-                        if(isset($params['numberVal']) && $params['numberVal'] != 3) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->andWhere(['user_id' => $params['managerId']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }elseif (isset($params['numberVal']) && $params['numberVal'] == 3){
-                            $query->where(['or',['status' => '1'],['status' => '2'],['status' => '0']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->andWhere(['user_id' => $params['managerId']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }
-                    }
-                }
-            }
-        }elseif ($session['role_id'] == 2) {
-            if (empty($params)){
-                $query->where(['or',['status' => '1'],['status' => '2']])->andWhere(['user_id' => $session['user_id']])->orderBy(['created_at'=> SORT_DESC]);
-            }else{
-                if (isset($params['clientsVal']) && $params['clientsVal'] == 'null'){
-                    if (empty($params['ordersDate'])){
-                        if (isset($params['numberVal']) && $params['numberVal'] != 4) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['user_id' => $params['managerId']])->orderBy(['created_at'=> SORT_DESC]);
-                        }elseif (isset($params['numberVal']) && $params['numberVal'] == 4){
-                            $query->where(['or',['status' => '1'],['status' => '2'],['status' => '0']])->andWhere(['user_id' => $params['managerId']])->orderBy(['created_at'=> SORT_DESC]);
-                        }
-                    }else{
-                        if (isset($params['numberVal']) && $params['numberVal'] != 4) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->andWhere(['user_id' => $params['managerId']])->orderBy(['created_at'=> SORT_DESC]);
-                        }elseif (isset($params['numberVal']) && $params['numberVal'] == 4){
-                            $query->where(['or',['status' => '1'],['status' => '2'],['status' => '0']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->andWhere(['user_id' => $params['managerId']])->orderBy(['created_at'=> SORT_DESC]);
-                        }
-                    }
-                }else{
-                    if (empty($params['ordersDate'])){
-                        if (isset($params['numberVal']) && $params['numberVal'] != 4) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['user_id' => $params['managerId']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }elseif (isset($params['numberVal']) && $params['numberVal'] == 4){
-                            $query->where(['or',['status' => '1'],['status' => '2']])->andWhere(['user_id' => $params['managerId']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }
-                    }else{
-                        if (isset($params['numberVal']) && $params['numberVal'] != 4) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->andWhere(['user_id' => $params['managerId']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }elseif (isset($params['numberVal']) && $params['numberVal'] == 4){
-                            $query->where(['or',['status' => '1'],['status' => '2']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->andWhere(['user_id' => $params['managerId']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }
-                    }
-                }
-            }
+//        $product =  $query->select('users.name as user_name,nomenclature.name,SUM(order_items.count) as count, AVG(price_before_discount) as price, orders.orders_date')->leftJoin('order_items','order_items.order_id = orders.id')
+//            ->leftJoin('nomenclature','nomenclature.id = order_items.nom_id_for_name')
+//            ->leftJoin('users','users.id = orders.user_id')
+//            ->groupBy(['order_items.nom_id_for_name', 'orders.user_id'])
+//            ->asArray()
+//            ->all();
+//        var_dump($product);
+//        exit();
+        $is_manager = false;
+        switch ($session['role_id']){
+            case 1:
+                $statuses = [0,1,2];
+                break;
+            case 2:
+                $statuses = [1,2];
+                break;
+            case 3:
+                $statuses = [1,2];
+//                $is_manager = Yii::$
         }
-        elseif ($session['role_id'] == 3){
-            $manager = ManagerDeliverCondition::find()->select('manager_deliver_condition.manager_id,delivers_group.deliver_id')
-                ->leftJoin('delivers_group','delivers_group.manager_deliver_condition_id = manager_deliver_condition.id')
-                ->where(['delivers_group.deliver_id' => $session['user_id']])
-                ->asArray()->one();
-            if (empty($params)){
-                $query->where(['or',['status' => '1'],['status' => '2']])->andWhere(['user_id' => $manager['manager_id']])->orderBy(['created_at'=> SORT_DESC]);
-            }else{
-                if (isset($params['clientsVal']) && $params['clientsVal'] == 'null'){
-                    if (empty($params['ordersDate'])){
-                        if (isset($params['numberVal']) && $params['numberVal'] != 4) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['user_id' => $manager['manager_id']])->orderBy(['created_at'=> SORT_DESC]);
-                        }elseif (isset($params['numberVal']) && $params['numberVal'] == 4){
-                            $query->where(['or',['status' => '1'],['status' => '2']])->andWhere(['user_id' => $manager['manager_id']])->orderBy(['created_at'=> SORT_DESC]);
-                        }
-                    }else{
-                        if (isset($params['numberVal']) && $params['numberVal'] != 4) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->andWhere(['user_id' => $manager['manager_id']])->orderBy(['created_at'=> SORT_DESC]);
-                        }elseif (isset($params['numberVal']) && $params['numberVal'] == 4){
-                            $query->where(['or',['status' => '1'],['status' => '2']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->andWhere(['user_id' => $manager['manager_id']])->orderBy(['created_at'=> SORT_DESC]);
-                        }
-                    }
-                }else{
-                    if (empty($params['ordersDate'])){
-                        if (isset($params['numberVal']) && $params['numberVal'] != 4) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['user_id' => $manager['manager_id']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }elseif (isset($params['numberVal']) && $params['numberVal'] == 4){
-                            $query->where(['or',['status' => '1'],['status' => '2']])->andWhere(['user_id' => $manager['manager_id']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }
-                    }else{
-                        if (isset($params['numberVal']) && $params['numberVal'] != 4) {
-                            $query->andWhere(['status' => $params['numberVal']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->andWhere(['user_id' => $manager['manager_id']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }elseif (isset($params['numberVal']) && $params['numberVal'] == 4){
-                            $query->where(['or',['status' => '1'],['status' => '2']])->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']])->andWhere(['user_id' => $manager['manager_id']])->andWhere(['clients_id' => $params['clientsVal']])->orderBy(['created_at'=> SORT_DESC]);
-                        }
-                    }
-                }
-            }
+        if (isset($params['numberVal']) && !empty($params['numberVal'])) {
+                $query->where(['status' => intval($params['numberVal'])]);
+        }  else {
+                $query->where(['status' => $statuses]);
+        }
+//        if()
+        if (isset($params['managerId']) && $params['managerId'] != 'null') {
+            $query->andWhere(['user_id' => $params['managerId']]);
+        }
+        if (isset($params['clientsVal']) && $params['clientsVal'] != 'null') {
+            $query->andWhere(['clients_id' => $params['clientsVal']]);
+        }
+        if (!empty($params['ordersDate'])) {
+            $query->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']]);
         }
 
         $dataProvider = new ActiveDataProvider([

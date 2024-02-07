@@ -129,6 +129,9 @@ class Users extends ActiveRecord implements IdentityInterface
     public function getRoleName(){
         return $this->hasOne(Roles::className(), ['id'=>'role_id']);
     }
+    public static function Drivers($id){
+        return ManagerDeliverCondition::find()->where(['manager_id'=>$id])->all();
+    }
     public static function checkPremission($premission){
          $session = Yii::$app->session;
          $userPrem = UserPremissions::findOne(['user_id'=>$session->get('user_id'),'premission_id'=>$premission]);

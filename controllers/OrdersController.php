@@ -598,7 +598,6 @@ class OrdersController extends Controller
     }
     public  function actionFilterStatus(){
         if ($_GET){
-            var_dump($_GET);
             $page_value = null;
             if(isset($_GET["page"]))
                 $page_value = intval($_GET["page"]);

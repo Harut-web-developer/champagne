@@ -42,7 +42,7 @@ class ManagerDeliverConditionController extends Controller
     public function actionIndex()
     {
         $searchModel = new ManagerDeliverConditionSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $managers = Users::find()->all();
         $sub_page = [
             ['name' => 'Կարգավիճակ','address' => '/roles'],
             ['name' => 'Օգտատեր','address' => '/users'],
@@ -53,7 +53,7 @@ class ManagerDeliverConditionController extends Controller
         $date_tab = [];
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'managers' => $managers,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
         ]);
