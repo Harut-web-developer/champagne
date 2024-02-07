@@ -3,7 +3,7 @@ function init () {
         var location_value = $('#routeSelect').val();
         var date = $("#myLocalDate").val();
         var manager = $(".mapManagerId").val();
-        // console.log(location_value, date, manager)
+        var araqich = $(".araqichId").val();
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:"/map/location-value",
@@ -13,11 +13,22 @@ function init () {
                 locationvalue: location_value,
                 date:date,
                 manager:manager,
+                araqich:araqich,
                 _csrf:csrfToken,
             },
             success:function(data){
-                // console.log(data)
+                console.log(data)
                 if (data['location'].length != 0) {
+                    // if (data['find_manager'] != null) {
+                    //     var html = '<div class="form-group col-md-4 col-lg-4 col-sm-4 loguser">';
+                    //     html += '<label for="menegerSelect">Ընտրել մենեջերին</label>';
+                    //     html += '<select id="menegerSelect" class="form-select form-control mapManagerId" aria-label="Default select example">';
+                    //     html += '<option value="">Ընտրել մենեջերին</option>';
+                    //
+                    //     html += '</select></div>';
+                    //     $('.mapFilter').append(html);
+                    // }
+
                     $('#map').html('');
                     var geolocation = ymaps.geolocation,
                         myMap = new ymaps.Map('map', {
@@ -30,6 +41,9 @@ function init () {
                         });
                     for (var i = 0; i < data['location'].length; i++) {
                         var arr = [];
+                        if (i == 0){
+                            arr.unshift(data['warehouse']['location']);
+                        }
                         for(var j = 0; j < data['location'][i].length; j++){
                             if(arr.length == 0 && i != 0){
                                 arr.push(data['location'][i-1][19]['location']);

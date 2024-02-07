@@ -3,6 +3,7 @@ namespace app\controllers;
 
 use app\models\Clients;
 use app\models\CoordinatesUser;
+use app\models\DeliversGroup;
 use app\models\Orders;
 use app\models\Route;
 use app\models\Users;
@@ -60,8 +61,21 @@ class MapController extends Controller
 //            $session = Yii::$app->session;
 //            $userId = $session['user_id'];
             $get = $this->request->get();
+//            var_dump($get);
+//            die;
+            $manager_id = 0;
+            $find_manager = null;
             $value = $get['locationvalue'];
-            $manager_id = $get['manager'];
+            if (isset($get['manager'])){
+                $manager_id = $get['manager'];
+            }elseif (isset($get['araqich'])){
+                $araqich_id = $get['araqich'];
+                $find_manager = DeliversGroup::find()
+                    ->select('id')
+                    ->where(['deliver_id' => $araqich_id])
+                    ->asArray()
+                    ->all();
+            }
             $valuedate =$get['date'];
             date_default_timezone_set('UTC');
             $warehouse = Warehouse::find()->select('location')->where(['id' => 1])->asArray()->one();
@@ -77,11 +91,10 @@ class MapController extends Controller
                 ->asArray()
                 ->orderBy('clients.sort_',SORT_DESC)
                 ->all();
-//            var_dump($locations);
             $locations = array_chunk($locations,20);
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-            return ['location' => $locations, 'warehouse' => $warehouse];
+            return ['location' => $locations, 'warehouse' => $warehouse, 'find_manager' => $find_manager];
         }
     }
     public function actionCoordinatesUser()

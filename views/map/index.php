@@ -43,7 +43,7 @@ $session = Yii::$app->session;
                 </select>
             </div>
         <?php } else {?>
-            <input type="hidden" class="mapManagerId" value="<?= $session['user_id'] ?>">
+            <input type="hidden" class="araqichId" value="<?= $session['user_id'] ?>">
         <?php } ?>
     </div>
     <div id="map">
