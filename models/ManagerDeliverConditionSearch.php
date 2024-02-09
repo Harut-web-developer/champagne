@@ -17,7 +17,7 @@ class ManagerDeliverConditionSearch extends ManagerDeliverCondition
     public function rules()
     {
         return [
-            [['id', 'manager_id'], 'integer'],
+            [['id', 'manager_id', 'deliver_id'], 'integer'],
             [['status', 'created_at', 'updated_at'], 'safe'],
         ];
     }
@@ -40,8 +40,7 @@ class ManagerDeliverConditionSearch extends ManagerDeliverCondition
      */
     public function search($params)
     {
-        $query = ManagerDeliverCondition::find();
-
+        $query = ManagerDeliverCondition::find()->groupBy('manager_id');
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -60,6 +59,7 @@ class ManagerDeliverConditionSearch extends ManagerDeliverCondition
         $query->andFilterWhere([
             'id' => $this->id,
             'manager_id' => $this->manager_id,
+            'deliver_id' => $this->deliver_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);

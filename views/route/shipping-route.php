@@ -78,6 +78,9 @@ $this->params['date_tab'] = $date_tab;
                         // arr.unshift(data['warehouse']['location']);
                         for (let i = 0; i < data['location'].length; i++) {
                             var arr = [];
+                            if (i == 0){
+                                arr.unshift(data['warehouse']['location']);
+                            }
                             for(var j = 0; j < data['location'][i].length; j++){
                                 if(arr.length == 0 && i != 0){
                                     arr.push(data['location'][i-1][19]['location']);

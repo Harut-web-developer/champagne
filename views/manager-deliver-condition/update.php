@@ -18,9 +18,12 @@ $this->params['date_tab'] = $date_tab;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'sub_page' => $sub_page,
+        'date_tab' => $date_tab,
         'manager_id' => $manager_id,
         'deliver_id' => $deliver_id,
-        'deliver_groups' => $deliver_groups,
+        'update_value' => $update_value,
+        'route' => $route,
 
     ]) ?>
 

@@ -2,11 +2,11 @@
 
 namespace app\controllers;
 
-use app\models\DeliversGroup;
 use app\models\ManagerDeliverCondition;
 use app\models\ManagerDeliverConditionSearch;
+use app\models\Route;
 use app\models\Users;
-use yii\helpers\ArrayHelper;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -34,6 +34,11 @@ class ManagerDeliverConditionController extends Controller
         );
     }
 
+    public function init()
+    {
+        parent::init();
+        Yii::$app->language = 'hy';
+    }
     /**
      * Lists all ManagerDeliverCondition models.
      *
@@ -42,17 +47,17 @@ class ManagerDeliverConditionController extends Controller
     public function actionIndex()
     {
         $searchModel = new ManagerDeliverConditionSearch();
-        $managers = Users::find()->all();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        $managers = Users::find()->select('*')->where(['and',['status' => '1'],['role_id' => '2']])->all();
         $sub_page = [
             ['name' => 'Կարգավիճակ','address' => '/roles'],
             ['name' => 'Օգտատեր','address' => '/users'],
-
-//            ['name' => 'Թույլտվություն','address' => '/premissions'], petqa pak mna
-
         ];
         $date_tab = [];
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
             'managers' => $managers,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
@@ -83,42 +88,31 @@ class ManagerDeliverConditionController extends Controller
      */
     public function actionCreate()
     {
-        $model = new ManagerDeliverCondition();
         $sub_page = [];
         $date_tab = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-//            echo "<pre>";
-//            var_dump(count($post['deliver_id']));
-//            exit();
-            $model->manager_id = $post['ManagerDeliverCondition']['manager_id'];
-            $model->created_at = date('Y-m-d H:i:s');
-            $model->updated_at = date('Y-m-d H:i:s');
-            $model->save();
-
             for ($i = 0; $i < count($post['deliver_id']); $i++){
-                $deliver_group = new DeliversGroup();
-                $deliver_group->manager_deliver_condition_id = $model->id;
-                $deliver_group->deliver_id = intval($post['deliver_id'][$i]);
-                $deliver_group->created_at = date('Y-m-d H:i:s');
-                $deliver_group->updated_at = date('Y-m-d H:i:s');
-                $deliver_group->save();
+                $model = new ManagerDeliverCondition();
+                $model->manager_id = $post['manager_id'];
+                $model->deliver_id = intval($post['deliver_id'][$i]);
+                $model->route_id = intval($post['route_id']);
+                $model->created_at = date('Y-m-d H:i:s');
+                $model->updated_at = date('Y-m-d H:i:s');
+                $model->save();
             }
             return $this->redirect(['index', 'id' => $model->id]);
         }
-        else {
-            $model->loadDefaultValues();
-        }
+        $route = Route::find()->select('id, route')->asArray()->all();
         $manager_id = Users::find()->select('id,name')->where(['and',['status' => '1'],['role_id' => '2']])->asArray()->all();
-        $manager_id = ArrayHelper::map($manager_id,'id','name');
         $deliver_id = Users::find()->select('id,name')->where(['and',['status' => '1'],['role_id' => '3']])->asArray()->all();
         return $this->render('create', [
-            'model' => $model,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'manager_id' => $manager_id,
             'deliver_id' => $deliver_id,
+            'route' => $route,
         ]);
     }
 
@@ -134,50 +128,55 @@ class ManagerDeliverConditionController extends Controller
         $model = $this->findModel($id);
         $sub_page = [];
         $date_tab = [];
+        $update_manager_id = ManagerDeliverCondition::find()
+            ->select('manager_id,route_id')
+            ->where(['id' => $id])
+            ->andWhere(['status' => '1'])
+            ->asArray()
+            ->one();
+        $update_value = ManagerDeliverCondition::find()
+            ->select('manager_id, deliver_id, route_id')
+            ->where(['manager_id' => $update_manager_id['manager_id']])
+            ->andWhere(['status' => '1'])
+            ->asArray()
+            ->all();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-//            echo "<pre>";
-//            var_dump(count($post['deliver_id']));
-//            exit();
-            $model->manager_id = $post['ManagerDeliverCondition']['manager_id'];
-            $model->updated_at = date('Y-m-d H:i:s');
-            $model->save();
             if(!empty($post['deliver_id'])) {
-                $discount_deliver_check = DeliversGroup::find()->where(['manager_deliver_condition_id' => $id])->exists();
-                if ($discount_deliver_check) {
-                    DeliversGroup::deleteAll(['manager_deliver_condition_id' => $id]);
+                $manager_id_check = ManagerDeliverCondition::find()->where(['manager_id' => intval($update_manager_id['manager_id'])])->exists();
+                if ($manager_id_check) {
+                    ManagerDeliverCondition::deleteAll(['manager_id' => intval($update_manager_id['manager_id'])]);
                 }
                 for ($i = 0; $i < count($post['deliver_id']); $i++){
-                    $deliver_group = new DeliversGroup();
-                    $deliver_group->manager_deliver_condition_id = $id;
-                    $deliver_group->deliver_id = intval($post['deliver_id'][$i]);
-                    $deliver_group->created_at = date('Y-m-d H:i:s');
-                    $deliver_group->updated_at = date('Y-m-d H:i:s');
-                    $deliver_group->save();
-                }
-            }else{
-                $discount_deliver_check = DeliversGroup::find()->where(['manager_deliver_condition_id' => $id])->exists();
-                if ($discount_deliver_check) {
-                    DeliversGroup::deleteAll(['manager_deliver_condition_id' => $id]);
+                    $modal = new ManagerDeliverCondition();
+                    $modal->manager_id = intval($post['manager_id']);
+                    $modal->deliver_id = intval($post['deliver_id'][$i]);
+                    $modal->route_id = intval($post['route_id']);
+                    $modal->created_at = date('Y-m-d H:i:s');
+                    $modal->updated_at = date('Y-m-d H:i:s');
+                    $modal->save();
                 }
             }
-
-
+            else{
+                $manager_id_check = ManagerDeliverCondition::find()->where(['manager_id' => intval($update_manager_id['manager_id'])])->exists();
+                if ($manager_id_check) {
+                    ManagerDeliverCondition::deleteAll(['manager_id' => intval($update_manager_id['manager_id'])]);
+                }
+            }
             return $this->redirect(['index', 'id' => $model->id]);
         }
+        $route = Route::find()->select('id, route')->asArray()->all();
         $manager_id = Users::find()->select('id,name')->where(['and',['status' => '1'],['role_id' => '2']])->asArray()->all();
-        $manager_id = ArrayHelper::map($manager_id,'id','name');
         $deliver_id = Users::find()->select('id,name')->where(['and',['status' => '1'],['role_id' => '3']])->asArray()->all();
-        $deliver_groups = DeliversGroup::find()->select('deliver_id')->where(['=','manager_deliver_condition_id',$id])->asArray()->all();
-        $deliver_groups = array_column($deliver_groups,'deliver_id');
         return $this->render('update', [
             'model' => $model,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'manager_id' => $manager_id,
             'deliver_id' => $deliver_id,
-            'deliver_groups' => $deliver_groups,
+            'update_value' => $update_value,
+            'route' => $route,
         ]);
     }
 
@@ -190,9 +189,25 @@ class ManagerDeliverConditionController extends Controller
      */
     public function actionDelete($id)
     {
-        $manager_deliver = ManagerDeliverCondition::findOne($id);
-        $manager_deliver->status = '0';
-        $manager_deliver->save();
+        $update_manager_id = ManagerDeliverCondition::find()
+            ->select('manager_id')
+            ->where(['id' => $id])
+            ->andWhere(['status' => '1'])
+            ->asArray()
+            ->one();
+        $update_value = ManagerDeliverCondition::find()
+            ->select('manager_id')
+            ->where(['manager_id' => $update_manager_id['manager_id']])
+            ->andWhere(['status' => '1'])
+            ->asArray()
+            ->all();
+        $manager_deliver = ManagerDeliverCondition::find()
+            ->where(['manager_id' => intval($update_value['manager_id'])])
+            ->all();
+        for ($i = 0; $i < count($manager_deliver); $i++){
+            $manager_deliver[$i]->status = '0';
+            $manager_deliver[$i]->save();
+        }
         return $this->redirect(['index']);
     }
 

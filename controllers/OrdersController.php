@@ -7,6 +7,7 @@ use app\models\Discount;
 use app\models\DiscountClients;
 use app\models\DiscountProducts;
 use app\models\Log;
+use app\models\ManagerDeliverCondition;
 use app\models\Nomenclature;
 use app\models\OrderItems;
 use app\models\Orders;
@@ -79,8 +80,21 @@ class OrdersController extends Controller
         }
         $sub_page = [];
         $date_tab = [];
-        $clients = Clients::find()->select('id, name')->where(['=','status',1])->asArray()->all();
-
+        $session = Yii::$app->session;
+        $user_id = $session['user_id'];
+        $manager_route_id = ManagerDeliverCondition::find()
+            ->select('route_id, deliver_id')
+            ->where(['manager_id' => $user_id])
+            ->andWhere(['status' => '1'])
+            ->asArray()
+            ->all();
+        $clients = Clients::find()
+            ->select('id, name')
+            ->where(['=','status',1]);
+            if ($session['role_id'] == 2) {
+                $clients->andWhere(['in', 'route_id', $manager_route_id]);
+            }
+        $clients =  $clients->asArray()->all();
         $searchModel = new OrdersSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -195,9 +209,6 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-//            echo "<pre>";
-//            var_dump($post);
-//            exit();
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
@@ -251,11 +262,23 @@ class OrdersController extends Controller
         } else {
             $model->loadDefaultValues();
         }
+        $session = Yii::$app->session;
         $sub_page = [];
         $date_tab = [];
-
-        $clients = Clients::find()->select('id, name')->where(['=','status',1])->asArray()->all();
-        $session = Yii::$app->session;
+        $user_id = $session['user_id'];
+        $manager_route_id = ManagerDeliverCondition::find()
+            ->select('route_id, deliver_id')
+            ->where(['manager_id' => $user_id])
+            ->andWhere(['status' => '1'])
+            ->asArray()
+            ->all();
+        $clients = Clients::find()
+            ->select('id, name')
+            ->where(['=','status',1]);
+        if ($session['role_id'] == 2) {
+            $clients->andWhere(['in', 'route_id', $manager_route_id]);
+        }
+        $clients =  $clients->asArray()->all();
         if($session['role_id'] == 1){
             $users = Users::find()->select('id, name')->where(['=','role_id',2])->andWhere(['=','status',1])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
@@ -522,8 +545,21 @@ class OrdersController extends Controller
         $numericValuesOnly = array_filter($numericArray, 'is_numeric');
 
         $active_discount = Discount::find()->select('id,name,discount,type')->asArray()->all();
-
-        $clients = Clients::find()->select('id, name')->Where(['=','status',1])->asArray()->all();
+        $session = Yii::$app->session;
+        $user_id = $session['user_id'];
+        $manager_route_id = ManagerDeliverCondition::find()
+            ->select('route_id, deliver_id')
+            ->where(['manager_id' => $user_id])
+            ->andWhere(['status' => '1'])
+            ->asArray()
+            ->all();
+        $clients = Clients::find()
+            ->select('id, name')
+            ->where(['=','status',1]);
+        if ($session['role_id'] == 2) {
+            $clients->andWhere(['in', 'route_id', $manager_route_id]);
+        }
+        $clients =  $clients->asArray()->all();
         $orders_clients = Orders::find()->select('clients_id')->where(['=','id',$id])->asArray()->all();
         $orders_clients = array_column($orders_clients,'clients_id');
         $session = Yii::$app->session;
@@ -622,8 +658,21 @@ class OrdersController extends Controller
             }elseif ($_GET['numberVal'] == 1){
                 $approved = 1;
             }
-            $clients = Clients::find()->select('id, name')->where(['=','status',1])->asArray()->all();
-
+            $session = Yii::$app->session;
+            $user_id = $session['user_id'];
+            $manager_route_id = ManagerDeliverCondition::find()
+                ->select('route_id, deliver_id')
+                ->where(['manager_id' => $user_id])
+                ->andWhere(['status' => '1'])
+                ->asArray()
+                ->all();
+            $clients = Clients::find()
+                ->select('id, name')
+                ->where(['=','status',1]);
+            if ($session['role_id'] == 2) {
+                $clients->andWhere(['in', 'route_id', $manager_route_id]);
+            }
+            $clients =  $clients->asArray()->all();
             $render_array = [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
