@@ -377,7 +377,6 @@ $(document).ready(function() {
         let clientsVal = $('.changeClients').val();
         let type = $(this).val()
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
-        console.log(type)
         $.ajax({
             url:'/orders/filter-status',
             method:'get',
@@ -392,6 +391,7 @@ $(document).ready(function() {
             },
             success:function (data){
                 $('body').find('.card').html(data);
+                clearWidget();
             }
         })
     })
@@ -399,6 +399,7 @@ $(document).ready(function() {
         let ordersDate = $('.ordersDate').val();
         let managerId = $('.changeManager').val();
         let numberVal = $(this).val();
+        let type = $('.byType').val();
         let clientsVal = $('.changeClients').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         // console.log(managerId,numberVal)
@@ -407,6 +408,7 @@ $(document).ready(function() {
             method:'get',
             datatype:'json',
             data:{
+                type:type,
                 ordersDate:ordersDate,
                 numberVal:numberVal,
                 managerId:managerId,
@@ -415,12 +417,14 @@ $(document).ready(function() {
             },
             success:function (data){
                 $('body').find('.card').html(data);
+                clearWidget()
             }
         })
     })
     $('body').on('change', '.changeManager', function () {
         let ordersDate = $('.ordersDate').val();
         let managerId = $(this).val();
+        let type = $('.byType').val();
         let numberVal = $('.orderStatus').val();
         let clientsVal = $('.changeClients').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -430,6 +434,7 @@ $(document).ready(function() {
             method:'get',
             datatype:'json',
             data:{
+                type:type,
                 ordersDate:ordersDate,
                 numberVal:numberVal,
                 managerId:managerId,
@@ -438,6 +443,7 @@ $(document).ready(function() {
             },
             success:function (data){
                 $('body').find('.card').html(data);
+                clearWidget()
             }
         })
     })
@@ -447,12 +453,14 @@ $(document).ready(function() {
         let managerId = $('.changeManager').val();
         let numberVal = $('.orderStatus').val();
         let clientsVal = $(this).val();
+        let type = $('.byType').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:'/orders/filter-status',
             method:'get',
             datatype:'json',
             data:{
+                type:type,
                 ordersDate:ordersDate,
                 numberVal:numberVal,
                 managerId:managerId,
@@ -461,11 +469,13 @@ $(document).ready(function() {
             },
             success:function (data){
                 $('body').find('.card').html(data);
+                clearWidget()
             }
         })
     })
     $('body').on('change', '.ordersDate', function () {
         let ordersDate = $(this).val();
+        let type = $('.byType').val();
         let managerId = $('.changeManager').val();
         let numberVal = $('.orderStatus').val();
         let clientsVal = $('.changeClients').val();
@@ -475,6 +485,7 @@ $(document).ready(function() {
             method:'get',
             datatype:'json',
             data:{
+                type:type,
                 ordersDate:ordersDate,
                 numberVal:numberVal,
                 managerId:managerId,
@@ -483,6 +494,7 @@ $(document).ready(function() {
             },
             success:function (data){
                 $('body').find('.card').html(data);
+                clearWidget()
             }
         })
     })
@@ -754,11 +766,11 @@ $(document).ready(function() {
     }
     $(window).on('load',function (){
         $('.ordersCard').find('tbody tr').each(function () {
-            let status_ = $(this).find('td:nth-child(5)').text();
+            let status_ = $(this).find('td:nth-child(6)').text();
                 if (status_ == 2) {
-                    $(this).find('td:nth-child(9) a:not(.reportsOrders)').remove();
+                    $(this).find('td:nth-child(2) a:not(.reportsOrders)').remove();
                 } else if (status_ == 0) {
-                    $(this).find('td:nth-child(9) a[title="Ջնջել"]').remove();
+                    $(this).find('td:nth-child(2) a[title="Ջնջել"]').remove();
                 }
         })
     })
@@ -766,6 +778,16 @@ $(document).ready(function() {
         if ($(this).has('a')){
             $(this).html( $(this).find('a').html())
         }
+    })
+    $(window).on('load',function (){
+        $('.documentsCard').find('tbody tr').each(function () {
+            let document_type = $(this).find('td:nth-child(3)').text();
+            if (document_type == 6) {
+                $(this).find('td:nth-child(2) a:not([title="Հաստատել"])').remove();
+            }else {
+                $(this).find('td:nth-child(2) a[title="Հաստատել"]').remove();
+            }
+        })
     })
     // var csrfToken = $('meta[name="csrf-token"]').attr("content");
     // $.ajax({
@@ -780,6 +802,22 @@ $(document).ready(function() {
     //     }
     // })
 
+    function clearWidget(){
+        $('body').find('#w0 table tbody tr').each(function(){
+            let status_ = $(this).find('td:nth-child(6)').text();
+            // console.log(status_)
+            if (status_ == 2) {
+                $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
+            } else if (status_ == 0) {
+                $(this).find('td:nth-child(2) a[title="Ջնջել"]').remove();
+            }
+        });
+        $('body').find('#w0 table thead th').each(function () {
+            if ($(this).has('a')){
+                $(this).html( $(this).find('a').html())
+            }
+        })
+    }
 
 });
 

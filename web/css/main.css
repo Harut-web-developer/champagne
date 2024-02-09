@@ -653,3 +653,6 @@
 .activeForInput{
     display:block;
 }
+.table > tbody > tr > td > a{
+    padding: 0px 5px !important;
+}

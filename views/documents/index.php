@@ -25,34 +25,28 @@ $have_access_update = Users::checkPremission(38);
 $have_access_delete = Users::checkPremission(39);
 $have_access_custom_field = Users::checkPremission(71);
 $action_column = [];
-if ($have_access_update && $have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{update} {delete}',
-        'urlCreator' => function ($action, Documents $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-} else if($have_access_update){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{update}',
-        'urlCreator' => function ($action, Documents $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{delete}',
-        'urlCreator' => function ($action, Documents $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
+$access_buttons = '';
+if($have_access_delete){
+    $access_buttons .='{delete}';
 }
+if($have_access_update){
+    $access_buttons .='{delivered}{update}';
+}
+
+    $action_column[] = [
+        'header' => 'Գործողություն',
+        'class' => ActionColumn::className(),
+        'template' => $access_buttons,
+        'buttons' =>[
+            'delivered'=>function ($url, $model, $key) {
+                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132; padding:0px 2px" ></i>', $url, [
+                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
+                ]);
+            }],
+        'urlCreator' => function ($action, Documents $model, $key, $index, $column) {
+            return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
 ?>
 <div class="documents-index">
     <div class="titleAndPrev">
@@ -80,26 +74,22 @@ if ($have_access_update && $have_access_delete){
                     <option value="2">Ելք</option>
                     <option value="3">Տեղափոխություն</option>
                     <option value="4">Խոտան</option>
+                    <option value="6">Վերադարձ</option>
                 <?php }?>
             </select>
         </div>
     </div>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-    <div class="card">
+    <div class="card pageStyle documentsCard">
     <?= CustomGridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],
         'dataProvider' => new ActiveDataProvider([
-
-
             'query' => $dataProvider->query->andWhere(['status' => '1']),
-//                'pagination' => [
-//                    'pageSize' => 20,
-//                ],
         ]),
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+            ...$action_column,
+            'document_type',
             [
                 'attribute' => 'Օգտատեր',
                 'value' => function ($model) {
@@ -140,8 +130,16 @@ if ($have_access_update && $have_access_delete){
                     }
                 }
             ],
-            'date',
-            ...$action_column,
+            [
+                'attribute' => 'Ստեցծման ժամանակ',
+                'value' => function ($model) {
+                    if ($model->date) {
+                        return $model->date;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
         ],
     ]); ?>
     </div>

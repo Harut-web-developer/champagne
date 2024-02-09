@@ -100,7 +100,7 @@ $session = Yii::$app->session;
                                         </td>
                                         <td class="name"><?=$item['name']?></td>
                                         <td class="count">
-                                            <input type="number" name="count_[]" value="<?=$item['count']?>" class="form-control countProductForUpdate">
+                                            <input type="number" name="count_[]" value="<?=$item['count_by']?>" class="form-control countProductForUpdate">
                                         </td>
                                         <td class="discount">
                                             <?php
@@ -111,8 +111,8 @@ $session = Yii::$app->session;
                                             <?php
                                             }else{
                                             ?>
-                                                <span><?= number_format($item['discount'] / $item['count'],2,'.','')?></span>
-                                                <input type="hidden" name="discount[]" value="<?=number_format($item['discount'] / $item['count'],2,'.','')?>">
+                                                <span><?= number_format($item['discount'],2,'.','')?></span>
+                                                <input type="hidden" name="discount[]" value="<?=number_format($item['discount'],2,'.','')?>">
                                             <?php
                                             }
                                             ?>

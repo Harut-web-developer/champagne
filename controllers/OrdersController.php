@@ -6,6 +6,8 @@ use app\models\Clients;
 use app\models\Discount;
 use app\models\DiscountClients;
 use app\models\DiscountProducts;
+use app\models\DocumentItems;
+use app\models\Documents;
 use app\models\Log;
 use app\models\Nomenclature;
 use app\models\OrderItems;
@@ -215,11 +217,12 @@ class OrdersController extends Controller
                 $order_items_create->warehouse_id = $post['warehouse'];
                 $order_items_create->product_id = intval($post['order_items'][$i]);
                 $order_items_create->nom_id_for_name = intval($post['nom_id'][$i]);
-                $order_items_create->price = floatval($post['price'][$i]) * intval($post['count_'][$i]);
+                $order_items_create->price = floatval($post['price'][$i]);
                 $order_items_create->count = $post['count_'][$i];
+                $order_items_create->count_by = $post['count_'][$i];
                 $order_items_create->cost = floatval($post['cost'][$i]) * intval($post['count_'][$i]);
-                $order_items_create->discount = floatval($post['discount'][$i]) * intval($post['count_'][$i]);
-                $order_items_create->price_before_discount = floatval($post['beforePrice'][$i]) * intval($post['count_'][$i]);
+                $order_items_create->discount = floatval($post['discount'][$i]);
+                $order_items_create->price_before_discount = floatval($post['beforePrice'][$i]);
                 $order_items_create->count_discount_id = $post['count_discount_id'][$i];
                 $order_items_create->created_at = date('Y-m-d H:i:s');
                 $order_items_create->updated_at = date('Y-m-d H:i:s');
@@ -399,6 +402,9 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+//            echo "<pre>";
+//            var_dump($post);
+//            exit;
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price_before_discount = $post['Orders']['total_price_before_discount'];
@@ -421,11 +427,11 @@ class OrdersController extends Controller
                     $order_item->warehouse_id = intval($post['warehouse']);
                     $order_item->product_id = $post['product_id'][$k];
                     $order_item->nom_id_for_name = intval($post['nom_id'][$k]);
-                    $order_item->price = floatval($post['price'][$k]) * intval($post['count_'][$k]);
+                    $order_item->price = floatval($post['price'][$k]);
                     $order_item->cost = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
-                    $order_item->discount = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
-                    $order_item->price_before_discount = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
-                    $order_item->count = intval($post['count_'][$k]);
+                    $order_item->discount = floatval($post['discount'][$k]);
+                    $order_item->price_before_discount = floatval($post['beforePrice'][$k]);
+                    $order_item->count_by = intval($post['count_'][$k]);
                     $order_item->updated_at = date('Y-m-d H:i:s');
                     $order_item->save(false);
 
@@ -449,11 +455,12 @@ class OrdersController extends Controller
                     $order_items_create->warehouse_id = intval($post['warehouse']);
                     $order_items_create->product_id = intval($post['product_id'][$k]);
                     $order_items_create->nom_id_for_name = intval($post['nom_id'][$k]);
-                    $order_items_create->price = floatval($post['price'][$k]) * intval($post['count_'][$k]);
+                    $order_items_create->price = floatval($post['price'][$k]);
                     $order_items_create->count = intval($post['count_'][$k]);
+                    $order_items_create->count_by = intval($post['count_'][$k]);
                     $order_items_create->cost = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
-                    $order_items_create->discount = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
-                    $order_items_create->price_before_discount = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
+                    $order_items_create->discount = floatval($post['discount'][$k]);
+                    $order_items_create->price_before_discount = floatval($post['beforePrice'][$k]);
                     $order_items_create->count_discount_id = $post['count_discount_id'][$k];
                     $order_items_create->created_at = date('Y-m-d H:i:s');
                     $order_items_create->updated_at = date('Y-m-d H:i:s');
@@ -498,9 +505,9 @@ class OrdersController extends Controller
         $sub_page = [];
         $date_tab = [];
 
-        $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
-        order_items.price_before_discount as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
-        order_items.price as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
+        $order_items = OrderItems::find()->select('count_by,order_items.id,order_items.product_id,order_items.count,order_items.price_before_discount as beforePrice,
+        (order_items.price_before_discount * order_items.count_by) as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
+        (order_items.price * order_items.count_by)  as total_price,order_items.price as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
             ->leftJoin('products','products.id = order_items.product_id')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['order_id' => $id])
@@ -587,10 +594,48 @@ class OrdersController extends Controller
     }
     public function actionDelivered($id)
     {
+        date_default_timezone_set('Asia/Yerevan');
 //        $have_access = Users::checkPremission(55);
 //        if(!$have_access){
 //            $this->redirect('/site/403');
 //        }
+//        echo "<pre>";
+        $changed_items = [];
+        $order_items = OrderItems::find()->where(['order_id' => $id])->asArray()->all();
+        for ($i = 0; $i < count($order_items); $i++){
+            if ($order_items[$i]['count'] - $order_items[$i]['count_by'] != 0){
+                $changed_items[$i] = [
+                    $order_items[$i]['order_id'],
+                    $order_items[$i]['warehouse_id'],
+                    $order_items[$i]['product_id'],
+                    $order_items[$i]['nom_id_for_name'],
+                    $order_items[$i]['price_before_discount'],
+                    $order_items[$i]['count']-$order_items[$i]['count_by'],
+                    ];
+            }
+        }
+
+        if(!empty($changed_items)){
+            $document = new Documents();
+            $document->orders_id = $changed_items[0][0];
+            $document->warehouse_id = $changed_items[0][1];
+            $document->document_type = 6;
+            $document->status = '1';
+            $document->created_at = date('Y-m-d H:i:s');
+            $document->updated_at = date('Y-m-d H:i:s');
+            var_dump($document->save(false));
+            for ($k = 0; $k < count($changed_items); $k++){
+                    $new_document_items = new DocumentItems();
+                    $new_document_items->document_id = $document->id;
+                    $new_document_items->nomenclature_id = $changed_items[$k][3];
+                    $new_document_items->count = $changed_items[$k][5];
+                    $new_document_items->price = $changed_items[$k][4];
+                    $new_document_items->status = '1';
+                    $new_document_items->created_at = date('Y-m-d H:i:s');
+                    $new_document_items->updated_at = date('Y-m-d H:i:s');
+                    var_dump($new_document_items->save(false));
+            }
+        }
         $orders = Orders::findOne($id);
         $orders->status = '2';
         $orders->save();
@@ -607,10 +652,10 @@ class OrdersController extends Controller
             $sub_page = [];
             $date_tab = [];
 
-            $is_filter = false;
-            if ($_GET['numberVal'] || $_GET['managerId'] || $_GET['clientsVal'] || $_GET['ordersDate']){
-                $is_filter = true;
-            }
+//            $is_filter = false;
+//            if ($_GET['numberVal'] || $_GET['managerId'] || $_GET['clientsVal'] || $_GET['ordersDate'] || $_GET['type']){
+//                $is_filter = true;
+//            }
 
             $approved = null;
             if ($_GET['numberVal'] == 2){
@@ -632,35 +677,24 @@ class OrdersController extends Controller
                 'approved' => $approved,
                 'clients' => $clients,
                 'page_value' => $page_value,
-                'is_filter' => $is_filter,
+//                'is_filter' => $is_filter,
             ];
 
             if(Yii::$app->request->isAjax){
-                if (isset($_GET['type'])){
-                    if ($_GET['type'] == 'order'){
-                        if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
-//                    $this->layout = 'index.php';
-                            $render_array['data_size'] = 'max';
-                            return $this->renderAjax('widget', $render_array);
-                        } else {
-                            return $this->renderAjax('widget', $render_array);
-                        }
-                    }else{
-                        return $this->renderAjax('products', $render_array);
-                    }
-                }else{
+                if (isset($_GET['type']) && $_GET['type'] == 'order'){
                     if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
-//                    $this->layout = 'index.php';
+                        $this->layout = 'index.php';
                         $render_array['data_size'] = 'max';
                         return $this->renderAjax('widget', $render_array);
                     } else {
                         return $this->renderAjax('widget', $render_array);
                     }
+                }elseif (isset($_GET['type']) && $_GET['type'] == 'product'){
+                    return $this->renderAjax('products', $render_array);
                 }
-
             }else{
                 if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
-//                    $this->layout = 'index.php';
+                    $this->layout = 'index.php';
                     $render_array['data_size'] = 'max';
                     return $this->render('widget', $render_array);
                 } else {
