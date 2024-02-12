@@ -7,6 +7,7 @@ use app\models\Documents;
 use app\models\DocumentsSearch;
 use app\models\Nomenclature;
 use app\models\Log;
+use app\models\Notifications;
 use app\models\Premissions;
 use yii\helpers\Url;
 use app\models\Products;
@@ -266,6 +267,7 @@ class DocumentsController extends Controller
                 foreach ($model as $name => $value) {
                     $model_new[$name] = $value;
                 }
+                Notifications::createNotifications($premission['name'], 'documentscreate');
                 Log::afterSaves('Create', $model_new, '', $url.'?'.'id'.'='.$model->id, $premission);
                 return $this->redirect(['index', 'id' => $model->id]);
 

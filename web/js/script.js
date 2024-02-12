@@ -172,41 +172,50 @@ $(document).ready(function() {
             dataType: "json",
             data: { _csrf: csrfToken },
             success: function (data) {
-                displayNotifications(data['notifications_today']);
-                $('body').on('click','#viweall',function () {
-                    // displayNotifications(data['notifications_all']);
-                    var notifications = data['notifications_all'];
-                    var notificationsDropdown = $("#notifications-dropdown");
-                    notificationsDropdown.empty();
-                    notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
-                        '<h3 class="text-center">Ծանուցումներ</h3>\n' +
-                        '</div>' +
-                        '<hr>'
-                    );
-                    notifications.forEach(function (notification) {
-                        notificationsDropdown.append('<div class="notification-item">' +
-                            '<p class="notification-title">' +
-                            '<span class="title-text">' + notification.title + '</span>' +
-                            '</br>' +
-                            notification.message +
-                            '<br>' +
-                            '<small style="font-size: 60%">' +
-                            notification.datetime +
-                            '</small>' +
-                            '</p>' +
-                            '</div>');
-                    });
-                })
+                if (data['notifications_today'] !== 0) {
+                    displayNotifications(data['notifications_today']);
+                    $('body').on('click','#viweall',function () {
+                        // displayNotifications(data['notifications_all']);
+                        var notifications = data['notifications_all'];
+                        var notificationsDropdown = $("#notifications-dropdown");
+                        notificationsDropdown.empty();
+                        notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
+                            '<h3 class="text-center">Ծանուցումներ</h3>\n' +
+                            '</div>' +
+                            '<hr>'
+                        );
+                        notifications.forEach(function (notification) {
+                            notificationsDropdown.append('<div class="notification-item">' +
+                                '<p class="notification-title">' +
+                                '<span class="title-text">' + notification.title + '</span>' +
+                                '</br>' +
+                                notification.message +
+                                '<br>' +
+                                '<small style="font-size: 60%">' +
+                                notification.datetime +
+                                '</small>' +
+                                '</p>' +
+                                '</div>');
+                        });
+                    })
+                }
             }
         });
     }
     function fetchNotificationstoast() {
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        let url_id = window.location.href;
+        let url = new URL(url_id);
+        let urlId = url.searchParams.get("id");
         $.ajax({
             url: '/site/check-notifications',
             type: 'GET',
             dataType: 'json',
+            data:{
+
+            },
             success: function (data) {
-                if (data.success) {
+                if (data.success !== undefined) {
                     displayNotificationtoast(data.notifications);
                 }
             },
@@ -254,7 +263,7 @@ $(document).ready(function() {
     });
     fetchNotifications();
     fetchNotificationstoast();
-    setInterval(fetchNotificationstoast, 100000);
+    setInterval(fetchNotificationstoast, 10000);
 
     $(document).mouseup(function(e)
     {

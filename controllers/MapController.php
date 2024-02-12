@@ -10,6 +10,7 @@ use app\models\Route;
 use app\models\Users;
 use app\models\Warehouse;
 use Yii;
+use yii\db\Expression;
 use yii\web\Controller;
 use yii\web\Session;
 use function React\Promise\all;
@@ -51,9 +52,19 @@ class MapController extends Controller
         $all_manager_ids = array_map(function ($all_managers) {
             return $all_managers['id'];
         }, $all_managers);
-        $route = Route::find()->select('id, route')->asArray()->all();
         $session = Yii::$app->session;
         $userId = $session['user_id'];
+
+        $route_manager = Route::find()
+            ->select('route.*');
+            if ($session['role_id'] == 2 || $session['role_id'] == 3) {
+            $route_manager->leftJoin('manager_deliver_condition', ['manager_deliver_condition.route_id' => new Expression('route.id')])
+                ->andWhere(['manager_deliver_condition.manager_id' => $userId])
+                ->andWhere(['manager_deliver_condition.status' => '1']);
+            }
+        $route = $route_manager->andWhere(['route.status' => '1'])
+            ->asArray()
+            ->all();
         $route_deliver = ManagerDeliverCondition::find()
             ->select('manager_deliver_condition.id, manager_deliver_condition.route_id, route.route')
             ->leftJoin('route','route.id = manager_deliver_condition.route_id')
@@ -66,6 +77,7 @@ class MapController extends Controller
 //        }, $route_deliver);
 //        echo "<pre>";
 //        var_dump($route_deliver);
+//        var_dump($route);
 //        var_dump($userId);
 //        die;
         return $this->render('index', [
@@ -124,8 +136,14 @@ class MapController extends Controller
                 ->andWhere(['and',['>=','orders.orders_date', $formattedSelectedDate.' 00:00:00'],
                     ['<','orders.orders_date', $formattedSelectedDate.' 23:59:59']])
                 ->andWhere(['orders.status' => '1']);
+//            echo "<pre>";
+//            var_dump($find_manager);
+//            var_dump($today_manager);
+//            var_dump($countToday_manager);
+//            die;
             if (!is_null($countToday_manager) && count($countToday_manager) == 1) {
-                $manager_id = $countToday_manager[0];
+                foreach ($countToday_manager as $key => $value)
+                $manager_id = $value;
                 $locationsQuery->andWhere(['=', 'orders.user_id', $manager_id]);
             }elseif(!is_null($countToday_manager) && count($countToday_manager) > 1) {
                 $manager_id = $countToday_manager[0];

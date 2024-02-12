@@ -21,6 +21,7 @@ $this->params['date_tab'] = $date_tab;
 $have_access_create = Users::checkPremission(62);
 $have_access_update = Users::checkPremission(63);
 $have_access_delete = Users::checkPremission(64);
+$action_column = [];
 if ($have_access_update && $have_access_delete){
     $action_column[] = [
         'header' => 'Գործողություն',

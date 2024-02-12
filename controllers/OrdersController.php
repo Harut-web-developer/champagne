@@ -11,6 +11,7 @@ use app\models\Documents;
 use app\models\Log;
 use app\models\ManagerDeliverCondition;
 use app\models\Nomenclature;
+use app\models\Notifications;
 use app\models\OrderItems;
 use app\models\Orders;
 use app\models\OrdersSearch;
@@ -27,6 +28,7 @@ use yii\filters\VerbFilter;
 use yii\data\Pagination;
 use yii\web\View;
 use function React\Promise\all;
+
 
 /**
  * OrdersController implements the CRUD actions for Orders model.
@@ -208,6 +210,7 @@ class OrdersController extends Controller
             ->where(['id' => 21])
             ->asArray()
             ->one();
+        $session = Yii::$app->session;
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -260,12 +263,12 @@ class OrdersController extends Controller
                 }
             }
             $model = Orders::getDefVals($model);
+            Notifications::createNotifications($premission['name'],'orderscreate');
             Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
-                return $this->redirect(['index', 'id' => $model->id]);
+            return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
-        $session = Yii::$app->session;
         $sub_page = [];
         $date_tab = [];
         $user_id = $session['user_id'];
@@ -521,7 +524,7 @@ class OrdersController extends Controller
                     }
                 }
             }
-
+            Notifications::createNotifications($premission['name'], 'ordersupdate');
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
@@ -631,11 +634,6 @@ class OrdersController extends Controller
     public function actionDelivered($id)
     {
         date_default_timezone_set('Asia/Yerevan');
-//        $have_access = Users::checkPremission(55);
-//        if(!$have_access){
-//            $this->redirect('/site/403');
-//        }
-//        echo "<pre>";
         $changed_items = [];
         $order_items = OrderItems::find()->where(['order_id' => $id])->asArray()->all();
         for ($i = 0; $i < count($order_items); $i++){
@@ -675,6 +673,7 @@ class OrdersController extends Controller
         $orders = Orders::findOne($id);
         $orders->status = '2';
         $orders->save();
+        Notifications::createNotifications("Հաստատել պատվեր", 'ordersdelivered');
         return $this->redirect(['index']);
     }
     public  function actionFilterStatus(){
