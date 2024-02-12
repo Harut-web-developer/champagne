@@ -45,7 +45,7 @@ if($have_access_available){
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
-        'template' => $access_buttons,
+        'template' => $access_buttons . '{exit}',
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
@@ -57,6 +57,11 @@ if($have_access_available){
                     'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'class' => 'reportsOrders',
                     'target' => '_blank',
+                ]);
+            },
+            'exit'=>function ($url, $model, $key) {
+                return Html::a('<i class="bx bx-receipt" style="color:#FF0000"></i>', $url, [
+                    'title' => Yii::t('yii', 'Ելքագրել'), // Add a title if needed
                 ]);
             },
         ],
@@ -106,7 +111,18 @@ if($have_access_available){
                             }
                         }
                     ],
-                    'status',
+                    [
+                        'attribute' => 'Կարգավիճակ',
+                        'value' => function ($model) {
+                            if ($model->status == 1) {
+                                return 'Ընթացքի մեջ';
+                            } elseif($model->status == 2){
+                                return 'Հաստատված';
+                            } elseif($model->status == 0){
+                                return 'Մերժված';
+                            }
+                        }
+                    ],
                     'total_price',
                     'total_count',
                     'orders_date',
@@ -268,7 +284,18 @@ else { ?>
                             }
                         }
                     ],
-                    'status',
+                    [
+                        'attribute' => 'Կարգավիճակ',
+                        'value' => function ($model) {
+                            if ($model->status == 1) {
+                                return 'Ընթացքի մեջ';
+                            } elseif($model->status == 2){
+                                return 'Հաստատված';
+                            } elseif($model->status == 0){
+                                return 'Մերժված';
+                            }
+                        }
+                    ],
                     'total_price',
                     'total_count',
                     'orders_date',

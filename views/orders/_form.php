@@ -111,8 +111,8 @@ $session = Yii::$app->session;
                                             <?php
                                             }else{
                                             ?>
-                                                <span><?= number_format($item['discount'],2,'.','')?></span>
-                                                <input type="hidden" name="discount[]" value="<?=number_format($item['discount'],2,'.','')?>">
+                                                <span><?= number_format($item['discount'] / $item['count'],2,'.','')?></span>
+                                                <input type="hidden" name="discount[]" value="<?=number_format($item['discount'] / $item['count'],2,'.','')?>">
                                             <?php
                                             }
                                             ?>

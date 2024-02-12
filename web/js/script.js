@@ -767,12 +767,15 @@ $(document).ready(function() {
     $(window).on('load',function (){
         $('.ordersCard').find('tbody tr').each(function () {
             let status_ = $(this).find('td:nth-child(6)').text();
-                if (status_ == 2) {
+                if (status_ == 'Հաստատված') {
                     $(this).find('td:nth-child(2) a:not(.reportsOrders)').remove();
-                } else if (status_ == 0) {
+                } else if (status_ == 'Մերժված') {
                     $(this).find('td:nth-child(2) a[title="Ջնջել"]').remove();
                 }
-        })
+                if (status_ != 'Ընթացքի մեջ'){
+                    $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
+                }
+        });
     })
     $('body').find('.card thead th').each(function () {
         if ($(this).has('a')){
@@ -805,11 +808,13 @@ $(document).ready(function() {
     function clearWidget(){
         $('body').find('#w0 table tbody tr').each(function(){
             let status_ = $(this).find('td:nth-child(6)').text();
-            // console.log(status_)
-            if (status_ == 2) {
+            if (status_ == 'Հաստատված') {
                 $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
-            } else if (status_ == 0) {
+            } else if (status_ == 'Մերժված') {
                 $(this).find('td:nth-child(2) a[title="Ջնջել"]').remove();
+            }
+            if (status_ != 'Ընթացքի մեջ'){
+                $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
             }
         });
         $('body').find('#w0 table thead th').each(function () {

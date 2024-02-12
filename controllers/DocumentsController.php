@@ -674,29 +674,41 @@ class DocumentsController extends Controller
         $new_document = new Documents();
         $new_document->user_id = $session['user_id'];
         $new_document->warehouse_id = $document->warehouse_id;
+        $new_document->rate_id = 1;
+        $new_document->rate_value = 1;
         $new_document->document_type = 1;
-        $new_document->comment = 'Վերադարձրած ապրանքներ';
+        $new_document->comment = 'Վերադարձի փաստաթուղթ';
         $new_document->status = '1';
         $new_document->date = date('Y-m-d H:i:s');;
         $new_document->created_at = date('Y-m-d H:i:s');
         $new_document->updated_at = date('Y-m-d H:i:s');
         $new_document->save(false);
         $document_items = DocumentItems::find()->where(['document_id' => $id])->asArray()->all();
-        for ($k = 0;$k < count(!empty($document_items)); $k++){
-            $new_document_items = new DocumentItems();
-            $new_document_items->document_id = $new_document->id;
-            $new_document_items->nomenclature_id = $document_items[$k]['nomenclature_id'];
-            $new_document_items->count = $document_items[$k]['count'];
-            $new_document_items->price = $document_items[$k]['price'];
-            $new_document_items->status = '1';
-            $new_document_items->created_at = date('Y-m-d H:i:s');
-            $new_document_items->updated_at = date('Y-m-d H:i:s');
-            $new_document_items->save(false);
-            $new_product = new Products();
-            $new_product->warehouse_id = $document->warehouse_id;
-            $new_product->nomenclature_id = $document_items[$k]['nomenclature_id'];
-            $new_product->document_id = $new_document->id;
+        if (!empty($document_items)){
+            for ($k = 0;$k < count($document_items); $k++){
+                $new_document_items = new DocumentItems();
+                $new_document_items->document_id = $new_document->id;
+                $new_document_items->nomenclature_id = $document_items[$k]['nomenclature_id'];
+                $new_document_items->count = $document_items[$k]['count'];
+                $new_document_items->price = $document_items[$k]['price'];
+                $new_document_items->status = '1';
+                $new_document_items->created_at = date('Y-m-d H:i:s');
+                $new_document_items->updated_at = date('Y-m-d H:i:s');
+                $new_document_items->save(false);
+                $new_product = new Products();
+                $new_product->warehouse_id = $document->warehouse_id;
+                $new_product->nomenclature_id = $document_items[$k]['nomenclature_id'];
+                $new_product->document_id = $new_document->id;
+                $new_product->type = 1;
+                $new_product->count = $document_items[$k]['count'];
+                $new_product->price = $document_items[$k]['price'];
+                $new_product->status = '1';
+                $new_product->created_at = date('Y-m-d H:i:s');
+                $new_product->updated_at = date('Y-m-d H:i:s');
+                $new_product->save(false);
+            }
         }
+
         $document_status = Documents::findOne($id);
         $document_status->status = '0';
         $document_status->save(false);
@@ -707,7 +719,7 @@ class DocumentsController extends Controller
                 $value->save(false);
             }
         }
-
+        return $this->redirect(['index']);
     }
     /**
      * Deletes an existing Documents model.

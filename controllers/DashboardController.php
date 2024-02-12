@@ -190,7 +190,7 @@ class DashboardController extends Controller
                     $deal = $orders_deal[0]['deal'];
                 }
                 $orders_cost = OrderItems::find()
-                    ->select('(SUM(order_items.price) - SUM(order_items.cost)) as profit')
+                    ->select('(SUM(order_items.price_by) - SUM(order_items.cost_by)) as profit')
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->where(['orders.status' => '3'])
                     ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
@@ -207,7 +207,7 @@ class DashboardController extends Controller
                 if ($total_order[0]['total'] != null){
                     $chart_round_total = $total_order[0]['total'];
                 }
-                $chart_round_products = OrderItems::find()->select('SUM(order_items.price) as price,nomenclature.name')
+                $chart_round_products = OrderItems::find()->select('SUM(order_items.price_by) as price,nomenclature.name')
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
                     ->where(['or',['orders.status' => '2'],['orders.status' => '3']])
@@ -311,7 +311,7 @@ class DashboardController extends Controller
                     $deal = $orders_deal[0]['deal'];
                 }
                 $orders_cost = OrderItems::find()
-                    ->select('(SUM(order_items.price) - SUM(order_items.cost)) as profit')
+                    ->select('(SUM(order_items.price_by) - SUM(order_items.cost_by)) as profit')
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->where(['orders.status' => '3'])
                     ->andWhere(['=', 'MONTH(orders_date)', date('m')])
@@ -330,7 +330,7 @@ class DashboardController extends Controller
                 if ($total_order[0]['total'] != null){
                     $chart_round_total = $total_order[0]['total'];
                 }
-                $chart_round_products = OrderItems::find()->select('SUM(order_items.price) as price,nomenclature.name')
+                $chart_round_products = OrderItems::find()->select('SUM(order_items.price_by) as price,nomenclature.name')
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
                     ->where(['or',['orders.status' => '2'],['orders.status' => '3']])
@@ -491,7 +491,7 @@ class DashboardController extends Controller
                     $deal = floor($orders_deal[0]['deal']);
                 }
                 $orders_cost = OrderItems::find()
-                    ->select('(SUM(order_items.price) - SUM(order_items.cost)) as profit')
+                    ->select('(SUM(order_items.price_by) - SUM(order_items.cost_by)) as profit')
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->where(['orders.status' => '3'])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y-m-d')])
@@ -508,7 +508,7 @@ class DashboardController extends Controller
                 if ($total_order[0]['total'] != null){
                     $chart_round_total = $total_order[0]['total'];
                 }
-                $chart_round_products = OrderItems::find()->select('SUM(order_items.price) as price,nomenclature.name')
+                $chart_round_products = OrderItems::find()->select('SUM(order_items.price_by) as price,nomenclature.name')
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
                     ->where(['or',['orders.status' => '2'],['orders.status' => '3']])
@@ -667,7 +667,7 @@ class DashboardController extends Controller
                 $deal = $orders_deal[0]['deal'];
             }
             $orders_cost = OrderItems::find()
-                ->select('(SUM(order_items.price) - SUM(order_items.cost)) as profit')
+                ->select('(SUM(order_items.price_by) - SUM(order_items.cost_by)) as profit')
                 ->leftJoin('orders','orders.id = order_items.order_id')
                 ->where(['orders.status' => '3'])
                 ->andWhere(['>=', 'DATE(orders_date)', $start])
@@ -687,7 +687,7 @@ class DashboardController extends Controller
                 $chart_round_total = $total_order[0]['total'];
             }
 //            echo "<pre>";
-            $chart_round_products = OrderItems::find()->select('SUM(order_items.price) as price,nomenclature.name')
+            $chart_round_products = OrderItems::find()->select('SUM(order_items.price_by) as price,nomenclature.name')
                 ->leftJoin('orders','orders.id = order_items.order_id')
                 ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
                 ->where(['or',['orders.status' => '2'],['orders.status' => '3']])

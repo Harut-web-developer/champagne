@@ -44,7 +44,7 @@ if($have_access_available){
 $action_column[] = [
     'header' => 'Գործողություն',
     'class' => ActionColumn::className(),
-    'template' => $access_buttons,
+    'template' => $access_buttons .'{exit}',
     'buttons' =>[
             'reports'=>function ($url, $model, $key) {
         return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
@@ -57,7 +57,13 @@ $action_column[] = [
         return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
             'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
         ]);
-    }],
+    },
+        'exit'=>function ($url, $model, $key) {
+            return Html::a('<i class="bx bx-receipt" style="color:#FF0000"></i>', $url, [
+                'title' => Yii::t('yii', 'Ելքագրել'), // Add a title if needed
+            ]);
+        },
+],
     'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
         return Url::toRoute([$action, 'id' => $model->id]);
     }
@@ -171,7 +177,18 @@ $action_column[] = [
                             }
                         }
                     ],
-                        'status',
+                    [
+                        'attribute' => 'Կարգավիճակ',
+                        'value' => function ($model) {
+                            if ($model->status == 1) {
+                                return 'Ընթացքի մեջ';
+                            } elseif($model->status == 2){
+                                return 'Հաստատված';
+                            } elseif($model->status == 0){
+                                return 'Մերժված';
+                            }
+                        }
+                    ],
                     'total_price',
                     'total_count',
                     'orders_date',
