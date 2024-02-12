@@ -59,8 +59,8 @@ if(isset($action__)){
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <label for="aah">ԱԱՀ</label>
                     <select class="form-control" name="aah" id="aah">
-                        <option value="true" <?php echo ($aah['AAH'] === 'true') ? 'selected' : ''; ?>>20%</option>
-                        <option value="false" <?php echo ($aah['AAH'] === 'false') ? 'selected' : ''; ?>>0%</option>
+                        <option value="true" <?php if(isset($aah['AAH']) && $aah['AAH'] === 'true'){ echo  'selected';} ?>>20%</option>
+                        <option value="false" <?php if(isset($aah['AAH']) && $aah['AAH'] === 'false'){ echo  'selected';} ?>>0%</option>
                     </select>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">

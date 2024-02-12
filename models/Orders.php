@@ -48,7 +48,7 @@ class Orders extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => 'Պատվերի համար',
             'user_id' => 'Օգտատեր',
             'clients_id' => 'Հաճախորդ',
             'status' => 'Կարգավիճակ',

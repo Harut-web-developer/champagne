@@ -666,6 +666,49 @@ class DocumentsController extends Controller
         ]);
     }
 
+    public function actionDelivered($id){
+        date_default_timezone_set('Asia/Yerevan');
+        $session = Yii::$app->session;
+//        echo "<pre>";
+        $document = Documents::findOne($id);
+        $new_document = new Documents();
+        $new_document->user_id = $session['user_id'];
+        $new_document->warehouse_id = $document->warehouse_id;
+        $new_document->document_type = 1;
+        $new_document->comment = 'Վերադարձրած ապրանքներ';
+        $new_document->status = '1';
+        $new_document->date = date('Y-m-d H:i:s');;
+        $new_document->created_at = date('Y-m-d H:i:s');
+        $new_document->updated_at = date('Y-m-d H:i:s');
+        $new_document->save(false);
+        $document_items = DocumentItems::find()->where(['document_id' => $id])->asArray()->all();
+        for ($k = 0;$k < count(!empty($document_items)); $k++){
+            $new_document_items = new DocumentItems();
+            $new_document_items->document_id = $new_document->id;
+            $new_document_items->nomenclature_id = $document_items[$k]['nomenclature_id'];
+            $new_document_items->count = $document_items[$k]['count'];
+            $new_document_items->price = $document_items[$k]['price'];
+            $new_document_items->status = '1';
+            $new_document_items->created_at = date('Y-m-d H:i:s');
+            $new_document_items->updated_at = date('Y-m-d H:i:s');
+            $new_document_items->save(false);
+            $new_product = new Products();
+            $new_product->warehouse_id = $document->warehouse_id;
+            $new_product->nomenclature_id = $document_items[$k]['nomenclature_id'];
+            $new_product->document_id = $new_document->id;
+        }
+        $document_status = Documents::findOne($id);
+        $document_status->status = '0';
+        $document_status->save(false);
+        $document_items_status = DocumentItems::find()->where(['document_id' => $id])->all();
+        if (!empty($document_items_status)){
+            foreach ($document_items_status as $value){
+                $value->status = '0';
+                $value->save(false);
+            }
+        }
+
+    }
     /**
      * Deletes an existing Documents model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

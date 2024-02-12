@@ -29,10 +29,8 @@ $have_access_delivered = Users::checkPremission(55);
 $have_access_available = Users::checkPremission(56);
 $action_column = [];
 $access_buttons = '';
-$access_buttons_code =[];
 if($have_access_delete){
     $access_buttons .='{delete}';
-
 }
 if($have_access_update){
     $access_buttons .='{update}';
@@ -47,18 +45,19 @@ $action_column[] = [
     'header' => 'Գործողություն',
     'class' => ActionColumn::className(),
     'template' => $access_buttons,
-    'buttons' =>['reports'=>function ($url, $model, $key) {
+    'buttons' =>[
+            'reports'=>function ($url, $model, $key) {
         return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
             'title' => Yii::t('yii', 'Հաշվետվություն'),
             'class' => 'reportsOrders',
             'target' => '_blank',
         ]);
-    },'delivered'=>function ($url, $model, $key) {
+    },
+        'delivered'=>function ($url, $model, $key) {
         return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
             'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
         ]);
-    }]
-    ,
+    }],
     'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
         return Url::toRoute([$action, 'id' => $model->id]);
     }
@@ -141,6 +140,7 @@ $action_column[] = [
                 ]),
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
+                    ...$action_column,
                     [
                         'attribute' => 'Օգտատեր',
                         'value' => function ($model) {
@@ -175,7 +175,6 @@ $action_column[] = [
                     'total_price',
                     'total_count',
                     'orders_date',
-                    ...$action_column,
                 ],
             ]); ?>
         </div>

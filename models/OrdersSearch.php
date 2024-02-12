@@ -45,45 +45,83 @@ class OrdersSearch extends Orders
     {
         $session = Yii::$app->session;
 //echo "<pre>";
+//        var_dump($params);
         $query = Orders::find();
-//        $product =  $query->select('users.name as user_name,nomenclature.name,SUM(order_items.count) as count, AVG(price_before_discount) as price, orders.orders_date')->leftJoin('order_items','order_items.order_id = orders.id')
-//            ->leftJoin('nomenclature','nomenclature.id = order_items.nom_id_for_name')
-//            ->leftJoin('users','users.id = orders.user_id')
-//            ->groupBy(['order_items.nom_id_for_name', 'orders.user_id'])
-//            ->asArray()
-//            ->all();
-//        var_dump($product);
-//        exit();
         $is_manager = false;
         switch ($session['role_id']){
             case 1:
-                $statuses = [0,1,2];
+                $statuses = ['0','1','2'];
                 break;
             case 2:
-                $statuses = [1,2];
+                $statuses = ['1','2'];
                 break;
             case 3:
-                $statuses = [1,2];
-//                $is_manager = Yii::$
+                $statuses = ['1','2'];
+                $manager = ManagerDeliverCondition::find()->where(['deliver_id' => $session['user_id']])->where(['status' => '1'])->asArray()->all();
+                $is_manager = true;
+                break;
+            case 4:
+                $statuses = ['1','2'];
         }
-        if (isset($params['numberVal']) && !empty($params['numberVal'])) {
-                $query->where(['status' => intval($params['numberVal'])]);
-        }  else {
-                $query->where(['status' => $statuses]);
+        if (empty($params)){
+            $query->where(['status' => $statuses]);
         }
-//        if()
-        if (isset($params['managerId']) && $params['managerId'] != 'null') {
-            $query->andWhere(['user_id' => $params['managerId']]);
+        if (isset($params['type']) && $params['type'] == 'product'){
+             $query->select('orders.status,users.name as user_name,nomenclature.name,SUM(order_items.count) as count, AVG(order_items.price_before_discount / order_items.count) as price, orders.orders_date')
+                ->leftJoin('order_items','order_items.order_id = orders.id')
+                ->leftJoin('nomenclature','nomenclature.id = order_items.nom_id_for_name')
+                ->leftJoin('users','users.id = orders.user_id');
+
+        }elseif (isset($params['type']) && $params['type'] == 'order' || !isset($params['type'])){
+            if (isset($params['numberVal'])) {
+                if ($params['numberVal'] == 3 || $params['numberVal'] == 4){
+                    $query->where(['status' => $statuses]);
+                }elseif ($params['numberVal'] == 1){
+                    $query->where(['status' => '1']);
+                }elseif ($params['numberVal'] == 2){
+                    $query->where(['status' => '2']);
+                }elseif ($params['numberVal'] == 0){
+                    $query->where(['status' => '0']);
+                }
+            }
         }
+        if ($is_manager){
+            $manager_id = [];
+            for ($j = 0; $j < count($manager); $j++){
+                array_push($manager_id,$manager[$j]['manager_id']);
+            }
+            if (isset($params['type']) && $params['type'] == 'product'){
+                $query->where(['orders.user_id' => $manager_id]);
+            }elseif (isset($params['type']) && $params['type'] == 'order' || !isset($params['type'])){
+                $query->andWhere(['user_id' => $manager_id]);
+            }
+        }else{
+            if (isset($params['managerId']) && $params['managerId'] != 'null') {
+                if (isset($params['type']) && $params['type'] == 'product'){
+                    $query->andWhere(['orders.user_id' => $params['managerId']]);
+                }elseif (isset($params['type']) && $params['type'] == 'order' || !isset($params['type'])){
+                    $query->andWhere(['user_id' => $params['managerId']]);
+                }
+            }
+        }
+
         if (isset($params['clientsVal']) && $params['clientsVal'] != 'null') {
-            $query->andWhere(['clients_id' => $params['clientsVal']]);
+            if (isset($params['type']) && $params['type'] == 'product'){
+                $query->andWhere(['orders.clients_id' => $params['clientsVal']]);
+            }elseif (isset($params['type']) && $params['type'] == 'order' || !isset($params['type'])){
+                $query->andWhere(['clients_id' => $params['clientsVal']]);
+            }
         }
         if (!empty($params['ordersDate'])) {
-            $query->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']]);
+            if (isset($params['type']) && $params['type'] == 'product'){
+                $query->andWhere(['DATE_FORMAT(orders.orders_date, "%Y-%m-%d")' => $params['ordersDate']]);
+            }elseif (isset($params['type']) && $params['type'] == 'order' || !isset($params['type'])){
+                $query->andWhere(['DATE_FORMAT(orders_date, "%Y-%m-%d")' => $params['ordersDate']]);
+            }
         }
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $query->orderBy(['created_at' => SORT_DESC]),
         ]);
 
 
@@ -96,17 +134,23 @@ class OrdersSearch extends Orders
         }
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'user_id' => $this->user_id,
-            'total_price' => $this->total_price,
-            'total_count' => $this->total_count,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ]);
+//        $query->andFilterWhere([
+//            'id' => $this->id,
+//            'user_id' => $this->user_id,
+//            'total_price' => $this->total_price,
+//            'total_count' => $this->total_count,
+//            'created_at' => $this->created_at,
+//            'updated_at' => $this->updated_at,
+//        ]);
+//
+//        $query->andFilterWhere(['like', 'status', $this->status]);
+        if (isset($params['type']) && $params['type'] == 'product'){
+            $dataProvider = $query->andWhere(['orders.status' => '1'])->groupBy(['order_items.nom_id_for_name', 'orders.user_id', 'DATE_FORMAT(orders.orders_date, "%Y-%m-%d")'])
+                ->orderBy(['users.name'=> SORT_ASC,'nomenclature.name' => SORT_ASC])->asArray()->all();
+            return $dataProvider;
+        }elseif (isset($params['type']) && $params['type'] == 'order' || !isset($params['type'])){
+            return $dataProvider;
+        }
 
-        $query->andFilterWhere(['like', 'status', $this->status]);
-
-        return $dataProvider;
     }
 }

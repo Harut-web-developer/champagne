@@ -36,7 +36,7 @@ class Documents extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'warehouse_id', 'rate_id', 'rate_value', 'document_type', 'date'], 'required'],
-            [['user_id', 'warehouse_id', 'rate_id', 'rate_value','to_warehouse'], 'integer'],
+            [['user_id', 'warehouse_id', 'rate_id', 'rate_value','to_warehouse','orders_id'], 'integer'],
             [['date', 'created_at', 'updated_at'], 'safe'],
             [['status'], 'string'],
             [['comment'], 'string', 'max' => 255],

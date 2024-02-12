@@ -28,60 +28,24 @@ $have_access_delete = Users::checkPremission(23);
 $have_access_delivered = Users::checkPremission(55);
 $have_access_available = Users::checkPremission(56);
 $action_column = [];
-if ($approved == 2){
-    $btn = '{reports}';
-    $btn1 = '';
-    $btn2 = '{reports}';
-    $btn3 = '{reports}';
-    $btn4 = '{reports}';
-    $btn5 = '';
-    $btn6 = '';
-    $btn7 = '{reports}';
-    $btn8 = '';
-    $btn9 = '{reports}';
-    $btn10 = '{reports}';
-    $btn11 = '';
-    $btn12 = '{reports}';
-    $btn13 = '';
-    $btn14 = '';
-}elseif ($approved == 0){
-    $btn = '{reports} {delivered} {update}';
-    $btn1 = '{update} {delivered}';
-    $btn2 = '{reports} {delivered} {update}';
-    $btn3 = '{reports} {update}';
-    $btn4 = '{reports} {delivered}';
-    $btn5 = '{delivered} {update}';
-    $btn6 = '{update}';
-    $btn7 = '{reports} {update}';
-    $btn8 = '{delivered}';
-    $btn9 = '{reports}  {delivered}';
-    $btn10 = '{reports}';
-    $btn11 = '{update}';
-    $btn12 = '{reports}';
-    $btn13 = '';
-    $btn14 = '{delivered}';
-}elseif ($approved == 1 || $approved == 3 || $approved == 4){
-    $btn = '{reports} {delivered} {update} {delete}';
-    $btn1 = '{update} {delivered}';
-    $btn2 = '{reports} {delivered} {update}';
-    $btn3 = '{reports} {update} {delete}';
-    $btn4 = '{reports} {delivered} {delete}';
-    $btn5 = '{delivered} {update}';
-    $btn6 = '{update} {delete}';
-    $btn7 = '{reports} {update}';
-    $btn8 = '{delivered} {delete}';
-    $btn9 = '{reports}  {delivered}';
-    $btn10 = '{reports} {delete}';
-    $btn11 = '{update}';
-    $btn12 = '{reports}';
-    $btn13 = '{delete}';
-    $btn14 = '{delivered}';
+$access_buttons = '';
+if($have_access_delete){
+    $access_buttons .='{delete}';
 }
-if ($have_access_update && $have_access_delete && $have_access_delivered && $have_access_available){
+if($have_access_update){
+    $access_buttons .='{update}';
+}
+if($have_access_delivered){
+    $access_buttons .='{delivered}';
+}
+if($have_access_available){
+    $access_buttons .='{reports}';
+}
+
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
-        'template' => $btn,
+        'template' => $access_buttons,
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
@@ -100,232 +64,6 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
             return Url::toRoute([$action, 'id' => $model->id]);
         }
     ];
-} else if($have_access_update && $have_access_delivered && $have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => $btn1,
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_update && $have_access_delivered && $have_access_available){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => $btn2,
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-            'reports' => function ($url, $model, $key) {
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_update && $have_access_delete && $have_access_available){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => $btn3,
-        'buttons' => [
-            'reports' => function ($url, $model, $key) {
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_delivered && $have_access_delete && $have_access_available){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => $btn4,
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-            'reports' => function ($url, $model, $key) {
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_update && $have_access_delivered){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => $btn5,
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_update && $have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => $btn6,
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_update && $have_access_available){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => $btn7,
-        'buttons' => [
-            'reports' => function ($url, $model, $key) {
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_delivered && $have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => $btn8,
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_delivered && $have_access_available){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => $btn9,
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-            'reports' => function ($url, $model, $key) {
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_available && $have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => $btn10,
-        'buttons' => [
-            'reports' => function ($url, $model, $key) {
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_update){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => $btn11,
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_available){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => $btn12,
-        'buttons' => [
-            'reports' => function ($url, $model, $key) {
-                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
-                    'title' => Yii::t('yii', 'Հաշվետվություն'),
-                    'target' => '_blank',
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => $btn13,
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_delivered){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => $btn14,
-        'buttons' => [
-            'delivered' => function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
-            },
-        ],
-        'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}
 ?>
 
 <?php
@@ -337,6 +75,7 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                 'summaryOptions' => ['class' => 'summary'],
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
+                    ...$action_column,
                     [
                         'attribute' => 'Օգտատեր',
                         'value' => function ($model) {
@@ -371,7 +110,6 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                     'total_price',
                     'total_count',
                     'orders_date',
-                    ...$action_column,
                 ],
             ]); ?>
         <?php
@@ -420,7 +158,6 @@ if ($have_access_update && $have_access_delete && $have_access_delivered && $hav
                             }
                         }
                     ],
-                    'status',
                     'total_price',
                     'total_count',
                     'orders_date',
@@ -499,6 +236,8 @@ else { ?>
                 'summaryOptions' => ['class' => 'summary'],
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
+                    ...$action_column,
+
                     [
                         'attribute' => 'Օգտատեր',
                         'value' => function ($model) {
@@ -533,7 +272,6 @@ else { ?>
                     'total_price',
                     'total_count',
                     'orders_date',
-                    ...$action_column,
                 ],
             ]); ?>
         <?php
@@ -592,21 +330,23 @@ else { ?>
         <?php } ?>
     </div>
 </div>
+
 <?php } ?>
-<script>
-    $('#w0 table tbody tr').each(function(){
-        let status_ = $(this).find('td:nth-child(5)').text();
-        if (status_ == 2) {
-            $(this).find('td:nth-child(9) a:not(.reportsOrders)').remove();
-        } else if (status_ == 0) {
-            $(this).find('td:nth-child(9) a[title="Ջնջել"]').remove();
-        }
-    });
-    $('body').find('.card thead th').each(function () {
-        if ($(this).has('a')){
-            $(this).html( $(this).find('a').html())
-        }
-    })
-</script>
+<!--<script>-->
+<!--    $('body').find('#w0 table tbody tr').each(function(){-->
+<!--        let status_ = $(this).find('td:nth-child(6)').text();-->
+<!--        // console.log(status_)-->
+<!--        if (status_ == 2) {-->
+<!--            $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();-->
+<!--        } else if (status_ == 0) {-->
+<!--            $(this).find('td:nth-child(2) a[title="Ջնջել"]').remove();-->
+<!--        }-->
+<!--    });-->
+<!--    $('body').find('#w0 table thead th').each(function () {-->
+<!--        if ($(this).has('a')){-->
+<!--            $(this).html( $(this).find('a').html())-->
+<!--        }-->
+<!--    })-->
+<!--</script>-->
 
 
