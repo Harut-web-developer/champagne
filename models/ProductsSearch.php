@@ -62,7 +62,7 @@ class ProductsSearch extends Products
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query
-                ->groupBy('nomenclature_id')
+                ->groupBy(['nomenclature_id','warehouse_id'])
                 ->orderBy(['created_at'=> SORT_DESC]),
         ]);
 

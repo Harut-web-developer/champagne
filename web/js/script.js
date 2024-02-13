@@ -839,6 +839,11 @@ $(document).ready(function() {
         })
     }
 
+    $('body').on('click', '.bx-block',function () {
+        let doc = $(this).closest('td').find();
+        console.log(doc)
+    })
+
 });
 
 

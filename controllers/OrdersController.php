@@ -215,9 +215,9 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-            echo "<pre>";
-            var_dump($post);
-            exit();
+//            echo "<pre>";
+//            var_dump($post);
+//            exit();
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
@@ -591,7 +591,7 @@ class OrdersController extends Controller
         }elseif ($session['role_id'] == 2){
             $users = Users::find()->select('id, name')->where(['=','id',$session['user_id']])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
-        }elseif($session['role_id'] == 3){
+        }elseif($session['role_id'] == 3 || $session['role_id'] == 4){
             $users = Users::find()->select('id, name')->where(['id' => $session['user_id']])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
 
@@ -654,7 +654,7 @@ class OrdersController extends Controller
             $this->redirect('/site/403');
         }
         date_default_timezone_set('Asia/Yerevan');
-//        echo "<pre>";
+        echo "<pre>";
         $changed_items = [];
         $order_items = OrderItems::find()
             ->select('order_items.order_id,order_items.warehouse_id,order_items.product_id,order_items.nom_id_for_name,
@@ -662,9 +662,10 @@ class OrdersController extends Controller
             ->leftJoin('products', 'order_items.product_id = products.id')
             ->where(['order_items.order_id' => $id])->asArray()->all();
 //        var_dump($order_items);
+        $num = 0;
         for ($i = 0; $i < count($order_items); $i++){
             if ($order_items[$i]['count'] - $order_items[$i]['count_by'] != 0){
-                $changed_items[$i] = [
+                $changed_items[$num] = [
                     $order_items[$i]['order_id'],
                     $order_items[$i]['warehouse_id'],
                     $order_items[$i]['product_id'],
@@ -673,9 +674,11 @@ class OrdersController extends Controller
                     $order_items[$i]['count']-$order_items[$i]['count_by'],
                     $order_items[$i]['AAH'],
                 ];
+                $num++;
             }
         }
-
+//var_dump($changed_items);
+//        exit();
         if(!empty($changed_items)){
             $document = new Documents();
             $document->orders_id = $changed_items[0][0];
@@ -728,7 +731,7 @@ class OrdersController extends Controller
         order_items.nom_id_for_name,order_items.count_by,products.AAH,products.price')
             ->leftJoin('products','products.id = order_items.product_id')
             ->where(['order_items.order_id' => $id])->asArray()->all();
-        var_dump($order_items);
+//        var_dump($order_items);
         for ($i = 0;$i < count($order_items);$i++){
             $exit_documents[$i] = [
               $order_items[$i]['order_id'],
