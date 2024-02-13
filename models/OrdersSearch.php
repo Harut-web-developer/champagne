@@ -51,20 +51,28 @@ class OrdersSearch extends Orders
         switch ($session['role_id']){
             case 1:
                 $statuses = ['0','1','2'];
+                $manager_array = [];
                 break;
             case 2:
                 $statuses = ['1','2'];
+                $manager_array = ['user_id' => $session['user_id']];
                 break;
             case 3:
                 $statuses = ['1','2'];
-                $manager = ManagerDeliverCondition::find()->where(['deliver_id' => $session['user_id']])->where(['status' => '1'])->asArray()->all();
+                $manager = ManagerDeliverCondition::find()->where(['deliver_id' => $session['user_id']])->andWhere(['status' => '1'])->asArray()->all();
                 $is_manager = true;
+                $manager_array_list = [];
+                for ($k = 0; $k < count($manager); $k++){
+                    array_push($manager_array_list,$manager[$k]['manager_id']);
+                }
+                $manager_array = ['user_id' => $manager_array_list];
                 break;
             case 4:
                 $statuses = ['1','2'];
+                $manager_array = [];
         }
         if (empty($params)){
-            $query->where(['status' => $statuses]);
+            $query->where(['status' => $statuses])->andWhere($manager_array);
         }
         if (isset($params['type']) && $params['type'] == 'product'){
              $query->select('orders.status,users.name as user_name,nomenclature.name,SUM(order_items.count) as count, AVG(order_items.price_before_discount / order_items.count) as price, orders.orders_date')

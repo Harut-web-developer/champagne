@@ -5,7 +5,11 @@ use yii\widgets\ActiveForm;
 $this->params['sub_page'] = $sub_page;
 $this->params['date_tab'] = $date_tab;
 $session = Yii::$app->session;
-
+//echo "<pre>";
+//var_dump($all_manager_ids);
+//var_dump($session['user_id']);
+//var_dump(in_array($session['user_id'],$all_manager_ids));
+//die;
 ?>
 <div class="titleAndPrevPage">
     <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
@@ -19,19 +23,44 @@ $session = Yii::$app->session;
 
 <body>
     <div class="form-group col-md-12 col-lg-12 col-sm-12 mapFilter">
-        <div class="form-group col-md-4 col-lg-4 col-sm-4 loguser">
-            <label for="routeSelect">Երթուղի</label>
-            <select id="routeSelect" class="form-select form-control valuemap" aria-label="Default select example">
-                <option value="">Ընտրել երթուղին</option>
-                <?php foreach ($route as $index => $rout ){ ?>
-                    <option value="<?= $rout['id'] ?>"><?= $rout['route'] ?></option>
-                <?php } ?>
-            </select>
-        </div>
-        <div class="form-group col-md-4 col-lg-4 col-sm-4 logAction">
-            <label for="myLocalDate">Ընտրել ամսաթիվը</label>
-            <input id="myLocalDate" class="fil-input form-control valuemap" type="date" name="date">
-        </div>
+
+        <?php if($session['role_id'] == 3) {?>
+            <div class="form-group col-md-4 col-lg-4 col-sm-4 loguser">
+                <label for="routeSelect">Երթուղի</label>
+                <select id="routeSelect" class="form-select form-control valuemap" aria-label="Default select example">
+                    <option value="">Ընտրել երթուղին</option>
+                    <?php foreach ($route_deliver as $index => $deliver ){ ?>
+                        <option value="<?= $deliver['route_id'] ?>"><?= $deliver['route'] ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+        <?php } else {?>
+            <div class="form-group col-md-4 col-lg-4 col-sm-4 loguser">
+                <label for="routeSelect">Երթուղի</label>
+                <select id="routeSelect" class="form-select form-control valuemap" aria-label="Default select example">
+                    <option value="">Ընտրել երթուղին</option>
+                    <?php foreach ($route as $index => $rout ){ ?>
+                        <option value="<?= $rout['id'] ?>"><?= $rout['route'] ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+        <?php } ?>
+
+        <?php if($session['role_id'] == 1): ?>
+            <div class="form-group col-md-4 col-lg-4 col-sm-4 logAction">
+                <label for="myLocalDate">Ընտրել ամսաթիվը</label>
+                <input id="myLocalDate" class="fil-input form-control valuemap" type="date" name="date">
+            </div>
+        <?php elseif($session['role_id'] == 2 || $session['role_id'] == 3): ?>
+        <input type="hidden" id="myLocalDate" class="fil-input form-control valuemap" type="date" name="date">
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var today = new Date().toISOString().split('T')[0];
+                    document.getElementById('myLocalDate').value = today;
+                });
+            </script>
+        <?php endif; ?>
+
         <?php if($session['role_id'] == 1){ ?>
             <div class="form-group col-md-4 col-lg-4 col-sm-4 loguser">
                 <label for="menegerSelect">Ընտրել մենեջերին</label>
@@ -42,7 +71,9 @@ $session = Yii::$app->session;
                     <?php } ?>
                 </select>
             </div>
-        <?php } else {?>
+        <?php } elseif($session['role_id'] == 2) {?>
+            <input type="hidden" class="mapManagerId" value="<?= $session['user_id'] ?>">
+        <?php } elseif($session['role_id'] == 3) { ?>
             <input type="hidden" class="araqichId" value="<?= $session['user_id'] ?>">
         <?php } ?>
     </div>

@@ -27,10 +27,14 @@ $have_access_update = Users::checkPremission(22);
 $have_access_delete = Users::checkPremission(23);
 $have_access_delivered = Users::checkPremission(55);
 $have_access_available = Users::checkPremission(56);
+$have_access_exit_document = Users::checkPremission(76);
 $action_column = [];
 $access_buttons = '';
 if($have_access_delete){
     $access_buttons .='{delete}';
+}
+if($have_access_exit_document){
+    $access_buttons .='{exit}';
 }
 if($have_access_update){
     $access_buttons .='{update}';
@@ -44,7 +48,7 @@ if($have_access_available){
 $action_column[] = [
     'header' => 'Գործողություն',
     'class' => ActionColumn::className(),
-    'template' => $access_buttons .'{exit}',
+    'template' => $access_buttons,
     'buttons' =>[
             'reports'=>function ($url, $model, $key) {
         return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
@@ -90,7 +94,7 @@ $action_column[] = [
                 <input type="date" class="form-control ordersDate" style="margin: 0px 5px 0px 10px;">
                 <?php
                 $users = Users::find()->select('id,name')->where(['=','role_id',2])->asArray()->all();
-                if($session['role_id'] == '1'){?>
+                if($session['role_id'] == '1' || $session['role_id'] == '4'){?>
                     <select class="form-control changeManager">
                         <option value="null">Ընտրել մենեջերին</option>
                         <?php
@@ -186,6 +190,16 @@ $action_column[] = [
                                 return 'Հաստատված';
                             } elseif($model->status == 0){
                                 return 'Մերժված';
+                            }
+                        }
+                    ],
+                    [
+                        'attribute' => 'Փաստաթուղթ',
+                        'value' => function ($model) {
+                            if ($model->is_exit == 1) {
+                                return 'Չելքագրված';
+                            }else{
+                                return 'Ելքագրված';
                             }
                         }
                     ],

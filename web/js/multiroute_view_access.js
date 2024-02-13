@@ -5,6 +5,7 @@ function init () {
         var manager = $(".mapManagerId").val();
         var araqich = $(".araqichId").val();
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        // console.log(location_value,date,manager,araqich)
         $.ajax({
             url:"/map/location-value",
             method: 'get',
@@ -19,16 +20,6 @@ function init () {
             success:function(data){
                 console.log(data)
                 if (data['location'].length != 0) {
-                    // if (data['find_manager'] != null) {
-                    //     var html = '<div class="form-group col-md-4 col-lg-4 col-sm-4 loguser">';
-                    //     html += '<label for="menegerSelect">Ընտրել մենեջերին</label>';
-                    //     html += '<select id="menegerSelect" class="form-select form-control mapManagerId" aria-label="Default select example">';
-                    //     html += '<option value="">Ընտրել մենեջերին</option>';
-                    //
-                    //     html += '</select></div>';
-                    //     $('.mapFilter').append(html);
-                    // }
-
                     $('#map').html('');
                     var geolocation = ymaps.geolocation,
                         myMap = new ymaps.Map('map', {
@@ -49,12 +40,24 @@ function init () {
                                 arr.push(data['location'][i-1][19]['location']);
                             };
                             arr.push(data['location'][i][j]['location']);
+                            // var customIcon = '/upload/icons8-location.png';
+                            // var myPlacemark1 = new ymaps.Placemark(data['location'][i][j]['location'], {
+                            //     balloonContent: 'Маленькая иконка'
+                            // }, {
+                            //     iconLayout: 'default#image',
+                            //     iconImageHref: customIcon,
+                            //     iconImageSize: [30, 30],
+                            //     iconImageOffset: [-15, -15]
+                            // });
+                            // myMap.geoObjects.add(myPlacemark1);
                         }
                         var multiRoute = new ymaps.multiRouter.MultiRoute({
                             referencePoints: arr,
                             type: 'viaPoint',
+                            params: {
+                                routingMode: 'masstransit',
+                            }
                         });
-
                         ymaps.modules.require([
                             'MultiRouteColorizer'
                         ], function (MultiRouteColorizer) {

@@ -4,11 +4,13 @@ namespace app\controllers;
 use app\models\Clients;
 use app\models\CoordinatesUser;
 use app\models\DeliversGroup;
+use app\models\ManagerDeliverCondition;
 use app\models\Orders;
 use app\models\Route;
 use app\models\Users;
 use app\models\Warehouse;
 use Yii;
+use yii\db\Expression;
 use yii\web\Controller;
 use yii\web\Session;
 use function React\Promise\all;
@@ -41,18 +43,50 @@ class MapController extends Controller
         }
         $sub_page = [];
         $date_tab = [];
-
-//        if(isset($_POST)){
-//            $result = 'post ka';
-//            return json_encode(['result' => $result]);
-//        }
         $all_manager = Users::find()->where(['and',['role_id' => '2'],['status' => 1]])->asArray()->all();
-        $route = Route::find()->select('id, route')->asArray()->all();
+        $all_managers = Users::find()
+            ->select('id')
+            ->where(['and',['role_id' => '2'],['status' => 1]])
+            ->asArray()
+            ->all();
+        $all_manager_ids = array_map(function ($all_managers) {
+            return $all_managers['id'];
+        }, $all_managers);
+        $session = Yii::$app->session;
+        $userId = $session['user_id'];
+
+        $route_manager = Route::find()
+            ->select('route.*');
+            if ($session['role_id'] == 2 || $session['role_id'] == 3) {
+            $route_manager->leftJoin('manager_deliver_condition', ['manager_deliver_condition.route_id' => new Expression('route.id')])
+                ->andWhere(['manager_deliver_condition.manager_id' => $userId])
+                ->andWhere(['manager_deliver_condition.status' => '1']);
+            }
+        $route = $route_manager->andWhere(['route.status' => '1'])
+            ->asArray()
+            ->all();
+        $route_deliver = ManagerDeliverCondition::find()
+            ->select('manager_deliver_condition.id, manager_deliver_condition.route_id, route.route')
+            ->leftJoin('route','route.id = manager_deliver_condition.route_id')
+            ->where(['manager_deliver_condition.deliver_id' => $userId])
+            ->andWhere(['manager_deliver_condition.status'=> '1'])
+            ->asArray()
+            ->all();
+//        $route_deliver = array_map(function($item) {
+//            return $item['route_id'];
+//        }, $route_deliver);
+//        echo "<pre>";
+//        var_dump($route_deliver);
+//        var_dump($route);
+//        var_dump($userId);
+//        die;
         return $this->render('index', [
             'route' => $route,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'all_manager' => $all_manager,
+            'all_manager_ids' => $all_manager_ids,
+            'route_deliver' => $route_deliver,
         ]);
     }
     public function actionLocationValue()
@@ -61,35 +95,66 @@ class MapController extends Controller
 //            $session = Yii::$app->session;
 //            $userId = $session['user_id'];
             $get = $this->request->get();
-//            var_dump($get);
-//            die;
             $manager_id = 0;
             $find_manager = null;
             $value = $get['locationvalue'];
-            if (isset($get['manager'])){
-                $manager_id = $get['manager'];
-            }elseif (isset($get['araqich'])){
-                $araqich_id = $get['araqich'];
-                $find_manager = DeliversGroup::find()
-                    ->select('id')
-                    ->where(['deliver_id' => $araqich_id])
-                    ->asArray()
-                    ->all();
-            }
             $valuedate =$get['date'];
             date_default_timezone_set('UTC');
             $warehouse = Warehouse::find()->select('location')->where(['id' => 1])->asArray()->one();
             $formattedSelectedDate = Yii::$app->formatter->asDatetime($valuedate, 'yyyy-MM-dd');
-            $locations = Orders::find()
+            if (isset($get['manager'])){
+                $manager_id = $get['manager'];
+            }elseif (isset($get['araqich'])){
+                $araqich_id = $get['araqich'];
+                $find_manager = ManagerDeliverCondition::find()
+                    ->select('manager_id')
+                    ->where(['deliver_id' => $araqich_id])
+                    ->andWhere(['status' => '1'])
+                    ->asArray()
+                    ->all();
+                $find_manager = array_map(function($item) {
+                    return $item['manager_id'];
+                }, $find_manager);
+            }
+            $today_manager = Orders::find()
+                ->select('user_id')
+                ->andWhere(['and',['>=','orders_date', $formattedSelectedDate.' 00:00:00'],
+                    ['<','orders_date', $formattedSelectedDate.' 23:59:59']])
+                ->asArray()
+                ->all();
+            $today_manager = array_map(function($item) {
+                return $item['user_id'];
+            }, $today_manager);
+            $countToday_manager = null;
+            if (!is_null($find_manager)) {
+                $countToday_manager = array_intersect($today_manager, $find_manager);
+            }
+            $locationsQuery  = Orders::find()
                 ->select(["clients.location", 'DATE_FORMAT(orders.orders_date, "%Y-%m-%d") as orders_date'])
                 ->leftJoin('clients','clients.id = orders.clients_id')
                 ->where(['route_id' => $value])
                 ->andWhere(['and',['>=','orders.orders_date', $formattedSelectedDate.' 00:00:00'],
                     ['<','orders.orders_date', $formattedSelectedDate.' 23:59:59']])
-                ->andWhere(['orders.status' => '1'])
-                ->andwhere(['=', 'orders.user_id', $manager_id])
+                ->andWhere(['orders.status' => '1']);
+//            echo "<pre>";
+//            var_dump($find_manager);
+//            var_dump($today_manager);
+//            var_dump($countToday_manager);
+//            die;
+            if (!is_null($countToday_manager) && count($countToday_manager) == 1) {
+                foreach ($countToday_manager as $key => $value)
+                $manager_id = $value;
+                $locationsQuery->andWhere(['=', 'orders.user_id', $manager_id]);
+            }elseif(!is_null($countToday_manager) && count($countToday_manager) > 1) {
+                $manager_id = $countToday_manager[0];
+                $locationsQuery->andWhere(['=', 'orders.user_id', $manager_id]);
+            }elseif(is_null($countToday_manager)) {
+                $locationsQuery->andWhere(['=', 'orders.user_id', $manager_id]);
+            }
+//            die;
+            $locations = $locationsQuery
                 ->asArray()
-                ->orderBy('clients.sort_',SORT_DESC)
+                ->orderBy('clients.sort_', SORT_DESC)
                 ->all();
             $locations = array_chunk($locations,20);
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;

@@ -172,41 +172,50 @@ $(document).ready(function() {
             dataType: "json",
             data: { _csrf: csrfToken },
             success: function (data) {
-                displayNotifications(data['notifications_today']);
-                $('body').on('click','#viweall',function () {
-                    // displayNotifications(data['notifications_all']);
-                    var notifications = data['notifications_all'];
-                    var notificationsDropdown = $("#notifications-dropdown");
-                    notificationsDropdown.empty();
-                    notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
-                        '<h3 class="text-center">Ծանուցումներ</h3>\n' +
-                        '</div>' +
-                        '<hr>'
-                    );
-                    notifications.forEach(function (notification) {
-                        notificationsDropdown.append('<div class="notification-item">' +
-                            '<p class="notification-title">' +
-                            '<span class="title-text">' + notification.title + '</span>' +
-                            '</br>' +
-                            notification.message +
-                            '<br>' +
-                            '<small style="font-size: 60%">' +
-                            notification.datetime +
-                            '</small>' +
-                            '</p>' +
-                            '</div>');
-                    });
-                })
+                if (data['notifications_today'] !== 0) {
+                    displayNotifications(data['notifications_today']);
+                    $('body').on('click','#viweall',function () {
+                        // displayNotifications(data['notifications_all']);
+                        var notifications = data['notifications_all'];
+                        var notificationsDropdown = $("#notifications-dropdown");
+                        notificationsDropdown.empty();
+                        notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
+                            '<h3 class="text-center">Ծանուցումներ</h3>\n' +
+                            '</div>' +
+                            '<hr>'
+                        );
+                        notifications.forEach(function (notification) {
+                            notificationsDropdown.append('<div class="notification-item">' +
+                                '<p class="notification-title">' +
+                                '<span class="title-text">' + notification.title + '</span>' +
+                                '</br>' +
+                                notification.message +
+                                '<br>' +
+                                '<small style="font-size: 60%">' +
+                                notification.datetime +
+                                '</small>' +
+                                '</p>' +
+                                '</div>');
+                        });
+                    })
+                }
             }
         });
     }
     function fetchNotificationstoast() {
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        let url_id = window.location.href;
+        let url = new URL(url_id);
+        let urlId = url.searchParams.get("id");
         $.ajax({
             url: '/site/check-notifications',
             type: 'GET',
             dataType: 'json',
+            data:{
+
+            },
             success: function (data) {
-                if (data.success) {
+                if (data.success !== undefined) {
                     displayNotificationtoast(data.notifications);
                 }
             },
@@ -254,7 +263,7 @@ $(document).ready(function() {
     });
     fetchNotifications();
     fetchNotificationstoast();
-    setInterval(fetchNotificationstoast, 100000);
+    setInterval(fetchNotificationstoast, 10000);
 
     $(document).mouseup(function(e)
     {
@@ -767,12 +776,16 @@ $(document).ready(function() {
     $(window).on('load',function (){
         $('.ordersCard').find('tbody tr').each(function () {
             let status_ = $(this).find('td:nth-child(6)').text();
+            let is_exit = $(this).find('td:nth-child(7)').text();
                 if (status_ == 'Հաստատված') {
                     $(this).find('td:nth-child(2) a:not(.reportsOrders)').remove();
                 } else if (status_ == 'Մերժված') {
                     $(this).find('td:nth-child(2) a[title="Ջնջել"]').remove();
                 }
                 if (status_ != 'Ընթացքի մեջ'){
+                    $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
+                }
+                if (is_exit == 'Ելքագրված'){
                     $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
                 }
         });
@@ -785,9 +798,7 @@ $(document).ready(function() {
     $(window).on('load',function (){
         $('.documentsCard').find('tbody tr').each(function () {
             let document_type = $(this).find('td:nth-child(3)').text();
-            if (document_type == 6) {
-                $(this).find('td:nth-child(2) a:not([title="Հաստատել"])').remove();
-            }else {
+            if (document_type != 'Վերադարձրած') {
                 $(this).find('td:nth-child(2) a[title="Հաստատել"]').remove();
             }
         })
@@ -808,12 +819,16 @@ $(document).ready(function() {
     function clearWidget(){
         $('body').find('#w0 table tbody tr').each(function(){
             let status_ = $(this).find('td:nth-child(6)').text();
+            let is_exit = $(this).find('td:nth-child(7)').text();
             if (status_ == 'Հաստատված') {
                 $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
             } else if (status_ == 'Մերժված') {
                 $(this).find('td:nth-child(2) a[title="Ջնջել"]').remove();
             }
             if (status_ != 'Ընթացքի մեջ'){
+                $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
+            }
+            if (is_exit == 'Ելքագրված'){
                 $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
             }
         });

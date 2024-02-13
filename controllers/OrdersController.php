@@ -9,7 +9,9 @@ use app\models\DiscountProducts;
 use app\models\DocumentItems;
 use app\models\Documents;
 use app\models\Log;
+use app\models\ManagerDeliverCondition;
 use app\models\Nomenclature;
+use app\models\Notifications;
 use app\models\OrderItems;
 use app\models\Orders;
 use app\models\OrdersSearch;
@@ -17,6 +19,7 @@ use app\models\Premissions;
 use app\models\Products;
 use app\models\Users;
 use app\models\Warehouse;
+use Couchbase\Document;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
@@ -26,6 +29,7 @@ use yii\filters\VerbFilter;
 use yii\data\Pagination;
 use yii\web\View;
 use function React\Promise\all;
+
 
 /**
  * OrdersController implements the CRUD actions for Orders model.
@@ -81,8 +85,21 @@ class OrdersController extends Controller
         }
         $sub_page = [];
         $date_tab = [];
-        $clients = Clients::find()->select('id, name')->where(['=','status',1])->asArray()->all();
-
+        $session = Yii::$app->session;
+        $user_id = $session['user_id'];
+        $manager_route_id = ManagerDeliverCondition::find()
+            ->select('route_id, deliver_id')
+            ->where(['manager_id' => $user_id])
+            ->andWhere(['status' => '1'])
+            ->asArray()
+            ->all();
+        $clients = Clients::find()
+            ->select('id, name')
+            ->where(['=','status',1]);
+            if ($session['role_id'] == 2) {
+                $clients->andWhere(['in', 'route_id', $manager_route_id]);
+            }
+        $clients =  $clients->asArray()->all();
         $searchModel = new OrdersSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -194,12 +211,13 @@ class OrdersController extends Controller
             ->where(['id' => 21])
             ->asArray()
             ->one();
+        $session = Yii::$app->session;
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-//            echo "<pre>";
-//            var_dump($post);
-//            exit();
+            echo "<pre>";
+            var_dump($post);
+            exit();
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
@@ -253,16 +271,28 @@ class OrdersController extends Controller
                 }
             }
             $model = Orders::getDefVals($model);
+            Notifications::createNotifications($premission['name'],'orderscreate');
             Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
-                return $this->redirect(['index', 'id' => $model->id]);
+            return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
         $sub_page = [];
         $date_tab = [];
-
-        $clients = Clients::find()->select('id, name')->where(['=','status',1])->asArray()->all();
-        $session = Yii::$app->session;
+        $user_id = $session['user_id'];
+        $manager_route_id = ManagerDeliverCondition::find()
+            ->select('route_id, deliver_id')
+            ->where(['manager_id' => $user_id])
+            ->andWhere(['status' => '1'])
+            ->asArray()
+            ->all();
+        $clients = Clients::find()
+            ->select('id, name')
+            ->where(['=','status',1]);
+        if ($session['role_id'] == 2) {
+            $clients->andWhere(['in', 'route_id', $manager_route_id]);
+        }
+        $clients =  $clients->asArray()->all();
         if($session['role_id'] == 1){
             $users = Users::find()->select('id, name')->where(['=','role_id',2])->andWhere(['=','status',1])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
@@ -506,7 +536,7 @@ class OrdersController extends Controller
                     }
                 }
             }
-
+            Notifications::createNotifications($premission['name'], 'ordersupdate');
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
@@ -537,8 +567,21 @@ class OrdersController extends Controller
         $numericValuesOnly = array_filter($numericArray, 'is_numeric');
 
         $active_discount = Discount::find()->select('id,name,discount,type')->asArray()->all();
-
-        $clients = Clients::find()->select('id, name')->Where(['=','status',1])->asArray()->all();
+        $session = Yii::$app->session;
+        $user_id = $session['user_id'];
+        $manager_route_id = ManagerDeliverCondition::find()
+            ->select('route_id, deliver_id')
+            ->where(['manager_id' => $user_id])
+            ->andWhere(['status' => '1'])
+            ->asArray()
+            ->all();
+        $clients = Clients::find()
+            ->select('id, name')
+            ->where(['=','status',1]);
+        if ($session['role_id'] == 2) {
+            $clients->andWhere(['in', 'route_id', $manager_route_id]);
+        }
+        $clients =  $clients->asArray()->all();
         $orders_clients = Orders::find()->select('clients_id')->where(['=','id',$id])->asArray()->all();
         $orders_clients = array_column($orders_clients,'clients_id');
         $session = Yii::$app->session;
@@ -548,6 +591,10 @@ class OrdersController extends Controller
         }elseif ($session['role_id'] == 2){
             $users = Users::find()->select('id, name')->where(['=','id',$session['user_id']])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
+        }elseif($session['role_id'] == 3){
+            $users = Users::find()->select('id, name')->where(['id' => $session['user_id']])->asArray()->all();
+            $users = ArrayHelper::map($users,'id','name');
+
         }
         $warehouse = Warehouse::find()
             ->select('id, name')
@@ -602,14 +649,19 @@ class OrdersController extends Controller
     }
     public function actionDelivered($id)
     {
+        $have_access = Users::checkPremission(55);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         date_default_timezone_set('Asia/Yerevan');
-//        $have_access = Users::checkPremission(55);
-//        if(!$have_access){
-//            $this->redirect('/site/403');
-//        }
-        echo "<pre>";
+//        echo "<pre>";
         $changed_items = [];
-        $order_items = OrderItems::find()->where(['order_id' => $id])->asArray()->all();
+        $order_items = OrderItems::find()
+            ->select('order_items.order_id,order_items.warehouse_id,order_items.product_id,order_items.nom_id_for_name,
+            order_items.count_by,order_items.count,products.AAH,products.price')
+            ->leftJoin('products', 'order_items.product_id = products.id')
+            ->where(['order_items.order_id' => $id])->asArray()->all();
+//        var_dump($order_items);
         for ($i = 0; $i < count($order_items); $i++){
             if ($order_items[$i]['count'] - $order_items[$i]['count_by'] != 0){
                 $changed_items[$i] = [
@@ -617,9 +669,10 @@ class OrdersController extends Controller
                     $order_items[$i]['warehouse_id'],
                     $order_items[$i]['product_id'],
                     $order_items[$i]['nom_id_for_name'],
-                    $order_items[$i]['price_before_discount'] / $order_items[$i]['count'],
+                    $order_items[$i]['price'],
                     $order_items[$i]['count']-$order_items[$i]['count_by'],
-                    ];
+                    $order_items[$i]['AAH'],
+                ];
             }
         }
 
@@ -630,7 +683,7 @@ class OrdersController extends Controller
             $document->rate_id = 1;
             $document->rate_value = 1;
             $document->document_type = 6;
-            $document->comment = 'Վերադարձրած ապրանքներ';
+            $document->comment = 'Վերադարձրած ապրանք(ներ)';
             $document->date = date('Y-m-d H:i:s');
             $document->status = '1';
             $document->created_at = date('Y-m-d H:i:s');
@@ -641,7 +694,15 @@ class OrdersController extends Controller
                     $new_document_items->document_id = $document->id;
                     $new_document_items->nomenclature_id = $changed_items[$k][3];
                     $new_document_items->count = $changed_items[$k][5];
-                    $new_document_items->price = $changed_items[$k][4];
+                    if ($changed_items[$k][6] == 1){
+                        $new_document_items->AAH = 'true';
+                        $new_document_items->price_with_aah = $changed_items[$k][4];
+                        $new_document_items->price = number_format((($changed_items[$k][4] * 5)/6),2,'.','');
+                    }else{
+                        $new_document_items->AAH = 'false';
+                        $new_document_items->price = $changed_items[$k][4];
+                        $new_document_items->price_with_aah = $changed_items[$k][4] + ($changed_items[$k][4] * 20) / 100;
+                    }
                     $new_document_items->status = '1';
                     $new_document_items->created_at = date('Y-m-d H:i:s');
                     $new_document_items->updated_at = date('Y-m-d H:i:s');
@@ -651,17 +712,75 @@ class OrdersController extends Controller
         $orders = Orders::findOne($id);
         $orders->status = '2';
         $orders->save();
+        Notifications::createNotifications("Հաստատել պատվեր", 'ordersdelivered');
         return $this->redirect(['index']);
     }
     public function actionExit($id){
-        echo "<pre>";
+        $have_access = Users::checkPremission(76);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+//        echo "<pre>";
+        $session = Yii::$app->session;
         date_default_timezone_set('Asia/Yerevan');
+        $exit_documents = [];
         $order_items = OrderItems::find()->select('order_items.id,order_items.order_id,order_items.warehouse_id,order_items.product_id,
-        order_items.nom_id_for_name,order_items.price_by,order_items.count_by,order_items.price_before_discount')
+        order_items.nom_id_for_name,order_items.count_by,products.AAH,products.price')
             ->leftJoin('products','products.id = order_items.product_id')
             ->where(['order_items.order_id' => $id])->asArray()->all();
         var_dump($order_items);
+        for ($i = 0;$i < count($order_items);$i++){
+            $exit_documents[$i] = [
+              $order_items[$i]['order_id'],
+              $order_items[$i]['product_id'],
+              $order_items[$i]['warehouse_id'],
+              $order_items[$i]['nom_id_for_name'],
+              $order_items[$i]['count_by'],
+              $order_items[$i]['AAH'],
+              $order_items[$i]['price'],
+            ];
+        }
 
+        if (!empty($exit_documents)){
+            $new_exit_document = new Documents();
+            if ($session['role_id'] == 4){
+                $new_exit_document->user_id = $session['user_id'];
+            }
+            $new_exit_document->orders_id = $exit_documents[0][0];
+            $new_exit_document->warehouse_id = $exit_documents[0][2];
+            $new_exit_document->rate_id = 1;
+            $new_exit_document->rate_value = 1;
+            $new_exit_document->document_type = 2;
+            $new_exit_document->comment = 'Ելքագրված փաստաթուղթ';
+            $new_exit_document->date = date('Y-m-d H:i:s');
+            $new_exit_document->status = '1';
+            $new_exit_document->created_at = date('Y-m-d H:i:s');
+            $new_exit_document->updated_at = date('Y-m-d H:i:s');
+            $new_exit_document->save(false);
+            for ($j = 0; $j< count($exit_documents); $j++){
+                $new_exit_document_items = new DocumentItems();
+                $new_exit_document_items->document_id = $new_exit_document->id;
+                $new_exit_document_items->nomenclature_id = $exit_documents[$j][3];
+                $new_exit_document_items->count = $exit_documents[$j][4];
+                if ($exit_documents[$j][5] == 1){
+                    $new_exit_document_items->price_with_aah = $exit_documents[$j][6];
+                    $new_exit_document_items->AAH = 'true';
+                    $new_exit_document_items->price = number_format((($exit_documents[$j][6] * 5)/6),2,'.','');
+                }else{
+                    $new_exit_document_items->price = $exit_documents[$j][6];
+                    $new_exit_document_items->AAH = 'false';
+                    $new_exit_document_items->price_with_aah = $exit_documents[$j][6] + ($exit_documents[$j][6] * 20) / 100;
+                }
+                $new_exit_document_items->status = '1';
+                $new_exit_document_items->created_at = date('Y-m-d H:i:s');
+                $new_exit_document_items->updated_at = date('Y-m-d H:i:s');
+                $new_exit_document_items->save(false);
+            }
+        }
+        $is_exit_orders = Orders::findOne($id);
+        $is_exit_orders->is_exit = '0';
+        $is_exit_orders->save(false);
+        return $this->redirect(['index']);
     }
     public  function actionFilterStatus(){
         if ($_GET){
@@ -689,8 +808,21 @@ class OrdersController extends Controller
             }elseif ($_GET['numberVal'] == 1){
                 $approved = 1;
             }
-            $clients = Clients::find()->select('id, name')->where(['=','status',1])->asArray()->all();
-
+            $session = Yii::$app->session;
+            $user_id = $session['user_id'];
+            $manager_route_id = ManagerDeliverCondition::find()
+                ->select('route_id, deliver_id')
+                ->where(['manager_id' => $user_id])
+                ->andWhere(['status' => '1'])
+                ->asArray()
+                ->all();
+            $clients = Clients::find()
+                ->select('id, name')
+                ->where(['=','status',1]);
+            if ($session['role_id'] == 2) {
+                $clients->andWhere(['in', 'route_id', $manager_route_id]);
+            }
+            $clients =  $clients->asArray()->all();
             $render_array = [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,

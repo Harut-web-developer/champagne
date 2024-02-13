@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\widgets\CustomLinkPager;
+use app\models\Orders;
 
 /** @var yii\web\View $this */
 /** @var app\models\Orders $model */
@@ -49,12 +50,13 @@ $session = Yii::$app->session;
                     ?>
                         <?= $form->field($model, 'user_id')->dropDownList($users) ?>
                     <?php
-                    }elseif($session['role_id'] == 2){
-                    ?>
+                    }elseif($session['role_id'] == 2){ ?>
                         <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
-                    <?php
-                    }
-                    ?>
+                    <?php }elseif ($session['role_id'] == 3){
+                        $manager_id = Orders::findOne($model->id);
+                        ?>
+                        <?= $form->field($model, 'user_id')->hiddenInput(['value' => $manager_id->user_id])->label(false) ?>
+                    <?php } ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'comment')->textarea() ?>

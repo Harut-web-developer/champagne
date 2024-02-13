@@ -24,13 +24,18 @@ $have_access_create = Users::checkPremission(37);
 $have_access_update = Users::checkPremission(38);
 $have_access_delete = Users::checkPremission(39);
 $have_access_custom_field = Users::checkPremission(71);
+$have_access_confirm_return = Users::checkPremission(75);
+
 $action_column = [];
 $access_buttons = '';
 if($have_access_delete){
     $access_buttons .='{delete}';
 }
+if($have_access_confirm_return){
+    $access_buttons .='{delivered}';
+}
 if($have_access_update){
-    $access_buttons .='{delivered}{update}';
+    $access_buttons .='{update}';
 }
 
     $action_column[] = [
@@ -89,7 +94,22 @@ if($have_access_update){
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             ...$action_column,
-            'document_type',
+            [
+                'attribute' => 'Փաստաթղթի տեսակ',
+                'value' => function ($model) {
+                    if ($model->document_type == 1) {
+                        return 'Մուտքի';
+                    } elseif($model->document_type == 2) {
+                        return 'Ելքի';
+                    } elseif($model->document_type == 3) {
+                        return 'Տեղափոխություն';
+                    } elseif($model->document_type == 4) {
+                        return 'Խոտան';
+                    } elseif($model->document_type == 6) {
+                        return 'Վերադարձրած';
+                    }
+                }
+            ],
             [
                 'attribute' => 'Օգտատեր',
                 'value' => function ($model) {

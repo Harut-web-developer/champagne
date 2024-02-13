@@ -55,7 +55,22 @@ if($have_access_update){
     'columns' => [
         ['class' => 'yii\grid\SerialColumn'],
         ...$action_column,
-        'document_type',
+        [
+            'attribute' => 'Օգտատեր',
+            'value' => function ($model) {
+                if ($model->document_type == 1) {
+                    return 'Մուտքի';
+                } elseif($model->document_type == 2) {
+                    return 'Ելքի';
+                } elseif($model->document_type == 3) {
+                    return 'Տեղափոխություն';
+                } elseif($model->document_type == 4) {
+                    return 'Խոտան';
+                } elseif($model->document_type == 6) {
+                    return 'Վերադարձրած';
+                }
+            }
+        ],
         [
             'attribute' => 'Օգտատեր',
             'value' => function ($model) {
@@ -112,9 +127,7 @@ if($have_access_update){
     $(document).ready(function() {
         $('.documentsCard').find('tbody tr').each(function () {
             let document_type = $(this).find('td:nth-child(3)').text();
-            if (document_type == 6) {
-                $(this).find('td:nth-child(2) a:not([title="Հաստատել"])').remove();
-            }else {
+            if (document_type != 'Վերադարձրած') {
                 $(this).find('td:nth-child(2) a[title="Հաստատել"]').remove();
             }
         })

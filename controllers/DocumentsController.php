@@ -7,6 +7,7 @@ use app\models\Documents;
 use app\models\DocumentsSearch;
 use app\models\Nomenclature;
 use app\models\Log;
+use app\models\Notifications;
 use app\models\Premissions;
 use yii\helpers\Url;
 use app\models\Products;
@@ -177,8 +178,11 @@ class DocumentsController extends Controller
                         $products->count = intval($post['count_'][$i]);
                         if ($post['aah'] == 'true'){
                             $products->price = floatval($post['pricewithaah'][$i]);
+                            $products->AAH = 1;
                         }else{
                             $products->price = floatval($post['price'][$i]);
+                            $products->AAH = 0;
+
                         }
 
                         $products->created_at = date('Y-m-d H:i:s');
@@ -196,8 +200,10 @@ class DocumentsController extends Controller
                         $products->count = -intval($post['count_'][$i]);
                         if ($post['aah'] == 'true'){
                             $products->price = floatval($post['pricewithaah'][$i]);
+                            $products->AAH = 1;
                         }else{
                             $products->price = floatval($post['price'][$i]);
+                            $products->AAH = 0;
                         }
                         $products->created_at = date('Y-m-d H:i:s');
                         $products->updated_at = date('Y-m-d H:i:s');
@@ -215,8 +221,10 @@ class DocumentsController extends Controller
                         $products->count = -intval($post['count_'][$i]);
                         if ($post['aah'] == 'true'){
                             $products->price = floatval($post['pricewithaah'][$i]);
+                            $products->AAH = 1;
                         }else{
                             $products->price = floatval($post['price'][$i]);
+                            $products->AAH = 0;
                         }
                         $products->created_at = date('Y-m-d H:i:s');
                         $products->updated_at = date('Y-m-d H:i:s');
@@ -232,8 +240,10 @@ class DocumentsController extends Controller
                         $products->count = intval($post['count_'][$j]);
                         if ($post['aah'] == 'true'){
                             $products->price = floatval($post['pricewithaah'][$j]);
+                            $products->AAH = 1;
                         }else{
                             $products->price = floatval($post['price'][$j]);
+                            $products->AAH = 0;
                         }
                         $products->created_at = date('Y-m-d H:i:s');
                         $products->updated_at = date('Y-m-d H:i:s');
@@ -251,8 +261,10 @@ class DocumentsController extends Controller
                         $products->count = -intval($post['count_'][$i]);
                         if ($post['aah'] == 'true'){
                             $products->price = floatval($post['pricewithaah'][$i]);
+                            $products->AAH = 1;
                         }else{
                             $products->price = floatval($post['price'][$i]);
+                            $products->AAH = 0;
                         }
                         $products->created_at = date('Y-m-d H:i:s');
                         $products->updated_at = date('Y-m-d H:i:s');
@@ -266,6 +278,7 @@ class DocumentsController extends Controller
                 foreach ($model as $name => $value) {
                     $model_new[$name] = $value;
                 }
+                Notifications::createNotifications($premission['name'], 'documentscreate');
                 Log::afterSaves('Create', $model_new, '', $url.'?'.'id'.'='.$model->id, $premission);
                 return $this->redirect(['index', 'id' => $model->id]);
 
@@ -448,8 +461,10 @@ class DocumentsController extends Controller
                             $product_write_in->count = intval($post['count_'][$j]);
                             if ($post['aah'] == 'true') {
                                 $product_write_in->price = floatval($post['pricewithaah'][$j]);
+                                $product_write_in->AAH = 1;
                             } else {
                                 $product_write_in->price = floatval($post['price'][$j]);
+                                $product_write_in->AAH = 0;
                             }
                             $product_write_in->updated_at = date('Y-m-d H:i:s');
                             $product_write_in->save(false);
@@ -464,8 +479,10 @@ class DocumentsController extends Controller
                             $product_write_out->count = -intval($post['count_'][$j]);
                             if ($post['aah'] == 'true') {
                                 $product_write_out->price = floatval($post['pricewithaah'][$j]);
+                                $product_write_out->AAH = 1;
                             } else {
                                 $product_write_out->price = floatval($post['price'][$j]);
+                                $product_write_out->AAH = 0;
                             }
                             $product_write_out->updated_at = date('Y-m-d H:i:s');
                             $product_write_out->save(false);
@@ -480,8 +497,10 @@ class DocumentsController extends Controller
                             $product_write_out->count = -intval($post['count_'][$j]);
                             if ($post['aah'] == 'true') {
                                 $product_write_out->price = floatval($post['pricewithaah'][$j]);
+                                $product_write_out->AAH = 1;
                             } else {
                                 $product_write_out->price = floatval($post['price'][$j]);
+                                $product_write_out->AAH = 0;
                             }
                             $product_write_out->updated_at = date('Y-m-d H:i:s');
                             $product_write_out->save(false);
@@ -495,8 +514,10 @@ class DocumentsController extends Controller
                             $product_write_in->count = intval($post['count_'][$j]);
                             if ($post['aah'] == 'true') {
                                 $product_write_in->price = floatval($post['pricewithaah'][$j]);
+                                $product_write_in->AAH = 1;
                             } else {
                                 $product_write_in->price = floatval($post['price'][$j]);
+                                $product_write_in->AAH = 0;
                             }
                             $product_write_in->updated_at = date('Y-m-d H:i:s');
                             $product_write_in->save(false);
@@ -511,8 +532,10 @@ class DocumentsController extends Controller
                             $product_write_out->count = -intval($post['count_'][$j]);
                             if ($post['aah'] == 'true') {
                                 $product_write_out->price = floatval($post['pricewithaah'][$j]);
+                                $product_write_out->AAH = 1;
                             } else {
                                 $product_write_out->price = floatval($post['price'][$j]);
+                                $product_write_out->AAH = 0;
                             }
                             $product_write_out->updated_at = date('Y-m-d H:i:s');
                             $product_write_out->save(false);
@@ -539,8 +562,10 @@ class DocumentsController extends Controller
                             $product_write_in->count = intval($post['count_'][$j]);
                             if ($post['aah'] == 'true') {
                                 $product_write_in->price = floatval($post['pricewithaah'][$j]);
+                                $product_write_in->AAH = 1;
                             } else {
                                 $product_write_in->price = floatval($post['price'][$j]);
+                                $product_write_in->AAH = 0;
                             }
                             $product_write_in->created_at = date('Y-m-d H:i:s');
                             $product_write_in->updated_at = date('Y-m-d H:i:s');
@@ -555,8 +580,10 @@ class DocumentsController extends Controller
                             $product_write_out->count = -intval($post['count_'][$j]);
                             if ($post['aah'] == 'true') {
                                 $product_write_out->price = floatval($post['pricewithaah'][$j]);
+                                $product_write_out->AAH = 1;
                             } else {
                                 $product_write_out->price = floatval($post['price'][$j]);
+                                $product_write_out->AAH = 0;
                             }
                             $product_write_out->created_at = date('Y-m-d H:i:s');
                             $product_write_out->updated_at = date('Y-m-d H:i:s');
@@ -571,8 +598,10 @@ class DocumentsController extends Controller
                             $product_write_out->count = -intval($post['count_'][$j]);
                             if ($post['aah'] == 'true') {
                                 $product_write_out->price = floatval($post['pricewithaah'][$j]);
+                                $product_write_out->AAH = 1;
                             } else {
                                 $product_write_out->price = floatval($post['price'][$j]);
+                                $product_write_out->AAH = 0;
                             }
                             $product_write_out->created_at = date('Y-m-d H:i:s');
                             $product_write_out->updated_at = date('Y-m-d H:i:s');
@@ -586,8 +615,10 @@ class DocumentsController extends Controller
                             $product_write_in->count = intval($post['count_'][$j]);
                             if ($post['aah'] == 'true') {
                                 $product_write_in->price = floatval($post['pricewithaah'][$j]);
+                                $product_write_in->AAH = 1;
                             } else {
                                 $product_write_in->price = floatval($post['price'][$j]);
+                                $product_write_in->AAH = 0;
                             }
                             $product_write_in->created_at = date('Y-m-d H:i:s');
                             $product_write_in->updated_at = date('Y-m-d H:i:s');
@@ -602,8 +633,10 @@ class DocumentsController extends Controller
                             $product_write_out->count = -intval($post['count_'][$j]);
                             if ($post['aah'] == 'true') {
                                 $product_write_out->price = floatval($post['pricewithaah'][$j]);
+                                $product_write_out->AAH = 1;
                             } else {
                                 $product_write_out->price = floatval($post['price'][$j]);
+                                $product_write_out->AAH = 0;
                             }
                             $product_write_out->created_at = date('Y-m-d H:i:s');
                             $product_write_out->updated_at = date('Y-m-d H:i:s');
@@ -667,12 +700,18 @@ class DocumentsController extends Controller
     }
 
     public function actionDelivered($id){
+        $have_access = Users::checkPremission(75);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         date_default_timezone_set('Asia/Yerevan');
         $session = Yii::$app->session;
 //        echo "<pre>";
         $document = Documents::findOne($id);
         $new_document = new Documents();
-        $new_document->user_id = $session['user_id'];
+        if ($session['role_id'] == 4){
+            $new_document->user_id = $session['user_id'];
+        }
         $new_document->warehouse_id = $document->warehouse_id;
         $new_document->rate_id = 1;
         $new_document->rate_value = 1;
@@ -691,17 +730,26 @@ class DocumentsController extends Controller
                 $new_document_items->nomenclature_id = $document_items[$k]['nomenclature_id'];
                 $new_document_items->count = $document_items[$k]['count'];
                 $new_document_items->price = $document_items[$k]['price'];
+                $new_document_items->price_with_aah = $document_items[$k]['price_with_aah'];
+                $new_document_items->AAH =  $document_items[$k]['AAH'];
                 $new_document_items->status = '1';
                 $new_document_items->created_at = date('Y-m-d H:i:s');
                 $new_document_items->updated_at = date('Y-m-d H:i:s');
                 $new_document_items->save(false);
+
                 $new_product = new Products();
                 $new_product->warehouse_id = $document->warehouse_id;
                 $new_product->nomenclature_id = $document_items[$k]['nomenclature_id'];
                 $new_product->document_id = $new_document->id;
                 $new_product->type = 1;
                 $new_product->count = $document_items[$k]['count'];
-                $new_product->price = $document_items[$k]['price'];
+                if ($document_items[$k]['AAH'] == 'true'){
+                    $new_product->AAH = 1;
+                    $new_product->price = $document_items[$k]['price_with_aah'];
+                }else{
+                    $new_product->price = $document_items[$k]['price'];
+                    $new_product->AAH = 0;
+                }
                 $new_product->status = '1';
                 $new_product->created_at = date('Y-m-d H:i:s');
                 $new_product->updated_at = date('Y-m-d H:i:s');
