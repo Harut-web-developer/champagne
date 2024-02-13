@@ -32,7 +32,7 @@ if($have_access_delete){
     $access_buttons .='{delete}';
 }
 if($have_access_confirm_return){
-    $access_buttons .='{delivered}';
+    $access_buttons .='{delivered} {refuse}';
 }
 if($have_access_update){
     $access_buttons .='{update}';
@@ -47,7 +47,12 @@ if($have_access_update){
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132; padding:0px 2px" ></i>', $url, [
                     'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
-            }],
+            },
+            'refuse'=>function ($url, $model, $key) {
+                return '<i class="bx bx-block" title="Մերժել" style="color:red; padding:0px 2px"></i>';
+            },
+],
+
         'urlCreator' => function ($action, Documents $model, $key, $index, $column) {
             return Url::toRoute([$action, 'id' => $model->id]);
         }

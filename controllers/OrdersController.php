@@ -588,7 +588,7 @@ class OrdersController extends Controller
         }elseif ($session['role_id'] == 2){
             $users = Users::find()->select('id, name')->where(['=','id',$session['user_id']])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
-        }elseif($session['role_id'] == 3){
+        }elseif($session['role_id'] == 3 || $session['role_id'] == 4){
             $users = Users::find()->select('id, name')->where(['id' => $session['user_id']])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
 
@@ -659,9 +659,11 @@ class OrdersController extends Controller
             ->leftJoin('products', 'order_items.product_id = products.id')
             ->where(['order_items.order_id' => $id])->asArray()->all();
         $size = 1;
+//        var_dump($order_items);
+        $num = 0;
         for ($i = 0; $i < count($order_items); $i++){
             if ($order_items[$i]['count'] - $order_items[$i]['count_by'] != 0){
-                $changed_items[$i] = [
+                $changed_items[$num] = [
                     $order_items[$i]['order_id'],
                     $order_items[$i]['warehouse_id'],
                     $order_items[$i]['product_id'],
@@ -674,6 +676,7 @@ class OrdersController extends Controller
                     $size++;
                     Notifications::createNotifications("Պատվեր փոփոխել", 'changeorderscount');
                 }
+                $num++;
             }
         }
 
@@ -729,7 +732,7 @@ class OrdersController extends Controller
         order_items.nom_id_for_name,order_items.count_by,products.AAH,products.price')
             ->leftJoin('products','products.id = order_items.product_id')
             ->where(['order_items.order_id' => $id])->asArray()->all();
-        var_dump($order_items);
+//        var_dump($order_items);
         for ($i = 0;$i < count($order_items);$i++){
             $exit_documents[$i] = [
               $order_items[$i]['order_id'],
@@ -757,7 +760,7 @@ class OrdersController extends Controller
             $new_exit_document->status = '1';
             $new_exit_document->created_at = date('Y-m-d H:i:s');
             $new_exit_document->updated_at = date('Y-m-d H:i:s');
-            $save_value = $new_exit_document->save(false);
+            $new_exit_document->save(false);
             for ($j = 0; $j< count($exit_documents); $j++){
                 $new_exit_document_items = new DocumentItems();
                 $new_exit_document_items->document_id = $new_exit_document->id;
@@ -775,7 +778,7 @@ class OrdersController extends Controller
                 $new_exit_document_items->status = '1';
                 $new_exit_document_items->created_at = date('Y-m-d H:i:s');
                 $new_exit_document_items->updated_at = date('Y-m-d H:i:s');
-                $save_value = $new_exit_document_items->save(false);
+                $new_exit_document_items->save(false);
             }
             if ($session['role_id'] == 4){
                 Notifications::createNotifications('Ելքագրել փաստաթուղթ', 'exitdocument');

@@ -52,7 +52,7 @@ $session = Yii::$app->session;
                     <?php
                     }elseif($session['role_id'] == 2){ ?>
                         <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
-                    <?php }elseif ($session['role_id'] == 3){
+                    <?php }elseif ($session['role_id'] == 3 || $session['role_id'] == 4){
                         $manager_id = Orders::findOne($model->id);
                         ?>
                         <?= $form->field($model, 'user_id')->hiddenInput(['value' => $manager_id->user_id])->label(false) ?>

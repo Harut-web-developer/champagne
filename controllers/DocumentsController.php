@@ -769,6 +769,19 @@ class DocumentsController extends Controller
         }
         return $this->redirect(['index']);
     }
+//    public function actionRefuse($id){
+//        $model = $this->findModel($id);
+//        $sub_page = [];
+//        $date_tab = [];
+////        var_dump($id);
+////        $model = $this->findModel($id);
+////        var_dump($model);
+//        return $this->render('refuse',[
+//            'sub_page' => $sub_page,
+//            'date_tab' => $date_tab,
+//        ]);
+//
+//    }
     /**
      * Deletes an existing Documents model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

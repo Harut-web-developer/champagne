@@ -663,3 +663,7 @@
     transform: translate(30%, -72%);
     --bs-badge-color: #f90606;
 }
+
+.bx-block:hover{
+    cursor:pointer;
+}
