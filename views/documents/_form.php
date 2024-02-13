@@ -24,6 +24,8 @@ if(isset($action__)){
         $value = 'Տեղափոխություն';
     }elseif ($model->document_type === '4'){
         $value = 'Խոտան';
+    }elseif ($model->document_type === '6'){
+        $value = 'Վերադարձրած';
     }
     ?>
     <div class="documents-form">

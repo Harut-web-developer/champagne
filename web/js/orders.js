@@ -182,7 +182,7 @@ $(document).ready(function () {
                                                      </td>
                                                      <td  class="name">`+pars.name+`</td>
                                                      <td class="count">
-                                                        <input type="number" name="count_[]" value="`+pars.count+`" class="form-control countProduct" min="1" step="1">
+                                                        <input type="number" name="count_[]" value="`+pars.count+`" class="form-control countProduct">
                                                      </td>
                                                      <td class="discount">
                                                         <span>`+parseFloat(pars.discount).toFixed(2)+`</span>
@@ -261,7 +261,8 @@ $(document).ready(function () {
             return value.replace(/-/g, '');
         });
         if ($(this).val() < 1 || $(this).val() === "") {
-            $(this).val(1);
+            $(this).val('');
+            $(this).attr('required',true);
         }
         var this_ = $(this);
         let warehouse_id = $('body').find('.warehouse_id').val();
@@ -283,7 +284,7 @@ $(document).ready(function () {
                 let pars = JSON.parse(data)
                 if (data) {
                     if (pars.count === 'nullable') {
-                        this_.val(1)
+                        this_.val('')
                     } else if (pars.count === 'countMore') {
                         this_.val(1)
                         alert('Պահեստում նման քանակի ապրանք չկա');
@@ -309,7 +310,8 @@ $(document).ready(function () {
             return value.replace(/-/g, '');
         });
         if ($(this).val() < 1 || $(this).val() === "") {
-            $(this).val(1);
+            $(this).val('');
+            $(this).attr('required',true);
         }
         var result = product_count();
         $(this).closest('.tableNomenclature').find('.totalPrice').children('span').text(parseFloat($(this).closest('.tableNomenclature').find('.price').children('input').val() * $(this).val()).toFixed(2))
@@ -630,7 +632,7 @@ $(document).ready(function () {
                                      </td>
                                      <td  class="name">`+pars.name+`</td>
                                      <td class="count">
-                                        <input type="number" name="count_[]" value="`+pars.count+`" class="form-control countProduct min="1" step="1"">
+                                        <input type="number" name="count_[]" value="`+pars.count+`" class="form-control countProduct">
                                      </td>
                                      <td class="discount">
                                         <span>`+parseFloat(pars.discount).toFixed(2)+`</span>
@@ -916,6 +918,9 @@ $(document).ready(function () {
         $(this).val(function(index, value) {
             return value.replace(/-/g, '');
         });
+        if ($(this).val() < 1){
+            $(this).val('')
+        }
         var this_ = $(this);
         let warehouse_id = $('body').find('.warehouse_id').val();
         var id = this_.closest('.addOrdersTableTr').find(".nomId").attr('data-product');
@@ -952,6 +957,9 @@ $(document).ready(function () {
         })
     })
     $('body').on('click','.ordersCountInput',function (){
+        if ($(this).val() < 1){
+            $(this).val('')
+        }
         var this_ = $(this);
         let warehouse_id = $('body').find('.warehouse_id').val();
         var id = this_.closest('.addOrdersTableTr').find(".nomId").attr('data-product');
@@ -1074,7 +1082,7 @@ $(document).ready(function () {
                                      </td>
                                      <td  class="name">`+pars.name+`</td>
                                      <td class="count">
-                                        <input type="number" name="count_[]" value="`+pars.count+`" class="form-control countProduct" min="1" step="1">
+                                        <input type="number" name="count_[]" value="`+pars.count+`" class="form-control countProduct">
                                      </td>
                                      <td class="discount">
                                         <span>`+parseFloat(pars.discount).toFixed(2)+`</span>
@@ -1219,7 +1227,7 @@ $(document).ready(function () {
                                      </td>
                                      <td  class="name">`+pars.name+`</td>
                                      <td class="count">
-                                        <input type="number" name="count_[]" value="`+pars.count+`" class="form-control countProduct" min="1" step="1">
+                                        <input type="number" name="count_[]" value="`+pars.count+`" class="form-control countProduct">
                                      </td>
                                      <td class="discount">
                                         <span>`+parseFloat(pars.discount).toFixed(2)+`</span>
@@ -1348,7 +1356,7 @@ $(document).ready(function () {
                                      </td>
                                      <td  class="name">`+pars.name+`</td>
                                      <td class="count">
-                                        <input type="number" name="count_[]" value="`+pars.count+`" class="form-control countProduct" min="1" step="1">
+                                        <input type="number" name="count_[]" value="`+pars.count+`" class="form-control countProduct">
                                      </td>
                                      <td class="discount">
                                         <span>`+parseFloat(pars.discount).toFixed(2)+`</span>

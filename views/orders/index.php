@@ -27,10 +27,14 @@ $have_access_update = Users::checkPremission(22);
 $have_access_delete = Users::checkPremission(23);
 $have_access_delivered = Users::checkPremission(55);
 $have_access_available = Users::checkPremission(56);
+$have_access_exit_document = Users::checkPremission(76);
 $action_column = [];
 $access_buttons = '';
 if($have_access_delete){
     $access_buttons .='{delete}';
+}
+if($have_access_exit_document){
+    $access_buttons .='{exit}';
 }
 if($have_access_update){
     $access_buttons .='{update}';
@@ -57,7 +61,13 @@ $action_column[] = [
         return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
             'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
         ]);
-    }],
+    },
+        'exit'=>function ($url, $model, $key) {
+            return Html::a('<i class="bx bx-receipt" style="color:#FF0000"></i>', $url, [
+                'title' => Yii::t('yii', 'Ելքագրել'), // Add a title if needed
+            ]);
+        },
+],
     'urlCreator' => function ($action, Orders $model, $key, $index, $column) {
         return Url::toRoute([$action, 'id' => $model->id]);
     }
@@ -84,7 +94,7 @@ $action_column[] = [
                 <input type="date" class="form-control ordersDate" style="margin: 0px 5px 0px 10px;">
                 <?php
                 $users = Users::find()->select('id,name')->where(['=','role_id',2])->asArray()->all();
-                if($session['role_id'] == '1'){?>
+                if($session['role_id'] == '1' || $session['role_id'] == '4'){?>
                     <select class="form-control changeManager">
                         <option value="null">Ընտրել մենեջերին</option>
                         <?php
@@ -171,7 +181,28 @@ $action_column[] = [
                             }
                         }
                     ],
-                        'status',
+                    [
+                        'attribute' => 'Կարգավիճակ',
+                        'value' => function ($model) {
+                            if ($model->status == 1) {
+                                return 'Ընթացքի մեջ';
+                            } elseif($model->status == 2){
+                                return 'Հաստատված';
+                            } elseif($model->status == 0){
+                                return 'Մերժված';
+                            }
+                        }
+                    ],
+                    [
+                        'attribute' => 'Փաստաթուղթ',
+                        'value' => function ($model) {
+                            if ($model->is_exit == 1) {
+                                return 'Չելքագրված';
+                            }else{
+                                return 'Ելքագրված';
+                            }
+                        }
+                    ],
                     'total_price',
                     'total_count',
                     'orders_date',

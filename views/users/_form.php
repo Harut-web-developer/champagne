@@ -170,6 +170,8 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                             ['id' => 72, 'name' => 'Ստեղծել անվանակարգի դաշտ', 'label_id' => 'premission72'],
                             ['id' => 73, 'name' => 'Ստեղծել պահեստի դաշտ', 'label_id' => 'premission73'],
                             ['id' => 74, 'name' => 'Ստեղծել օգտատիրոջ դաշտ', 'label_id' => 'premission74'],
+                            ['id' => 75, 'name' => 'Հաստատել վերադարցրածը', 'label_id' => 'premission75'],
+                            ['id' => 76, 'name' => 'Ելքագրել պատվերը', 'label_id' => 'premission76'],
 
                         ];
 
@@ -478,7 +480,6 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                             <label for="premission70" class="items-title">Ստեղծել հաճախորդի դաշտ</label>
                             <input id="premission70" type="checkbox" value="70" name="premission[]">
                         </div
-
                     </div>
                     <div class="rows-checkbox">
                         <div class="premission-content-items">
@@ -496,6 +497,14 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                         <div class="premission-content-items">
                             <label for="premission74" class="items-title">Ստեղծել օգտատիրոջ դաշտ</label>
                             <input id="premission74" type="checkbox" value="74" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission75" class="items-title">Հաստատել վերադարցրածը</label>
+                            <input id="premission75" type="checkbox" value="75" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission76" class="items-title">Ելքագրել պատվերը</label>
+                            <input id="premission76" type="checkbox" value="76" name="premission[]">
                         </div>
                     </div>
                 </div>

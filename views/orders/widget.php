@@ -27,10 +27,14 @@ $have_access_update = Users::checkPremission(22);
 $have_access_delete = Users::checkPremission(23);
 $have_access_delivered = Users::checkPremission(55);
 $have_access_available = Users::checkPremission(56);
+$have_access_exit_document = Users::checkPremission(76);
 $action_column = [];
 $access_buttons = '';
 if($have_access_delete){
     $access_buttons .='{delete}';
+}
+if($have_access_exit_document){
+    $access_buttons .='{exit}';
 }
 if($have_access_update){
     $access_buttons .='{update}';
@@ -57,6 +61,11 @@ if($have_access_available){
                     'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'class' => 'reportsOrders',
                     'target' => '_blank',
+                ]);
+            },
+            'exit'=>function ($url, $model, $key) {
+                return Html::a('<i class="bx bx-receipt" style="color:#FF0000"></i>', $url, [
+                    'title' => Yii::t('yii', 'Ելքագրել'), // Add a title if needed
                 ]);
             },
         ],
@@ -106,7 +115,28 @@ if($have_access_available){
                             }
                         }
                     ],
-                    'status',
+                    [
+                        'attribute' => 'Կարգավիճակ',
+                        'value' => function ($model) {
+                            if ($model->status == 1) {
+                                return 'Ընթացքի մեջ';
+                            } elseif($model->status == 2){
+                                return 'Հաստատված';
+                            } elseif($model->status == 0){
+                                return 'Մերժված';
+                            }
+                        }
+                    ],
+                    [
+                        'attribute' => 'Փաստաթուղթ',
+                        'value' => function ($model) {
+                            if ($model->is_exit == 1) {
+                                return 'Չելքագրված';
+                            }else{
+                                return 'Ելքագրված';
+                            }
+                        }
+                    ],
                     'total_price',
                     'total_count',
                     'orders_date',
@@ -268,7 +298,28 @@ else { ?>
                             }
                         }
                     ],
-                    'status',
+                    [
+                        'attribute' => 'Կարգավիճակ',
+                        'value' => function ($model) {
+                            if ($model->status == 1) {
+                                return 'Ընթացքի մեջ';
+                            } elseif($model->status == 2){
+                                return 'Հաստատված';
+                            } elseif($model->status == 0){
+                                return 'Մերժված';
+                            }
+                        }
+                    ],
+                    [
+                        'attribute' => 'Փաստաթուղթ',
+                        'value' => function ($model) {
+                            if ($model->is_exit == 1) {
+                                return 'Չելքագրված';
+                            }else{
+                                return 'Ելքագրված';
+                            }
+                        }
+                    ],
                     'total_price',
                     'total_count',
                     'orders_date',
@@ -332,21 +383,6 @@ else { ?>
 </div>
 
 <?php } ?>
-<!--<script>-->
-<!--    $('body').find('#w0 table tbody tr').each(function(){-->
-<!--        let status_ = $(this).find('td:nth-child(6)').text();-->
-<!--        // console.log(status_)-->
-<!--        if (status_ == 2) {-->
-<!--            $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();-->
-<!--        } else if (status_ == 0) {-->
-<!--            $(this).find('td:nth-child(2) a[title="Ջնջել"]').remove();-->
-<!--        }-->
-<!--    });-->
-<!--    $('body').find('#w0 table thead th').each(function () {-->
-<!--        if ($(this).has('a')){-->
-<!--            $(this).html( $(this).find('a').html())-->
-<!--        }-->
-<!--    })-->
-<!--</script>-->
+
 
 

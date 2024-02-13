@@ -19,6 +19,7 @@ use app\models\Premissions;
 use app\models\Products;
 use app\models\Users;
 use app\models\Warehouse;
+use Couchbase\Document;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
@@ -214,6 +215,9 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            echo "<pre>";
+            var_dump($post);
+            exit();
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
@@ -231,12 +235,16 @@ class OrdersController extends Controller
                 $order_items_create->warehouse_id = $post['warehouse'];
                 $order_items_create->product_id = intval($post['order_items'][$i]);
                 $order_items_create->nom_id_for_name = intval($post['nom_id'][$i]);
-                $order_items_create->price = floatval($post['price'][$i]);
+                $order_items_create->price = floatval($post['price'][$i]) * intval($post['count_'][$i]);
+                $order_items_create->price_by = floatval($post['price'][$i]) * intval($post['count_'][$i]);
                 $order_items_create->count = $post['count_'][$i];
                 $order_items_create->count_by = $post['count_'][$i];
                 $order_items_create->cost = floatval($post['cost'][$i]) * intval($post['count_'][$i]);
-                $order_items_create->discount = floatval($post['discount'][$i]);
-                $order_items_create->price_before_discount = floatval($post['beforePrice'][$i]);
+                $order_items_create->cost_by = floatval($post['cost'][$i]) * intval($post['count_'][$i]);
+                $order_items_create->discount = floatval($post['discount'][$i]) * intval($post['count_'][$i]);
+                $order_items_create->discount_by = floatval($post['discount'][$i]) * intval($post['count_'][$i]);
+                $order_items_create->price_before_discount = floatval($post['beforePrice'][$i]) * intval($post['count_'][$i]);
+                $order_items_create->price_before_discount_by = floatval($post['beforePrice'][$i]) * intval($post['count_'][$i]);
                 $order_items_create->count_discount_id = $post['count_discount_id'][$i];
                 $order_items_create->created_at = date('Y-m-d H:i:s');
                 $order_items_create->updated_at = date('Y-m-d H:i:s');
@@ -453,10 +461,10 @@ class OrdersController extends Controller
                     $order_item->warehouse_id = intval($post['warehouse']);
                     $order_item->product_id = $post['product_id'][$k];
                     $order_item->nom_id_for_name = intval($post['nom_id'][$k]);
-                    $order_item->price = floatval($post['price'][$k]);
-                    $order_item->cost = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
-                    $order_item->discount = floatval($post['discount'][$k]);
-                    $order_item->price_before_discount = floatval($post['beforePrice'][$k]);
+                    $order_item->price_by = floatval($post['price'][$k]) * intval($post['count_'][$k]);
+                    $order_item->cost_by = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
+                    $order_item->discount_by = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
+                    $order_item->price_before_discount_by = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
                     $order_item->count_by = intval($post['count_'][$k]);
                     $order_item->updated_at = date('Y-m-d H:i:s');
                     $order_item->save(false);
@@ -481,12 +489,16 @@ class OrdersController extends Controller
                     $order_items_create->warehouse_id = intval($post['warehouse']);
                     $order_items_create->product_id = intval($post['product_id'][$k]);
                     $order_items_create->nom_id_for_name = intval($post['nom_id'][$k]);
-                    $order_items_create->price = floatval($post['price'][$k]);
+                    $order_items_create->price = floatval($post['price'][$k]) * intval($post['count_'][$k]);
+                    $order_items_create->price_by = floatval($post['price'][$k]) * intval($post['count_'][$k]);
                     $order_items_create->count = intval($post['count_'][$k]);
                     $order_items_create->count_by = intval($post['count_'][$k]);
                     $order_items_create->cost = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
-                    $order_items_create->discount = floatval($post['discount'][$k]);
-                    $order_items_create->price_before_discount = floatval($post['beforePrice'][$k]);
+                    $order_items_create->cost_by = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
+                    $order_items_create->discount = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
+                    $order_items_create->discount_by = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
+                    $order_items_create->price_before_discount = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
+                    $order_items_create->price_before_discount_by = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
                     $order_items_create->count_discount_id = $post['count_discount_id'][$k];
                     $order_items_create->created_at = date('Y-m-d H:i:s');
                     $order_items_create->updated_at = date('Y-m-d H:i:s');
@@ -531,9 +543,9 @@ class OrdersController extends Controller
         $sub_page = [];
         $date_tab = [];
 
-        $order_items = OrderItems::find()->select('count_by,order_items.id,order_items.product_id,order_items.count,order_items.price_before_discount as beforePrice,
-        (order_items.price_before_discount * order_items.count_by) as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
-        (order_items.price * order_items.count_by)  as total_price,order_items.price as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
+        $order_items = OrderItems::find()->select('count_by,order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
+        ((order_items.price_before_discount / order_items.count) * order_items.count_by) as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
+        ((order_items.price / order_items.count) * order_items.count_by)  as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
             ->leftJoin('products','products.id = order_items.product_id')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['order_id' => $id])
@@ -579,6 +591,10 @@ class OrdersController extends Controller
         }elseif ($session['role_id'] == 2){
             $users = Users::find()->select('id, name')->where(['=','id',$session['user_id']])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
+        }elseif($session['role_id'] == 3){
+            $users = Users::find()->select('id, name')->where(['id' => $session['user_id']])->asArray()->all();
+            $users = ArrayHelper::map($users,'id','name');
+
         }
         $warehouse = Warehouse::find()
             ->select('id, name')
@@ -633,9 +649,19 @@ class OrdersController extends Controller
     }
     public function actionDelivered($id)
     {
+        $have_access = Users::checkPremission(55);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         date_default_timezone_set('Asia/Yerevan');
+//        echo "<pre>";
         $changed_items = [];
-        $order_items = OrderItems::find()->where(['order_id' => $id])->asArray()->all();
+        $order_items = OrderItems::find()
+            ->select('order_items.order_id,order_items.warehouse_id,order_items.product_id,order_items.nom_id_for_name,
+            order_items.count_by,order_items.count,products.AAH,products.price')
+            ->leftJoin('products', 'order_items.product_id = products.id')
+            ->where(['order_items.order_id' => $id])->asArray()->all();
+//        var_dump($order_items);
         for ($i = 0; $i < count($order_items); $i++){
             if ($order_items[$i]['count'] - $order_items[$i]['count_by'] != 0){
                 $changed_items[$i] = [
@@ -643,9 +669,10 @@ class OrdersController extends Controller
                     $order_items[$i]['warehouse_id'],
                     $order_items[$i]['product_id'],
                     $order_items[$i]['nom_id_for_name'],
-                    $order_items[$i]['price_before_discount'],
+                    $order_items[$i]['price'],
                     $order_items[$i]['count']-$order_items[$i]['count_by'],
-                    ];
+                    $order_items[$i]['AAH'],
+                ];
             }
         }
 
@@ -653,27 +680,106 @@ class OrdersController extends Controller
             $document = new Documents();
             $document->orders_id = $changed_items[0][0];
             $document->warehouse_id = $changed_items[0][1];
+            $document->rate_id = 1;
+            $document->rate_value = 1;
             $document->document_type = 6;
+            $document->comment = 'Վերադարձրած ապրանք(ներ)';
+            $document->date = date('Y-m-d H:i:s');
             $document->status = '1';
             $document->created_at = date('Y-m-d H:i:s');
             $document->updated_at = date('Y-m-d H:i:s');
-            var_dump($document->save(false));
+            $document->save(false);
             for ($k = 0; $k < count($changed_items); $k++){
                     $new_document_items = new DocumentItems();
                     $new_document_items->document_id = $document->id;
                     $new_document_items->nomenclature_id = $changed_items[$k][3];
                     $new_document_items->count = $changed_items[$k][5];
-                    $new_document_items->price = $changed_items[$k][4];
+                    if ($changed_items[$k][6] == 1){
+                        $new_document_items->AAH = 'true';
+                        $new_document_items->price_with_aah = $changed_items[$k][4];
+                        $new_document_items->price = number_format((($changed_items[$k][4] * 5)/6),2,'.','');
+                    }else{
+                        $new_document_items->AAH = 'false';
+                        $new_document_items->price = $changed_items[$k][4];
+                        $new_document_items->price_with_aah = $changed_items[$k][4] + ($changed_items[$k][4] * 20) / 100;
+                    }
                     $new_document_items->status = '1';
                     $new_document_items->created_at = date('Y-m-d H:i:s');
                     $new_document_items->updated_at = date('Y-m-d H:i:s');
-                    var_dump($new_document_items->save(false));
+                    $new_document_items->save(false);
             }
         }
         $orders = Orders::findOne($id);
         $orders->status = '2';
         $orders->save();
         Notifications::createNotifications("Հաստատել պատվեր", 'ordersdelivered');
+        return $this->redirect(['index']);
+    }
+    public function actionExit($id){
+        $have_access = Users::checkPremission(76);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+//        echo "<pre>";
+        $session = Yii::$app->session;
+        date_default_timezone_set('Asia/Yerevan');
+        $exit_documents = [];
+        $order_items = OrderItems::find()->select('order_items.id,order_items.order_id,order_items.warehouse_id,order_items.product_id,
+        order_items.nom_id_for_name,order_items.count_by,products.AAH,products.price')
+            ->leftJoin('products','products.id = order_items.product_id')
+            ->where(['order_items.order_id' => $id])->asArray()->all();
+        var_dump($order_items);
+        for ($i = 0;$i < count($order_items);$i++){
+            $exit_documents[$i] = [
+              $order_items[$i]['order_id'],
+              $order_items[$i]['product_id'],
+              $order_items[$i]['warehouse_id'],
+              $order_items[$i]['nom_id_for_name'],
+              $order_items[$i]['count_by'],
+              $order_items[$i]['AAH'],
+              $order_items[$i]['price'],
+            ];
+        }
+
+        if (!empty($exit_documents)){
+            $new_exit_document = new Documents();
+            if ($session['role_id'] == 4){
+                $new_exit_document->user_id = $session['user_id'];
+            }
+            $new_exit_document->orders_id = $exit_documents[0][0];
+            $new_exit_document->warehouse_id = $exit_documents[0][2];
+            $new_exit_document->rate_id = 1;
+            $new_exit_document->rate_value = 1;
+            $new_exit_document->document_type = 2;
+            $new_exit_document->comment = 'Ելքագրված փաստաթուղթ';
+            $new_exit_document->date = date('Y-m-d H:i:s');
+            $new_exit_document->status = '1';
+            $new_exit_document->created_at = date('Y-m-d H:i:s');
+            $new_exit_document->updated_at = date('Y-m-d H:i:s');
+            $new_exit_document->save(false);
+            for ($j = 0; $j< count($exit_documents); $j++){
+                $new_exit_document_items = new DocumentItems();
+                $new_exit_document_items->document_id = $new_exit_document->id;
+                $new_exit_document_items->nomenclature_id = $exit_documents[$j][3];
+                $new_exit_document_items->count = $exit_documents[$j][4];
+                if ($exit_documents[$j][5] == 1){
+                    $new_exit_document_items->price_with_aah = $exit_documents[$j][6];
+                    $new_exit_document_items->AAH = 'true';
+                    $new_exit_document_items->price = number_format((($exit_documents[$j][6] * 5)/6),2,'.','');
+                }else{
+                    $new_exit_document_items->price = $exit_documents[$j][6];
+                    $new_exit_document_items->AAH = 'false';
+                    $new_exit_document_items->price_with_aah = $exit_documents[$j][6] + ($exit_documents[$j][6] * 20) / 100;
+                }
+                $new_exit_document_items->status = '1';
+                $new_exit_document_items->created_at = date('Y-m-d H:i:s');
+                $new_exit_document_items->updated_at = date('Y-m-d H:i:s');
+                $new_exit_document_items->save(false);
+            }
+        }
+        $is_exit_orders = Orders::findOne($id);
+        $is_exit_orders->is_exit = '0';
+        $is_exit_orders->save(false);
         return $this->redirect(['index']);
     }
     public  function actionFilterStatus(){
