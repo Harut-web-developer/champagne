@@ -27,6 +27,7 @@ class ClientsController extends Controller
     /**
      * @inheritDoc
      */
+
     public function init()
     {
         parent::init();
