@@ -976,6 +976,7 @@ $(document).ready(function () {
                 _csrf: csrfToken
             },
             success:function (data) {
+                console.log(data)
                 let pars = JSON.parse(data)
                 if (data){
                     if (pars.count === 'nullable'){
