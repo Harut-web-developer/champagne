@@ -18,7 +18,6 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-
 /**
  * ClientsController implements the CRUD actions for Clients model.
  */
