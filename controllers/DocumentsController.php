@@ -285,7 +285,7 @@ class DocumentsController extends Controller
         } else {
             $model->loadDefaultValues();
         }
-
+//        if ()
         $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['or', ['role_id' => '1'], ['role_id' => '4']])->asArray()->all();
         $users = ArrayHelper::map($users,'id','name');
         $warehouse = Warehouse::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
@@ -769,19 +769,43 @@ class DocumentsController extends Controller
         }
         return $this->redirect(['index']);
     }
-//    public function actionRefuse($id){
-//        $model = $this->findModel($id);
-//        $sub_page = [];
-//        $date_tab = [];
-////        var_dump($id);
-////        $model = $this->findModel($id);
-////        var_dump($model);
-//        return $this->render('refuse',[
-//            'sub_page' => $sub_page,
-//            'date_tab' => $date_tab,
-//        ]);
-//
-//    }
+
+    public function actionRefuseModal(){
+        if($this->request->isGet){
+            $get = $this->request->get('documentId');
+        }
+        return $this->renderAjax('refuse',[
+            'id' => $get,
+        ]);
+    }
+    public function actionMessage(){
+        $sub_page = [
+            ['name' => 'Պահեստ','address' => '/warehouse'],
+            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
+            ['name' => 'Ապրանք','address' => '/products'],
+            ['name' => 'Տեղեկամատյան','address' => '/log'],
+        ];
+        $date_tab = [];
+        if ($this->request->isPost){
+            $post = $this->request->post();
+            $document = Documents::findOne($post['document_id']);
+            $document->document_type = 7;
+            $document->comment = 'Մերժման պատճառն է՝ «' . $post['message'] . '»';
+            $document->save(false);
+            return $this->redirect('message');
+        }
+
+
+        $searchModel = new DocumentsSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+
+        ]);
+    }
     /**
      * Deletes an existing Documents model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -832,21 +856,6 @@ class DocumentsController extends Controller
         }
     }
 
-//    public function actionSearch(){
-//        if ($this->request->isPost){
-//            $nom = $this->request->post('nomenclature');
-//            $query = Nomenclature::find()
-//                ->where(['like', 'name', $nom]);
-//
-//            $nomenclature = $query
-//                ->asArray()
-//                ->all();
-//            $res = [];
-//            $res['nomenclature'] = $nomenclature;
-//            return json_encode($res);
-//
-//        }
-//    }
     /**
      * Finds the Documents model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -871,11 +880,6 @@ class DocumentsController extends Controller
             }else{
                 return json_encode('amd');
             }
-        }
-    }
-    public function actionGetCount(){
-        if ($this->request->isPost){
-
         }
     }
     public  function actionDocumentFilterStatus(){

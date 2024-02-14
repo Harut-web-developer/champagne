@@ -49,7 +49,7 @@ if($have_access_update){
                 ]);
             },
             'refuse'=>function ($url, $model, $key) {
-                return '<i class="bx bx-block" title="Մերժել" style="color:red; padding:0px 2px"></i>';
+                return '<i class="bx bx-block refuseDocument" data-id="'. $key . '" title="Մերժել" style="color:red; padding:0px 2px"></i>';
             },
 ],
 
@@ -85,6 +85,7 @@ if($have_access_update){
                     <option value="3">Տեղափոխություն</option>
                     <option value="4">Խոտան</option>
                     <option value="6">Վերադարձ</option>
+                    <option value="7">Մերժված</option>
                 <?php }?>
             </select>
         </div>
@@ -112,6 +113,8 @@ if($have_access_update){
                         return 'Խոտան';
                     } elseif($model->document_type == 6) {
                         return 'Վերադարձրած';
+                    } elseif($model->document_type == 7) {
+                        return 'Մերժված';
                     }
                 }
             ],
@@ -168,4 +171,7 @@ if($have_access_update){
         ],
     ]); ?>
     </div>
+</div>
+<div class="modals">
+
 </div>
