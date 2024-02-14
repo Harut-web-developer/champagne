@@ -14,6 +14,7 @@ $req = true;
 if(isset($action__)){
     $req = false;
 }
+$type = $model->document_type;
 ?>
 <?php if ($model->id){
     if ($model->document_type === '1'){
@@ -69,12 +70,12 @@ if(isset($action__)){
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <?php
-                    if ($model->document_type != '7'){?>
-                        <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
-                    <?php }elseif($model->document_type != '6'){?>
-                        <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
-                    <?php }else{?>
+                    if ($type == '7'){?>
                         <?= $form->field($model, 'comment')->textArea(['maxlength' => true, 'disabled' => true]) ?>
+                    <?php }elseif($type == '6'){?>
+                        <?= $form->field($model, 'comment')->textArea(['maxlength' => true, 'disabled' => true]) ?>
+                    <?php }else{?>
+                        <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
                     <?php }?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
@@ -137,7 +138,7 @@ if(isset($action__)){
                                 <th>Գինը առանց ԱԱՀ-ի</th>
                                 <th>Գինը ներառյալ ԱԱՀ-ն</th>
                                 <?php
-                                if ($model->document_type != '7'){?>
+                                if ($type == '1' || $type == '2' || $type == '3' || $type == '4'){?>
                                     <th>Գործողություն</th>
                                 <?php }?>
                             </tr>
@@ -153,11 +154,10 @@ if(isset($action__)){
                                         <span><?=$keys + 1?></span>
                                         <input class="docItemsId" type="hidden" name="document_items[]" value="<?=$document_item['id']?>">
                                         <input class="itemsId" type="hidden" name="items[]" value="<?=$document_item['nom_id']?>">
-<!--                                        <input class="itemsId" type="hidden" name="nom_id[]" value="--><?php //=$document_item['nom_id']?><!--">-->
                                     </td>
                                     <td class="name"><?=$document_item['name']?></td>
                                     <?php
-                                    if ($model->document_type == '7'){?>
+                                    if ($type == '7' || $type == '6'){?>
                                         <td class="count"><input type="number" name="count_[]" disabled value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="any"></td>
                                         <td class="price"><input type="number" name="price[]" disabled value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>
                                     <?php }else{?>
@@ -170,7 +170,7 @@ if(isset($action__)){
                                         <input type="hidden" name="pricewithaah[]" value="<?=number_format($document_item['price_with_aah'],2,'.', '')?>" class="form-control PriceWithaah">
                                     </td>
                                     <?php
-                                    if ($model->document_type != '7'){?>
+                                    if ($type == '1' || $type == '2' || $type == '3' || $type == '4'){?>
                                         <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteDocumentItems">Ջնջել</button></td>
                                     <?php }?>
                                 </tr>
@@ -183,7 +183,7 @@ if(isset($action__)){
                 </div>
                 <!-- Button trigger modal -->
                 <?php
-                if ($model->document_type != '7'){?>
+                if ($type == '1' || $type == '2' || $type == '3' || $type == '4'){?>
                     <button type="button" class="btn rounded-pill btn-secondary addDocuments" data-bs-toggle="modal" data-bs-target="#documentsModal">Ավելացնել ապրանք</button>
                 <?php }?>
                 <!-- Modal -->
@@ -262,7 +262,7 @@ if(isset($action__)){
             </div>
             <div class="card-footer">
                 <?php
-                if ($model->document_type != '7'){?>
+                if ($type == '1' || $type == '2' || $type == '3' || $type == '4'){?>
                     <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary']) ?>
                 <?php }?>
             </div>
