@@ -26,6 +26,8 @@ if(isset($action__)){
         $value = 'Խոտան';
     }elseif ($model->document_type === '6'){
         $value = 'Վերադարձրած';
+    }elseif ($model->document_type === '7'){
+        $value = 'Մերժված';
     }
     ?>
     <div class="documents-form">
@@ -66,7 +68,14 @@ if(isset($action__)){
                     </select>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
+                    <?php
+                    if ($model->document_type != '7'){?>
+                        <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
+                    <?php }elseif($model->document_type != '6'){?>
+                        <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
+                    <?php }else{?>
+                        <?= $form->field($model, 'comment')->textArea(['maxlength' => true, 'disabled' => true]) ?>
+                    <?php }?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <?= $form->field($model, 'date')->input('datetime-local') ?>
@@ -127,7 +136,10 @@ if(isset($action__)){
                                 <th>Քանակ</th>
                                 <th>Գինը առանց ԱԱՀ-ի</th>
                                 <th>Գինը ներառյալ ԱԱՀ-ն</th>
-                                <th>Գործողություն</th>
+                                <?php
+                                if ($model->document_type != '7'){?>
+                                    <th>Գործողություն</th>
+                                <?php }?>
                             </tr>
                             </thead>
                             <tbody class="old_tbody">
@@ -144,13 +156,23 @@ if(isset($action__)){
 <!--                                        <input class="itemsId" type="hidden" name="nom_id[]" value="--><?php //=$document_item['nom_id']?><!--">-->
                                     </td>
                                     <td class="name"><?=$document_item['name']?></td>
-                                    <td class="count"><input type="number" name="count_[]" value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="any"></td>
-                                    <td class="price"><input type="number" name="price[]" value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>
+                                    <?php
+                                    if ($model->document_type == '7'){?>
+                                        <td class="count"><input type="number" name="count_[]" disabled value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="any"></td>
+                                        <td class="price"><input type="number" name="price[]" disabled value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>
+                                    <?php }else{?>
+                                        <td class="count"><input type="number" name="count_[]" value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="any"></td>
+                                        <td class="price"><input type="number" name="price[]" value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>
+                                    <?php }?>
+
                                     <td class="pricewithaah">
                                         <span><?=number_format($document_item['price_with_aah'],2,'.', '')?></span>
                                         <input type="hidden" name="pricewithaah[]" value="<?=number_format($document_item['price_with_aah'],2,'.', '')?>" class="form-control PriceWithaah">
                                     </td>
-                                    <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteDocumentItems">Ջնջել</button></td>
+                                    <?php
+                                    if ($model->document_type != '7'){?>
+                                        <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteDocumentItems">Ջնջել</button></td>
+                                    <?php }?>
                                 </tr>
                                 <?php
                             }
@@ -160,7 +182,10 @@ if(isset($action__)){
                     </div>
                 </div>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn rounded-pill btn-secondary addDocuments" data-bs-toggle="modal" data-bs-target="#documentsModal">Ավելացնել ապրանք</button>
+                <?php
+                if ($model->document_type != '7'){?>
+                    <button type="button" class="btn rounded-pill btn-secondary addDocuments" data-bs-toggle="modal" data-bs-target="#documentsModal">Ավելացնել ապրանք</button>
+                <?php }?>
                 <!-- Modal -->
                 <div class="modal fade" id="documentsModal" tabindex="-1" style="display: none;" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">
@@ -236,7 +261,10 @@ if(isset($action__)){
                 </div>
             </div>
             <div class="card-footer">
-                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary']) ?>
+                <?php
+                if ($model->document_type != '7'){?>
+                    <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary']) ?>
+                <?php }?>
             </div>
             <?php ActiveForm::end(); ?>
         </div>

@@ -21,14 +21,18 @@ $this->params['date_tab'] = $date_tab;
 $have_access_create = Users::checkPremission(37);
 $have_access_update = Users::checkPremission(38);
 $have_access_delete = Users::checkPremission(39);
+$have_access_confirm_return = Users::checkPremission(75);
 $action_column = [];
 
 $access_buttons = '';
 if($have_access_delete){
     $access_buttons .='{delete}';
 }
+if($have_access_confirm_return){
+    $access_buttons .='{delivered} {refuse}';
+}
 if($have_access_update){
-    $access_buttons .='{delivered}{update}';
+    $access_buttons .='{update}';
 }
     $action_column[] = [
         'header' => 'Գործողություն',
@@ -39,7 +43,11 @@ if($have_access_update){
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132; padding:0px 2px" ></i>', $url, [
                     'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
-            }],
+            },
+            'refuse'=>function ($url, $model, $key) {
+                return '<i class="bx bx-block refuseDocument" data-id="'. $key . '" title="Մերժել" style="color:red; padding:0px 2px"></i>';
+            },
+],
         'urlCreator' => function ($action, Documents $model, $key, $index, $column) {
             return Url::toRoute([$action, 'id' => $model->id]);
         }
@@ -68,6 +76,8 @@ if($have_access_update){
                     return 'Խոտան';
                 } elseif($model->document_type == 6) {
                     return 'Վերադարձրած';
+                } elseif($model->document_type == 7) {
+                    return 'Մերժված';
                 }
             }
         ],
@@ -129,6 +139,7 @@ if($have_access_update){
             let document_type = $(this).find('td:nth-child(3)').text();
             if (document_type != 'Վերադարձրած') {
                 $(this).find('td:nth-child(2) a[title="Հաստատել"]').remove();
+                $(this).find('td:nth-child(2) .refuseDocument').remove();
             }
         })
     })

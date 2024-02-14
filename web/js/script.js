@@ -800,6 +800,7 @@ $(document).ready(function() {
             let document_type = $(this).find('td:nth-child(3)').text();
             if (document_type != 'Վերադարձրած') {
                 $(this).find('td:nth-child(2) a[title="Հաստատել"]').remove();
+                $(this).find('td:nth-child(2) .refuseDocument').remove();
             }
         })
     })
@@ -839,10 +840,25 @@ $(document).ready(function() {
         })
     }
 
-    $('body').on('click', '.bx-block',function () {
-        let doc = $(this).closest('td').find();
-        console.log(doc)
+    $('body').on('click','.refuseDocument',function(){
+        refuseDocument($(this));
     })
+    function refuseDocument(el) {
+        let docId = el.data('id');
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/documents/refuse-modal',
+            method:'get',
+            datatype:'html',
+            data:{
+                documentId:docId,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.modals').html(data);
+            }
+        })
+    }
 
 });
 

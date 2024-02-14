@@ -52,6 +52,8 @@ class DocumentsSearch extends Documents
                 $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
             }elseif ($params['numberVal'] == 6){
                 $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
+            }elseif ($params['numberVal'] == 7){
+                $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']]);
             }
         }else{
             $query->andWhere(['status' => '1']);
