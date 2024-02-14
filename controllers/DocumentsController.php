@@ -888,13 +888,23 @@ class DocumentsController extends Controller
             $dataProvider = $searchModel->search($this->request->queryParams);
             $sub_page = [];
             $date_tab = [];
-
-            return $this->renderAjax('widget', [
+            $page_value = null;
+            if(isset($_GET["dp-1-page"]))
+                $page_value = intval($_GET["dp-1-page"]);
+            $render_array = [
                 'sub_page' => $sub_page,
                 'date_tab' => $date_tab,
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
-            ]);
+                'page_value' => $page_value,
+
+            ];
+
+            if(Yii::$app->request->isAjax){
+                return $this->renderAjax('widget', $render_array);
+            }else{
+                return $this->render('widget', $render_array);
+            }
         }
     }
 

@@ -69,23 +69,13 @@ if ($have_access_update && $have_access_delete){
             </select>
             <?php }?>
         </div>
-<!--        <h3>--><?php //= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?><!--</h3>-->
     </div>
-    <p>
-<!--        --><?php //if($have_access_create){ ?>
-<!--            --><?php //= Html::a('Ստեղծել ապրանք', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
-<!--        --><?php //} ?>
-    </p>
-
     <div class="card pageStyle">
     <?= CustomGridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],
         'dataProvider' => new ActiveDataProvider([
             'query' => $dataProvider->query->andWhere(['status' => '1']),
-//                'pagination' => [
-//                    'pageSize' => 20,
-//                ],
         ]),
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
@@ -109,7 +99,6 @@ if ($have_access_update && $have_access_delete){
                     }
                 }
             ],
-//            'count',
             [
                 'attribute' => 'Քանակ',
                 'value' => function ($model) {
@@ -126,8 +115,6 @@ if ($have_access_update && $have_access_delete){
                     return round($model->price);
                 }
             ],
-//            'price',
-//            ...$action_column,
         ],
     ]); ?>
     </div>

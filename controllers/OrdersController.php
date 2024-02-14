@@ -215,9 +215,6 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-//            echo "<pre>";
-//            var_dump($post);
-//            exit();
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
@@ -654,13 +651,14 @@ class OrdersController extends Controller
             $this->redirect('/site/403');
         }
         date_default_timezone_set('Asia/Yerevan');
-        echo "<pre>";
+//        echo "<pre>";
         $changed_items = [];
         $order_items = OrderItems::find()
             ->select('order_items.order_id,order_items.warehouse_id,order_items.product_id,order_items.nom_id_for_name,
             order_items.count_by,order_items.count,products.AAH,products.price')
             ->leftJoin('products', 'order_items.product_id = products.id')
             ->where(['order_items.order_id' => $id])->asArray()->all();
+        $size = 1;
 //        var_dump($order_items);
         $num = 0;
         for ($i = 0; $i < count($order_items); $i++){
@@ -674,11 +672,14 @@ class OrdersController extends Controller
                     $order_items[$i]['count']-$order_items[$i]['count_by'],
                     $order_items[$i]['AAH'],
                 ];
+                if ($size == 1) {
+                    $size++;
+                    Notifications::createNotifications("Պատվեր փոփոխել", 'changeorderscount');
+                }
                 $num++;
             }
         }
-//var_dump($changed_items);
-//        exit();
+
         if(!empty($changed_items)){
             $document = new Documents();
             $document->orders_id = $changed_items[0][0];
@@ -778,6 +779,9 @@ class OrdersController extends Controller
                 $new_exit_document_items->created_at = date('Y-m-d H:i:s');
                 $new_exit_document_items->updated_at = date('Y-m-d H:i:s');
                 $new_exit_document_items->save(false);
+            }
+            if ($session['role_id'] == 4){
+                Notifications::createNotifications('Ելքագրել փաստաթուղթ', 'exitdocument');
             }
         }
         $is_exit_orders = Orders::findOne($id);

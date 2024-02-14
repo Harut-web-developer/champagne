@@ -173,7 +173,7 @@ $(document).ready(function() {
             data: { _csrf: csrfToken },
             success: function (data) {
                 if (data['notifications_today'] !== 0) {
-                    displayNotifications(data['notifications_today']);
+                    displayNotifications(data, data['notifications_today']);
                     $('body').on('click','#viweall',function () {
                         // displayNotifications(data['notifications_all']);
                         var notifications = data['notifications_all'];
@@ -221,7 +221,12 @@ $(document).ready(function() {
             },
         });
     }
-    function displayNotifications(notifications) {
+    function displayNotifications(data, notifications) {
+        if(data['notification_badge_storekeeper'] != null){
+            $('.index_not').text(data['notification_badge_storekeeper'])
+        }else{
+            $('.index_not').text(data['notification_badge_admin'])
+        }
         var notificationsDropdown = $("#notifications-dropdown");
         notificationsDropdown.empty();
         notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +

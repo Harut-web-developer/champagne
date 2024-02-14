@@ -295,7 +295,9 @@ $date_tab = $this->params['date_tab'];
                         <!-- Place this tag where you want the button to render. -->
                         <li class="nav-item lh-1 me-3">
                             <div class="notifications-container">
-                                <div class="bell-icon"><i id="notificationBell" class="bx bx-bell notificationIcon"></i></div>
+                                <div class="bell-icon"><i id="notificationBell" class="bx bx-bell notificationIcon"></i>
+                                    <span class="badge badge-light index_not"></span>
+                                </div>
                                 <div id="notifications-dropdown">
                                     <div class="notification-ui_dd-header">
                                         <h3 class="text-center">Notification</h3>

@@ -285,17 +285,32 @@ class ProductsController extends Controller
 
     public  function actionProductsFilterStatus(){
         if ($_GET){
+            $page_value = null;
+            if(isset($_GET["dp-1-page"]))
+                $page_value = intval($_GET["dp-1-page"]);
             $searchModel = new ProductsSearch();
             $dataProvider = $searchModel->search($this->request->queryParams);
             $sub_page = [];
             $date_tab = [];
+            $warehouse = Warehouse::find()
+                ->select('id, name')
+                ->asArray()
+                ->all();
 
-            return $this->renderAjax('widget', [
+            $render_array = [
                 'sub_page' => $sub_page,
                 'date_tab' => $date_tab,
+                'page_value' => $page_value,
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
-            ]);
+                'warehouse' => $warehouse,
+            ];
+
+            if(Yii::$app->request->isAjax){
+                return $this->renderAjax('widget', $render_array);
+            }else{
+                return $this->render('widget', $render_array);
+            }
         }
     }
 }

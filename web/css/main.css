@@ -656,6 +656,14 @@
 .table > tbody > tr > td > a{
     padding: 0px 5px !important;
 }
+.index_not {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(30%, -72%);
+    --bs-badge-color: #f90606;
+}
+
 .bx-block:hover{
     cursor:pointer;
 }

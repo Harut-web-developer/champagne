@@ -43,13 +43,12 @@ class ProductsSearch extends Products
     public function search($params)
     {
         $session = Yii::$app->session;
-        $query = Products::find()
-            ->select('id,warehouse_id,nomenclature_id,SUM(count) as count,AVG(price) as price');
+        $query = Products::find()->select('id,warehouse_id,nomenclature_id,SUM(count) as count,AVG(price) as price');
         if ($session['role_id'] == '1' || $session['role_id'] == '2'){
             if (isset($params['numberVal']) && $params['numberVal'] != 0){
                 $query->andWhere(['status' => '1'])->andWhere(['warehouse_id' => $params['numberVal']]);
             }else{
-                $query->andWhere(['status' => '1']);
+                $query->Where(['status' => '1']);
             }
         } elseif ($session['role_id'] == '4'){
             $users = Users::findOne($session['user_id']);
@@ -61,9 +60,7 @@ class ProductsSearch extends Products
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query
-                ->groupBy(['nomenclature_id','warehouse_id'])
-                ->orderBy(['created_at'=> SORT_DESC]),
+                'query' => $query->groupBy('id'),
         ]);
 
         $this->load($params);
