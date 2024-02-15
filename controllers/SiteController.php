@@ -183,42 +183,38 @@ class SiteController extends Controller
             $notifications_today = Notifications::find()
                 ->select(['title', 'message', 'datetime'])
                 ->andWhere(['>=', 'datetime', date('Y-m-d')])
-                ->andWhere(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount']])
+                ->andWhere(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn']])
                 ->orderBy(['datetime' => SORT_DESC])
                 ->asArray()
                 ->all();
             $notifications_all = Notifications::find()
                 ->select(['title', 'message', 'datetime'])
-                ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount']])
+                ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn']])
                 ->orderBy(['datetime' => SORT_DESC])
                 ->asArray()
                 ->all();
             $notification_badge_admin = Notifications::find()
-                ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount']])
-                ->andWhere(['>=', 'datetime', date('Y-m-d')])
-                ->andWhere(['status' => '1'])
-                ->andWhere(['watched' => null])
+                ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn']])
+                ->andWhere(['NOT LIKE', 'watched', ',' . $session['role_id'] . ','])
                 ->count();
         }
         if ($session['role_id'] == '4') {
             $notifications_today = Notifications::find()
                 ->select(['title', 'message', 'datetime'])
                 ->andWhere(['>=', 'datetime', date('Y-m-d')])
-                ->andWhere(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'changeorderscount'], ['sort_' => 'changeorderscount']])
+                ->andWhere(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'changeorderscount']])
                 ->orderBy(['datetime' => SORT_DESC])
                 ->asArray()
                 ->all();
             $notifications_all = Notifications::find()
                 ->select(['title', 'message', 'datetime'])
-                ->andWhere(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'changeorderscount'], ['sort_' => 'changeorderscount']])
+                ->andWhere(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'changeorderscount']])
                 ->orderBy(['datetime' => SORT_DESC])
                 ->asArray()
                 ->all();
             $notification_badge_storekeeper = Notifications::find()
-                ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'changeorderscount'], ['sort_' => 'changeorderscount']])
-                ->andWhere(['>=', 'datetime', date('Y-m-d')])
-                ->andWhere(['status' => '1'])
-                ->andWhere(['watched' => null])
+                ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'changeorderscount']])
+                ->andWhere(['NOT LIKE', 'watched', ',' . $session['role_id'] . ','])
                 ->count();
         }
         return json_encode([
@@ -233,51 +229,55 @@ class SiteController extends Controller
     {
         $session = Yii::$app->session;
         Yii::$app->response->format = Response::FORMAT_JSON;
+        $users_premissions = [];
+        if ($session['role_id'] == '1') {
+            $users_premissions = ['orderscreate','ordersupdate','ordersdelivered','exitdocument','documentscreate','changeorderscount','refusalreturn'];
+        }
+        if ($session['role_id'] == '4') {
+            $users_premissions = ['orderscreate','ordersdelivered','changeorderscount'];
+        }
         $notification = Notifications::find()
             ->andWhere(['>=', 'datetime', date('Y-m-d')])
             ->andWhere(['status' => '1'])
             ->andWhere(['role_id' => '2'])
-//            ->orderBy(['datetime' => SORT_DESC])
-            ->one();
-        if ($session['role_id'] == '1' || $session['role_id'] == '4') {
-            if (!is_null($notification)){
-                if (!is_null($notification->watched) && ($notification->sort_ == 'orderscreate' || $notification->sort_ == 'changeorderscount')) {
-                    $watched_array = explode(',', $notification->watched);
-                    if (in_array('1', $watched_array) && in_array('4', $watched_array)) {
-                        $notification->status = 0;
-                        $notification->save();
-                        return [
-                            'index' => 0,
-                            'success' => false,
-                        ];
-                    } elseif (!in_array($session['role_id'], $watched_array)) {
-                        $watched_value = $notification->watched . $session['role_id'] . ',';
-                        $notification->watched = $watched_value;
-                        $notification->save();
-                        return [
-                            'success' => true,
-                            'notifications' => $notification,
-                        ];
-                    }
-                }elseif(is_null($notification->watched) && ($notification->sort_ == 'orderscreate' || $notification->sort_ == 'changeorderscount')){
-                    $watched_value = $session['role_id'] . ',';
-                    $notification->watched = $watched_value;
-                    $notification->save();
-                    return [
-                        'success' => true,
-                        'notifications' => $notification,
-                    ];
-                }
+            ->andWhere([
+                'or',
+                ['watched' => ','],
+                ['NOT LIKE', 'watched', ',' . $session['role_id'] . ',']
+            ])
+            ->all();
 
-                if (!is_null($notification->watched) && $notification->sort_ == 'ordersdelivered') {
-                    $watched_array = explode(',', $notification->watched);
-                    if (in_array('1', $watched_array) && in_array('4', $watched_array)) {
-                        $notification->status = 0;
-                        $notification->save();
-                        return [
-                            'success' => false
-                        ];
-                    } elseif (!in_array($session['role_id'], $watched_array)) {
+        $not_count = count($notification);
+
+        for ($i = 0; $i < $not_count; $i++){
+            if (in_array($notification[$i]['sort_'], $users_premissions)) {
+                $notification = $notification[$i];
+                break;
+            }elseif ($i == $not_count-1){
+                $notification = null;
+            }
+        }
+        if ($session['role_id'] == '1' || $session['role_id'] == '4') {
+            if (!empty($notification)){
+                if (!is_null($notification)){
+                    if (($notification->watched != ',') && ($notification->sort_ == 'orderscreate' || $notification->sort_ == 'changeorderscount' || $notification->sort_ == 'ordersdelivered')) {
+                        $watched_array = explode(',', $notification->watched);
+                        if (in_array('1', $watched_array) && in_array('4', $watched_array)) {
+                            $notification->status = 0;
+                            $notification->save();
+                            return [
+                                'success' => false,
+                            ];
+                        } elseif (!in_array($session['role_id'], $watched_array)) {
+                            $watched_value = $notification->watched . $session['role_id'] . ',';
+                            $notification->watched = $watched_value;
+                            $notification->save();
+                            return [
+                                'success' => true,
+                                'notifications' => $notification,
+                            ];
+                        }
+                    }elseif(($notification->watched == ',') && ($notification->sort_ == 'orderscreate' || $notification->sort_ == 'changeorderscount' || $notification->sort_ == 'ordersdelivered')){
                         $watched_value = $notification->watched . $session['role_id'] . ',';
                         $notification->watched = $watched_value;
                         $notification->save();
@@ -286,29 +286,31 @@ class SiteController extends Controller
                             'notifications' => $notification,
                         ];
                     }
-                }elseif(is_null($notification->watched) && $notification->sort_ == 'ordersdelivered'){
-                    $watched_value = $session['role_id'] . ',';
-                    $notification->watched = $watched_value;
-                    $notification->save();
-                    return [
-                        'success' => true,
-                        'notifications' => $notification,
-                    ];
                 }
             }
         }
 
         if ($session['role_id'] == '1') {
-            if (!is_null($notification)){
-                if (!is_null($notification->watched) && ($notification->sort_ == 'ordersupdate' || $notification->sort_ == 'documentscreate')) {
-                    $watched_array = explode(',', $notification->watched);
-                    if (in_array('1', $watched_array)) {
-                        $notification->status = 0;
-                        $notification->save();
-                        return [
-                            'success' => false
-                        ];
-                    } elseif (!in_array($session['role_id'], $watched_array)) {
+            if (!empty($notification)){
+                if (!is_null($notification)){
+                    if (($notification->watched != ',') && ($notification->sort_ == 'ordersupdate' || $notification->sort_ == 'documentscreate')) {
+                        $watched_array = explode(',', $notification->watched);
+                        if (in_array('1', $watched_array)) {
+                            $notification->status = 0;
+                            $notification->save();
+                            return [
+                                'success' => false
+                            ];
+                        } elseif (!in_array($session['role_id'], $watched_array)) {
+                            $watched_value = $notification->watched . $session['role_id'] . ',';
+                            $notification->watched = $watched_value;
+                            $notification->save();
+                            return [
+                                'success' => true,
+                                'notifications' => $notification,
+                            ];
+                        }
+                    }elseif(($notification->watched == ',') && ($notification->sort_ == 'ordersupdate' || $notification->sort_ == 'documentscreate')){
                         $watched_value = $notification->watched . $session['role_id'] . ',';
                         $notification->watched = $watched_value;
                         $notification->save();
@@ -317,14 +319,6 @@ class SiteController extends Controller
                             'notifications' => $notification,
                         ];
                     }
-                }elseif(is_null($notification->watched) && ($notification->sort_ == 'ordersupdate' || $notification->sort_ == 'documentscreate')){
-                    $watched_value = $session['role_id'] . ',';
-                    $notification->watched = $watched_value;
-                    $notification->save();
-                    return [
-                        'success' => true,
-                        'notifications' => $notification,
-                    ];
                 }
             }
         }
@@ -332,19 +326,45 @@ class SiteController extends Controller
             ->andWhere(['>=', 'datetime', date('Y-m-d')])
             ->andWhere(['status' => '1'])
             ->andWhere(['role_id' => '4'])
-//            ->orderBy(['datetime' => SORT_DESC])
-            ->one();
+            ->andWhere([
+                'or',
+                ['watched' => ','],
+                ['NOT LIKE', 'watched', ',' . $session['role_id'] . ',']
+            ])
+            ->all();
+
+        $not_count = count($notification_doc);
+
+        for ($i = 0; $i < $not_count; $i++){
+            if (in_array($notification_doc[$i]['sort_'], $users_premissions)) {
+                $notification_doc = $notification_doc[$i];
+                break;
+            }elseif ($i == $not_count-1){
+                $notification_doc = null;
+            }
+        }
+
         if ($session['role_id'] == '1') {
-            if (!is_null($notification_doc)){
-                if (!is_null($notification_doc->watched) && $notification_doc->sort_ == 'exitdocument') {
-                    $watched_array = explode(',', $notification_doc->watched);
-                    if (in_array('1', $watched_array)) {
-                        $notification_doc->status = 0;
-                        $notification_doc->save();
-                        return [
-                            'success' => false
-                        ];
-                    } elseif (!in_array($session['role_id'], $watched_array)) {
+            if (!empty($notification_doc)){
+                if (!is_null($notification_doc)){
+                    if (($notification_doc->watched != ',') && ($notification_doc->sort_ == 'exitdocument' || $notification_doc->sort_ == 'refusalreturn')) {
+                        $watched_array = explode(',', $notification_doc->watched);
+                        if (in_array('1', $watched_array)) {
+                            $notification_doc->status = 0;
+                            $notification_doc->save();
+                            return [
+                                'success' => false
+                            ];
+                        } elseif (!in_array($session['role_id'], $watched_array)) {
+                            $watched_value = $notification_doc->watched . $session['role_id'] . ',';
+                            $notification_doc->watched = $watched_value;
+                            $notification_doc->save();
+                            return [
+                                'success' => true,
+                                'notifications' => $notification_doc,
+                            ];
+                        }
+                    }elseif(($notification_doc->watched == ',') && ($notification_doc->sort_ == 'exitdocument' || $notification_doc->sort_ == 'refusalreturn')){
                         $watched_value = $notification_doc->watched . $session['role_id'] . ',';
                         $notification_doc->watched = $watched_value;
                         $notification_doc->save();
@@ -353,15 +373,8 @@ class SiteController extends Controller
                             'notifications' => $notification_doc,
                         ];
                     }
-                }elseif(is_null($notification_doc->watched) && $notification_doc->sort_ == 'exitdocument'){
-                    $watched_value = $session['role_id'] . ',';
-                    $notification_doc->watched = $watched_value;
-                    $notification_doc->save();
-                    return [
-                        'success' => true,
-                        'notifications' => $notification_doc,
-                    ];
                 }
+
             }
         }
         return [

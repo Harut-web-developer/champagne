@@ -224,7 +224,7 @@ $(document).ready(function() {
     function displayNotifications(data, notifications) {
         if(data['notification_badge_storekeeper'] != null){
             $('.index_not').text(data['notification_badge_storekeeper'])
-        }else{
+        }else if(data['notification_badge_admin'] != null){
             $('.index_not').text(data['notification_badge_admin'])
         }
         var notificationsDropdown = $("#notifications-dropdown");
@@ -255,7 +255,7 @@ $(document).ready(function() {
     function displayNotificationtoast(notification) {
         if (notification!=null) {
             $('.bs-toast .toast-header .me-auto').text(notification.title);
-            $('.bs-toast .toast-body').text(notification.message);
+            $('.bs-toast .toast-body').append(notification.message);
             $('.bs-toast').toast('show');
         }
     }

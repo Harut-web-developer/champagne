@@ -271,21 +271,30 @@ class DocumentsController extends Controller
                         $products->save(false);
                     }
                 }
-                $model_new = [];
-                foreach ($document_items as $name => $value) {
-                    $model_new[$name] = $value;
-                }
-                foreach ($model as $name => $value) {
-                    $model_new[$name] = $value;
-                }
-                Notifications::createNotifications($premission['name'], 'documentscreate');
-                Log::afterSaves('Create', $model_new, '', $url.'?'.'id'.'='.$model->id, $premission);
-                return $this->redirect(['index', 'id' => $model->id]);
-
+            $model_new = [];
+            foreach ($document_items as $name => $value) {
+                $model_new[$name] = $value;
+            }
+            foreach ($model as $name => $value) {
+                $model_new[$name] = $value;
+            }
+            $session = Yii::$app->session;
+            $document_tipe = (object) [
+                '1' => 'մուտքի',
+                '2' => 'ելքի',
+                '3' => 'տեղափոխման',
+                '4' => 'խոտանի',
+                '6' => 'վերադարձի',
+                '7' => 'մերժման',
+            ];
+            $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
+            $text = $user_name['name'] . '(ն\ը) ստեղծել է ' . $document_tipe->{$post['Documents']['document_type']} . ' փաստաթուղթ։';
+            Notifications::createNotifications('Ստեղծել փաստաթուղթ', $text,'documentscreate');
+            Log::afterSaves('Create', $model_new, '', $url.'?'.'id'.'='.$model->id, $premission);
+            return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
-//        if ()
         $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['or', ['role_id' => '1'], ['role_id' => '4']])->asArray()->all();
         $users = ArrayHelper::map($users,'id','name');
         $warehouse = Warehouse::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
@@ -792,9 +801,27 @@ class DocumentsController extends Controller
             $document->document_type = 7;
             $document->comment = 'Մերժման պատճառն է՝ «' . $post['message'] . '»';
             $document->save(false);
+            $session = Yii::$app->session;
+            $mes = $post['message'];
+            $message_length = strlen($mes);
+            $ch = '';
+            for ($i = 0; $i < $message_length; $i++) {
+                $ch .= $mes[$i];
+                if (($i + 1) % 20 == 0 && $i != $message_length - 1) {
+                    $ch .= "\n";
+                }
+            }
+            if($session['role_id'] == 4){
+                $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
+                $text = $user_name['name'] . '(ն/ը) ' . 'մերժել է ապրանքի հետ վերդարձը, նշելով մերժման պատճառն ՝ «'
+                    . $ch . '»: '
+                    . "\n" .
+                    '<a href="http://champagne/documents/update?id=' . $post['document_id'] . '">
+                    <img width="15" height="15" src="/upload/view.png" alt="view"></a>';
+                Notifications::createNotifications('Մերժել վերադարձը', $text,'refusalreturn');
+            }
             return $this->redirect('message');
         }
-
 
         $searchModel = new DocumentsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
