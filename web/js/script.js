@@ -255,6 +255,7 @@ $(document).ready(function() {
     function displayNotificationtoast(notification) {
         if (notification!=null) {
             $('.bs-toast .toast-header .me-auto').text(notification.title);
+            $('.bs-toast .toast-body').html('');
             $('.bs-toast .toast-body').append(notification.message);
             $('.bs-toast').toast('show');
         }
