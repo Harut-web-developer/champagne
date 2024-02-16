@@ -1,4 +1,3 @@
-<!--<input class="form-control col-md-3 mb-3 searchForDocument" value="--><?php //=$search_name?><!--" type="search" placeholder="Որոնել...">-->
 <div class="card">
     <div class="table-responsive text-nowrap">
         <table class="table">
@@ -22,7 +21,7 @@
                     <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
                     <td class="documentsName"><?=$nomenclature['name']?></td>
                     <td class="documentsCount">
-                        <input type="number" class="form-control documentsCountInput" step="any" min="1" value="<?= $id_count[$nomenclature['id']] ?? '' ?>">
+                        <input type="number" class="form-control documentsCountInput" step="1" min="1" value="<?= $id_count[$nomenclature['id']] ?? '' ?>">
                         <input class="documentsPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
                     </td>
                 </tr>
@@ -34,23 +33,21 @@
     </div>
 </div>
 <?php $page = @$_GET['paging'] ?? 1; ?>
-<?php
-
-$count = intval(ceil($total/10)) ;
+<?php $count = intval(ceil($total/10)) ;
 if (@$_GET['nomenclature'] != ''){
     $count = 1 ;
 }
 ?>
-<?php if($urlId){ ?>
+<?php if(isset($urlId)){ ?>
     <nav aria-label="Page navigation example" class="pagination">
         <ul class="pagination pagination-sm">
             <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
-                <a class="page-link by_ajax_update" href="#" data-href="/documents/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
+                <a class="page-link by_ajax_update" href="#" data-href="/documents/get-nomiclature-update?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
             </li>
             <?php for ($i = 1;$i <= $count; $i++){ ?>
                 <?php if($i > 0 && $i <= $count+1){?>
                     <li class="page-item <?= ($page==$i) ? 'active' : '' ?> page-item-active-insearche">
-                        <a class="page-link by_ajax_update" href="#" data-href="/documents/get-nomiclature?paging=<?= $i ?>"><?= $i ?>
+                        <a class="page-link by_ajax_update" href="#" data-href="/documents/get-nomiclature-update?paging=<?= $i ?>"><?= $i ?>
                         </a>
                     </li>
                     <?php
@@ -67,10 +64,9 @@ if (@$_GET['nomenclature'] != ''){
                     ?>
                 <?php } ?>
             <?php } ?>
-
             <?php if(intval($page) < $count){ ?>
                 <li class="page-item next">
-                    <a class="page-link by_ajax_update" href="#" data-href="/documents/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
+                    <a class="page-link by_ajax_update" href="#" data-href="/documents/get-nomiclature-update?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
                 </li>
             <?php } ?>
         </ul>

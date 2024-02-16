@@ -1,5 +1,13 @@
 $(document).ready(function () {
     var id_count = {};
+    var warehouse_id = $('#documents-warehouse_id').val();
+    $('body').on('change','#documents-warehouse_id',function () {
+        warehouse_id = $(this).val();
+    })
+    var documents_type = $('#documents-document_type').val();
+    $('body').on('change','#documents-document_type',function () {
+        documents_type = $(this).val();
+    })
     $('body').on('input', '.documentsCountInput', function () {
         count_id($(this));
     });
@@ -383,7 +391,7 @@ $(document).ready(function () {
         let url = new URL(url_id);
         let urlId = url.searchParams.get("id");
         $.ajax({
-            url: href_,
+            url:href_+'&warehouse_id='+warehouse_id+'&documents_type='+documents_type,
             method: 'post',
             datatype: 'html',
             data:{
@@ -503,6 +511,52 @@ $(document).ready(function () {
     $('body').find('.card thead th').each(function () {
         if ($(this).has('a')){
             $(this).html( $(this).find('a').html())
+        }
+    })
+
+    $('body').on('click', '.addDocuments_get_type_val', function (e) {
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/documents/get-nomiclature',
+            method:'post',
+            datatype:'html',
+            data:{
+                warehouse_id:warehouse_id,
+                documents_type:documents_type,
+                id_count:id_count,
+                csrfToken:csrfToken,
+            },
+            success:function(data){
+                $('#ajax_content').html(data);
+            }
+        })
+    })
+
+    $('body').on('click', '.addDocuments_get_type_val_update', function (e) {
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        let url_id = window.location.href;
+        let url = new URL(url_id);
+        let urlId = url.searchParams.get("id");
+        $.ajax({
+            url:'/documents/get-nomiclature-update',
+            method:'post',
+            datatype:'html',
+            data:{
+                warehouse_id:warehouse_id,
+                documents_type:documents_type,
+                id_count:id_count,
+                urlId: urlId,
+                csrfToken:csrfToken,
+            },
+            success:function(data){
+                $('#ajax_content').html(data);
+            }
+        })
+    })
+
+    $('body').on('change','#documents-warehouse_id, #documents-document_type, #documents-date',function(){
+        if($('#documents-warehouse_id').val() != '' && $('#documents-document_type').val() != '' && $('#documents-date').val() != ''){
+            $('body').find('.addDocuments').attr('disabled',false);
         }
     })
 })
