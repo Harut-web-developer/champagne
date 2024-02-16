@@ -66,7 +66,7 @@ if($have_access_update){
             'query' => $dataProvider->query->andWhere(['status' => '1']),
         ]),
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+//            ['class' => 'yii\grid\SerialColumn'],
             ...$action_column,
             [
                 'attribute' => 'Օգտատեր',
@@ -180,7 +180,7 @@ if($have_access_update){
                     'query' => $dataProvider->query->andWhere(['status' => '1']),
                 ]),
                 'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
+//                    ['class' => 'yii\grid\SerialColumn'],
                     ...$action_column,
                     [
                         'attribute' => 'Օգտատեր',

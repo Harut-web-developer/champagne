@@ -140,9 +140,6 @@ class DocumentsController extends Controller
             ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
-//            echo "<pre>";
-//            var_dump($post);
-//            exit();
             date_default_timezone_set('Asia/Yerevan');
             $model->user_id = $post['Documents']['user_id'];
             $model->warehouse_id = $post['Documents']['warehouse_id'];
@@ -289,17 +286,27 @@ class DocumentsController extends Controller
                         $products->save(false);
                     }
                 }
-                $model_new = [];
-                foreach ($document_items as $name => $value) {
-                    $model_new[$name] = $value;
-                }
-                foreach ($model as $name => $value) {
-                    $model_new[$name] = $value;
-                }
-                Notifications::createNotifications($premission['name'], 'documentscreate');
-                Log::afterSaves('Create', $model_new, '', $url.'?'.'id'.'='.$model->id, $premission);
-                return $this->redirect(['index', 'id' => $model->id]);
-
+            $model_new = [];
+            foreach ($document_items as $name => $value) {
+                $model_new[$name] = $value;
+            }
+            foreach ($model as $name => $value) {
+                $model_new[$name] = $value;
+            }
+            $session = Yii::$app->session;
+            $document_tipe = (object) [
+                '1' => 'մուտքի',
+                '2' => 'ելքի',
+                '3' => 'տեղափոխման',
+                '4' => 'խոտանի',
+                '6' => 'վերադարձի',
+                '7' => 'մերժման',
+            ];
+            $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
+            $text = $user_name['name'] . '(ն\ը) ստեղծել է ' . $document_tipe->{$post['Documents']['document_type']} . ' փաստաթուղթ։';
+            Notifications::createNotifications('Ստեղծել փաստաթուղթ', $text,'documentscreate');
+            Log::afterSaves('Create', $model_new, '', $url.'?'.'id'.'='.$model->id, $premission);
+            return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -385,31 +392,113 @@ class DocumentsController extends Controller
      */
     public function actionGetNomiclature(){
         $page = $_GET['paging'] ?? 1;
-        $urlId = intval($_POST['urlId']);
         $search_name = $_GET['nomenclature'] ?? false;
         $pageSize = 10;
         $offset = ($page-1) * $pageSize;
+        $_GET['warehouse_id'] = $_GET['warehouse_id'] ?? $_POST['warehouse_id'];
+        $_POST['warehouse_id'] = $_POST['warehouse_id'] ?? $_GET['warehouse_id'];
+        $warehouse_id = $_POST['warehouse_id'] ?? $_GET['warehouse_id'];
+        $_GET['documents_type'] = $_GET['documents_type'] ?? $_POST['documents_type'];
+        $_POST['documents_type'] = $_POST['documents_type'] ?? $_GET['documents_type'];
+        $document_type = $_POST['documents_type'];
         $query = Nomenclature::find();
         $countQuery = clone $query;
+        $nomenclatures = $query->select('*')
+            ->where(['status' => '1'])
+            ->groupBy('nomenclature.id');
+        if ($search_name){
+            $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
+                ->offset(0);
+        }else{
+            $nomenclatures->offset($offset)
+                ->limit($pageSize);
+        }
+        $nomenclatures = $nomenclatures
+            ->asArray()
+            ->all();
+        $total = $countQuery->count();
+        if ($document_type != 1){
+            $query = Products::find();
+            $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,
+                nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
+                ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
+                ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
+                ->andWhere(['products.warehouse_id' => intval($warehouse_id)]);
+//                ->groupBy('products.nomenclature_id');
+            if ($search_name){
+                $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
+                    ->offset(0);
+            }else{
+                $nomenclatures->offset($offset)
+                    ->limit($pageSize);
+            }
+            $total = $nomenclatures->count();
+            $nomenclatures = $nomenclatures
+                ->asArray()
+                ->all();
+        }
+
+        $id_count = $_POST['id_count'] ?? [];
+        return $this->renderAjax('get-nom', [
+            'nomenclatures' => $nomenclatures,
+            'id_count' => $id_count ,
+            'total' => $total,
+            'search_name' => $search_name,
+        ]);
+    }
+
+    public function actionGetNomiclatureUpdate(){
+        $page = $_GET['paging'] ?? 1;
+        $urlId = intval($_POST['urlId']);
+        $_GET['warehouse_id'] = $_GET['warehouse_id'] ?? $_POST['warehouse_id'];
+        $_POST['warehouse_id'] = $_POST['warehouse_id'] ?? $_GET['warehouse_id'];
+        $warehouse_id = $_POST['warehouse_id'] ?? $_GET['warehouse_id'];
+        $_GET['documents_type'] = $_GET['documents_type'] ?? $_POST['documents_type'];
+        $_POST['documents_type'] = $_POST['documents_type'] ?? $_GET['documents_type'];
+        $document_type = $_POST['documents_type'];
+        $search_name = $_GET['nomenclature'] ?? false;
+        $pageSize = 10;
+        $offset = ($page-1) * $pageSize;
         $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')
             ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
             ->where(['document_items.document_id' => $urlId])
-            ->asArray()
-            ->all();
-        $nomenclatures = $query->where(['not in','id' , array_column($document_items,'nomenclature_id')])
+            ->asArray()->all();
+        $query = Nomenclature::find();
+        $nomenclatures = $query->select('*')
+            ->where(['not in','id' , array_column($document_items,'nomenclature_id')])
+            ->andWhere(['status' => '1'])
             ->groupBy('nomenclature.id');
-                if ($search_name){
-                    $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
-                        ->offset(0);
-                }else{
-                    $nomenclatures->offset($offset)
-                        ->limit($pageSize);
-                }
+        $total = $query->count();
+        if ($search_name){
+            $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
+                ->offset(0);
+        }else{
+            $nomenclatures->offset($offset)
+                ->limit($pageSize);
+        }
         $nomenclatures = $nomenclatures
-//            ->orderBy(['nomenclature.id'=> SORT_DESC])
             ->asArray()
             ->all();
-        $total = $countQuery->count() - count($document_items);
+        if ($document_type != "Մուտք"){
+            $query = Products::find();
+            $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,
+                nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
+                ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
+                ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
+                ->andWhere(['products.warehouse_id' => intval($warehouse_id)]);
+//                ->groupBy('products.nomenclature_id');
+            if ($search_name){
+                $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
+                    ->offset(0);
+            }else{
+                $nomenclatures->offset($offset)
+                    ->limit($pageSize);
+            }
+            $total = $nomenclatures->count();
+            $nomenclatures = $nomenclatures
+                ->asArray()
+                ->all();
+        }
         $id_count = $_POST['id_count'] ?? [];
         return $this->renderAjax('get-nom', [
             'nomenclatures' => $nomenclatures,
@@ -418,7 +507,6 @@ class DocumentsController extends Controller
             'search_name' => $search_name,
             'urlId' => $urlId,
         ]);
-
     }
     public function actionUpdate($id)
     {
@@ -427,7 +515,6 @@ class DocumentsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-//        echo  "<pre>";
         $model = $this->findModel($id);
         $sub_page = [];
         $date_tab = [];
@@ -445,9 +532,6 @@ class DocumentsController extends Controller
             ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
-//            echo "<pre>";
-//            var_dump($post);
-//            exit();
             date_default_timezone_set('Asia/Yerevan');
             $model->user_id = $post['Documents']['user_id'];
             $model->warehouse_id = $post['Documents']['warehouse_id'];
@@ -671,8 +755,6 @@ class DocumentsController extends Controller
                     }
                 }
             }
-//            exit();
-
             $model_new = [];
             foreach ($document_items_update as $name => $value) {
                 $model_new[$name] = $value;
@@ -697,29 +779,19 @@ class DocumentsController extends Controller
         $to_warehouse = ArrayHelper::map($to_warehouse,'id','name');
         $rates = Rates::find()->select('id,name')->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
-        $query = Nomenclature::find();
-        $countQuery = clone $query;
+
         $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')
             ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
             ->where(['document_items.document_id' => $id])
             ->asArray()->all();
 
-        $nomenclatures = $query->where(['not in','id' , array_column($document_items,'nomenclature_id')])
-            ->offset(0)
-            ->limit(10)
-//            ->orderBy(['nomenclature.id'=> SORT_DESC])
-            ->asArray()
-            ->all();
-        $total = $countQuery->count() - count($document_items);
         $aah = DocumentItems::find()->select('AAH')->where(['document_id' => $id])->asArray()->one();
         return $this->render('update', [
             'model' => $model,
             'users' => $users,
             'warehouse' => $warehouse,
             'rates' => $rates,
-            'nomenclatures' => $nomenclatures,
             'document_items' => $document_items,
-            'total' => $total,
             'aah' => $aah,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
@@ -820,9 +892,27 @@ class DocumentsController extends Controller
             $document->document_type = 7;
             $document->comment = 'Մերժման պատճառն է՝ «' . $post['message'] . '»';
             $document->save(false);
+            $session = Yii::$app->session;
+            $mes = $post['message'];
+            $message_length = strlen($mes);
+            $ch = '';
+            for ($i = 0; $i < $message_length; $i++) {
+                $ch .= $mes[$i];
+                if (($i + 1) % 20 == 0 && $i != $message_length - 1) {
+                    $ch .= "\n";
+                }
+            }
+            if($session['role_id'] == 4){
+                $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
+                $text = $user_name['name'] . '(ն/ը) ' . 'մերժել է ապրանքի հետ վերդարձը, նշելով մերժման պատճառն ՝ «'
+                    . $ch . '»: '
+                    . "\n" .
+                    '<a href="http://champagne/documents/update?id=' . $post['document_id'] . '">
+                    <img width="15" height="15" src="/upload/view.png" alt="view"></a>';
+                Notifications::createNotifications('Մերժել վերադարձը', $text,'refusalreturn');
+            }
             return $this->redirect('message');
         }
-
 
         $searchModel = new DocumentsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
