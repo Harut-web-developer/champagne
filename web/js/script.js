@@ -785,13 +785,15 @@ $(document).ready(function() {
                 if (status_ == 'Հաստատված') {
                     $(this).find('td:nth-child(2) a:not(.reportsOrders)').remove();
                 } else if (status_ == 'Մերժված') {
-                    $(this).find('td:nth-child(2) a[title="Ջնջել"]').remove();
+                    $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
                 }
                 if (status_ != 'Ընթացքի մեջ'){
                     $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
                 }
                 if (is_exit == 'Ելքագրված'){
                     $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
+                }else {
+                    $(this).find('td:nth-child(2) a[title="Հաստատել"]').remove();
                 }
         });
     })
@@ -809,18 +811,6 @@ $(document).ready(function() {
             }
         })
     })
-    // var csrfToken = $('meta[name="csrf-token"]').attr("content");
-    // $.ajax({
-    //     url:"/map/index",
-    //     method: 'post',
-    //     dataType:'json',
-    //     data:{
-    //         _csrf : csrfToken
-    //     },
-    //     success:function(data){
-    //         alert(data)
-    //     }
-    // })
 
     function clearWidget(){
         $('body').find('#w0 table tbody tr').each(function(){
@@ -829,13 +819,15 @@ $(document).ready(function() {
             if (status_ == 'Հաստատված') {
                 $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
             } else if (status_ == 'Մերժված') {
-                $(this).find('td:nth-child(2) a[title="Ջնջել"]').remove();
+                $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
             }
             if (status_ != 'Ընթացքի մեջ'){
                 $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
             }
             if (is_exit == 'Ելքագրված'){
                 $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
+            }else {
+                $(this).find('td:nth-child(2) a[title="Հաստատել"]').remove();
             }
         });
         $('body').find('#w0 table thead th').each(function () {

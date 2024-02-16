@@ -121,6 +121,8 @@ class DocumentsController extends Controller
      */
     public function actionCreate()
     {
+//        echo "<pre>";
+        $session = Yii::$app->session;
         $have_access = Users::checkPremission(37);
         if(!$have_access){
             $this->redirect('/site/403');
@@ -173,6 +175,7 @@ class DocumentsController extends Controller
                         $products->document_id = $model->id;
                         $products->type = 1;
                         $products->count = intval($post['count_'][$i]);
+                        $products->count_balance = intval($post['count_'][$i]);
                         if ($post['aah'] == 'true'){
                             $products->price = floatval($post['pricewithaah'][$i]);
                             $products->AAH = 1;
@@ -181,12 +184,12 @@ class DocumentsController extends Controller
                             $products->AAH = 0;
 
                         }
-
                         $products->created_at = date('Y-m-d H:i:s');
                         $products->updated_at = date('Y-m-d H:i:s');
                         $products->save(false);
                     }
                 }
+
                 if ($post['Documents']['document_type'] == '2'){
                     for ($i = 0; $i < count($post['document_items']); $i++) {
                         $products = new Products();
@@ -195,6 +198,21 @@ class DocumentsController extends Controller
                         $products->document_id = $model->id;
                         $products->type = 5;
                         $products->count = -intval($post['count_'][$i]);
+//                        $first_product = Products::find()
+//                            ->where(['and',['nomenclature_id' => $post['document_items'][$i]],
+//                                ['warehouse_id' => $post['Documents']['warehouse_id']],
+//                                ['type' => 1]])
+//                            ->all();
+//                        foreach ($first_product as $item){
+//                            if ($item->count_balance == 0){
+//                                continue;
+//                            }else{
+//                                $item->count_balance -= intval($post['count_'][$i]);
+//                                $item->save(false);
+//                                $products->parent_id = $item->id;
+//                            }
+//                            break;
+//                        }
                         if ($post['aah'] == 'true'){
                             $products->price = floatval($post['pricewithaah'][$i]);
                             $products->AAH = 1;
@@ -292,8 +310,13 @@ class DocumentsController extends Controller
         } else {
             $model->loadDefaultValues();
         }
-        $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['or', ['role_id' => '1'], ['role_id' => '4']])->asArray()->all();
-        $users = ArrayHelper::map($users,'id','name');
+        if ($session['role_id'] == 1){
+            $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['role_id' => '4'])->asArray()->all();
+            $users = ArrayHelper::map($users,'id','name');
+        }elseif($session['role_id'] == 4){
+            $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['id' => $session['user_id']])->asArray()->all();
+            $users = ArrayHelper::map($users,'id','name');
+        }
         $warehouse = Warehouse::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
         $warehouse =  ArrayHelper::map($warehouse,'id','name');
         $rates = Rates::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
@@ -368,7 +391,6 @@ class DocumentsController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionGetNomiclature(){
-        ('getnom');
         $page = $_GET['paging'] ?? 1;
         $search_name = $_GET['nomenclature'] ?? false;
         $pageSize = 10;
@@ -426,7 +448,6 @@ class DocumentsController extends Controller
     }
 
     public function actionGetNomiclatureUpdate(){
-        ('getnom update');
         $page = $_GET['paging'] ?? 1;
         $urlId = intval($_POST['urlId']);
         $_GET['warehouse_id'] = $_GET['warehouse_id'] ?? $_POST['warehouse_id'];
@@ -489,7 +510,7 @@ class DocumentsController extends Controller
     }
     public function actionUpdate($id)
     {
-        ('update');
+        $session = Yii::$app->session;
         $have_access = Users::checkPremission(38);
         if(!$have_access){
             $this->redirect('/site/403');
@@ -745,8 +766,13 @@ class DocumentsController extends Controller
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $get_documents_id = Documents::findOne($id);
-        $users = Users::find()->select('id,name')->andWhere(['or', ['role_id' => '1'], ['role_id' => '4']])->asArray()->all();
-        $users = ArrayHelper::map($users,'id','name');
+        if ($session['role_id'] == 1){
+            $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['role_id' => '4'])->asArray()->all();
+            $users = ArrayHelper::map($users,'id','name');
+        }elseif($session['role_id'] == 4){
+            $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['id' => $session['user_id']])->asArray()->all();
+            $users = ArrayHelper::map($users,'id','name');
+        }
         $warehouse = Warehouse::find()->select('id,name')->where(['id' => $get_documents_id->warehouse_id])->asArray()->all();
         $warehouse =  ArrayHelper::map($warehouse,'id','name');
         $to_warehouse =  Warehouse::find()->select('id,name')->where(['id' => $get_documents_id->to_warehouse])->andWhere(['status' => '1'])->asArray()->all();
@@ -789,8 +815,8 @@ class DocumentsController extends Controller
         $new_document->warehouse_id = $document->warehouse_id;
         $new_document->rate_id = 1;
         $new_document->rate_value = 1;
-        $new_document->document_type = 1;
-        $new_document->comment = 'Վերադարձի փաստաթուղթ';
+        $new_document->document_type = 8;
+        $new_document->comment = 'Վերադարձի մուտքագրված փաստաթուղթ';
         $new_document->status = '1';
         $new_document->date = date('Y-m-d H:i:s');;
         $new_document->created_at = date('Y-m-d H:i:s');
@@ -815,7 +841,7 @@ class DocumentsController extends Controller
                 $new_product->warehouse_id = $document->warehouse_id;
                 $new_product->nomenclature_id = $document_items[$k]['nomenclature_id'];
                 $new_product->document_id = $new_document->id;
-                $new_product->type = 1;
+                $new_product->type = 8;
                 $new_product->count = $document_items[$k]['count'];
                 if ($document_items[$k]['AAH'] == 'true'){
                     $new_product->AAH = 1;

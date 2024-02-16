@@ -326,15 +326,11 @@ if ($have_access_update && $have_access_delete && $have_access_view && $have_acc
         'summaryOptions' => ['class' => 'summary'],
         'dataProvider' => new ActiveDataProvider([
             'query' => $dataProvider->query->andWhere(['status' => '1']),
-//                'pagination' => [
-//                    'pageSize' => 20,
-//                ],
         ]),
-//        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'route',
             ...$action_column,
+            'route',
         ],
     ]); ?>
 

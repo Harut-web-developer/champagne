@@ -38,20 +38,6 @@ if($have_access_update){
     $access_buttons .='{update}';
 }
 
-$action_column[] = [
-    'header' => 'Գործողություն',
-    'class' => ActionColumn::className(),
-    'template' => $access_buttons,
-    'buttons' =>[
-        'delivered'=>function ($url, $model, $key) {
-            return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132; padding:0px 2px" ></i>', $url, [
-                'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-            ]);
-        }],
-    'urlCreator' => function ($action, Documents $model, $key, $index, $column) {
-        return Url::toRoute([$action, 'id' => $model->id]);
-    }
-];
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
@@ -97,6 +83,8 @@ $action_column[] = [
                         return 'Վերադարձրած';
                     } elseif($model->document_type == 7) {
                         return 'Մերժված';
+                    } elseif($model->document_type == 8){
+                        return 'Մուտք(վերադարցրած)';
                     }
                 }
             ],

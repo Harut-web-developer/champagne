@@ -156,6 +156,7 @@ if ($have_access_update && $have_access_delete && $have_access_debt_statistic){
         ]),
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+            ...$action_column,
             [
                 'attribute' => 'route_id',
                 'value' => function ($model) {
@@ -170,7 +171,6 @@ if ($have_access_update && $have_access_delete && $have_access_debt_statistic){
             'name',
 //            'location',
             'phone',
-            ...$action_column,
         ],
     ]); ?>
     </div>
