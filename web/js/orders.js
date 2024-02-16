@@ -178,9 +178,11 @@ $(document).ready(function () {
                                                      <td>
                                                         <span>`+sequenceNumber+`</span>
                                                         <input type="hidden" name="order_items[]" value="`+pars[k].product_id+`">
+                                                        <input type="hidden" name="count_balance[]" value="`+pars[k].count_balance+`">
                                                         <input class="prodId" type="hidden" name="product_id[]" value="`+pars[k].product_id+`">
                                                         <input class="nom_Id" type="hidden" name="nom_id[]" value="`+pars[k].nomenclature_id+`">
                                                         <input type="hidden" name="count_discount_id[]" value="`+pars[k].count_discount_id+`">
+                                                        <input type="hidden" name="aah[]" value="`+pars[k].aah+`">
                                                         `+prod_clients+`
                                                         <input type="hidden" name="cost[]" value="`+pars[k].cost+`">
                                                      </td>
@@ -216,33 +218,33 @@ $(document).ready(function () {
 
                         ordersTableLength--;
                         if(ordersTableLength == 0){
-                            // $('.discountDesc tbody').html('');
-                            // let uniquePairs = discount_desc
-                            //     .flat()
-                            //     .filter(item => item.id !== 'empty')
-                            //     .reduce((result, item) => {
-                            //         let existingPair = result.find(pair => pair[0] === item.id);
-                            //         if (existingPair) {
-                            //             if (item.discount > existingPair[2]) {
-                            //                 existingPair[1] = item.name;
-                            //                 existingPair[2] = item.discount;
-                            //                 existingPair[3] = item.type;
-                            //             }
-                            //         } else {
-                            //             result.push([item.id, item.name, item.discount, item.type]);
-                            //         }
-                            //         return result;
-                            //     }, [])
-                            //     .filter(pair => pair.every(value => value !== undefined));
-                            //
-                            // uniquePairs.forEach((item,index) => {
-                            //     discountBody += `<tr>
+                            $('.discountDesc tbody').html('');
+                            let uniquePairs = discount_desc
+                                .flat()
+                                .filter(item => item.id !== 'empty')
+                                .reduce((result, item) => {
+                                    let existingPair = result.find(pair => pair[0] === item.id);
+                                    if (existingPair) {
+                                        if (item.discount > existingPair[2]) {
+                                            existingPair[1] = item.name;
+                                            existingPair[2] = item.discount;
+                                            existingPair[3] = item.type;
+                                        }
+                                    } else {
+                                        result.push([item.id, item.name, item.discount, item.type]);
+                                    }
+                                    return result;
+                                }, [])
+                                .filter(pair => pair.every(value => value !== undefined));
+
+                            uniquePairs.forEach((item,index) => {
+                                discountBody += `<tr>
                             //                          <td>`+(parseInt(index) + 1) +`</td>
                             //                          <td>`+item[1]+`</td>
                             //                          <td>`+(item[3] == 'percent' ? item[2] + ' %' : item[2] + ' դր․')+`</td>
                             //                     </tr>`
-                            // })
-                            // $('.discountDesc tbody').parent().append(discountBody);
+                            })
+                            $('.discountDesc tbody').parent().append(discountBody);
                             for (let i in trss) {
                                 if(trss[i] != ''){
                                     newTbody.append(trss[i]);

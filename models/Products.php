@@ -120,9 +120,11 @@ class Products extends \yii\db\ActiveRecord
             $end_result = [];
             $bal = $orders_count;
             foreach ($first_product as $item){
+                $count_balance = 0;
                 if ($item->count_balance - $bal > 0) {
-                    $item->count_balance -= $bal;
-                    $item->save(false);
+                    $count_balance = $item->count_balance - $bal;
+//                    $item->count_balance -= $bal;
+//                    $item->save(false);
 
 
                     if ($discount) {
@@ -967,12 +969,14 @@ class Products extends \yii\db\ActiveRecord
                         $res['price'] = $price;
                         $res['count'] = $bal;
                         $res['discount'] = $item->price - $price;//gin - zexchvac gin
+                        $res['aah'] = $item->AAH;
                         if ($count_discount_id == ''){
                             $res['count_discount_id'] = 'չկա';
                         }else{
                             $res['count_discount_id'] = substr($count_discount_id,0,-1);
                         }
                         $res['format_before_price'] = $item->price;
+                        $res['count_balance'] = $count_balance;
                         array_push($end_result,$res);
 
                             return json_encode($end_result);
@@ -992,9 +996,10 @@ class Products extends \yii\db\ActiveRecord
                         $res['price'] = $item->price;
                         $res['count'] = $bal;
                         $res['discount'] = $item->price - $item->price;//gin - zexchvac gin
+                        $res['aah'] = $item->AAH;
                         $res['count_discount_id'] = 'չկա';
                         $res['format_before_price'] = $item->price;
-//                            return json_encode($res);
+                        $res['count_balance'] = $count_balance;
                         array_push($end_result,$res);
                         return json_encode($end_result);
 
@@ -1847,18 +1852,21 @@ class Products extends \yii\db\ActiveRecord
                         $res['price'] = $price;
                         $res['count'] = $item->count_balance;
                         $res['discount'] = $item->price - $price;//gin - zexchvac gin
+                        $res['aah'] = $item->AAH;
                         if ($count_discount_id == ''){
                             $res['count_discount_id'] = 'չկա';
                         }else{
                             $res['count_discount_id'] = substr($count_discount_id,0,-1);
                         }
                         $res['format_before_price'] = $item->price;
+                        $count_balance = 0;
+                        $bal -= $item->count_balance;
+                        $res['count_balance'] = $count_balance;
+
                         array_push($end_result,$res);
 
-                        $bal -= $item->count_balance;
-                        $item->count_balance = 0;
-                        $item->save(false);
-//                            return json_encode($res);
+//                        $item->count_balance = 0;
+//                        $item->save(false);
                     }
                     else{
                         $desc = 'empty';
@@ -1875,14 +1883,18 @@ class Products extends \yii\db\ActiveRecord
                         $res['price'] = $item->price;
                         $res['count'] = $item->count_balance;
                         $res['discount'] = $item->price - $item->price;//gin - zexchvac gin
+                        $res['aah'] = $item->AAH;
                         $res['count_discount_id'] = 'չկա';
                         $res['format_before_price'] = $item->price;
-//                            return json_encode($res);
+                        $count_balance = 0;
+                        $bal -= $item->count_balance;
+//                        $item->count_balance = 0;
+//                        $item->save(false);
+                        $res['count_balance'] = $count_balance;
+
                         array_push($end_result,$res);
 
-                        $bal -= $item->count_balance;
-                        $item->count_balance = 0;
-                        $item->save(false);
+
                     }
 
 
