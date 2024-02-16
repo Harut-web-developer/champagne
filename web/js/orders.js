@@ -25,14 +25,14 @@ $(document).ready(function () {
             let discountProductValue = $(this).closest('tr').find('input[name="discount[]"]').val();
             let beforePriceProductValue = $(this).closest('tr').find('input[name="beforePrice[]"]').val();
             let priceProductValue = $(this).closest('tr').find('input[name="price[]"]').val();
-            if (!count_product[nomIdValue]) {
-                count_product[nomIdValue] = {};
+            if (!count_product[id]) {
+                count_product[id] = {};
             }
-            count_product[nomIdValue]['prodId'] = id;
-            count_product[nomIdValue]['count'] = countProductValue;
-            count_product[nomIdValue]['discount'] = discountProductValue;
-            count_product[nomIdValue]['beforePrice'] = beforePriceProductValue;
-            count_product[nomIdValue]['price'] = priceProductValue;
+            count_product[id]['prodId'] = id;
+            count_product[id]['count'] = countProductValue;
+            count_product[id]['discount'] = discountProductValue;
+            count_product[id]['beforePrice'] = beforePriceProductValue;
+            count_product[id]['price'] = priceProductValue;
         });
         var ordersTotalPriceSum = 0;
         var ordersTotalCount = 0;
