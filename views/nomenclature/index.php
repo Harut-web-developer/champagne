@@ -81,6 +81,7 @@ if ($have_access_update && $have_access_delete){
             ]),
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
+                ...$action_column,
                 [
                     'attribute' => 'image',
                     'format' => 'raw',
@@ -91,7 +92,6 @@ if ($have_access_update && $have_access_delete){
                 'name',
                 'price',
                 'cost',
-                ...$action_column,
             ],
         ]); ?>
     </div>

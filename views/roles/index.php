@@ -74,9 +74,9 @@ if ($have_access_update && $have_access_delete){
         ]),
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+            ...$action_column,
             'name',
             'access',
-            ...$action_column,
         ],
     ]); ?>
 

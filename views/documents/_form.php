@@ -15,6 +15,8 @@ if(isset($action__)){
     $req = false;
 }
 $type = $model->document_type;
+$session = Yii::$app->session;
+
 ?>
 <?php if ($model->id){
     if ($model->document_type === '1'){
@@ -29,6 +31,8 @@ $type = $model->document_type;
         $value = 'Վերադարձրած';
     }elseif ($model->document_type === '7'){
         $value = 'Մերժված';
+    }elseif ($model->document_type === '8'){
+        $value = 'Մուտք(վերադարցրած)';
     }
     ?>
     <div class="documents-form">
@@ -48,7 +52,12 @@ $type = $model->document_type;
                     <?= $form->field($model, 'to_warehouse')->dropDownList($to_warehouse) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                    <?php
+                    if($session['role_id'] == 1){?>
+                       <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                   <?php }elseif ($session['role_id'] == 4){?>
+                        <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
+                    <?php } ?>
                 </div>
 
                 <label class="rateLabel" for="rate">Փոխարժեք</label>
@@ -289,7 +298,12 @@ $type = $model->document_type;
                     <?= $form->field($model, 'to_warehouse')->dropDownList(['' => 'Ընտրել պահեստը'] + $to_warehouse) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                    <?php
+                    if($session['role_id'] == 1){?>
+                        <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                    <?php }elseif ($session['role_id'] == 4){?>
+                        <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
+                    <?php } ?>
                 </div>
 
                 <label class="rateLabel" for="rate">Փոխարժեք</label>

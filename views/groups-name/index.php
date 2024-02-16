@@ -77,10 +77,8 @@ if ($have_access_update && $have_access_delete){
 //        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-//            'id',
-            'groups_name',
             ...$action_column,
+            'groups_name',
         ],
     ]); ?>
     </div>

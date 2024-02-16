@@ -73,7 +73,7 @@ if ($have_access_update && $have_access_delete){
         ]),
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
+            ...$action_column,
             [
                 'attribute' => 'Հաճախորդ',
                 'value' => function ($model) {
@@ -97,7 +97,6 @@ if ($have_access_update && $have_access_delete){
             ],
             'rate_value',
             'pay_date',
-            ...$action_column,
         ],
     ]); ?>
     </div>

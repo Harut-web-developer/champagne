@@ -141,7 +141,10 @@ $session = Yii::$app->session;
                     </div>
                 </div>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn rounded-pill btn-secondary addOrders addOrders_get_warh_id_update" data-bs-toggle="modal" data-bs-target="#largeModal">Ավելացնել ապրանք</button>
+                <?php
+                if ($model->is_exit == 1){?>
+                    <button type="button" class="btn rounded-pill btn-secondary addOrders addOrders_get_warh_id_update" data-bs-toggle="modal" data-bs-target="#largeModal">Ավելացնել ապրանք</button>
+                <?php }?>
                 <!-- Modal -->
                 <div class="modal fade" id="largeModal" tabindex="-1" style="display: none;" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">

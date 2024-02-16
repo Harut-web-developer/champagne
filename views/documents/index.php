@@ -25,6 +25,7 @@ $have_access_update = Users::checkPremission(38);
 $have_access_delete = Users::checkPremission(39);
 $have_access_custom_field = Users::checkPremission(71);
 $have_access_confirm_return = Users::checkPremission(75);
+$have_access_refuse = Users::checkPremission(81);
 
 $action_column = [];
 $access_buttons = '';
@@ -32,10 +33,13 @@ if($have_access_delete){
     $access_buttons .='{delete}';
 }
 if($have_access_confirm_return){
-    $access_buttons .='{delivered} {refuse}';
+    $access_buttons .='{delivered}';
 }
 if($have_access_update){
     $access_buttons .='{update}';
+}
+if($have_access_refuse){
+    $access_buttons .='{refuse}';
 }
 
     $action_column[] = [
@@ -76,9 +80,9 @@ if($have_access_update){
             <?php } ?>
         </p>
         <div class="filtersField" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
+            <?php
+            if($session['role_id'] == '1' || $session['role_id'] == '4'){?>
             <select class="form-select documentStatus" aria-label="Default select example" style="width: 150px; margin: 0px 10px 15px 5px;">
-                <?php
-                if($session['role_id'] == '1'){?>
                     <option selected value="0">Ընդհանուր</option>
                     <option value="1">Մուտք</option>
                     <option value="2">Ելք</option>
@@ -86,8 +90,9 @@ if($have_access_update){
                     <option value="4">Խոտան</option>
                     <option value="6">Վերադարձ</option>
                     <option value="7">Մերժված</option>
-                <?php }?>
+                    <option value="8">Մուտք(վերադարցրած)</option>
             </select>
+            <?php }?>
         </div>
     </div>
     <div class="card pageStyle documentsCard">
@@ -115,6 +120,8 @@ if($have_access_update){
                         return 'Վերադարձրած';
                     } elseif($model->document_type == 7) {
                         return 'Մերժված';
+                    } elseif($model->document_type == 8){
+                        return 'Մուտք(վերադարցրած)';
                     }
                 }
             ],

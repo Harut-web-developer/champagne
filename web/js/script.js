@@ -785,7 +785,7 @@ $(document).ready(function() {
                 if (status_ == 'Հաստատված') {
                     $(this).find('td:nth-child(2) a:not(.reportsOrders)').remove();
                 } else if (status_ == 'Մերժված') {
-                    $(this).find('td:nth-child(2) a[title="Ջնջել"]').remove();
+                    $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
                 }
                 if (status_ != 'Ընթացքի մեջ'){
                     $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
@@ -819,7 +819,7 @@ $(document).ready(function() {
             if (status_ == 'Հաստատված') {
                 $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
             } else if (status_ == 'Մերժված') {
-                $(this).find('td:nth-child(2) a[title="Ջնջել"]').remove();
+                $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
             }
             if (status_ != 'Ընթացքի մեջ'){
                 $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();

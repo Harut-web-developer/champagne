@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\ManagerDeliverCondition $model */
 
-$this->title = 'Update Manager Deliver Condition: ' . $model->id;
+$this->title = 'Փոփոխել մենեջեր-առաքիչ կապ: ' . $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Manager Deliver Conditions', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';

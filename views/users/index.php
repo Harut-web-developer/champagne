@@ -75,6 +75,7 @@ if ($have_access_update && $have_access_delete){
 //        'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+            ...$action_column,
             'name',
             'username',
             [
@@ -87,7 +88,6 @@ if ($have_access_update && $have_access_delete){
                     }
                 }
             ],
-            ...$action_column,
         ],
         'dataProvider' => new ActiveDataProvider([
             'query' => $dataProvider->query->andWhere(['status' => '1']),
