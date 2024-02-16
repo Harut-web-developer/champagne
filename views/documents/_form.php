@@ -166,11 +166,11 @@ $session = Yii::$app->session;
                                     </td>
                                     <td class="name"><?=$document_item['name']?></td>
                                     <?php
-                                    if ($type == '7' || $type == '6'){?>
+                                    if ($model->document_type == '7'){?>
                                         <td class="count"><input type="number" name="count_[]" disabled value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="any"></td>
                                         <td class="price"><input type="number" name="price[]" disabled value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>
                                     <?php }else{?>
-                                        <td class="count"><input type="number" name="count_[]" value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="any"></td>
+                                        <td class="count"><input type="number" name="count_[]" value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="1"></td>
                                         <td class="price"><input type="number" name="price[]" value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>
                                     <?php }?>
 
@@ -193,7 +193,7 @@ $session = Yii::$app->session;
                 <!-- Button trigger modal -->
                 <?php
                 if ($type == '1' || $type == '2' || $type == '3' || $type == '4'){?>
-                    <button type="button" class="btn rounded-pill btn-secondary addDocuments" data-bs-toggle="modal" data-bs-target="#documentsModal">Ավելացնել ապրանք</button>
+                    <button type="button" class="btn rounded-pill btn-secondary addDocuments addDocuments_get_type_val_update" data-bs-toggle="modal" data-bs-target="#documentsModal">Ավելացնել ապրանք</button>
                 <?php }?>
                 <!-- Modal -->
                 <div class="modal fade" id="documentsModal" tabindex="-1" style="display: none;" aria-hidden="true">
@@ -345,7 +345,8 @@ $session = Yii::$app->session;
                     </div>
                 </div>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn rounded-pill btn-secondary addDocuments addDocuments_get_type_val" data-bs-toggle="modal" data-bs-target="#documentsModal" disabled>Ավելացնել ապրանք</button>
+                <!--disabled-->
+                <button type="button" class="btn rounded-pill btn-secondary addDocuments addDocuments_get_type_val" data-bs-toggle="modal" data-bs-target="#documentsModal">Ավելացնել ապրանք</button>
                 <!-- Modal -->
                 <div class="modal fade" id="documentsModal" tabindex="-1" style="display: none;" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">

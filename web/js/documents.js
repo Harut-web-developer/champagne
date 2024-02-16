@@ -21,10 +21,10 @@ $(document).ready(function () {
         }
     }
 
-    function check_delete(){
-        var arj = $('.deleteItems').closest('tr').find(".itemsId").val();
-        $('.documentsTableTr').find('.nom_id[data-id="arj"]').siblings('.documentsCount').find('.documentsCountInput').val('');
-    }
+    // function check_delete(){
+    //     var arj = $('.deleteItems').closest('tr').find(".itemsId").val();
+    //     $('.documentsTableTr').find('.nom_id[data-id="arj"]').siblings('.documentsCount').find('.documentsCountInput').val('');
+    // }
 
     var newTbody = $('<tbody></tbody>');
     var trs = {};
@@ -46,7 +46,7 @@ $(document).ready(function () {
                                         <input class="itemsId" type="hidden" name="items[]" value="` + id  + `">
                                      </td>
                                      <td class="name">` + name + `</td>
-                                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
+                                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                      <td class="pricewithaah">
                                         <span>`+priceWithaah+`</span>
@@ -103,7 +103,7 @@ $(document).ready(function () {
                                             <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
-                                         <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
+                                         <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                                          <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                          <td class="pricewithaah">
                                             <span>`+priceWithaah+`</span>
@@ -152,7 +152,7 @@ $(document).ready(function () {
                                             <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
-                                         <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
+                                         <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                                          <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                          <td class="pricewithaah">
                                             <span>`+priceWithaah+`</span>
@@ -300,7 +300,7 @@ $(document).ready(function () {
                         
                      </td>
                      <td class="name">` + name + `</td>
-                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
+                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                      <td class="pricewithaah">
                         <span>`+priceWithaah+`</span>
@@ -343,7 +343,7 @@ $(document).ready(function () {
                                             <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
-                                         <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
+                                         <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                                          <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                          <td class="pricewithaah">
                                              <span>`+priceWithaah+`</span>
@@ -375,7 +375,7 @@ $(document).ready(function () {
                         <input class="itemsId" type="hidden" name="items[]" value="` + id  + `">
                      </td>
                      <td class="name">` + name + `</td>
-                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments"></td>
+                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                      <td class="pricewithaah">
                          <span>`+priceWithaah+`</span>
@@ -437,26 +437,53 @@ $(document).ready(function () {
         }
     })
     $('body').on('click','.countDocuments',function (){
-        // $(this).val(function (index,value){
-        //     return value.replace(/-/g, '')
-        // })
-        let itemId = $(this).closest('tr').find('.itemsId').val();
-        getCount($(this),itemId);
+        $(this).val(function(index, value) {
+            return value.replace(/-/g, '');
+        });
+        if ($(this).val() < 1 || $(this).val() === "") {
+            $(this).val('');
+            $(this).attr('required',true);
+        }else{
+            let itemId = $(this).closest('tr').find('.itemsId').val();
+            getCount($(this),itemId);
+        }
     })
     $('body').on('keyup','.countDocuments',function (){
-        // $(this).val(function (index,value){
-        //     return value.replace(/-/g, 1)
-        // })
-        let itemId = $(this).closest('tr').find('.itemsId').val();
-        getCount($(this),itemId);
+        $(this).val(function(index, value) {
+            return value.replace(/-/g, '');
+        });
+        if ($(this).val() < 1 || $(this).val() === "") {
+            $(this).val('');
+            $(this).attr('required',true);
+        }else{
+            let itemId = $(this).closest('tr').find('.itemsId').val();
+            getCount($(this),itemId);
+        }
     })
     $('body').on('click','.documentsCountInput',function (){
-        let itemId = $(this).closest('.documentsTableTr').find('.nom_id').data('id');
-        getCount($(this),itemId);
+        $(this).val(function(index, value) {
+            return value.replace(/-/g, '');
+        });
+        if ($(this).val() < 1 || $(this).val() === "") {
+            $(this).val('');
+            $(this).attr('required',true);
+        }else{
+            let itemId = $(this).closest('.documentsTableTr').find('.nom_id').data('id');
+            getCount($(this),itemId);
+        }
     })
     $('body').on('keyup','.documentsCountInput',function (){
-        let itemId = $(this).closest('.documentsTableTr').find('.nom_id').data('id');
-        getCount($(this),itemId);
+        $(this).val(function(index, value) {
+            return value.replace(/-/g, '');
+        });
+        if ($(this).val() < 1 || $(this).val() === "") {
+            $(this).val('');
+            $(this).attr('required',true);
+        }else{
+            let itemId = $(this).closest('.documentsTableTr').find('.nom_id').data('id');
+            getCount($(this),itemId);
+        }
+
     })
     function getCount(element,item){
         let document_type = $('body').find('#documents-document_type').val();
