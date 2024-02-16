@@ -95,9 +95,11 @@ $session = Yii::$app->session;
                                         <td>
                                             <span class="acordingNumber"><?=$keys + 1?></span>
                                             <input class="orderItemsId" type="hidden" name="order_items[]" value="<?=$item['id']?>">
+                                            <input type="hidden" name="count_balance[]" value="<?=$item['count_balance']?>">
                                             <input class="prodId" type="hidden" name="product_id[]" value="<?=$item['product_id']?>">
                                             <input class="nomId"  type="hidden" name="nom_id[]" value="<?=$item['nom_id']?>">
                                             <input class="cost" type="hidden" name="cost[]" value="<?=$item['cost']?>">
+                                            <input type="hidden" name="aah[]" value="<?=$item['AAH']?>">
                                             <input class="countDiscountId" type="hidden" name="count_discount_id[]" value="<?=$item['count_discount_id']?>">
                                         </td>
                                         <td class="name"><?=$item['name']?></td>

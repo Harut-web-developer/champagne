@@ -119,7 +119,7 @@ class OrdersController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionPrintDoc($id){
-        $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
+        $order_items = OrderItems::find()->select('products.AAH.products.count_balance,order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
         order_items.price_before_discount as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
         order_items.price as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
             ->leftJoin('products','products.id = order_items.product_id')
@@ -127,7 +127,6 @@ class OrdersController extends Controller
             ->where(['order_id' => $id])
             ->asArray()
             ->all();
-
         return $this->renderAjax('get-update-trs', [
             'order_items' => $order_items,
         ]);
@@ -215,7 +214,7 @@ class OrdersController extends Controller
             ->one();
         $session = Yii::$app->session;
         if ($this->request->isPost) {
-            echo "<pre>";
+//            echo "<pre>";
 
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -386,8 +385,9 @@ class OrdersController extends Controller
         $query = Products::find();
         $countQuery = clone $query;
         $orders_items_update = OrderItems::find()
-            ->select('order_items.*,nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.cost')
+            ->select('products.AAH, products.count_balance,order_items.*,nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.cost')
             ->leftJoin('nomenclature','order_items.nom_id_for_name = nomenclature.id')
+            ->leftJoin('products','products.id = order_items.product_id')
             ->andWhere(['order_items.warehouse_id' => intval($warehouse_id)])
             ->where(['order_items.order_id' => $urlId])
             ->asArray()
@@ -574,7 +574,7 @@ class OrdersController extends Controller
         $sub_page = [];
         $date_tab = [];
 
-        $order_items = OrderItems::find()->select('order_items.count_by,order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
+        $order_items = OrderItems::find()->select('products.AAH,products.count_balance,order_items.count_by,order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
         ((order_items.price_before_discount / order_items.count) * order_items.count_by) as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
         ((order_items.price / order_items.count) * order_items.count_by)  as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
             ->leftJoin('products','products.id = order_items.product_id')
