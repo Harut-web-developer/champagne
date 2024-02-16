@@ -29,7 +29,7 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'warehouse','block_typ
                     <?= $form->field($model, 'name')->textInput(['required'=>true]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseLocation">
-                    <?= $form->field($model, 'location')->textInput(['required'=>true]) ?>
+                    <?= $form->field($model, 'location')->textInput(['required'=>true, 'readonly' => true]) ?>
                 </div>
                 <div id="map">
                 </div>
