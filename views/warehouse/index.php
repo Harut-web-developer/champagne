@@ -91,6 +91,7 @@ if(!empty($new_fields)){
             ]),
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
+                ...$action_column,
                     'name',
                     'location',
                 [
@@ -104,7 +105,6 @@ if(!empty($new_fields)){
                     }
                 ],
                 ...$fields_arr,
-                    ...$action_column,
             ],
         ]); ?>
     </div>

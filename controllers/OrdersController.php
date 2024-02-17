@@ -119,7 +119,7 @@ class OrdersController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionPrintDoc($id){
-        $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
+        $order_items = OrderItems::find()->select('products.AAH.products.count_balance,order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
         order_items.price_before_discount as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
         order_items.price as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
             ->leftJoin('products','products.id = order_items.product_id')
@@ -127,7 +127,6 @@ class OrdersController extends Controller
             ->where(['order_id' => $id])
             ->asArray()
             ->all();
-
         return $this->renderAjax('get-update-trs', [
             'order_items' => $order_items,
         ]);
@@ -160,6 +159,7 @@ class OrdersController extends Controller
             $product_id = intval($this->request->post('product_id'));
             $nomenclature_id = intval($this->request->post('nomenclature_id'));
             $name = $this->request->post('name');
+            $warehouse_id = $this->request->post('warehouse_id');
             $orders_date = $this->request->post('orders_date');
             $orders_count = intval($this->request->post('count'));
             $orders_price = intval($this->request->post('price'));
@@ -171,6 +171,7 @@ class OrdersController extends Controller
                 'prod_id' => $product_id,
                 'nom_id' => $nomenclature_id,
                 'name' => $name,
+                'warehouse_id' => $warehouse_id,
                 'orders_date' => $orders_date,
                 'orders_count' => $orders_count,
                 'orders_price' => $orders_price,
@@ -213,11 +214,12 @@ class OrdersController extends Controller
             ->one();
         $session = Yii::$app->session;
         if ($this->request->isPost) {
+//            echo "<pre>";
+
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-            echo "<pre>";
-            var_dump($post);
-            exit();
+//            var_dump($post);
+//            exit();
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
@@ -229,11 +231,25 @@ class OrdersController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
-            for ($i = 0; $i < count($post['order_items']); $i++){
+            for ($i = 0; $i < count($post['order_items']); $i++) {
+                $product_write_out = new Products();
+                $product_write_out->warehouse_id = $post['warehouse'];;
+                $product_write_out->nomenclature_id = intval($post['nom_id'][$i]);
+                $product_write_out->document_id = $model->id;
+                $product_write_out->type = 2;
+                $product_write_out->count = intval($post['count_'][$i]);
+                $product_write_out->count_balance = 0;
+                $product_write_out->price = floatval($post['beforePrice'][$i]);
+                $product_write_out->AAH = $post['aah'][$i];
+                $product_write_out->parent_id = $post['order_items'][$i];
+                $product_write_out->created_at = date('Y-m-d H:i:s');
+                $product_write_out->updated_at = date('Y-m-d H:i:s');
+                $product_write_out->save(false);
+
                 $order_items_create = new OrderItems();
                 $order_items_create->order_id = $model->id;
                 $order_items_create->warehouse_id = $post['warehouse'];
-                $order_items_create->product_id = intval($post['order_items'][$i]);
+                $order_items_create->product_id = $product_write_out->id;
                 $order_items_create->nom_id_for_name = intval($post['nom_id'][$i]);
                 $order_items_create->price = floatval($post['price'][$i]) * intval($post['count_'][$i]);
                 $order_items_create->price_by = floatval($post['price'][$i]) * intval($post['count_'][$i]);
@@ -249,18 +265,13 @@ class OrdersController extends Controller
                 $order_items_create->created_at = date('Y-m-d H:i:s');
                 $order_items_create->updated_at = date('Y-m-d H:i:s');
                 $order_items_create->save(false);
-
-                $product_write_out = new Products();
-                $product_write_out->warehouse_id = $post['warehouse'];;
-                $product_write_out->nomenclature_id = intval($post['nom_id'][$i]);
-                $product_write_out->document_id = $model->id;
-                $product_write_out->type = 2;
-                $product_write_out->count = -intval($post['count_'][$i]);
-                $product_write_out->price = floatval($post['price'][$i]);
-                $product_write_out->created_at = date('Y-m-d H:i:s');
-                $product_write_out->updated_at = date('Y-m-d H:i:s');
-                $product_write_out->save(false);
             }
+            for ($s = 0; $s < count($post['order_items']);$s++){
+                $count_balance = Products::findOne($post['order_items'][$s]);
+                $count_balance->count_balance = $post['count_balance'][$s];
+                $count_balance->save(false);
+            }
+
             if(isset($post['discount_client_id_check'])) {
                 foreach ($post['discount_client_id_check'] as $key => $value) {
                     if ($key != 'empty') {
@@ -271,7 +282,10 @@ class OrdersController extends Controller
                 }
             }
             $model = Orders::getDefVals($model);
-            Notifications::createNotifications($premission['name'],'orderscreate');
+            $user_name = Users::find()->select('*')->where(['id' => $post['Orders']['user_id']])->asArray()->one();
+            $client_name = Clients::find()->select('name')->where(['id' => $post['clients_id']])->one();
+            $text = $user_name['name'] . '(ն/ը) ' . 'ստեղծել է ' . $client_name['name'] . 'ի համար պատվեր։';
+            Notifications::createNotifications($premission['name'], $text,'orderscreate');
             Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         } else {
@@ -371,8 +385,9 @@ class OrdersController extends Controller
         $query = Products::find();
         $countQuery = clone $query;
         $orders_items_update = OrderItems::find()
-            ->select('order_items.*,nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.cost')
+            ->select('products.AAH, products.count_balance,order_items.*,nomenclature.id,nomenclature.image,nomenclature.name,nomenclature.cost')
             ->leftJoin('nomenclature','order_items.nom_id_for_name = nomenclature.id')
+            ->leftJoin('products','products.id = order_items.product_id')
             ->andWhere(['order_items.warehouse_id' => intval($warehouse_id)])
             ->where(['order_items.order_id' => $urlId])
             ->asArray()
@@ -461,11 +476,24 @@ class OrdersController extends Controller
                     $order_item->warehouse_id = intval($post['warehouse']);
                     $order_item->product_id = $post['product_id'][$k];
                     $order_item->nom_id_for_name = intval($post['nom_id'][$k]);
-                    $order_item->price_by = floatval($post['price'][$k]) * intval($post['count_'][$k]);
-                    $order_item->cost_by = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
-                    $order_item->discount_by = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
-                    $order_item->price_before_discount_by = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
-                    $order_item->count_by = intval($post['count_'][$k]);
+                    if ($model->is_exit == 1){
+                        $order_item->price = floatval($post['price'][$k]) * intval($post['count_'][$k]);
+                        $order_item->price_by = floatval($post['price'][$k]) * intval($post['count_'][$k]);
+                        $order_item->cost = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
+                        $order_item->cost_by = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
+                        $order_item->discount = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
+                        $order_item->discount_by = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
+                        $order_item->price_before_discount = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
+                        $order_item->price_before_discount_by = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
+                        $order_item->count = intval($post['count_'][$k]);
+                        $order_item->count_by = intval($post['count_'][$k]);
+                    }else{
+                        $order_item->price_by = floatval($post['price'][$k]) * intval($post['count_'][$k]);
+                        $order_item->cost_by = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
+                        $order_item->discount_by = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
+                        $order_item->price_before_discount_by = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
+                        $order_item->count_by = intval($post['count_'][$k]);
+                    }
                     $order_item->updated_at = date('Y-m-d H:i:s');
                     $order_item->save(false);
 
@@ -536,19 +564,23 @@ class OrdersController extends Controller
                     }
                 }
             }
-            Notifications::createNotifications($premission['name'], 'ordersupdate');
+            $user_name = Users::find()->select('*')->where(['id' => $post['Orders']['user_id']])->asArray()->one();
+            $client_name = Clients::find()->select('name')->where(['id' => $post['clients_id']])->one();
+            $text = $user_name['name'] . '(ն/ը) ' . 'թարմացրել է ' . $client_name['name'] . 'ի համար պատվերը։';
+            Notifications::createNotifications($premission['name'], $text,'ordersupdate');
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $sub_page = [];
         $date_tab = [];
 
-        $order_items = OrderItems::find()->select('count_by,order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
+        $order_items = OrderItems::find()->select('products.AAH,products.count_balance,order_items.count_by,order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
         ((order_items.price_before_discount / order_items.count) * order_items.count_by) as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
         ((order_items.price / order_items.count) * order_items.count_by)  as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
             ->leftJoin('products','products.id = order_items.product_id')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['order_id' => $id])
+            ->andWhere(['order_items.status' => '1'])
             ->asArray()
             ->all();
         $order_items_discount = OrderItems::find()->select('count_discount_id')->where(['=','order_id', $id])->asArray()->all();
@@ -591,7 +623,7 @@ class OrdersController extends Controller
         }elseif ($session['role_id'] == 2){
             $users = Users::find()->select('id, name')->where(['=','id',$session['user_id']])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
-        }elseif($session['role_id'] == 3){
+        }elseif($session['role_id'] == 3 || $session['role_id'] == 4){
             $users = Users::find()->select('id, name')->where(['id' => $session['user_id']])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
 
@@ -641,9 +673,46 @@ class OrdersController extends Controller
             ->where(['id' => 23])
             ->asArray()
             ->one();
+        echo "<pre>";
         $orders = Orders::findOne($id);
-        $orders->status = '0';
-        $orders->save();
+        $order_items = OrderItems::find()->where(['order_id' => $orders->id])->all();
+        if ($orders->is_exit == 1){
+            $orders->status = '0';
+            $orders->save(false);
+            foreach ($order_items as $item){
+                $item->status = '0';
+                $item->save(false);
+                $product = Products::find()->where(['and',
+                    ['warehouse_id' => $item->warehouse_id],
+                    ['nomenclature_id' => $item->nom_id_for_name],
+                    ['type' => 2],
+                    ['document_id' => $item->order_id]])
+                    ->one();
+                $product->status = '0';
+                $product->save(false);
+            }
+        }else{
+                $orders->status = '0';
+                $orders->save(false);
+                $document_exit = Documents::findOne(['orders_id' => $orders->id,'document_type' => 2]);
+                $document_exit->status = '0';
+                $document_exit->save(false);
+                foreach ($order_items as $item){
+                        $item->status = '0';
+                        $item->save(false);
+                        $product = Products::find()->where(['and',
+                            ['warehouse_id' => $item->warehouse_id],
+                            ['nomenclature_id' => $item->nom_id_for_name],
+                            ['type' => 2],
+                            ['document_id' => $item->order_id]])
+                            ->one();
+                        $product->status = '0';
+                        $product->save(false);
+                        $delete_document_items_exit = DocumentItems::findOne(['document_id' => $document_exit->id, 'nomenclature_id' => $item->nom_id_for_name,]);
+                        $delete_document_items_exit->status = '0';
+                        $delete_document_items_exit->save(false);
+                }
+        }
         Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }
@@ -653,18 +722,19 @@ class OrdersController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $session = Yii::$app->session;
         date_default_timezone_set('Asia/Yerevan');
-//        echo "<pre>";
         $changed_items = [];
         $order_items = OrderItems::find()
             ->select('order_items.order_id,order_items.warehouse_id,order_items.product_id,order_items.nom_id_for_name,
             order_items.count_by,order_items.count,products.AAH,products.price')
             ->leftJoin('products', 'order_items.product_id = products.id')
             ->where(['order_items.order_id' => $id])->asArray()->all();
-//        var_dump($order_items);
+        $size = 1;
+        $num = 0;
         for ($i = 0; $i < count($order_items); $i++){
             if ($order_items[$i]['count'] - $order_items[$i]['count_by'] != 0){
-                $changed_items[$i] = [
+                $changed_items[$num] = [
                     $order_items[$i]['order_id'],
                     $order_items[$i]['warehouse_id'],
                     $order_items[$i]['product_id'],
@@ -673,6 +743,19 @@ class OrdersController extends Controller
                     $order_items[$i]['count']-$order_items[$i]['count_by'],
                     $order_items[$i]['AAH'],
                 ];
+                if ($size == 1) {
+                    $size++;
+                    $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
+                    $client_name = Orders::find()
+                        ->select('clients.name')
+                        ->leftJoin('clients', 'clients.id = orders.clients_id')
+                        ->where(['orders.id' => $id])
+                        ->asArray()
+                        ->one();
+                    $text = $user_name['name'] . '(ի) առաքումից ' . $client_name['name'] . '(ն\ը) ապրանք է հետ վերադարձ արել։';
+                    Notifications::createNotifications('Ապրանքի վերադարձ', $text,'changeorderscount');
+                }
+                $num++;
             }
         }
 
@@ -712,7 +795,15 @@ class OrdersController extends Controller
         $orders = Orders::findOne($id);
         $orders->status = '2';
         $orders->save();
-        Notifications::createNotifications("Հաստատել պատվեր", 'ordersdelivered');
+        $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
+        $client_name = Orders::find()
+            ->select('clients.name')
+            ->leftJoin('clients', 'clients.id = orders.clients_id')
+            ->where(['orders.id' => $id])
+            ->asArray()
+            ->one();
+        $text = $user_name['name'] . '(ը) հաստատել է ' . $client_name['name'] . '(ի) պատվեի առաքումը։';
+        Notifications::createNotifications('Հաստատել պատվեր', $text,'ordersdelivered');
         return $this->redirect(['index']);
     }
     public function actionExit($id){
@@ -728,7 +819,7 @@ class OrdersController extends Controller
         order_items.nom_id_for_name,order_items.count_by,products.AAH,products.price')
             ->leftJoin('products','products.id = order_items.product_id')
             ->where(['order_items.order_id' => $id])->asArray()->all();
-        var_dump($order_items);
+//        var_dump($order_items);
         for ($i = 0;$i < count($order_items);$i++){
             $exit_documents[$i] = [
               $order_items[$i]['order_id'],
@@ -775,6 +866,11 @@ class OrdersController extends Controller
                 $new_exit_document_items->created_at = date('Y-m-d H:i:s');
                 $new_exit_document_items->updated_at = date('Y-m-d H:i:s');
                 $new_exit_document_items->save(false);
+            }
+            if ($session['role_id'] == 4){
+                $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
+                $text = $user_name['name'] . '(ն\ը) ելքագրել է ապրանք։';
+                Notifications::createNotifications('Ելքագրել փաստաթուղթ', $text,'exitdocument');
             }
         }
         $is_exit_orders = Orders::findOne($id);
@@ -859,6 +955,7 @@ class OrdersController extends Controller
     }
 
     public function actionDeleteItems(){
+//        echo "<pre>";
         if ($this->request->isPost){
             $total_count = $this->request->post('totalCount');
             $total_price = $this->request->post('totalPrice');
@@ -866,24 +963,118 @@ class OrdersController extends Controller
             $total_discount = $this->request->post('totalDiscount');
             $item_id = intval($this->request->post('itemId'));
             $nom_id = intval($this->request->post('nomId'));
-            $orders_id = OrderItems::find()->select('order_id')->where(['id' => $item_id])->one();
-            $delete_items = OrderItems::findOne($item_id)->delete();
-            $delete_products = Products::findOne([
-                'document_id' => $orders_id->order_id,
-                'nomenclature_id' => $nom_id,
-                'type' => 2
-            ])->delete();
-            $update_orders = Orders::findOne($orders_id->order_id);
-            $update_orders->total_count = $total_count;
-            $update_orders->total_price = $total_price;
-            $update_orders->total_price_before_discount = $total_price_before_discount;
-            $update_orders->total_discount = $total_discount;
-            $update_orders->save(false);
-            if(isset($delete_items) && isset($delete_products)){
+            $orders_id = OrderItems::find()->select('order_id,count,count_by,warehouse_id, nom_id_for_name')->where(['id' => $item_id])->one();
+            $product_id = Products::findOne(['warehouse_id' => $orders_id->warehouse_id, 'nomenclature_id' => $orders_id->nom_id_for_name,
+                'document_id' => $orders_id->order_id, 'type' => 2]);
+            $is_exit = Orders::findOne($orders_id->order_id);
+//            $document_exit = Documents::findOne(['orders_id' => $orders_id->order_id,'document_type' => 2]);
+//            $document_refuse = Documents::findOne(['orders_id' => $orders_id->order_id,'document_type' => 6]);
+            if ($is_exit->is_exit == 1){
+                $delete_items = OrderItems::findOne($item_id);
+                $delete_items->status = '0';
+                $delete_items->save(false);
+                $delete_products = Products::findOne([
+                    'document_id' => $orders_id->order_id,
+                    'nomenclature_id' => $nom_id,
+                    'type' => 2
+                ]);
+                $delete_products->status = '0';
+                $delete_products->save(false);
+                $update_orders = Orders::findOne($orders_id->order_id);
+                $update_orders->total_count = $total_count;
+                $update_orders->total_price = $total_price;
+                $update_orders->total_price_before_discount = $total_price_before_discount;
+                $update_orders->total_discount = $total_discount;
+                $update_orders->save(false);
                 return json_encode(true);
+
             }else{
-                return json_encode(false);
+                if ($orders_id->count - $orders_id->count_by == 0){
+                    $delete_items = OrderItems::findOne($item_id);
+                    $delete_items->status = '0';
+                    $delete_items->save(false);
+                    $document = new Documents();
+                    $document->orders_id = $orders_id->order_id;
+                    $document->warehouse_id = $orders_id->warehouse_id;
+                    $document->rate_id = 1;
+                    $document->rate_value = 1;
+                    $document->document_type = 6;
+                    $document->comment = 'Վերադարձրած ապրանք';
+                    $document->date = date('Y-m-d H:i:s');
+                    $document->status = '1';
+                    $document->created_at = date('Y-m-d H:i:s');
+                    $document->updated_at = date('Y-m-d H:i:s');
+                    $document->save(false);
+
+                    $new_document_items = new DocumentItems();
+                    $new_document_items->document_id = $document->id;
+                    $new_document_items->nomenclature_id = $orders_id->nom_id_for_name;
+                    $new_document_items->count = $orders_id->count_by;
+                    if ($product_id->AAH == 1){
+                        $new_document_items->AAH = 'true';
+                        $new_document_items->price_with_aah = $product_id->price;
+                        $new_document_items->price = number_format((($product_id->price * 5)/6),2,'.','');
+                    }else{
+                        $new_document_items->AAH = 'false';
+                        $new_document_items->price = $product_id->price;
+                        $new_document_items->price_with_aah = $product_id->price + ($product_id->price * 20) / 100;
+                    }
+                    $new_document_items->status = '1';
+                    $new_document_items->created_at = date('Y-m-d H:i:s');
+                    $new_document_items->updated_at = date('Y-m-d H:i:s');
+                    $new_document_items->save(false);
+                    return json_encode(true);
+
+
+                }else{
+                    $delete_items = OrderItems::findOne($item_id);
+                    $delete_items->status = '0';
+                    $delete_items->save(false);
+                    $document = new Documents();
+                    $document->orders_id = $orders_id->order_id;
+                    $document->warehouse_id = $orders_id->warehouse_id;
+                    $document->rate_id = 1;
+                    $document->rate_value = 1;
+                    $document->document_type = 6;
+                    $document->comment = 'Վերադարձրած ապրանք(ներ)';
+                    $document->date = date('Y-m-d H:i:s');
+                    $document->status = '1';
+                    $document->created_at = date('Y-m-d H:i:s');
+                    $document->updated_at = date('Y-m-d H:i:s');
+                    $document->save(false);
+
+                    $product_id->count = -$orders_id->count;
+                    $product_id->save(false);
+
+                    $new_document_items = new DocumentItems();
+                    $new_document_items->document_id = $document->id;
+                    $new_document_items->nomenclature_id = $orders_id->nom_id_for_name;
+                    $new_document_items->count = $orders_id->count;
+                    if ($product_id->AAH == 1){
+                        $new_document_items->AAH = 'true';
+                        $new_document_items->price_with_aah = $product_id->price;
+                        $new_document_items->price = number_format((($product_id->price * 5)/6),2,'.','');
+                    }else{
+                        $new_document_items->AAH = 'false';
+                        $new_document_items->price = $product_id->price;
+                        $new_document_items->price_with_aah = $product_id->price + ($product_id->price * 20) / 100;
+                    }
+                    $new_document_items->status = '1';
+                    $new_document_items->created_at = date('Y-m-d H:i:s');
+                    $new_document_items->updated_at = date('Y-m-d H:i:s');
+                    $new_document_items->save(false);
+                    return json_encode(true);
+                }
+
             }
+
+//            var_dump($delete_items->status == 0);
+//            var_dump($delete_products->status == 0);
+//            if($delete_items->status == 0 && $delete_products->status == 0){
+//                return json_encode(true);
+//            }else{
+//                return json_encode(false);
+//            }
         }
     }
 

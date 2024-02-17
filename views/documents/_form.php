@@ -14,6 +14,9 @@ $req = true;
 if(isset($action__)){
     $req = false;
 }
+$type = $model->document_type;
+$session = Yii::$app->session;
+
 ?>
 <?php if ($model->id){
     if ($model->document_type === '1'){
@@ -26,6 +29,10 @@ if(isset($action__)){
         $value = 'Խոտան';
     }elseif ($model->document_type === '6'){
         $value = 'Վերադարձրած';
+    }elseif ($model->document_type === '7'){
+        $value = 'Մերժված';
+    }elseif ($model->document_type === '8'){
+        $value = 'Մուտք(վերադարցրած)';
     }
     ?>
     <div class="documents-form">
@@ -45,7 +52,12 @@ if(isset($action__)){
                     <?= $form->field($model, 'to_warehouse')->dropDownList($to_warehouse) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                    <?php
+                    if($session['role_id'] == 1){?>
+                       <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                   <?php }elseif ($session['role_id'] == 4){?>
+                        <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
+                    <?php } ?>
                 </div>
 
                 <label class="rateLabel" for="rate">Փոխարժեք</label>
@@ -66,7 +78,14 @@ if(isset($action__)){
                     </select>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
+                    <?php
+                    if ($type == '7'){?>
+                        <?= $form->field($model, 'comment')->textArea(['maxlength' => true, 'disabled' => true]) ?>
+                    <?php }elseif($type == '6'){?>
+                        <?= $form->field($model, 'comment')->textArea(['maxlength' => true, 'disabled' => true]) ?>
+                    <?php }else{?>
+                        <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
+                    <?php }?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <?= $form->field($model, 'date')->input('datetime-local') ?>
@@ -127,7 +146,10 @@ if(isset($action__)){
                                 <th>Քանակ</th>
                                 <th>Գինը առանց ԱԱՀ-ի</th>
                                 <th>Գինը ներառյալ ԱԱՀ-ն</th>
-                                <th>Գործողություն</th>
+                                <?php
+                                if ($type == '1' || $type == '2' || $type == '3' || $type == '4'){?>
+                                    <th>Գործողություն</th>
+                                <?php }?>
                             </tr>
                             </thead>
                             <tbody class="old_tbody">
@@ -141,16 +163,25 @@ if(isset($action__)){
                                         <span><?=$keys + 1?></span>
                                         <input class="docItemsId" type="hidden" name="document_items[]" value="<?=$document_item['id']?>">
                                         <input class="itemsId" type="hidden" name="items[]" value="<?=$document_item['nom_id']?>">
-<!--                                        <input class="itemsId" type="hidden" name="nom_id[]" value="--><?php //=$document_item['nom_id']?><!--">-->
                                     </td>
                                     <td class="name"><?=$document_item['name']?></td>
-                                    <td class="count"><input type="number" name="count_[]" value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="any"></td>
-                                    <td class="price"><input type="number" name="price[]" value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>
+                                    <?php
+                                    if ($model->document_type == '7'){?>
+                                        <td class="count"><input type="number" name="count_[]" disabled value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="any"></td>
+                                        <td class="price"><input type="number" name="price[]" disabled value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>
+                                    <?php }else{?>
+                                        <td class="count"><input type="number" name="count_[]" value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="1"></td>
+                                        <td class="price"><input type="number" name="price[]" value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>
+                                    <?php }?>
+
                                     <td class="pricewithaah">
                                         <span><?=number_format($document_item['price_with_aah'],2,'.', '')?></span>
                                         <input type="hidden" name="pricewithaah[]" value="<?=number_format($document_item['price_with_aah'],2,'.', '')?>" class="form-control PriceWithaah">
                                     </td>
-                                    <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteDocumentItems">Ջնջել</button></td>
+                                    <?php
+                                    if ($type == '1' || $type == '2' || $type == '3' || $type == '4'){?>
+                                        <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteDocumentItems">Ջնջել</button></td>
+                                    <?php }?>
                                 </tr>
                                 <?php
                             }
@@ -160,7 +191,10 @@ if(isset($action__)){
                     </div>
                 </div>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn rounded-pill btn-secondary addDocuments" data-bs-toggle="modal" data-bs-target="#documentsModal">Ավելացնել ապրանք</button>
+                <?php
+                if ($type == '1' || $type == '2' || $type == '3' || $type == '4'){?>
+                    <button type="button" class="btn rounded-pill btn-secondary addDocuments addDocuments_get_type_val_update" data-bs-toggle="modal" data-bs-target="#documentsModal">Ավելացնել ապրանք</button>
+                <?php }?>
                 <!-- Modal -->
                 <div class="modal fade" id="documentsModal" tabindex="-1" style="display: none;" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">
@@ -172,60 +206,7 @@ if(isset($action__)){
                             <div class="modal-body">
                                 <input class="form-control col-md-3 mb-3 searchForDocumentUpdate" type="search" placeholder="Որոնել...">
                                 <div id="ajax_content">
-                                    <div class="card">
-                                        <div class="table-responsive text-nowrap">
-                                            <table class="table">
-                                                <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Նկար</th>
-                                                    <th>Անուն</th>
-                                                    <th>Քանակ</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody class="table-border-bottom-0 tbody_">
-                                                <?php
-                                                foreach ($nomenclatures as $keys => $nomenclature){?>
-                                                    <tr class="documentsTableTr">
-                                                        <td><?=$keys + 1?></td>
-                                                        <input class="nom_id" data-id="<?=$nomenclature['id']?>" type="hidden">
-                                                        <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
-                                                        <td class="documentsName"><?=$nomenclature['name']?></td>
-                                                        <td class="documentsCount">
-                                                            <input type="number" class="form-control documentsCountInput">
-                                                            <input class="documentsPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
-                                                        </td>
-                                                    </tr>
-                                                    <?php
-                                                }
-                                                ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <?php $page = @$_GET['paging'] ?? 1; ?>
-                                    <?php  $count = intval(ceil($total/10)) ; ?>
-                                    <nav aria-label="Page navigation example" class="pagination">
-                                        <ul class="pagination pagination-sm">
-                                            <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
-                                                <a class="page-link by_ajax_update" href="#" data-href="/documents/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
-                                            </li>
-                                            <?php for ($i = 1;$i <= $count; $i++){ ?>
-                                                <?php if($i > 0 && $i <= $count+1){ ?>
-                                                    <li class="page-item <?= ($page==$i) ? 'active' : '' ?>">
-                                                        <a class="page-link by_ajax_update" href="#" data-href="/documents/get-nomiclature?paging=<?= $i ?>"><?= $i ?>
-                                                        </a>
-                                                    </li>
-                                                <?php } ?>
-                                            <?php } ?>
 
-                                            <?php if(intval($page) < $count){ ?>
-                                                <li class="page-item next">
-                                                    <a class="page-link by_ajax_update" href="#" data-href="/documents/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
-                                                </li>
-                                            <?php } ?>
-                                        </ul>
-                                    </nav>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -236,7 +217,10 @@ if(isset($action__)){
                 </div>
             </div>
             <div class="card-footer">
-                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary']) ?>
+                <?php
+                if ($type == '1' || $type == '2' || $type == '3' || $type == '4'){?>
+                    <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary']) ?>
+                <?php }?>
             </div>
             <?php ActiveForm::end(); ?>
         </div>
@@ -261,7 +245,12 @@ if(isset($action__)){
                     <?= $form->field($model, 'to_warehouse')->dropDownList(['' => 'Ընտրել պահեստը'] + $to_warehouse) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                    <?php
+                    if($session['role_id'] == 1){?>
+                        <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                    <?php }elseif ($session['role_id'] == 4){?>
+                        <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
+                    <?php } ?>
                 </div>
 
                 <label class="rateLabel" for="rate">Փոխարժեք</label>
@@ -356,7 +345,8 @@ if(isset($action__)){
                     </div>
                 </div>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn rounded-pill btn-secondary addDocuments" data-bs-toggle="modal" data-bs-target="#documentsModal">Ավելացնել ապրանք</button>
+                <!--disabled-->
+                <button type="button" class="btn rounded-pill btn-secondary addDocuments addDocuments_get_type_val" data-bs-toggle="modal" data-bs-target="#documentsModal" disabled>Ավելացնել ապրանք</button>
                 <!-- Modal -->
                 <div class="modal fade" id="documentsModal" tabindex="-1" style="display: none;" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">
@@ -368,63 +358,7 @@ if(isset($action__)){
                             <div class="modal-body">
                                 <input class="form-control col-md-3 mb-3 searchForDocument" type="search" placeholder="Որոնել...">
                                 <div id="ajax_content">
-                                    <div class="card">
-                                        <div class="table-responsive text-nowrap">
-                                            <table class="table" id="myTable">
-                                                <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Նկար</th>
-                                                    <th>Անուն</th>
-                                                    <th>Քանակ</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody class="table-border-bottom-0 tbody_">
-                                                <?php
-                                                foreach ($nomenclatures as $keys => $nomenclature){
-                                                    ?>
-                                                    <tr class="documentsTableTr">
-                                                        <td>
-                                                            <span><?=$keys + 1?></span>
-                                                            <input class="nom_id" data-id="<?=$nomenclature['id']?>" type="hidden">
-                                                        </td>
-                                                        <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
-                                                        <td class="documentsName"><?=$nomenclature['name']?></td>
-                                                        <td class="documentsCount">
-                                                            <input type="number" class="form-control documentsCountInput">
-                                                            <input class="documentsPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
-                                                        </td>
-                                                    </tr>
-                                                    <?php
-                                                }
-                                                ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <?php $page = @$_GET['paging'] ?? 1; ?>
-                                    <?php  $count = intval(ceil($total/10)) ; ?>
-                                    <nav aria-label="Page navigation example" class="pagination">
-                                        <ul class="pagination pagination-sm">
-                                            <li class="page-item prev <?= ($page <= 1) ? 'disabled' : '' ?>">
-                                                <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $page-1 ?>"><i class="tf-icon bx bx-chevrons-left"></i></a>
-                                            </li>
-                                            <?php for ($i = 1;$i <= $count; $i++){ ?>
-                                                <?php if($i > 0 && $i <= $count+1){ ?>
-                                                    <li class="page-item <?= ($page==$i) ? 'active' : '' ?>">
-                                                        <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $i ?>"><?= $i ?>
-                                                        </a>
-                                                    </li>
-                                                <?php } ?>
-                                            <?php } ?>
 
-                                            <?php if(intval($page) < $count){ ?>
-                                                <li class="page-item next">
-                                                    <a class="page-link by_ajax" href="#" data-href="/documents/get-nomiclature?paging=<?= $page+1 ?>"><i class="tf-icon bx bx-chevrons-right"></i></a>
-                                                </li>
-                                            <?php } ?>
-                                        </ul>
-                                    </nav>
                                 </div>
                             </div>
                             <div class="modal-footer">

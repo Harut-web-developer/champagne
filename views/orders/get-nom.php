@@ -18,6 +18,7 @@
                         <span><?=$keys + 1?></span>
                         <input class="prodId" data-id="<?=$nomenclature['id']?>" type="hidden">
                         <input class="nomId" data-product="<?=$nomenclature['nomenclature_id']?>" type="hidden">
+<!--                        <input class="productsAAH" data-aah="--><?php //=$nomenclature['AAH']?><!--" type="text" value="--><?php //=$nomenclature['AAH']?><!--">-->
                     </td>
                     <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
                     <td class="nomenclatureName"><?=$nomenclature['name']?></td>

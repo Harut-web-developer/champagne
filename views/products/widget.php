@@ -54,49 +54,118 @@ if ($have_access_update && $have_access_delete){
 }
 ?>
 
-<?= CustomGridView::widget([
-    'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
-    'summaryOptions' => ['class' => 'summary'],
-    'dataProvider' => new ActiveDataProvider([
-        'query' => $dataProvider->query->andWhere(['status' => '1']),
-    ]),
-    'columns' => [
-        ['class' => 'yii\grid\SerialColumn'],
-        [
-            'attribute' => 'Պահեստ',
-            'value' => function ($model) {
-                if ($model->warehouseName) {
-                    return $model->warehouseName->name;
-                } else {
-                    return 'Դատարկ';
+<?php  if (!isset($page_value)){ ?>
+    <?= CustomGridView::widget([
+        'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
+        'summaryOptions' => ['class' => 'summary'],
+        'dataProvider' => new ActiveDataProvider([
+            'query' => $dataProvider->query->andWhere(['status' => '1']),
+        ]),
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+            [
+                'attribute' => 'Պահեստ',
+                'value' => function ($model) {
+                    if ($model->warehouseName) {
+                        return $model->warehouseName->name;
+                    } else {
+                        return 'Դատարկ';
+                    }
                 }
-            }
-        ],
-        [
-            'attribute' => 'Անվանակարգ',
-            'value' => function ($model) {
-                if ($model->nomenclatureName) {
-                    return $model->nomenclatureName->name;
-                } else {
-                    return 'Դատարկ';
+            ],
+            [
+                'attribute' => 'Անվանակարգ',
+                'value' => function ($model) {
+                    if ($model->nomenclatureName) {
+                        return $model->nomenclatureName->name;
+                    } else {
+                        return 'Դատարկ';
+                    }
                 }
-            }
-        ],
-        [
-            'attribute' => 'Քանակ',
-            'value' => function ($model) {
-                if ($model->count < 0) {
-                    return $model->count * (-1);
-                } else {
-                    return $model->count;
+            ],
+            [
+                'attribute' => 'Քանակ',
+                'value' => function ($model) {
+                    if ($model->count < 0) {
+                        return $model->count * (-1);
+                    } else {
+                        return $model->count;
+                    }
                 }
-            }
+            ],
+            [
+                'attribute' => 'Գին',
+                'value' => function ($model) {
+                    return round($model->price);
+                }
+            ],
         ],
-        [
-            'attribute' => 'Գին',
-            'value' => function ($model) {
-                return round($model->price);
-            }
-        ],
-    ],
-]); ?>
+    ]); ?>
+<?php } else { ?>
+    <div class="products-index">
+        <div class="titleAndPrev">
+            <div class="titleAndConfig">
+                <i class='bx bxs-log-out iconPrevPage' onclick="window.location = document.referrer"></i>
+                <h3><?= Html::encode($this->title) ?></h3>
+            </div>
+            <div class="filtersField" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
+                <?php if($session['role_id'] == '1' || $session['role_id'] == '2'){ ?>
+                    <select class="form-select productStatus" aria-label="Default select example" style="width: auto; margin: 0px 10px 15px 5px;">
+                        <option selected value="0">Ընդհանուր</option>
+                        <?php foreach ($warehouse as $item => $value){ ?>
+                            <option value="<?=$value['id']?>"><?=$value['name']?></option>
+                        <?php } ?>
+                    </select>
+                <?php }?>
+            </div>
+        </div>
+        <div class="card pageStyle">
+            <?= CustomGridView::widget([
+                'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
+                'summaryOptions' => ['class' => 'summary'],
+                'dataProvider' => new ActiveDataProvider([
+                    'query' => $dataProvider->query->andWhere(['status' => '1']),
+                ]),
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
+                    [
+                        'attribute' => 'Պահեստ',
+                        'value' => function ($model) {
+                            if ($model->warehouseName) {
+                                return $model->warehouseName->name;
+                            } else {
+                                return 'Դատարկ';
+                            }
+                        }
+                    ],
+                    [
+                        'attribute' => 'Անվանակարգ',
+                        'value' => function ($model) {
+                            if ($model->nomenclatureName) {
+                                return $model->nomenclatureName->name;
+                            } else {
+                                return 'Դատարկ';
+                            }
+                        }
+                    ],
+                    [
+                        'attribute' => 'Քանակ',
+                        'value' => function ($model) {
+                            if ($model->count < 0) {
+                                return $model->count * (-1);
+                            } else {
+                                return $model->count;
+                            }
+                        }
+                    ],
+                    [
+                        'attribute' => 'Գին',
+                        'value' => function ($model) {
+                            return round($model->price);
+                        }
+                    ],
+                ],
+            ]); ?>
+        </div>
+    </div>
+<?php } ?>

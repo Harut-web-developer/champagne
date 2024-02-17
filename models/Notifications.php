@@ -53,29 +53,21 @@ class Notifications extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function createNotifications($title,$sort)
+    public static function createNotifications($title,$text,$sort)
     {
         date_default_timezone_set('Asia/Yerevan');
         $session = Yii::$app->session;
         $role_id = $session['role_id'];
         $user_id = $session['user_id'];
-        $user_name = Users::find()
-            ->select('*')
-            ->where(['id' => $user_id])->asArray()->one();
-        $string = $title;
-        $string = mb_strtolower($string, 'UTF-8');
-        $parts = explode(" ", $string, 2);
-        $result = implode(' է ', $parts);
-//        $insert_position = mb_strlen($string, 'UTF-8') / 2;
-//        $new_string = mb_substr($string, 0, $insert_position, 'UTF-8') . ' է' . mb_substr($string, $insert_position, NULL, 'UTF-8');
-        $message = $user_name['name'] . '(ն/ը) ' . $result . ':';
-        $model = new Notifications();
-        $model->role_id = $role_id;
-        $model->user_id = $user_id;
-        $model->title = $title;
-        $model->message = $message;
-        $model->datetime = date('Y-m-d H:i:s');
-        $model->sort_ = $sort;
-        $model->save();
+        if ($session['role_id'] != '1') {
+            $model = new Notifications();
+            $model->role_id = $role_id;
+            $model->user_id = $user_id;
+            $model->title = $title;
+            $model->message = $text;
+            $model->datetime = date('Y-m-d H:i:s');
+            $model->sort_ = $sort;
+            $model->save();
+        }
     }
 }

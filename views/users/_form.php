@@ -172,6 +172,11 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                             ['id' => 74, 'name' => 'Ստեղծել օգտատիրոջ դաշտ', 'label_id' => 'premission74'],
                             ['id' => 75, 'name' => 'Հաստատել վերադարցրածը', 'label_id' => 'premission75'],
                             ['id' => 76, 'name' => 'Ելքագրել պատվերը', 'label_id' => 'premission76'],
+                            ['id' => 77, 'name' => 'Ստեցծել մենեջեր-առաքիչ', 'label_id' => 'premission77'],
+                            ['id' => 78, 'name' => 'Փոփոխել մենեջեր-առաքիչ', 'label_id' => 'premission78'],
+                            ['id' => 79, 'name' => 'Ջնջել մենեջեր-առաքիչ', 'label_id' => 'premission79'],
+                            ['id' => 80, 'name' => 'Տեսնել մենեջեր-առաքիչ', 'label_id' => 'premission80'],
+                            ['id' => 81, 'name' => 'Մերժել վերադարցրածը', 'label_id' => 'premission81'],
 
                         ];
 
@@ -506,10 +511,29 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                             <label for="premission76" class="items-title">Ելքագրել պատվերը</label>
                             <input id="premission76" type="checkbox" value="76" name="premission[]">
                         </div>
+                        <div class="premission-content-items">
+                            <label for="premission77" class="items-title">Ստեցծել մենեջեր-առաքիչ</label>
+                            <input id="premission77" type="checkbox" value="77" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission78" class="items-title">Փոփոխել մենեջեր-առաքիչ</label>
+                            <input id="premission78" type="checkbox" value="78" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission79" class="items-title">Ջնջել մենեջեր-առաքիչ</label>
+                            <input id="premission79" type="checkbox" value="79" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission80" class="items-title">Տեսնել մենեջեր-առաքիչ</label>
+                            <input id="premission80" type="checkbox" value="80" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission81" class="items-title">Մերժել վերադարցրածը</label>
+                            <input id="premission81" type="checkbox" value="81" name="premission[]">
+                        </div>
                     </div>
                 </div>
                 <?php } ?>
-
         </div>
         <div class="card-footer">
             <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>

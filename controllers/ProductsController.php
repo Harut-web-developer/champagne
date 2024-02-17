@@ -254,7 +254,8 @@ class ProductsController extends Controller
             $products_count = Products::find()->select('SUM(count) as count')->where(['nomenclature_id' => intval($post['itemId'])])
                 ->andWhere(['warehouse_id' => $post['warehouse_id']])
                 ->asArray()->all();
-            var_dump($products_count);
+//            var_dump($products_count);
+//            exit();
             if ($products_count[0]['count'] === null){
                 return json_encode(['count' => 'dontExists']);
             }elseif ($post['count'] > intval($products_count[0]['count'])){
@@ -284,17 +285,32 @@ class ProductsController extends Controller
 
     public  function actionProductsFilterStatus(){
         if ($_GET){
+            $page_value = null;
+            if(isset($_GET["dp-1-page"]))
+                $page_value = intval($_GET["dp-1-page"]);
             $searchModel = new ProductsSearch();
             $dataProvider = $searchModel->search($this->request->queryParams);
             $sub_page = [];
             $date_tab = [];
+            $warehouse = Warehouse::find()
+                ->select('id, name')
+                ->asArray()
+                ->all();
 
-            return $this->renderAjax('widget', [
+            $render_array = [
                 'sub_page' => $sub_page,
                 'date_tab' => $date_tab,
+                'page_value' => $page_value,
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
-            ]);
+                'warehouse' => $warehouse,
+            ];
+
+            if(Yii::$app->request->isAjax){
+                return $this->renderAjax('widget', $render_array);
+            }else{
+                return $this->render('widget', $render_array);
+            }
         }
     }
 }

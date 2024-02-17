@@ -173,7 +173,7 @@ $(document).ready(function() {
             data: { _csrf: csrfToken },
             success: function (data) {
                 if (data['notifications_today'] !== 0) {
-                    displayNotifications(data['notifications_today']);
+                    displayNotifications(data, data['notifications_today']);
                     $('body').on('click','#viweall',function () {
                         // displayNotifications(data['notifications_all']);
                         var notifications = data['notifications_all'];
@@ -221,7 +221,12 @@ $(document).ready(function() {
             },
         });
     }
-    function displayNotifications(notifications) {
+    function displayNotifications(data, notifications) {
+        if(data['notification_badge_storekeeper'] != null){
+            $('.index_not').text(data['notification_badge_storekeeper'])
+        }else if(data['notification_badge_admin'] != null){
+            $('.index_not').text(data['notification_badge_admin'])
+        }
         var notificationsDropdown = $("#notifications-dropdown");
         notificationsDropdown.empty();
         notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
@@ -250,7 +255,8 @@ $(document).ready(function() {
     function displayNotificationtoast(notification) {
         if (notification!=null) {
             $('.bs-toast .toast-header .me-auto').text(notification.title);
-            $('.bs-toast .toast-body').text(notification.message);
+            $('.bs-toast .toast-body').html('');
+            $('.bs-toast .toast-body').append(notification.message);
             $('.bs-toast').toast('show');
         }
     }
@@ -780,13 +786,15 @@ $(document).ready(function() {
                 if (status_ == 'Հաստատված') {
                     $(this).find('td:nth-child(2) a:not(.reportsOrders)').remove();
                 } else if (status_ == 'Մերժված') {
-                    $(this).find('td:nth-child(2) a[title="Ջնջել"]').remove();
+                    $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
                 }
                 if (status_ != 'Ընթացքի մեջ'){
                     $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
                 }
                 if (is_exit == 'Ելքագրված'){
                     $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
+                }else {
+                    $(this).find('td:nth-child(2) a[title="Հաստատել"]').remove();
                 }
         });
     })
@@ -800,21 +808,10 @@ $(document).ready(function() {
             let document_type = $(this).find('td:nth-child(3)').text();
             if (document_type != 'Վերադարձրած') {
                 $(this).find('td:nth-child(2) a[title="Հաստատել"]').remove();
+                $(this).find('td:nth-child(2) .refuseDocument').remove();
             }
         })
     })
-    // var csrfToken = $('meta[name="csrf-token"]').attr("content");
-    // $.ajax({
-    //     url:"/map/index",
-    //     method: 'post',
-    //     dataType:'json',
-    //     data:{
-    //         _csrf : csrfToken
-    //     },
-    //     success:function(data){
-    //         alert(data)
-    //     }
-    // })
 
     function clearWidget(){
         $('body').find('#w0 table tbody tr').each(function(){
@@ -823,18 +820,40 @@ $(document).ready(function() {
             if (status_ == 'Հաստատված') {
                 $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
             } else if (status_ == 'Մերժված') {
-                $(this).find('td:nth-child(2) a[title="Ջնջել"]').remove();
+                $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
             }
             if (status_ != 'Ընթացքի մեջ'){
                 $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
             }
             if (is_exit == 'Ելքագրված'){
                 $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
+            }else {
+                $(this).find('td:nth-child(2) a[title="Հաստատել"]').remove();
             }
         });
         $('body').find('#w0 table thead th').each(function () {
             if ($(this).has('a')){
                 $(this).html( $(this).find('a').html())
+            }
+        })
+    }
+
+    $('body').on('click','.refuseDocument',function(){
+        refuseDocument($(this));
+    })
+    function refuseDocument(el) {
+        let docId = el.data('id');
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/documents/refuse-modal',
+            method:'get',
+            datatype:'html',
+            data:{
+                documentId:docId,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.modals').html(data);
             }
         })
     }

@@ -25,6 +25,7 @@ $have_access_update = Users::checkPremission(38);
 $have_access_delete = Users::checkPremission(39);
 $have_access_custom_field = Users::checkPremission(71);
 $have_access_confirm_return = Users::checkPremission(75);
+$have_access_refuse = Users::checkPremission(81);
 
 $action_column = [];
 $access_buttons = '';
@@ -37,6 +38,9 @@ if($have_access_confirm_return){
 if($have_access_update){
     $access_buttons .='{update}';
 }
+if($have_access_refuse){
+    $access_buttons .='{refuse}';
+}
 
     $action_column[] = [
         'header' => 'Գործողություն',
@@ -47,7 +51,12 @@ if($have_access_update){
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132; padding:0px 2px" ></i>', $url, [
                     'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                 ]);
-            }],
+            },
+            'refuse'=>function ($url, $model, $key) {
+                return '<i class="bx bx-block refuseDocument" data-id="'. $key . '" title="Մերժել" style="color:red; padding:0px 2px"></i>';
+            },
+],
+
         'urlCreator' => function ($action, Documents $model, $key, $index, $column) {
             return Url::toRoute([$action, 'id' => $model->id]);
         }
@@ -71,17 +80,19 @@ if($have_access_update){
             <?php } ?>
         </p>
         <div class="filtersField" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
+            <?php
+            if($session['role_id'] == '1' || $session['role_id'] == '4'){?>
             <select class="form-select documentStatus" aria-label="Default select example" style="width: 150px; margin: 0px 10px 15px 5px;">
-                <?php
-                if($session['role_id'] == '1'){?>
                     <option selected value="0">Ընդհանուր</option>
                     <option value="1">Մուտք</option>
                     <option value="2">Ելք</option>
                     <option value="3">Տեղափոխություն</option>
                     <option value="4">Խոտան</option>
                     <option value="6">Վերադարձ</option>
-                <?php }?>
+                    <option value="7">Մերժված</option>
+                    <option value="8">Մուտք(վերադարցրած)</option>
             </select>
+            <?php }?>
         </div>
     </div>
     <div class="card pageStyle documentsCard">
@@ -107,6 +118,10 @@ if($have_access_update){
                         return 'Խոտան';
                     } elseif($model->document_type == 6) {
                         return 'Վերադարձրած';
+                    } elseif($model->document_type == 7) {
+                        return 'Մերժված';
+                    } elseif($model->document_type == 8){
+                        return 'Մուտք(վերադարցրած)';
                     }
                 }
             ],
@@ -163,4 +178,7 @@ if($have_access_update){
         ],
     ]); ?>
     </div>
+</div>
+<div class="modals">
+
 </div>
