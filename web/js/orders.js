@@ -1620,20 +1620,34 @@ $(document).ready(function () {
                 }
             }
         })
-        // alert(5555)
     })
     $('body').on('click','#countByModal', function (){
-        if ($(this).val() > $('countModal')){
+        if ($(this).val() > $('#countModal').val()){
             alert("Պատվերի քանակից ավել հնարավոր չէ փոխել։")
-            $(this).val(('#countByModal').val());
+            $(this).val($('#countModal').val());
         }else if ($(this).val() < 1 || $(this).val() == ''){
             alert("Նշված դաշտը չի կարող լինել դատարկ կամ 1-ից պակաս։")
-            $(this).val(('#countByModal').val());
+            $(this).val($('#countModal').val());
         }else {
             $('#totalBeforePriceModal').val(+parseFloat($('#beforePriceModal').val() * $(this).val()).toFixed(2))
             $('#totalPriceModal').val(+parseFloat($('#priceModal').val() * $(this).val()).toFixed(2))
         }
+    })
 
+    $('body').on('keyup', '#countByModal', function() {
+        $(this).val(function(index, value) {
+            return value.replace(/-/g, '');
+        });
+        if ($(this).val() > $('#countModal').val()) {
+            alert("Ավել հնարավոր չէ փոխել։")
+            $(this).val($('#countModal').val());
+        } else if ($(this).val() < 1 || $(this).val() === "") {
+            alert("Նշված դաշտը չի կարող լինել դատարկ կամ 1-ից պակաս։")
+            $(this).val($('#countModal').val());
+        } else {
+            $('#totalBeforePriceModal').val(+parseFloat($('#beforePriceModal').val() * $(this).val()).toFixed(2))
+            $('#totalPriceModal').val(+parseFloat($('#priceModal').val() * $(this).val()).toFixed(2))
+        }
     })
     function getNom(href_) {
         let url_id = window.location.href;

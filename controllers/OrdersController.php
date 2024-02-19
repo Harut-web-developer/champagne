@@ -119,7 +119,7 @@ class OrdersController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionPrintDoc($id){
-        $order_items = OrderItems::find()->select('products.AAH.products.count_balance,order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
+        $order_items = OrderItems::find()->select('products.AAH,products.count_balance,order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
         order_items.price_before_discount as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
         order_items.price as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
             ->leftJoin('products','products.id = order_items.product_id')
@@ -455,9 +455,6 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-//            echo "<pre>";
-//            var_dump($post);
-//            exit;
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price_before_discount = $post['Orders']['total_price_before_discount'];
@@ -660,9 +657,8 @@ class OrdersController extends Controller
             'active_discount' => $active_discount,
             'clients' => $clients,
             'orders_clients' => $orders_clients,
-//            'nomenclatures' => $nomenclatures,
+            'oldattributes' => $oldattributes,
             'order_items' => $order_items,
-//            'total' => $total,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'warehouse' => $warehouse,
@@ -907,26 +903,13 @@ class OrdersController extends Controller
             $page_value = null;
             if(isset($_GET["page"]))
                 $page_value = intval($_GET["page"]);
-
             $searchModel = new OrdersSearch();
             $dataProvider = $searchModel->search($this->request->queryParams);
             $sub_page = [];
             $date_tab = [];
-
-//            $is_filter = false;
-//            if ($_GET['numberVal'] || $_GET['managerId'] || $_GET['clientsVal'] || $_GET['ordersDate'] || $_GET['type']){
-//                $is_filter = true;
-//            }
-
-            $approved = null;
-            if ($_GET['numberVal'] == 2){
-                $approved = 2;
-            }elseif ($_GET['numberVal'] == 0){
-                $approved = 0;
-            }elseif ($_GET['numberVal'] == 3 || $_GET['numberVal'] == 4){
-                $approved = 3;
-            }elseif ($_GET['numberVal'] == 1){
-                $approved = 1;
+            $is_filter = false;
+            if ($_GET['numberVal'] || $_GET['managerId'] || $_GET['clientsVal'] || $_GET['ordersDate'] || $_GET['type']){
+                $is_filter = true;
             }
             $session = Yii::$app->session;
             $user_id = $session['user_id'];
@@ -948,12 +931,10 @@ class OrdersController extends Controller
                 'dataProvider' => $dataProvider,
                 'sub_page' => $sub_page,
                 'date_tab' => $date_tab,
-                'approved' => $approved,
                 'clients' => $clients,
                 'page_value' => $page_value,
-//                'is_filter' => $is_filter,
+                'is_filter' => $is_filter,
             ];
-
             if(Yii::$app->request->isAjax){
                 if (isset($_GET['type']) && $_GET['type'] == 'order'){
                     if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
@@ -965,6 +946,10 @@ class OrdersController extends Controller
                     }
                 }elseif (isset($_GET['type']) && $_GET['type'] == 'product'){
                     return $this->renderAjax('products', $render_array);
+                }elseif (!isset($_GET['type'])){
+                    $this->layout = 'index.php';
+                    $render_array['data_size'] = 'max';
+                    return $this->renderAjax('widget', $render_array);
                 }
             }else{
                 if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
@@ -1194,7 +1179,6 @@ class OrdersController extends Controller
             ->limit(10)
             ->asArray()
             ->all();
-
 
         $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,
         order_items.count,(order_items.price / order_items.count) as price,

@@ -66,7 +66,6 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                         <td><?=number_format($order_items[$i]['price'] + ($order_items[$i]['discount']/$order_items[$i]['count']),2) . " դր" ?></td>
                         <td><?=number_format($order_items[$i]['price'],2) . " դր" ?></td>
                         <td><?=number_format($order_items[$i]['price_before_discount'],2) . " դր" ?></td>
-<!--                        <td>--><?php //=$order_items[$i]['total_price']; ?><!--</td>-->
                         <td><?=number_format($order_items[$i]['count']*$order_items[$i]['price'],2) . " դր" ?></td>
                     </tr>
                 <?php } ?>

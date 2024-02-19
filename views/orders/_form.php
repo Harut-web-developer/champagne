@@ -136,9 +136,11 @@ $session = Yii::$app->session;
                                             <input type="hidden" name="total_price[]" value="<?=number_format($item['total_price'],2,'.','')?>">
                                         </td>
                                         <td>
+                                        <?php if ($oldattributes['is_exit'] == 0){?>
                                             <button type="button" data-orders="<?=$item['id']?>" class="btn rounded-pill btn-outline-info changeCount" data-bs-toggle="modal" data-bs-target="#modalCenter">
                                                 Փոփոխել
                                             </button>
+                                        <?php } ?>
                                             <div class="modal fade" id="modalCenter" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
