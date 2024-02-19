@@ -843,6 +843,7 @@ class DocumentsController extends Controller
                 $new_product->document_id = $new_document->id;
                 $new_product->type = 8;
                 $new_product->count = $document_items[$k]['count'];
+                $new_product->count_balance = $document_items[$k]['count'];
                 if ($document_items[$k]['AAH'] == 'true'){
                     $new_product->AAH = 1;
                     $new_product->price = $document_items[$k]['price_with_aah'];

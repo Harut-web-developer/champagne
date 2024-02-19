@@ -232,6 +232,8 @@ class OrdersController extends Controller
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
             for ($i = 0; $i < count($post['order_items']); $i++) {
+//                $count_balance = Products::findOne($post['order_items'][$i]);
+
                 $product_write_out = new Products();
                 $product_write_out->warehouse_id = $post['warehouse'];;
                 $product_write_out->nomenclature_id = intval($post['nom_id'][$i]);
@@ -239,6 +241,7 @@ class OrdersController extends Controller
                 $product_write_out->type = 2;
                 $product_write_out->count = intval($post['count_'][$i]);
                 $product_write_out->count_balance = 0;
+//                    $count_balance->count_balance - intval($post['count_'][$i]);
                 $product_write_out->price = floatval($post['beforePrice'][$i]);
                 $product_write_out->AAH = $post['aah'][$i];
                 $product_write_out->parent_id = $post['order_items'][$i];
@@ -392,7 +395,8 @@ class OrdersController extends Controller
             ->where(['order_items.order_id' => $urlId])
             ->asArray()
             ->all();
-        $nomenclatures = $query->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
+        $nomenclatures = $query
+//            ->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
             ->select('products.id, products.count, products.price,products.warehouse_id, nomenclature.id as nomenclature_id, nomenclature.image, nomenclature.name, nomenclature.cost')
             ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
             ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
@@ -472,50 +476,69 @@ class OrdersController extends Controller
             foreach ($items as $k => $item){
                 $order_item = OrderItems::findOne(intval($item));
                 if($order_item !== null){
-                    $order_item->order_id = $id;
-                    $order_item->warehouse_id = intval($post['warehouse']);
-                    $order_item->product_id = $post['product_id'][$k];
-                    $order_item->nom_id_for_name = intval($post['nom_id'][$k]);
-                    if ($model->is_exit == 1){
-                        $order_item->price = floatval($post['price'][$k]) * intval($post['count_'][$k]);
-                        $order_item->price_by = floatval($post['price'][$k]) * intval($post['count_'][$k]);
-                        $order_item->cost = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
-                        $order_item->cost_by = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
-                        $order_item->discount = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
-                        $order_item->discount_by = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
-                        $order_item->price_before_discount = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
-                        $order_item->price_before_discount_by = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
-                        $order_item->count = intval($post['count_'][$k]);
-                        $order_item->count_by = intval($post['count_'][$k]);
-                    }else{
-                        $order_item->price_by = floatval($post['price'][$k]) * intval($post['count_'][$k]);
-                        $order_item->cost_by = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
-                        $order_item->discount_by = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
-                        $order_item->price_before_discount_by = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
-                        $order_item->count_by = intval($post['count_'][$k]);
-                    }
-                    $order_item->updated_at = date('Y-m-d H:i:s');
-                    $order_item->save(false);
+
+
+//                    $order_item->order_id = $id;
+//                    $order_item->warehouse_id = intval($post['warehouse']);
+//                    $order_item->product_id = $post['product_id'][$k];
+//                    $order_item->nom_id_for_name = intval($post['nom_id'][$k]);
+//                    if ($model->is_exit == 1){
+//                        $order_item->price = floatval($post['price'][$k]) * intval($post['count_'][$k]);
+//                        $order_item->price_by = floatval($post['price'][$k]) * intval($post['count_'][$k]);
+//                        $order_item->cost = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
+//                        $order_item->cost_by = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
+//                        $order_item->discount = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
+//                        $order_item->discount_by = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
+//                        $order_item->price_before_discount = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
+//                        $order_item->price_before_discount_by = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
+//                        $order_item->count = intval($post['count_'][$k]);
+//                        $order_item->count_by = intval($post['count_'][$k]);
+//                    }else{
+//                        $order_item->price_by = floatval($post['price'][$k]) * intval($post['count_'][$k]);
+//                        $order_item->cost_by = floatval($post['cost'][$k]) * intval($post['count_'][$k]);
+//                        $order_item->discount_by = floatval($post['discount'][$k]) * intval($post['count_'][$k]);
+//                        $order_item->price_before_discount_by = floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
+//                        $order_item->count_by = intval($post['count_'][$k]);
+//                    }
+//                    $order_item->updated_at = date('Y-m-d H:i:s');
+//                    $order_item->save(false);
 
                     $quantity += intval($post['count_'][$k]);
                     $total_price += floatval($post['price'][$k]) * intval($post['count_'][$k]);
                     $total_price_before_discount += floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
                     $total_discount += floatval($post['discount'][$k]) * intval($post['count_'][$k]);
 
-                    $product_write_out = Products::find()->select('products.*')
-                        ->where(['and',['document_id' => $model->id,'type' => 2,'nomenclature_id' => $post['nom_id'][$k]]])->one();
-                    $product_write_out->warehouse_id = intval($post['warehouse']);
-                    $product_write_out->nomenclature_id = $post['nom_id'][$k];
-                    $product_write_out->price = floatval($post['price'][$k]);
-                    $product_write_out->count = -intval($post['count_'][$k]);
-                    $product_write_out->type = 2;
-                    $product_write_out->updated_at = date('Y-m-d H:i:s');
-                    $product_write_out->save();
+//                    $product_write_out = Products::find()->select('products.*')
+//                        ->where(['and',['document_id' => $model->id,'type' => 2,'nomenclature_id' => $post['nom_id'][$k]]])->one();
+//                    $product_write_out->warehouse_id = intval($post['warehouse']);
+//                    $product_write_out->nomenclature_id = $post['nom_id'][$k];
+//                    $product_write_out->price = floatval($post['price'][$k]);
+//                    $product_write_out->count = -intval($post['count_'][$k]);
+//                    $product_write_out->type = 2;
+//                    $product_write_out->updated_at = date('Y-m-d H:i:s');
+//                    $product_write_out->save();
                 } else {
+                    $product_write_out = new Products();
+                    $product_write_out->warehouse_id = $post['warehouse'];;
+                    $product_write_out->nomenclature_id = intval($post['nom_id'][$k]);
+                    $product_write_out->document_id = $model->id;
+                    $product_write_out->type = 2;
+                    $product_write_out->count = intval($post['count_'][$k]);
+                    $product_write_out->count_balance = 0;
+//                    $count_balance->count_balance - intval($post['count_'][$k]);
+                    $product_write_out->price = floatval($post['beforePrice'][$k]);
+                    $product_write_out->AAH = $post['aah'][$k];
+                    $product_write_out->parent_id = $post['product_id'][$k];
+                    $product_write_out->created_at = date('Y-m-d H:i:s');
+                    $product_write_out->updated_at = date('Y-m-d H:i:s');
+                    $product_write_out->save(false);
+
+
+
                     $order_items_create = new OrderItems();
                     $order_items_create->order_id = $model->id;
                     $order_items_create->warehouse_id = intval($post['warehouse']);
-                    $order_items_create->product_id = intval($post['product_id'][$k]);
+                    $order_items_create->product_id = $product_write_out->id;
                     $order_items_create->nom_id_for_name = intval($post['nom_id'][$k]);
                     $order_items_create->price = floatval($post['price'][$k]) * intval($post['count_'][$k]);
                     $order_items_create->price_by = floatval($post['price'][$k]) * intval($post['count_'][$k]);
@@ -537,16 +560,10 @@ class OrdersController extends Controller
                     $total_price_before_discount += floatval($post['beforePrice'][$k]) * intval($post['count_'][$k]);
                     $total_discount += floatval($post['discount'][$k]) * intval($post['count_'][$k]);
 
-                    $product_write_out = new Products();
-                    $product_write_out->warehouse_id = intval($post['warehouse']);
-                    $product_write_out->nomenclature_id = $post['nom_id'][$k];
-                    $product_write_out->document_id = $model->id;
-                    $product_write_out->count = -intval($post['count_'][$k]);
-                    $product_write_out->price = floatval($post['price'][$k]);
-                    $product_write_out->type = 2;
-                    $product_write_out->created_at = date('Y-m-d H:i:s');
-                    $product_write_out->updated_at = date('Y-m-d H:i:s');
-                    $product_write_out->save(false);
+                    $count_balance = Products::findOne($post['product_id'][$k]);
+                    $count_balance->count_balance = $post['count_balance'][$k];
+                    $count_balance->save(false);
+
                 }
             }
             $order = Orders::findOne($id);
@@ -578,11 +595,15 @@ class OrdersController extends Controller
         ((order_items.price_before_discount / order_items.count) * order_items.count_by) as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
         ((order_items.price / order_items.count) * order_items.count_by)  as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
             ->leftJoin('products','products.id = order_items.product_id')
+//            ->leftJoin('products as prod_parent','prod_parent.id = products.parent_id')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['order_id' => $id])
             ->andWhere(['order_items.status' => '1'])
             ->asArray()
             ->all();
+//        echo "<pre>";
+//        var_dump($order_items);
+//        exit();
         $order_items_discount = OrderItems::find()->select('count_discount_id')->where(['=','order_id', $id])->asArray()->all();
 
         $uniqueValues = [];
@@ -722,6 +743,7 @@ class OrdersController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+//        echo "<pre>";
         $session = Yii::$app->session;
         date_default_timezone_set('Asia/Yerevan');
         $changed_items = [];
@@ -730,6 +752,7 @@ class OrdersController extends Controller
             order_items.count_by,order_items.count,products.AAH,products.price')
             ->leftJoin('products', 'order_items.product_id = products.id')
             ->where(['order_items.order_id' => $id])->asArray()->all();
+
         $size = 1;
         $num = 0;
         for ($i = 0; $i < count($order_items); $i++){
@@ -776,6 +799,7 @@ class OrdersController extends Controller
                     $new_document_items = new DocumentItems();
                     $new_document_items->document_id = $document->id;
                     $new_document_items->nomenclature_id = $changed_items[$k][3];
+                    $new_document_items->refuse_product_id = $changed_items[$k][2];
                     $new_document_items->count = $changed_items[$k][5];
                     if ($changed_items[$k][6] == 1){
                         $new_document_items->AAH = 'true';
@@ -819,7 +843,8 @@ class OrdersController extends Controller
         order_items.nom_id_for_name,order_items.count_by,products.AAH,products.price')
             ->leftJoin('products','products.id = order_items.product_id')
             ->where(['order_items.order_id' => $id])->asArray()->all();
-//        var_dump($order_items);
+//        echo "<pre>";
+
         for ($i = 0;$i < count($order_items);$i++){
             $exit_documents[$i] = [
               $order_items[$i]['order_id'],
@@ -831,7 +856,6 @@ class OrdersController extends Controller
               $order_items[$i]['price'],
             ];
         }
-
         if (!empty($exit_documents)){
             $new_exit_document = new Documents();
             if ($session['role_id'] == 4){
@@ -954,6 +978,58 @@ class OrdersController extends Controller
         }
     }
 
+    public function actionChangeCount(){
+        if ($this->request->isGet){
+            $items = $this->request->get('orderItemsId');
+            $order_items = OrderItems::find()
+                ->select('order_items.discount,order_items.id,order_items.count,order_items.count_by,order_items.price_by,order_items.price,order_items.price_before_discount,
+                order_items.price_before_discount_by,order_items.discount_by,order_items.cost,order_items.cost_by,nomenclature.name,')
+                ->leftJoin('nomenclature', 'nomenclature.id = order_items.nom_id_for_name')
+                ->where(['order_items.id' => intval($items)])
+                ->asArray()
+                ->one();
+            return $this->renderAjax('change-count',[
+                'order_items' => $order_items,
+            ]);
+        }
+    }
+    public function actionChangingItems(){
+        if ($this->request->isPost){
+            $post = $this->request->post();
+
+            $order_items = OrderItems::findOne($post['itemsId']);
+            $order_items->count_by = $post['countBy'];
+            $order_items->cost_by = $post['costBy'];
+            $order_items->discount_by = $post['discountBy'];
+            $order_items->price_by = $post['priceBy'];
+            $order_items->price_before_discount_by = $post['priceBeforeDiscountBy'];
+            $order_items->save(false);
+            $for_orders = OrderItems::find()->select('SUM(count_by) as count,SUM(price_by) as total_price,
+            SUM(discount_by) as discount,SUM(price_before_discount_by) as total_price_before_discount')
+                ->where(['status' => '1'])
+                ->andWhere(['order_id' => $order_items->order_id])
+                ->asArray()
+                ->all();
+            $orders = Orders::findOne($order_items->order_id);
+//            var_dump($orders);
+//            var_dump($for_orders);
+//            exit();
+            $orders->total_price = $for_orders[0]['total_price'];
+            $orders->total_price_before_discount = $for_orders[0]['total_price_before_discount'];
+            $orders->total_discount = $for_orders[0]['discount'];
+            $orders->total_count = $for_orders[0]['count'];
+            $orders->save(false);
+
+            $products = Products::findOne($order_items->product_id);
+//            $products_batch = Products::findOne($products->parent_id);
+//            $products_batch->count_balance += $products->count - $order_items->count_by;
+//            $products_batch->save(false);
+            $products->count = $order_items->count_by;
+            $products->save(false);
+            return json_encode('change');
+        }
+    }
+
     public function actionDeleteItems(){
 //        echo "<pre>";
         if ($this->request->isPost){
@@ -963,9 +1039,11 @@ class OrdersController extends Controller
             $total_discount = $this->request->post('totalDiscount');
             $item_id = intval($this->request->post('itemId'));
             $nom_id = intval($this->request->post('nomId'));
-            $orders_id = OrderItems::find()->select('order_id,count,count_by,warehouse_id, nom_id_for_name')->where(['id' => $item_id])->one();
-            $product_id = Products::findOne(['warehouse_id' => $orders_id->warehouse_id, 'nomenclature_id' => $orders_id->nom_id_for_name,
-                'document_id' => $orders_id->order_id, 'type' => 2]);
+
+            $orders_id = OrderItems::find()->select('order_id,count,count_by,warehouse_id, nom_id_for_name,product_id')->where(['id' => $item_id])->one();
+
+//            $product_id = Products::findOne($orders_id->product_id);
+
             $is_exit = Orders::findOne($orders_id->order_id);
 //            $document_exit = Documents::findOne(['orders_id' => $orders_id->order_id,'document_type' => 2]);
 //            $document_refuse = Documents::findOne(['orders_id' => $orders_id->order_id,'document_type' => 6]);
@@ -973,13 +1051,15 @@ class OrdersController extends Controller
                 $delete_items = OrderItems::findOne($item_id);
                 $delete_items->status = '0';
                 $delete_items->save(false);
-                $delete_products = Products::findOne([
-                    'document_id' => $orders_id->order_id,
-                    'nomenclature_id' => $nom_id,
-                    'type' => 2
-                ]);
+
+                $delete_products = Products::findOne($orders_id->product_id);
                 $delete_products->status = '0';
                 $delete_products->save(false);
+
+                $enter_products = Products::findOne($delete_products->parent_id);
+                $enter_products->count_balance += $delete_products->count;
+                $enter_products->save(false);
+
                 $update_orders = Orders::findOne($orders_id->order_id);
                 $update_orders->total_count = $total_count;
                 $update_orders->total_price = $total_price;

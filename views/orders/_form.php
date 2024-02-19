@@ -95,7 +95,7 @@ $session = Yii::$app->session;
                                         <td>
                                             <span class="acordingNumber"><?=$keys + 1?></span>
                                             <input class="orderItemsId" type="hidden" name="order_items[]" value="<?=$item['id']?>">
-                                            <input type="hidden" name="count_balance[]" value="<?=$item['count_balance']?>">
+                                            <input class="count_balance" type="hidden" name="count_balance[]" value="<?=$item['count_balance']?>">
                                             <input class="prodId" type="hidden" name="product_id[]" value="<?=$item['product_id']?>">
                                             <input class="nomId"  type="hidden" name="nom_id[]" value="<?=$item['nom_id']?>">
                                             <input class="cost" type="hidden" name="cost[]" value="<?=$item['cost']?>">
@@ -104,7 +104,7 @@ $session = Yii::$app->session;
                                         </td>
                                         <td class="name"><?=$item['name']?></td>
                                         <td class="count">
-                                            <input type="number" name="count_[]" value="<?=$item['count_by']?>" class="form-control countProductForUpdate">
+                                            <input type="number" readonly name="count_[]" value="<?=$item['count_by']?>" class="form-control countProductForUpdate">
                                         </td>
                                         <td class="discount">
                                             <?php
@@ -135,7 +135,33 @@ $session = Yii::$app->session;
                                             <span><?=number_format($item['total_price'],2,'.','')?></span>
                                             <input type="hidden" name="total_price[]" value="<?=number_format($item['total_price'],2,'.','')?>">
                                         </td>
-                                        <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsFromDB">Ջնջել</button></td>
+                                        <td>
+                                            <button type="button" data-orders="<?=$item['id']?>" class="btn rounded-pill btn-outline-info changeCount" data-bs-toggle="modal" data-bs-target="#modalCenter">
+                                                Փոփոխել
+                                            </button>
+                                            <div class="modal fade" id="modalCenter" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="modalCenterTitle">Modal title</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+<!--                                                        <form action="/orders/refuse" method="post">-->
+                                                            <div class="modal-body changeModalBody">
+
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                                    Փակել
+                                                                </button>
+                                                                <button type="button" class="btn btn-primary addChange" data-bs-dismiss="modal">Պահպանել</button>
+                                                            </div>
+<!--                                                        </form>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsFromDB">Ջնջել</button>
+                                        </td>
                                     </tr>
                                <?php }?>
                             </tbody>

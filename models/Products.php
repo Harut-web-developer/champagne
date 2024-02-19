@@ -119,14 +119,10 @@ class Products extends \yii\db\ActiveRecord
                 ->all();
             $end_result = [];
             $bal = $orders_count;
+
             foreach ($first_product as $item){
-                $count_balance = 0;
-                if ($item->count_balance - $bal > 0) {
+                if ($item->count_balance - $bal >= 0) {
                     $count_balance = $item->count_balance - $bal;
-//                    $item->count_balance -= $bal;
-//                    $item->save(false);
-
-
                     if ($discount) {
                         $desc = [];
                         $arr = [];
@@ -1004,12 +1000,7 @@ class Products extends \yii\db\ActiveRecord
                         return json_encode($end_result);
 
                     }
-
-
                 }else{
-
-
-
                     if ($discount) {
                         $desc = [];
                         $arr = [];
@@ -1888,21 +1879,11 @@ class Products extends \yii\db\ActiveRecord
                         $res['format_before_price'] = $item->price;
                         $count_balance = 0;
                         $bal -= $item->count_balance;
-//                        $item->count_balance = 0;
-//                        $item->save(false);
                         $res['count_balance'] = $count_balance;
-
                         array_push($end_result,$res);
-
-
                     }
-
-
                 }
-
             }
-
-
         }
     }
 }
