@@ -696,43 +696,106 @@ class OrdersController extends Controller
             ->one();
         echo "<pre>";
         $orders = Orders::findOne($id);
-        $order_items = OrderItems::find()->where(['order_id' => $orders->id])->all();
+        $orders_items_refuse = OrderItems::findOne(['order_id' => $orders->id]);
+
+        $order_items = OrderItems::find()->where(['order_id' => $orders->id])->andWhere(['status' => '1'])->all();
+
         if ($orders->is_exit == 1){
             $orders->status = '0';
             $orders->save(false);
             foreach ($order_items as $item){
                 $item->status = '0';
                 $item->save(false);
-                $product = Products::find()->where(['and',
-                    ['warehouse_id' => $item->warehouse_id],
-                    ['nomenclature_id' => $item->nom_id_for_name],
-                    ['type' => 2],
-                    ['document_id' => $item->order_id]])
-                    ->one();
+                $product = Products::findOne($item->product_id);
                 $product->status = '0';
                 $product->save(false);
             }
         }else{
+//            var_dump($order_items);
+//            exit();
                 $orders->status = '0';
                 $orders->save(false);
-                $document_exit = Documents::findOne(['orders_id' => $orders->id,'document_type' => 2]);
-                $document_exit->status = '0';
-                $document_exit->save(false);
+
+                $document = new Documents();
+                $document->orders_id = $orders_items_refuse->order_id;
+                $document->warehouse_id = $orders_items_refuse->warehouse_id;
+                $document->rate_id = 1;
+                $document->rate_value = 1;
+                $document->document_type = 6;
+                $document->comment = 'Վերադարձրած ապրանք(ներ)';
+                $document->date = date('Y-m-d H:i:s');
+                $document->status = '1';
+                $document->created_at = date('Y-m-d H:i:s');
+                $document->updated_at = date('Y-m-d H:i:s');
+                $document->save(false);
+
                 foreach ($order_items as $item){
-                        $item->status = '0';
-                        $item->save(false);
-                        $product = Products::find()->where(['and',
-                            ['warehouse_id' => $item->warehouse_id],
-                            ['nomenclature_id' => $item->nom_id_for_name],
-                            ['type' => 2],
-                            ['document_id' => $item->order_id]])
-                            ->one();
+                    if ($item->count - $item->count_by == 0){
+
+                        $product = Products::findOne($item->product_id);
                         $product->status = '0';
                         $product->save(false);
-                        $delete_document_items_exit = DocumentItems::findOne(['document_id' => $document_exit->id, 'nomenclature_id' => $item->nom_id_for_name,]);
-                        $delete_document_items_exit->status = '0';
-                        $delete_document_items_exit->save(false);
+
+                        $new_document_items = new DocumentItems();
+                        $new_document_items->document_id = $document->id;
+                        $new_document_items->nomenclature_id = $item->nom_id_for_name;
+                        $new_document_items->count = $item->count_by;
+                        $new_document_items->refuse_product_id = $product->id;
+                        if ($product->AAH == 1){
+                            $new_document_items->AAH = 'true';
+                            $new_document_items->price_with_aah = $product->price;
+                            $new_document_items->price = number_format((($product->price * 5)/6),2,'.','');
+                        }else{
+                            $new_document_items->AAH = 'false';
+                            $new_document_items->price = $product->price;
+                            $new_document_items->price_with_aah = $product->price + ($product->price * 20) / 100;
+                        }
+                        $new_document_items->status = '1';
+                        $new_document_items->created_at = date('Y-m-d H:i:s');
+                        $new_document_items->updated_at = date('Y-m-d H:i:s');
+                        $new_document_items->save(false);
+                        $item->status = '0';
+                        $item->save(false);
+                    }else{
+
+                        $product = Products::findOne($item->product_id);
+                        $product->count = $item->count;
+                        $product->status = '0';
+                        $product->save(false);
+
+                        $new_document_items = new DocumentItems();
+                        $new_document_items->document_id = $document->id;
+                        $new_document_items->nomenclature_id = $item->nom_id_for_name;
+                        $new_document_items->count = $item->count;
+                        $new_document_items->refuse_product_id = $product->id;
+                        if ($product->AAH == 1){
+                            $new_document_items->AAH = 'true';
+                            $new_document_items->price_with_aah = $product->price;
+                            $new_document_items->price = number_format((($product->price * 5)/6),2,'.','');
+                        }else{
+                            $new_document_items->AAH = 'false';
+                            $new_document_items->price = $product->price;
+                            $new_document_items->price_with_aah = $product->price + ($product->price * 20) / 100;
+                        }
+                        $new_document_items->status = '1';
+                        $new_document_items->created_at = date('Y-m-d H:i:s');
+                        $new_document_items->updated_at = date('Y-m-d H:i:s');
+                        $new_document_items->save(false);
+                        $item->status = '0';
+                        $item->save(false);
+                    }
+
+
                 }
+
+//                exit();
+//                $document_exit = Documents::findOne(['orders_id' => $orders->id,'document_type' => 2]);
+//                $document_exit->status = '0';
+//                $document_exit->save(false);
+
+//                        $delete_document_items_exit = DocumentItems::findOne(['document_id' => $document_exit->id, 'nomenclature_id' => $item->nom_id_for_name,]);
+//                        $delete_document_items_exit->status = '0';
+//                        $delete_document_items_exit->save(false);
         }
         Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
@@ -842,9 +905,12 @@ class OrdersController extends Controller
         $order_items = OrderItems::find()->select('order_items.id,order_items.order_id,order_items.warehouse_id,order_items.product_id,
         order_items.nom_id_for_name,order_items.count_by,products.AAH,products.price')
             ->leftJoin('products','products.id = order_items.product_id')
-            ->where(['order_items.order_id' => $id])->asArray()->all();
+            ->where(['order_items.order_id' => $id])
+            ->andWhere(['order_items.status' => '1'])
+            ->asArray()->all();
 //        echo "<pre>";
-
+//        var_dump($order_items);
+//        exit();
         for ($i = 0;$i < count($order_items);$i++){
             $exit_documents[$i] = [
               $order_items[$i]['order_id'],
@@ -1042,7 +1108,6 @@ class OrdersController extends Controller
 
             $orders_id = OrderItems::find()->select('order_id,count,count_by,warehouse_id, nom_id_for_name,product_id')->where(['id' => $item_id])->one();
 
-//            $product_id = Products::findOne($orders_id->product_id);
 
             $is_exit = Orders::findOne($orders_id->order_id);
 //            $document_exit = Documents::findOne(['orders_id' => $orders_id->order_id,'document_type' => 2]);
@@ -1069,10 +1134,17 @@ class OrdersController extends Controller
                 return json_encode(true);
 
             }else{
+                $product_id = Products::findOne($orders_id->product_id);
                 if ($orders_id->count - $orders_id->count_by == 0){
+//                    var_dump(1111);
                     $delete_items = OrderItems::findOne($item_id);
                     $delete_items->status = '0';
                     $delete_items->save(false);
+
+                    $delete_products = Products::findOne($delete_items->product_id);
+                    $delete_products->status = '0';
+                    $delete_products->save(false);
+
                     $document = new Documents();
                     $document->orders_id = $orders_id->order_id;
                     $document->warehouse_id = $orders_id->warehouse_id;
@@ -1090,6 +1162,7 @@ class OrdersController extends Controller
                     $new_document_items->document_id = $document->id;
                     $new_document_items->nomenclature_id = $orders_id->nom_id_for_name;
                     $new_document_items->count = $orders_id->count_by;
+                    $new_document_items->refuse_product_id = $delete_products->id;
                     if ($product_id->AAH == 1){
                         $new_document_items->AAH = 'true';
                         $new_document_items->price_with_aah = $product_id->price;
@@ -1103,6 +1176,12 @@ class OrdersController extends Controller
                     $new_document_items->created_at = date('Y-m-d H:i:s');
                     $new_document_items->updated_at = date('Y-m-d H:i:s');
                     $new_document_items->save(false);
+                    $update_orders = Orders::findOne($orders_id->order_id);
+                    $update_orders->total_count = $total_count;
+                    $update_orders->total_price = $total_price;
+                    $update_orders->total_price_before_discount = $total_price_before_discount;
+                    $update_orders->total_discount = $total_discount;
+                    $update_orders->save(false);
                     return json_encode(true);
 
 
@@ -1110,26 +1189,29 @@ class OrdersController extends Controller
                     $delete_items = OrderItems::findOne($item_id);
                     $delete_items->status = '0';
                     $delete_items->save(false);
+
+                    $product_id->count = $delete_items->count;
+                    $product_id->status = '0';
+                    $product_id->save(false);
+
                     $document = new Documents();
                     $document->orders_id = $orders_id->order_id;
                     $document->warehouse_id = $orders_id->warehouse_id;
                     $document->rate_id = 1;
                     $document->rate_value = 1;
                     $document->document_type = 6;
-                    $document->comment = 'Վերադարձրած ապրանք(ներ)';
+                    $document->comment = 'Վերադարձրած ապրանք';
                     $document->date = date('Y-m-d H:i:s');
                     $document->status = '1';
                     $document->created_at = date('Y-m-d H:i:s');
                     $document->updated_at = date('Y-m-d H:i:s');
                     $document->save(false);
 
-                    $product_id->count = -$orders_id->count;
-                    $product_id->save(false);
-
                     $new_document_items = new DocumentItems();
                     $new_document_items->document_id = $document->id;
                     $new_document_items->nomenclature_id = $orders_id->nom_id_for_name;
                     $new_document_items->count = $orders_id->count;
+                    $new_document_items->refuse_product_id = $product_id->id;
                     if ($product_id->AAH == 1){
                         $new_document_items->AAH = 'true';
                         $new_document_items->price_with_aah = $product_id->price;
@@ -1143,18 +1225,18 @@ class OrdersController extends Controller
                     $new_document_items->created_at = date('Y-m-d H:i:s');
                     $new_document_items->updated_at = date('Y-m-d H:i:s');
                     $new_document_items->save(false);
+
+                    $update_orders = Orders::findOne($orders_id->order_id);
+                    $update_orders->total_count = $total_count;
+                    $update_orders->total_price = $total_price;
+                    $update_orders->total_price_before_discount = $total_price_before_discount;
+                    $update_orders->total_discount = $total_discount;
+                    $update_orders->save(false);
                     return json_encode(true);
                 }
 
             }
 
-//            var_dump($delete_items->status == 0);
-//            var_dump($delete_products->status == 0);
-//            if($delete_items->status == 0 && $delete_products->status == 0){
-//                return json_encode(true);
-//            }else{
-//                return json_encode(false);
-//            }
         }
     }
 

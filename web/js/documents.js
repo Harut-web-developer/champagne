@@ -46,7 +46,7 @@ $(document).ready(function () {
                                         <input class="itemsId" type="hidden" name="items[]" value="` + id  + `">
                                      </td>
                                      <td class="name">` + name + `</td>
-                                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
+                                     <td class="count"><input type="number" readonly name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                      <td class="pricewithaah">
                                         <span>`+priceWithaah+`</span>
@@ -103,7 +103,7 @@ $(document).ready(function () {
                                             <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
-                                         <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
+                                         <td class="count"><input type="number" readonly name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                                          <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                          <td class="pricewithaah">
                                             <span>`+priceWithaah+`</span>
@@ -152,7 +152,7 @@ $(document).ready(function () {
                                             <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
-                                         <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
+                                         <td class="count"><input type="number" readonly name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                                          <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                          <td class="pricewithaah">
                                             <span>`+priceWithaah+`</span>
@@ -182,6 +182,7 @@ $(document).ready(function () {
         let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
         var this_ = $(this);
         let docItemsId = this_.closest('.oldTr').find('.docItemsId').val()
+        let docType = $('body').find('#documents-document_type').val();
         let nomId = this_.closest('.oldTr').find('.itemsId').val()
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         let url_id = window.location.href;
@@ -195,17 +196,18 @@ $(document).ready(function () {
                 data: {
                     docItemsId: docItemsId,
                     nomId:nomId,
+                    docType:docType,
                     urlId: urlId,
                     _csrf: csrfToken
                 },
                 success: function (data) {
                     if (data === 'true') {
                         this_.closest('.oldTr').remove();
+                        alert('Հաջողությամբ ջնջված է:');
                     }
                 }
             })
         }
-        alert('Հաջողությամբ ջնջված է:');
     })
 
     $('body').on('click', '.PriceDocuments', function () {
@@ -300,7 +302,7 @@ $(document).ready(function () {
                         
                      </td>
                      <td class="name">` + name + `</td>
-                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
+                     <td class="count"><input type="number" readonly name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                      <td class="pricewithaah">
                         <span>`+priceWithaah+`</span>
@@ -343,7 +345,7 @@ $(document).ready(function () {
                                             <input class="itemsId" type="hidden" name="items[]" value="` + nom_id  + `">
                                          </td>
                                          <td class="name">` + name + `</td>
-                                         <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
+                                         <td class="count"><input type="number" readonly name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                                          <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                          <td class="pricewithaah">
                                              <span>`+priceWithaah+`</span>
@@ -375,7 +377,7 @@ $(document).ready(function () {
                         <input class="itemsId" type="hidden" name="items[]" value="` + id  + `">
                      </td>
                      <td class="name">` + name + `</td>
-                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
+                     <td class="count"><input type="number" readonly name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                      <td class="pricewithaah">
                          <span>`+priceWithaah+`</span>

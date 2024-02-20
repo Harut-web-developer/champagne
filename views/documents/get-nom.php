@@ -12,7 +12,9 @@
             <tbody class="table-border-bottom-0 tbody_">
             <?php
             foreach ($nomenclatures as $keys => $nomenclature){
-                ?>
+//                if ($nomenclature['count_balance'] != 0){?>
+
+
                 <tr class="documentsTableTr">
                     <td>
                         <span><?=$keys + 1?></span>
@@ -26,6 +28,8 @@
                     </td>
                 </tr>
                 <?php
+//                }
+
             }
             ?>
             </tbody>
