@@ -23,6 +23,7 @@ $session = Yii::$app->session;
 $have_access_create = Users::checkPremission(37);
 $have_access_update = Users::checkPremission(38);
 $have_access_delete = Users::checkPremission(39);
+$have_access_available = Users::checkPremission(56);
 $have_access_custom_field = Users::checkPremission(71);
 $have_access_confirm_return = Users::checkPremission(75);
 $have_access_refuse = Users::checkPremission(81);
@@ -41,12 +42,22 @@ if($have_access_update){
 if($have_access_refuse){
     $access_buttons .='{refuse}';
 }
+if($have_access_available){
+    $access_buttons .='{reports}';
+}
 
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => $access_buttons,
         'buttons' =>[
+            'reports'=>function ($url, $model, $key) {
+                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
+                    'class' => 'reportsOrders',
+                    'target' => '_blank',
+                ]);
+            },
             'delivered'=>function ($url, $model, $key) {
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132; padding:0px 2px" ></i>', $url, [
                     'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
@@ -55,7 +66,7 @@ if($have_access_refuse){
             'refuse'=>function ($url, $model, $key) {
                 return '<i class="bx bx-block refuseDocument" data-id="'. $key . '" title="Մերժել" style="color:red; padding:0px 2px"></i>';
             },
-],
+        ],
 
         'urlCreator' => function ($action, Documents $model, $key, $index, $column) {
             return Url::toRoute([$action, 'id' => $model->id]);
@@ -93,6 +104,14 @@ if($have_access_refuse){
                     <option value="8">Մուտք(վերադարցրած)</option>
             </select>
             <?php }?>
+        </div>
+        <div class="iconsPrintAndXlsx">
+            <div>
+                <img class="downloadXLSX" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAC+klEQVR4nO2ZzWsTURDAFwW/kYre9CKKiB4ERT2of4AUveXqF1htZtaQ7rw0NDN9ehMUsTfxIggepPSioOJRz3rQg3gRqYI91I/Wg1rUykvzkk2atNl2d/uCHRjIMpnZ+c2b93Y28bxlWZZlmVf8gt4GJMNAMolKpheoU6DkJarBjJd68oo/LyLx2UqsUwMAkuFYk68oKLmcFsBkXAkvCQTGVPFyMRT3z24nudoxAEsCgTEDpA6BCQCkCoEJAaQGgQkCpAKRNICRZkdsbA+7NABaQsQxdsQFYEaSyBDEL5wBAMWPokIA8S9nAJJqvXnlvwEAxbetj9Z6BSh5V2+Xi9YOhcGzzgGgkimfSjuane9AMpbP59dW4FY1wqEjAKbKd6xfT5/egsQ/yjaSYggs52QL4Yz+xj69u+pLfBcUT+RyustcZ7XeYFbDZYBpVHLP+mb7S0eR5GYISJzdxFjtd/7jB3qP3czZAu81n6FY3Iwk35wHwBm93xgHSK4vJJa3JADE333fX10HoPhNJwFcmRWH+NScrafkJygeygZyOAiC9YtOfOEA/MmcNmXfoLQd+3mf3Q9I8qqF30f7vdglevUHz4cHMyC5Ya/9QE40qzwmlXxUAFD8OpPJrDR+ZhWQZNz8rtRbLG6qxiN53uAzlFjyUQEwkOM1P86HbAN1z4awT2HgUN39Auk2LQXEH8Lxkgcgfmp9zLyDSkarVSYZO631GmsHxQ+sLVvZL1WbSbwWdzQ1AF/xuUuBHDDa7EUdiEvWjsRnWh2T6MQxGkG9DgZ4DIpPdiLAX6AStHs/zz0Avhblfp5TAOUZSW9MFQAUT8QHIA/DsXM53QXEz0xbtTOmI/GTHq3XRQMgGYkLAJTcqqs21Y7TtjWQ7mgAfXqXGQliASAZCcfOFvVO01YRVnDcvGt7UeVCfmCreUlZbDuZfzvNU7puFZQcawuC5Asovd9zUZDkyFx/JoLir72BHPRcFmwB0RHJexVphOio5K1Uxu33qPhtOz3/DyrGtgq43BHiAAAAAElFTkSuQmCC">
+            </div>
+            <div>
+                <img class="print_orders_table" src="/upload/icons8-print-94.png">
+            </div>
         </div>
     </div>
     <div class="card pageStyle documentsCard">
