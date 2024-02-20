@@ -156,18 +156,6 @@ class DocumentsController extends Controller
             $model->updated_at = date('Y-m-d H:i:s');
             $model = Documents::getDefVals($model);
             $model->save(false);
-//                for ($i = 0; $i < count($post['document_items']); $i++){
-//                    $document_items = new DocumentItems();
-//                    $document_items->document_id = $model->id;
-//                    $document_items->nomenclature_id = $post['document_items'][$i];
-//                    $document_items->count = $post['count_'][$i];
-//                    $document_items->price = floatval($post['price'][$i]);
-//                    $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
-//                    $document_items->AAH = $post['aah'];
-//                    $document_items->created_at = date('Y-m-d H:i:s');
-//                    $document_items->updated_at = date('Y-m-d H:i:s');
-//                    $document_items->save(false);
-//                }
                 if ($post['Documents']['document_type'] === '1'){
                     for ($i = 0; $i < count($post['document_items']); $i++) {
                         $products = new Products();
@@ -207,8 +195,8 @@ class DocumentsController extends Controller
                     for ($i = 0; $i < count($post['document_items']); $i++) {
                         $first_product = Products::find()
                             ->where(['and',['nomenclature_id' => $post['document_items'][$i]],
-                                ['warehouse_id' => $post['Documents']['warehouse_id']],
-                                ['type' => 1]])
+                                ['warehouse_id' => $post['Documents']['warehouse_id']]])
+                            ->andWhere(['or',['type' => 1],['type' => 3],['type' => 8]])
                             ->andWhere(['!=', 'count_balance', 0])
                             ->andWhere(['status' => '1'])
                             ->all();
@@ -235,6 +223,18 @@ class DocumentsController extends Controller
                                 $products->created_at = date('Y-m-d H:i:s');
                                 $products->updated_at = date('Y-m-d H:i:s');
                                 $products->save(false);
+
+                                $document_items = new DocumentItems();
+                                $document_items->document_id = $model->id;
+                                $document_items->nomenclature_id = $post['document_items'][$i];
+                                $document_items->count = $products->count;
+                                $document_items->price = floatval($post['price'][$i]);
+                                $document_items->refuse_product_id = $products->id;
+                                $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
+                                $document_items->AAH = $post['aah'];
+                                $document_items->created_at = date('Y-m-d H:i:s');
+                                $document_items->updated_at = date('Y-m-d H:i:s');
+                                $document_items->save(false);
                                 break;
                             }else{
                                 $products = new Products();
@@ -258,30 +258,29 @@ class DocumentsController extends Controller
                                 $products->created_at = date('Y-m-d H:i:s');
                                 $products->updated_at = date('Y-m-d H:i:s');
                                 $products->save(false);
+
+                                $document_items = new DocumentItems();
+                                $document_items->document_id = $model->id;
+                                $document_items->nomenclature_id = $post['document_items'][$i];
+                                $document_items->count = $products->count;
+                                $document_items->price = floatval($post['price'][$i]);
+                                $document_items->refuse_product_id = $products->id;
+                                $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
+                                $document_items->AAH = $post['aah'];
+                                $document_items->created_at = date('Y-m-d H:i:s');
+                                $document_items->updated_at = date('Y-m-d H:i:s');
+                                $document_items->save(false);
                             }
 
                         }
-                        $document_items = new DocumentItems();
-                        $document_items->document_id = $model->id;
-                        $document_items->nomenclature_id = $post['document_items'][$i];
-                        $document_items->count = $post['count_'][$i];
-                        $document_items->price = floatval($post['price'][$i]);
-                        $document_items->refuse_product_id = $products->id;
-                        $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
-                        $document_items->AAH = $post['aah'];
-                        $document_items->created_at = date('Y-m-d H:i:s');
-                        $document_items->updated_at = date('Y-m-d H:i:s');
-                        $document_items->save(false);
-
-
                     }
                 }
                 if ($post['Documents']['document_type'] == '3'){
                     for ($i = 0; $i < count($post['document_items']); $i++) {
                         $first_product = Products::find()
                             ->where(['and',['nomenclature_id' => $post['document_items'][$i]],
-                                ['warehouse_id' => $post['Documents']['warehouse_id']],
-                                ['type' => 1]])
+                                ['warehouse_id' => $post['Documents']['warehouse_id']]])
+                            ->andWhere(['or',['type' => 1],['type' => 3],['type' => 8]])
                             ->andWhere(['!=', 'count_balance', 0])
                             ->andWhere(['status' => '1'])
                             ->all();
@@ -327,6 +326,18 @@ class DocumentsController extends Controller
                                 $to_warehouse_products->created_at = date('Y-m-d H:i:s');
                                 $to_warehouse_products->updated_at = date('Y-m-d H:i:s');
                                 $to_warehouse_products->save(false);
+
+                                $document_items = new DocumentItems();
+                                $document_items->document_id = $model->id;
+                                $document_items->nomenclature_id = $post['document_items'][$i];
+                                $document_items->count = $products->count;
+                                $document_items->price = floatval($post['price'][$i]);
+                                $document_items->refuse_product_id = $products->id;
+                                $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
+                                $document_items->AAH = $post['aah'];
+                                $document_items->created_at = date('Y-m-d H:i:s');
+                                $document_items->updated_at = date('Y-m-d H:i:s');
+                                $document_items->save(false);
                                 break;
                             }else{
                                 $products = new Products();
@@ -369,27 +380,28 @@ class DocumentsController extends Controller
                                 $to_warehouse_products->created_at = date('Y-m-d H:i:s');
                                 $to_warehouse_products->updated_at = date('Y-m-d H:i:s');
                                 $to_warehouse_products->save(false);
+
+                                $document_items = new DocumentItems();
+                                $document_items->document_id = $model->id;
+                                $document_items->nomenclature_id = $post['document_items'][$i];
+                                $document_items->count = $products->count;
+                                $document_items->price = floatval($post['price'][$i]);
+                                $document_items->refuse_product_id = $products->id;
+                                $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
+                                $document_items->AAH = $post['aah'];
+                                $document_items->created_at = date('Y-m-d H:i:s');
+                                $document_items->updated_at = date('Y-m-d H:i:s');
+                                $document_items->save(false);
                             }
                         }
-                        $document_items = new DocumentItems();
-                        $document_items->document_id = $model->id;
-                        $document_items->nomenclature_id = $post['document_items'][$i];
-                        $document_items->count = $post['count_'][$i];
-                        $document_items->price = floatval($post['price'][$i]);
-                        $document_items->refuse_product_id = $products->id;
-                        $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
-                        $document_items->AAH = $post['aah'];
-                        $document_items->created_at = date('Y-m-d H:i:s');
-                        $document_items->updated_at = date('Y-m-d H:i:s');
-                        $document_items->save(false);
                     }
                 }
                 if($post['Documents']['document_type'] === '4'){
                     for ($i = 0; $i < count($post['document_items']); $i++) {
                         $first_product = Products::find()
                             ->where(['and',['nomenclature_id' => $post['document_items'][$i]],
-                                ['warehouse_id' => $post['Documents']['warehouse_id']],
-                                ['type' => 1]])
+                                ['warehouse_id' => $post['Documents']['warehouse_id']]])
+                            ->andWhere(['or',['type' => 1],['type' => 3],['type' => 8]])
                             ->andWhere(['!=', 'count_balance', 0])
                             ->andWhere(['status' => '1'])
                             ->all();
@@ -416,6 +428,18 @@ class DocumentsController extends Controller
                                 $products->created_at = date('Y-m-d H:i:s');
                                 $products->updated_at = date('Y-m-d H:i:s');
                                 $products->save(false);
+
+                                $document_items = new DocumentItems();
+                                $document_items->document_id = $model->id;
+                                $document_items->nomenclature_id = $post['document_items'][$i];
+                                $document_items->count = $products->count;
+                                $document_items->price = floatval($post['price'][$i]);
+                                $document_items->refuse_product_id = $products->id;
+                                $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
+                                $document_items->AAH = $post['aah'];
+                                $document_items->created_at = date('Y-m-d H:i:s');
+                                $document_items->updated_at = date('Y-m-d H:i:s');
+                                $document_items->save(false);
                                 break;
                             }else{
                                 $products = new Products();
@@ -439,19 +463,20 @@ class DocumentsController extends Controller
                                 $products->created_at = date('Y-m-d H:i:s');
                                 $products->updated_at = date('Y-m-d H:i:s');
                                 $products->save(false);
+
+                                $document_items = new DocumentItems();
+                                $document_items->document_id = $model->id;
+                                $document_items->nomenclature_id = $post['document_items'][$i];
+                                $document_items->count = $products->count;
+                                $document_items->price = floatval($post['price'][$i]);
+                                $document_items->refuse_product_id = $products->id;
+                                $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
+                                $document_items->AAH = $post['aah'];
+                                $document_items->created_at = date('Y-m-d H:i:s');
+                                $document_items->updated_at = date('Y-m-d H:i:s');
+                                $document_items->save(false);
                             }
                         }
-                        $document_items = new DocumentItems();
-                        $document_items->document_id = $model->id;
-                        $document_items->nomenclature_id = $post['document_items'][$i];
-                        $document_items->count = $post['count_'][$i];
-                        $document_items->price = floatval($post['price'][$i]);
-                        $document_items->refuse_product_id = $products->id;
-                        $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
-                        $document_items->AAH = $post['aah'];
-                        $document_items->created_at = date('Y-m-d H:i:s');
-                        $document_items->updated_at = date('Y-m-d H:i:s');
-                        $document_items->save(false);
                     }
                 }
             $model_new = [];
@@ -840,12 +865,24 @@ class DocumentsController extends Controller
                             $products->created_at = date('Y-m-d H:i:s');
                             $products->updated_at = date('Y-m-d H:i:s');
                             $products->save(false);
+
+                            $document_items_update = new DocumentItems();
+                            $document_items_update->document_id = $id;
+                            $document_items_update->nomenclature_id = $post['items'][$j];
+                            $document_items_update->count = intval($post['count_'][$j]);
+                            $document_items_update->price = floatval($post['price'][$j]);
+                            $document_items_update->refuse_product_id = $products->id;
+                            $document_items_update->price_with_aah = floatval($post['pricewithaah'][$j]);
+                            $document_items_update->AAH = $post['aah'];
+                            $document_items_update->created_at = date('Y-m-d H:i:s');
+                            $document_items_update->updated_at = date('Y-m-d H:i:s');
+                            $document_items_update->save();
                         }
                         if ($post['Documents']['document_type'] === 'Ելք') {
                             $first_product = Products::find()
                                 ->where(['and',['nomenclature_id' => $post['items'][$j]],
-                                    ['warehouse_id' => $post['Documents']['warehouse_id']],
-                                    ['type' => 1]])
+                                    ['warehouse_id' => $post['Documents']['warehouse_id']]])
+                                ->andWhere(['or',['type' => 1],['type' => 3],['type' => 8]])
                                 ->andWhere(['!=', 'count_balance', 0])
                                 ->andWhere(['status' => '1'])
                                 ->all();
@@ -874,6 +911,18 @@ class DocumentsController extends Controller
                                     $products->created_at = date('Y-m-d H:i:s');
                                     $products->updated_at = date('Y-m-d H:i:s');
                                     $products->save(false);
+
+                                    $document_items_update = new DocumentItems();
+                                    $document_items_update->document_id = $id;
+                                    $document_items_update->nomenclature_id = $post['items'][$j];
+                                    $document_items_update->count = $products->count;
+                                    $document_items_update->price = floatval($post['price'][$j]);
+                                    $document_items_update->refuse_product_id = $products->id;
+                                    $document_items_update->price_with_aah = floatval($post['pricewithaah'][$j]);
+                                    $document_items_update->AAH = $post['aah'];
+                                    $document_items_update->created_at = date('Y-m-d H:i:s');
+                                    $document_items_update->updated_at = date('Y-m-d H:i:s');
+                                    $document_items_update->save();
                                     break;
                                 }else{
                                     $products = new Products();
@@ -897,14 +946,26 @@ class DocumentsController extends Controller
                                     $products->created_at = date('Y-m-d H:i:s');
                                     $products->updated_at = date('Y-m-d H:i:s');
                                     $products->save(false);
+
+                                    $document_items_update = new DocumentItems();
+                                    $document_items_update->document_id = $id;
+                                    $document_items_update->nomenclature_id = $post['items'][$j];
+                                    $document_items_update->count = $products->count;
+                                    $document_items_update->price = floatval($post['price'][$j]);
+                                    $document_items_update->refuse_product_id = $products->id;
+                                    $document_items_update->price_with_aah = floatval($post['pricewithaah'][$j]);
+                                    $document_items_update->AAH = $post['aah'];
+                                    $document_items_update->created_at = date('Y-m-d H:i:s');
+                                    $document_items_update->updated_at = date('Y-m-d H:i:s');
+                                    $document_items_update->save();
                                 }
                             }
                         }
                         if ($post['Documents']['document_type'] === 'Տեղափոխություն') {
                             $first_product = Products::find()
                                 ->where(['and',['nomenclature_id' => $post['items'][$j]],
-                                    ['warehouse_id' => $post['Documents']['warehouse_id']],
-                                    ['type' => 1]])
+                                    ['warehouse_id' => $post['Documents']['warehouse_id']]])
+                                ->andWhere(['or',['type' => 1],['type' => 3],['type' => 8]])
                                 ->andWhere(['!=', 'count_balance', 0])
                                 ->andWhere(['status' => '1'])
                                 ->all();
@@ -950,6 +1011,18 @@ class DocumentsController extends Controller
                                     $to_warehouse_products->created_at = date('Y-m-d H:i:s');
                                     $to_warehouse_products->updated_at = date('Y-m-d H:i:s');
                                     $to_warehouse_products->save(false);
+
+                                    $document_items_update = new DocumentItems();
+                                    $document_items_update->document_id = $id;
+                                    $document_items_update->nomenclature_id = $post['items'][$j];
+                                    $document_items_update->count = $products->count;
+                                    $document_items_update->price = floatval($post['price'][$j]);
+                                    $document_items_update->refuse_product_id = $products->id;
+                                    $document_items_update->price_with_aah = floatval($post['pricewithaah'][$j]);
+                                    $document_items_update->AAH = $post['aah'];
+                                    $document_items_update->created_at = date('Y-m-d H:i:s');
+                                    $document_items_update->updated_at = date('Y-m-d H:i:s');
+                                    $document_items_update->save();
                                     break;
                                 }else{
                                     $products = new Products();
@@ -992,19 +1065,29 @@ class DocumentsController extends Controller
                                     $to_warehouse_products->created_at = date('Y-m-d H:i:s');
                                     $to_warehouse_products->updated_at = date('Y-m-d H:i:s');
                                     $to_warehouse_products->save(false);
+
+                                    $document_items_update = new DocumentItems();
+                                    $document_items_update->document_id = $id;
+                                    $document_items_update->nomenclature_id = $post['items'][$j];
+                                    $document_items_update->count = $products->count;
+                                    $document_items_update->price = floatval($post['price'][$j]);
+                                    $document_items_update->refuse_product_id = $products->id;
+                                    $document_items_update->price_with_aah = floatval($post['pricewithaah'][$j]);
+                                    $document_items_update->AAH = $post['aah'];
+                                    $document_items_update->created_at = date('Y-m-d H:i:s');
+                                    $document_items_update->updated_at = date('Y-m-d H:i:s');
+                                    $document_items_update->save();
                                 }
                             }
                         }
                         if ($post['Documents']['document_type'] === 'Խոտան') {
                             $first_product = Products::find()
                                 ->where(['and',['nomenclature_id' => $post['items'][$j]],
-                                    ['warehouse_id' => $post['Documents']['warehouse_id']],
-                                    ['type' => 1]])
+                                    ['warehouse_id' => $post['Documents']['warehouse_id']]])
+                                ->andWhere(['or',['type' => 1],['type' => 3],['type' => 8]])
                                 ->andWhere(['!=', 'count_balance', 0])
                                 ->andWhere(['status' => '1'])
                                 ->all();
-//                            var_dump($first_product);
-//                            exit();
                             $bal = $post['count_'][$j];;
                             foreach ($first_product as $item) {
                                 if ($item->count_balance - $bal >= 0) {
@@ -1028,6 +1111,18 @@ class DocumentsController extends Controller
                                     $products->created_at = date('Y-m-d H:i:s');
                                     $products->updated_at = date('Y-m-d H:i:s');
                                     $products->save(false);
+
+                                    $document_items_update = new DocumentItems();
+                                    $document_items_update->document_id = $id;
+                                    $document_items_update->nomenclature_id = $post['items'][$j];
+                                    $document_items_update->count = $products->count;
+                                    $document_items_update->price = floatval($post['price'][$j]);
+                                    $document_items_update->refuse_product_id = $products->id;
+                                    $document_items_update->price_with_aah = floatval($post['pricewithaah'][$j]);
+                                    $document_items_update->AAH = $post['aah'];
+                                    $document_items_update->created_at = date('Y-m-d H:i:s');
+                                    $document_items_update->updated_at = date('Y-m-d H:i:s');
+                                    $document_items_update->save();
                                     break;
                                 }else{
                                     $products = new Products();
@@ -1051,20 +1146,21 @@ class DocumentsController extends Controller
                                     $products->created_at = date('Y-m-d H:i:s');
                                     $products->updated_at = date('Y-m-d H:i:s');
                                     $products->save(false);
+
+                                    $document_items_update = new DocumentItems();
+                                    $document_items_update->document_id = $id;
+                                    $document_items_update->nomenclature_id = $post['items'][$j];
+                                    $document_items_update->count = $products->count;
+                                    $document_items_update->price = floatval($post['price'][$j]);
+                                    $document_items_update->refuse_product_id = $products->id;
+                                    $document_items_update->price_with_aah = floatval($post['pricewithaah'][$j]);
+                                    $document_items_update->AAH = $post['aah'];
+                                    $document_items_update->created_at = date('Y-m-d H:i:s');
+                                    $document_items_update->updated_at = date('Y-m-d H:i:s');
+                                    $document_items_update->save();
                                 }
                             }
                         }
-                        $document_items_update = new DocumentItems();
-                        $document_items_update->document_id = $id;
-                        $document_items_update->nomenclature_id = $post['items'][$j];
-                        $document_items_update->count = intval($post['count_'][$j]);
-                        $document_items_update->price = floatval($post['price'][$j]);
-                        $document_items_update->refuse_product_id = $products->id;
-                        $document_items_update->price_with_aah = floatval($post['pricewithaah'][$j]);
-                        $document_items_update->AAH = $post['aah'];
-                        $document_items_update->created_at = date('Y-m-d H:i:s');
-                        $document_items_update->updated_at = date('Y-m-d H:i:s');
-                        $document_items_update->save();
                         //                    $document_items_update = new DocumentItems();
                         //                    $document_items_update->document_id = $id;
                         //                    $document_items_update->save();
