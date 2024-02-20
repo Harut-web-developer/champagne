@@ -348,22 +348,25 @@ class OrdersController extends Controller
         $pageSize = 10;
         $offset = ($page-1) * $pageSize;
         $query = Products::find();
-
         $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,
-                nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
+                nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price, SUM(count_balance) as all_count_balance')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
-            ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
+            ->where(['and',['products.status' => 1,'nomenclature.status' => 1]])
             ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
-            ->groupBy('products.nomenclature_id');
+            ->andWhere(['or',
+                ['products.type' => '1'],
+                ['products.type' => '3'],
+                ['products.type' => '8']
+            ])
+            ->groupBy('products.nomenclature_id')
+            ->having(['!=', 'SUM(count_balance)', 0]);
         if ($search_name){
             $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name]);
             $offset = 0;
             $pageSize = false;
         }
-
         $countQuery = clone $query;
         $total = $countQuery->count();
-
         $nomenclatures = $nomenclatures->offset($offset)
             ->limit($pageSize)
             ->asArray()
