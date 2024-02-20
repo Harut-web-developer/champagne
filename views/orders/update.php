@@ -23,9 +23,8 @@ $this->params['date_tab'] = $date_tab;
         'active_discount' => $active_discount,
         'clients' => $clients,
         'orders_clients' => $orders_clients,
-//        'nomenclatures' => $nomenclatures,
         'order_items' => $order_items,
-//        'total' => $total,
+        'oldattributes' => $oldattributes,
         'warehouse' => $warehouse,
         'warehouse_value_update' => $warehouse_value_update,
 

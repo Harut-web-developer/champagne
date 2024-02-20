@@ -286,11 +286,13 @@ $(document).ready(function() {
         var tables = '';
         var sheetNumber = 1;
         var PromiseArray = [];
-        let ordersDate = $('.content-wrapper').find('.ordersDate').val()
         let clientsVal = $('.content-wrapper').find('.changeClients').val();
         let managerId = $('.content-wrapper').find('.changeManager').val();
         let numberVal = $('.content-wrapper').find('.orderStatus').val();
         let clickXLSX = 'clickXLSX';
+        let ordersDate = $('.ordersDate').val();
+        // let type = $(this).val()
+        // console.log(clientsVal,managerId,numberVal,clickXLSX,ordersDate)
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:'/orders/filter-status',
@@ -301,6 +303,8 @@ $(document).ready(function() {
                 numberVal:numberVal,
                 clientsVal:clientsVal,
                 managerId:managerId,
+                ordersDate:ordersDate,
+                // type:type,
                 clickXLSX:clickXLSX,
             },
             dataType: "html",
@@ -680,12 +684,14 @@ $(document).ready(function() {
                                         <th>Օգտատեր</th>
                                         <th>Հաճախորդ</th>
                                         <th>Մեկնաբանություն</th>
+                                        <th>Կարգավիճակ</th>
+                                        <th>Փաստաթուղթ</th>
                                         <th>Ընդհանուր զեղչված գումար</th>
                                         <th>Ընդհանուր քանակ</th>
                                         <th>Պատվերի ամսաթիվ</th>
                                     </tr>
                                 `;
-            var tdToHide = el.find('td:nth-child(1), td:nth-child(8)').remove();
+            el.find('td:nth-child(1), td:nth-child(2)').remove();
             let id = $(this).data('key');
             if (id) {
                 $.ajax({

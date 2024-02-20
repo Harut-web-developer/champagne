@@ -6,8 +6,6 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var app\models\Log $model */
 /** @var yii\widgets\ActiveForm $form */
-var_dump($model);
-die;
 ?>
 
 <div class="log-form">

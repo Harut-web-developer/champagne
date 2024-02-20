@@ -10,8 +10,6 @@ use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use app\widgets\CustomGridView;
-
-
 /** @var yii\web\View $this */
 /** @var app\models\OrdersSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -46,7 +44,7 @@ if($have_access_available){
     $access_buttons .='{reports}';
 }
 
-    $action_column[] = [
+$action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => $access_buttons,
@@ -74,7 +72,6 @@ if($have_access_available){
         }
     ];
 ?>
-
 <?php
     if (!isset($page_value)){
         if(!isset($data_size)){ ?>
@@ -142,8 +139,7 @@ if($have_access_available){
                     'orders_date',
                 ],
             ]); ?>
-        <?php
-        }
+        <?php }
         else{
         $dataProvider->pagination = false; ?>
         <?= CustomGridView::widget([
@@ -185,6 +181,28 @@ if($have_access_available){
                                 return $model->comment;
                             } else {
                                 return 'Դատարկ';
+                            }
+                        }
+                    ],
+                    [
+                        'attribute' => 'Կարգավիճակ',
+                        'value' => function ($model) {
+                            if ($model->status == 1) {
+                                return 'Ընթացքի մեջ';
+                            } elseif($model->status == 2){
+                                return 'Հաստատված';
+                            } elseif($model->status == 0){
+                                return 'Մերժված';
+                            }
+                        }
+                    ],
+                    [
+                        'attribute' => 'Փաստաթուղթ',
+                        'value' => function ($model) {
+                            if ($model->is_exit == 1) {
+                                return 'Չելքագրված';
+                            }else{
+                                return 'Ելքագրված';
                             }
                         }
                     ],
@@ -325,8 +343,7 @@ else { ?>
                     'orders_date',
                 ],
             ]); ?>
-        <?php
-        }
+        <?php }
         else{ ?>
 
         <?php $dataProvider->pagination = false; ?>
@@ -369,6 +386,28 @@ else { ?>
                                 return $model->comment;
                             } else {
                                 return 'Դատարկ';
+                            }
+                        }
+                    ],
+                    [
+                        'attribute' => 'Կարգավիճակ',
+                        'value' => function ($model) {
+                            if ($model->status == 1) {
+                                return 'Ընթացքի մեջ';
+                            } elseif($model->status == 2){
+                                return 'Հաստատված';
+                            } elseif($model->status == 0){
+                                return 'Մերժված';
+                            }
+                        }
+                    ],
+                    [
+                        'attribute' => 'Փաստաթուղթ',
+                        'value' => function ($model) {
+                            if ($model->is_exit == 1) {
+                                return 'Չելքագրված';
+                            }else{
+                                return 'Ելքագրված';
                             }
                         }
                     ],

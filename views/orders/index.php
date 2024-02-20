@@ -72,7 +72,6 @@ $action_column[] = [
         return Url::toRoute([$action, 'id' => $model->id]);
     }
 ];
-
 ?>
 
     <div class="orders-index">
