@@ -113,8 +113,9 @@ class Products extends \yii\db\ActiveRecord
                 ->all();
             $first_product = Products::find()
                 ->where(['and',['nomenclature_id' => $nom_id],
-                    ['warehouse_id' => $warehouse_id],
-                    ['type' => 1]])
+                    ['warehouse_id' => $warehouse_id]])
+                ->andWhere(['or',['type' => 1],['type' => 3],['type' => 8]])
+                ->andWhere(['status' => '1'])
                 ->andWhere(['!=', 'count_balance', 0])
                 ->all();
             $end_result = [];

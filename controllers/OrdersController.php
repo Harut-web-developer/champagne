@@ -1098,8 +1098,6 @@ class OrdersController extends Controller
 
 
             $is_exit = Orders::findOne($orders_id->order_id);
-//            $document_exit = Documents::findOne(['orders_id' => $orders_id->order_id,'document_type' => 2]);
-//            $document_refuse = Documents::findOne(['orders_id' => $orders_id->order_id,'document_type' => 6]);
             if ($is_exit->is_exit == 1){
                 $delete_items = OrderItems::findOne($item_id);
                 $delete_items->status = '0';
