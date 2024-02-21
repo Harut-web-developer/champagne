@@ -1620,9 +1620,6 @@ class DocumentsController extends Controller
         $model = $this->findModel($id);
         $sub_page = [];
         $date_tab = [];
-
-//        $clients = Clients::find()->select('id, name')->asArray()->all();
-//        $clients = ArrayHelper::map($clients,'id','name');
         $users = Users::find()->select('id, name')->asArray()->all();
         $users = ArrayHelper::map($users,'id','name');
         $warehouse = Warehouse::find()->select('id,name')->asArray()->all();

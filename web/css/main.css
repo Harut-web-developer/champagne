@@ -462,9 +462,14 @@
 .downloadUpdateXLSX{
     cursor: pointer;
 }
-.orders-update, .documents-update h5{
+.orders-update h5{
     display: inline-block;
 }
+
+.documents-update h5{
+    display: inline-block;
+}
+
 .discountCheck{
     display:flex !important;
 }
