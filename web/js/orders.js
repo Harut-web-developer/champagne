@@ -1002,8 +1002,8 @@ $(document).ready(function () {
                     _csrf:csrfToken
                 },
                 success:function (data){
-                    if (data){
-                        console.log(5555)
+                    // console.log(data)
+                    if (data == 'true'){
                         this_.closest('.tableNomenclature').remove();
                         alert('Հաջողությամբ ջնջված է:');
                         let ordersTotalCount = 0;
@@ -1020,10 +1020,12 @@ $(document).ready(function () {
                         $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
                         $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
                         $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
+                    }else if (data == 'false'){
+                        alert('Մեկ անուն ապրանքի դեպքում պետք է ջնջել ամբողջ պատվերը:');
                     }
-                    else{
-                        alert('Գոյություն չունի կամ հաջողությամբ չի կատարվել ջնջումը:');
-                    }
+                    // else{
+                    //     alert('Գոյություն չունի կամ հաջողությամբ չի կատարվել ջնջումը:');
+                    // }
                 }
             })
 
@@ -1031,86 +1033,88 @@ $(document).ready(function () {
 
     })
     $('body').on('keyup','.ordersCountInput',function (){
-        $(this).val(function(index, value) {
-            return value.replace(/-/g, '');
-        });
         if ($(this).val() < 1){
             $(this).val('')
-        }
-        var this_ = $(this);
-        let warehouse_id = $('body').find('.warehouse_id').val();
-        var id = this_.closest('.addOrdersTableTr').find(".nomId").attr('data-product');
-        var count = this_.val();
-        let id_product = $(this).closest('tr').find('.prodId').data('id');
-        var csrfToken = $('meta[name="csrf-token"]').attr("content");
-        // console.log(warehouse_id,id,count,id_product)
-        $.ajax({
-            url: '/products/get-products',
-            method: 'post',
-            datatype: 'json',
-            data: {
-                itemId: id,
-                warehouse_id:warehouse_id,
-                count:count,
-                _csrf: csrfToken
-            },
-            success:function (data) {
-                let pars = JSON.parse(data)
-                if (data){
-                    if (pars.count === 'nullable'){
-                        this_.val('')
-                    }else if (pars.count === 'countMore'){
-                        this_.val('')
-                        count = this_.val('');
-                        delete id_count[String(id_product).trim()];
-                        delete count_product[String(id).trim()];
-                        alert('Պահեստում նման քանակի ապրանք չկա');
-                    }else if (pars.count === 'dontExists'){
-                        alert('Նման ապրանք պահեստում գոյություն չունի')
-                        this_.val('')
+        }else {
+            var this_ = $(this);
+            let warehouse_id = $('body').find('.warehouse_id').val();
+            var id = this_.closest('.addOrdersTableTr').find(".nomId").attr('data-product');
+            var count = this_.val();
+            let id_product = $(this).closest('tr').find('.prodId').data('id');
+            var csrfToken = $('meta[name="csrf-token"]').attr("content");
+            $.ajax({
+                url: '/products/get-products',
+                method: 'post',
+                datatype: 'json',
+                data: {
+                    itemId: id,
+                    warehouse_id:warehouse_id,
+                    count:count,
+                    _csrf: csrfToken
+                },
+                success:function (data) {
+                    let p = JSON.parse(data)
+                    if (data){
+                        if (p.count === 'nullable'){
+                            this_.val('')
+                        }else if (p.count === 'countMore'){
+                            this_.val('')
+                            count = this_.val('');
+                            delete id_count[String(id_product).trim()];
+                            delete count_product[String(id).trim()];
+                            alert('Պահեստում նման քանակի ապրանք չկա');
+                        }else if (p.count === 'dontExists'){
+                            alert('Նման ապրանք պահեստում գոյություն չունի')
+                            this_.val('')
+                        }
+                        // else if (pars.count === 'exists'){
+                        //     // console.log(222)
+                        // }
                     }
-                    // else if (pars.count === 'exists'){
-                    //     // console.log(222)
-                    // }
                 }
-            }
-        })
+            })
+        }
+
     })
     $('body').on('click','.ordersCountInput',function (){
         if ($(this).val() < 1){
             $(this).val('')
-        }
-        var this_ = $(this);
-        let warehouse_id = $('body').find('.warehouse_id').val();
-        var id = this_.closest('.addOrdersTableTr').find(".nomId").attr('data-product');
-        let id_product = $(this).closest('tr').find('.prodId').data('id');
-        var count = this_.val();
-        var csrfToken = $('meta[name="csrf-token"]').attr("content");
-        // console.log(warehouse_id,id,count,id_product)
-        $.ajax({
-            url: '/products/get-products',
-            method: 'post',
-            datatype: 'json',
-            data: {
-                itemId: id,
-                warehouse_id:warehouse_id,
-                count:count,
-                _csrf: csrfToken
-            },
-            success:function (data) {
-                let pars = JSON.parse(data)
-                if (data){
-                    if (pars.count === 'nullable'){
-                        this_.val('')
-                    }else if (pars.count === 'countMore'){
-                        this_.val('')
-                        alert('Պահեստում նման քանակի ապրանք չկա');
-                    }else if (pars.count === 'dontExists'){
-                        alert('Նման ապրանք պահեստում գոյություն չունի')
+        }else {
+            var this_ = $(this);
+            let warehouse_id = $('body').find('.warehouse_id').val();
+            var id = this_.closest('.addOrdersTableTr').find(".nomId").attr('data-product');
+            let id_product = $(this).closest('tr').find('.prodId').data('id');
+            var count = this_.val();
+            var csrfToken = $('meta[name="csrf-token"]').attr("content");
+            // console.log(warehouse_id,id,count,id_product)
+            $.ajax({
+                url: '/products/get-products',
+                method: 'post',
+                datatype: 'json',
+                data: {
+                    itemId: id,
+                    warehouse_id:warehouse_id,
+                    count:count,
+                    _csrf: csrfToken
+                },
+                success:function (data) {
+                    let p = JSON.parse(data)
+                    if (data){
+                        if (p.count === 'nullable'){
+                            this_.val('')
+                        }else if (p.count === 'countMore'){
+                            this_.val('')
+                            count = this_.val('');
+                            delete id_count[String(id_product).trim()];
+                            delete count_product[String(id).trim()];
+                            alert('Պահեստում նման քանակի ապրանք չկա');
+                        }else if (p.count === 'dontExists'){
+                            alert('Նման ապրանք պահեստում գոյություն չունի')
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     })
 
     var arr_carent_page_update = [];

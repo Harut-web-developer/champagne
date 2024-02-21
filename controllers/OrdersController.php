@@ -930,7 +930,7 @@ class OrdersController extends Controller
             $new_exit_document->warehouse_id = $exit_documents[0][2];
             $new_exit_document->rate_id = 1;
             $new_exit_document->rate_value = 1;
-            $new_exit_document->document_type = 2;
+            $new_exit_document->document_type = 9;
             $new_exit_document->comment = 'Ելքագրված փաստաթուղթ';
             $new_exit_document->date = date('Y-m-d H:i:s');
             $new_exit_document->status = '1';
@@ -942,6 +942,7 @@ class OrdersController extends Controller
                 $new_exit_document_items->document_id = $new_exit_document->id;
                 $new_exit_document_items->nomenclature_id = $exit_documents[$j][3];
                 $new_exit_document_items->count = $exit_documents[$j][4];
+                $new_exit_document_items->refuse_product_id = $exit_documents[$j][1];
                 if ($exit_documents[$j][5] == 1){
                     $new_exit_document_items->price_with_aah = $exit_documents[$j][6];
                     $new_exit_document_items->AAH = 'true';
@@ -1098,70 +1099,23 @@ class OrdersController extends Controller
 
 
             $is_exit = Orders::findOne($orders_id->order_id);
-            if ($is_exit->is_exit == 1){
-                $delete_items = OrderItems::findOne($item_id);
-                $delete_items->status = '0';
-                $delete_items->save(false);
-
-                $delete_products = Products::findOne($orders_id->product_id);
-                $delete_products->status = '0';
-                $delete_products->save(false);
-
-                $enter_products = Products::findOne($delete_products->parent_id);
-                $enter_products->count_balance += $delete_products->count;
-                $enter_products->save(false);
-
-                $update_orders = Orders::findOne($orders_id->order_id);
-                $update_orders->total_count = $total_count;
-                $update_orders->total_price = $total_price;
-                $update_orders->total_price_before_discount = $total_price_before_discount;
-                $update_orders->total_discount = $total_discount;
-                $update_orders->save(false);
-                return json_encode(true);
-
+            $exist_orders_items = OrderItems::find()->where(['status' => '1'])->andWhere(['order_id' => $orders_id->order_id])->count();
+            if ($exist_orders_items == 1){
+                return json_encode(false);
             }else{
-                $product_id = Products::findOne($orders_id->product_id);
-                if ($orders_id->count - $orders_id->count_by == 0){
-//                    var_dump(1111);
+                if ($is_exit->is_exit == 1){
                     $delete_items = OrderItems::findOne($item_id);
                     $delete_items->status = '0';
                     $delete_items->save(false);
 
-                    $delete_products = Products::findOne($delete_items->product_id);
+                    $delete_products = Products::findOne($orders_id->product_id);
                     $delete_products->status = '0';
                     $delete_products->save(false);
 
-                    $document = new Documents();
-                    $document->orders_id = $orders_id->order_id;
-                    $document->warehouse_id = $orders_id->warehouse_id;
-                    $document->rate_id = 1;
-                    $document->rate_value = 1;
-                    $document->document_type = 6;
-                    $document->comment = 'Վերադարձրած ապրանք';
-                    $document->date = date('Y-m-d H:i:s');
-                    $document->status = '1';
-                    $document->created_at = date('Y-m-d H:i:s');
-                    $document->updated_at = date('Y-m-d H:i:s');
-                    $document->save(false);
+                    $enter_products = Products::findOne($delete_products->parent_id);
+                    $enter_products->count_balance += $delete_products->count;
+                    $enter_products->save(false);
 
-                    $new_document_items = new DocumentItems();
-                    $new_document_items->document_id = $document->id;
-                    $new_document_items->nomenclature_id = $orders_id->nom_id_for_name;
-                    $new_document_items->count = $orders_id->count_by;
-                    $new_document_items->refuse_product_id = $delete_products->id;
-                    if ($product_id->AAH == 1){
-                        $new_document_items->AAH = 'true';
-                        $new_document_items->price_with_aah = $product_id->price;
-                        $new_document_items->price = number_format((($product_id->price * 5)/6),2,'.','');
-                    }else{
-                        $new_document_items->AAH = 'false';
-                        $new_document_items->price = $product_id->price;
-                        $new_document_items->price_with_aah = $product_id->price + ($product_id->price * 20) / 100;
-                    }
-                    $new_document_items->status = '1';
-                    $new_document_items->created_at = date('Y-m-d H:i:s');
-                    $new_document_items->updated_at = date('Y-m-d H:i:s');
-                    $new_document_items->save(false);
                     $update_orders = Orders::findOne($orders_id->order_id);
                     $update_orders->total_count = $total_count;
                     $update_orders->total_price = $total_price;
@@ -1169,59 +1123,114 @@ class OrdersController extends Controller
                     $update_orders->total_discount = $total_discount;
                     $update_orders->save(false);
                     return json_encode(true);
-
 
                 }else{
-                    $delete_items = OrderItems::findOne($item_id);
-                    $delete_items->status = '0';
-                    $delete_items->save(false);
+                    $product_id = Products::findOne($orders_id->product_id);
+                    if ($orders_id->count - $orders_id->count_by == 0){
+//                    var_dump(1111);
+                        $delete_items = OrderItems::findOne($item_id);
+                        $delete_items->status = '0';
+                        $delete_items->save(false);
 
-                    $product_id->count = $delete_items->count;
-                    $product_id->status = '0';
-                    $product_id->save(false);
+                        $delete_products = Products::findOne($delete_items->product_id);
+                        $delete_products->status = '0';
+                        $delete_products->save(false);
 
-                    $document = new Documents();
-                    $document->orders_id = $orders_id->order_id;
-                    $document->warehouse_id = $orders_id->warehouse_id;
-                    $document->rate_id = 1;
-                    $document->rate_value = 1;
-                    $document->document_type = 6;
-                    $document->comment = 'Վերադարձրած ապրանք';
-                    $document->date = date('Y-m-d H:i:s');
-                    $document->status = '1';
-                    $document->created_at = date('Y-m-d H:i:s');
-                    $document->updated_at = date('Y-m-d H:i:s');
-                    $document->save(false);
+                        $document = new Documents();
+                        $document->orders_id = $orders_id->order_id;
+                        $document->warehouse_id = $orders_id->warehouse_id;
+                        $document->rate_id = 1;
+                        $document->rate_value = 1;
+                        $document->document_type = 6;
+                        $document->comment = 'Վերադարձրած ապրանք';
+                        $document->date = date('Y-m-d H:i:s');
+                        $document->status = '1';
+                        $document->created_at = date('Y-m-d H:i:s');
+                        $document->updated_at = date('Y-m-d H:i:s');
+                        $document->save(false);
 
-                    $new_document_items = new DocumentItems();
-                    $new_document_items->document_id = $document->id;
-                    $new_document_items->nomenclature_id = $orders_id->nom_id_for_name;
-                    $new_document_items->count = $orders_id->count;
-                    $new_document_items->refuse_product_id = $product_id->id;
-                    if ($product_id->AAH == 1){
-                        $new_document_items->AAH = 'true';
-                        $new_document_items->price_with_aah = $product_id->price;
-                        $new_document_items->price = number_format((($product_id->price * 5)/6),2,'.','');
+                        $new_document_items = new DocumentItems();
+                        $new_document_items->document_id = $document->id;
+                        $new_document_items->nomenclature_id = $orders_id->nom_id_for_name;
+                        $new_document_items->count = $orders_id->count_by;
+                        $new_document_items->refuse_product_id = $delete_products->id;
+                        if ($product_id->AAH == 1){
+                            $new_document_items->AAH = 'true';
+                            $new_document_items->price_with_aah = $product_id->price;
+                            $new_document_items->price = number_format((($product_id->price * 5)/6),2,'.','');
+                        }else{
+                            $new_document_items->AAH = 'false';
+                            $new_document_items->price = $product_id->price;
+                            $new_document_items->price_with_aah = $product_id->price + ($product_id->price * 20) / 100;
+                        }
+                        $new_document_items->status = '1';
+                        $new_document_items->created_at = date('Y-m-d H:i:s');
+                        $new_document_items->updated_at = date('Y-m-d H:i:s');
+                        $new_document_items->save(false);
+                        $update_orders = Orders::findOne($orders_id->order_id);
+                        $update_orders->total_count = $total_count;
+                        $update_orders->total_price = $total_price;
+                        $update_orders->total_price_before_discount = $total_price_before_discount;
+                        $update_orders->total_discount = $total_discount;
+                        $update_orders->save(false);
+                        return json_encode(true);
+
+
                     }else{
-                        $new_document_items->AAH = 'false';
-                        $new_document_items->price = $product_id->price;
-                        $new_document_items->price_with_aah = $product_id->price + ($product_id->price * 20) / 100;
+                        $delete_items = OrderItems::findOne($item_id);
+                        $delete_items->status = '0';
+                        $delete_items->save(false);
+
+                        $product_id->count = $delete_items->count;
+                        $product_id->status = '0';
+                        $product_id->save(false);
+
+                        $document = new Documents();
+                        $document->orders_id = $orders_id->order_id;
+                        $document->warehouse_id = $orders_id->warehouse_id;
+                        $document->rate_id = 1;
+                        $document->rate_value = 1;
+                        $document->document_type = 6;
+                        $document->comment = 'Վերադարձրած ապրանք';
+                        $document->date = date('Y-m-d H:i:s');
+                        $document->status = '1';
+                        $document->created_at = date('Y-m-d H:i:s');
+                        $document->updated_at = date('Y-m-d H:i:s');
+                        $document->save(false);
+
+                        $new_document_items = new DocumentItems();
+                        $new_document_items->document_id = $document->id;
+                        $new_document_items->nomenclature_id = $orders_id->nom_id_for_name;
+                        $new_document_items->count = $orders_id->count;
+                        $new_document_items->refuse_product_id = $product_id->id;
+                        if ($product_id->AAH == 1){
+                            $new_document_items->AAH = 'true';
+                            $new_document_items->price_with_aah = $product_id->price;
+                            $new_document_items->price = number_format((($product_id->price * 5)/6),2,'.','');
+                        }else{
+                            $new_document_items->AAH = 'false';
+                            $new_document_items->price = $product_id->price;
+                            $new_document_items->price_with_aah = $product_id->price + ($product_id->price * 20) / 100;
+                        }
+                        $new_document_items->status = '1';
+                        $new_document_items->created_at = date('Y-m-d H:i:s');
+                        $new_document_items->updated_at = date('Y-m-d H:i:s');
+                        $new_document_items->save(false);
+
+                        $update_orders = Orders::findOne($orders_id->order_id);
+                        $update_orders->total_count = $total_count;
+                        $update_orders->total_price = $total_price;
+                        $update_orders->total_price_before_discount = $total_price_before_discount;
+                        $update_orders->total_discount = $total_discount;
+                        $update_orders->save(false);
+                        return json_encode(true);
                     }
-                    $new_document_items->status = '1';
-                    $new_document_items->created_at = date('Y-m-d H:i:s');
-                    $new_document_items->updated_at = date('Y-m-d H:i:s');
-                    $new_document_items->save(false);
 
-                    $update_orders = Orders::findOne($orders_id->order_id);
-                    $update_orders->total_count = $total_count;
-                    $update_orders->total_price = $total_price;
-                    $update_orders->total_price_before_discount = $total_price_before_discount;
-                    $update_orders->total_discount = $total_discount;
-                    $update_orders->save(false);
-                    return json_encode(true);
                 }
-
             }
+            var_dump($exist_orders_items);
+            exit();
+
 
         }
     }

@@ -102,6 +102,7 @@ if($have_access_available){
                     <option value="6">Վերադարձ</option>
                     <option value="7">Մերժված</option>
                     <option value="8">Մուտք(վերադարցրած)</option>
+                    <option value="9">Պատվերից ելքագրված</option>
             </select>
             <?php }?>
         </div>
@@ -141,6 +142,8 @@ if($have_access_available){
                         return 'Մերժված';
                     } elseif($model->document_type == 8){
                         return 'Մուտք(վերադարցրած)';
+                    } elseif ($model->document_type == 9){
+                        return 'Պատվերից ելքագրված';
                     }
                 }
             ],

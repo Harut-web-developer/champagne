@@ -69,7 +69,7 @@ if($have_access_update){
 //            ['class' => 'yii\grid\SerialColumn'],
             ...$action_column,
             [
-                'attribute' => 'Օգտատեր',
+                'attribute' => 'Փաստաթղթի տեսակ',
                 'value' => function ($model) {
                     if ($model->document_type == 1) {
                         return 'Մուտքի';
@@ -85,6 +85,8 @@ if($have_access_update){
                         return 'Մերժված';
                     } elseif($model->document_type == 8){
                         return 'Մուտք(վերադարցրած)';
+                    }elseif ($model->document_type == 9){
+                        return 'Պատվերից ելքագրված';
                     }
                 }
             ],

@@ -183,11 +183,7 @@ $(document).ready(function () {
         var this_ = $(this);
         let docItemsId = this_.closest('.oldTr').find('.docItemsId').val()
         let docType = $('body').find('#documents-document_type').val();
-        let nomId = this_.closest('.oldTr').find('.itemsId').val()
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
-        let url_id = window.location.href;
-        let url = new URL(url_id);
-        let urlId = url.searchParams.get("id");
         if (confirmed){
             $.ajax({
                 url: '/documents/delete-document-items',
@@ -197,13 +193,14 @@ $(document).ready(function () {
                     docItemsId: docItemsId,
                     nomId:nomId,
                     docType:docType,
-                    urlId: urlId,
                     _csrf: csrfToken
                 },
                 success: function (data) {
                     if (data === 'true') {
                         this_.closest('.oldTr').remove();
                         alert('Հաջողությամբ ջնջված է:');
+                    }else if (data === 'false'){
+                        alert('Մեկ անուն ապրանքի դեպքում պետք է ջնջել ամբողջ փաստաթուղթը:');
                     }
                 }
             })
@@ -438,49 +435,41 @@ $(document).ready(function () {
             $("#documents-to_warehouse").removeAttr('required');
         }
     })
-    $('body').on('click','.countDocuments',function (){
-        $(this).val(function(index, value) {
-            return value.replace(/-/g, '');
-        });
-        if ($(this).val() < 1 || $(this).val() === "") {
-            $(this).val('');
-            $(this).attr('required',true);
-        }else{
-            let itemId = $(this).closest('tr').find('.itemsId').val();
-            getCount($(this),itemId);
-        }
-    })
-    $('body').on('keyup','.countDocuments',function (){
-        $(this).val(function(index, value) {
-            return value.replace(/-/g, '');
-        });
-        if ($(this).val() < 1 || $(this).val() === "") {
-            $(this).val('');
-            $(this).attr('required',true);
-        }else{
-            let itemId = $(this).closest('tr').find('.itemsId').val();
-            getCount($(this),itemId);
-        }
-    })
+    // $('body').on('click','.countDocuments',function (){
+    //     $(this).val(function(index, value) {
+    //         return value.replace(/-/g, '');
+    //     });
+    //     if ($(this).val() < 1 || $(this).val() === "") {
+    //         $(this).val('');
+    //         $(this).attr('required',true);
+    //     }else{
+    //         let itemId = $(this).closest('tr').find('.itemsId').val();
+    //         getCount($(this),itemId);
+    //     }
+    // })
+    // $('body').on('keyup','.countDocuments',function (){
+    //     $(this).val(function(index, value) {
+    //         return value.replace(/-/g, '');
+    //     });
+    //     if ($(this).val() < 1 || $(this).val() === "") {
+    //         $(this).val('');
+    //         $(this).attr('required',true);
+    //     }else{
+    //         let itemId = $(this).closest('tr').find('.itemsId').val();
+    //         getCount($(this),itemId);
+    //     }
+    // })
     $('body').on('click','.documentsCountInput',function (){
-        $(this).val(function(index, value) {
-            return value.replace(/-/g, '');
-        });
-        if ($(this).val() < 1 || $(this).val() === "") {
+        if ($(this).val() < 1) {
             $(this).val('');
-            $(this).attr('required',true);
         }else{
             let itemId = $(this).closest('.documentsTableTr').find('.nom_id').data('id');
             getCount($(this),itemId);
         }
     })
     $('body').on('keyup','.documentsCountInput',function (){
-        $(this).val(function(index, value) {
-            return value.replace(/-/g, '');
-        });
-        if ($(this).val() < 1 || $(this).val() === "") {
+        if ($(this).val() < 1) {
             $(this).val('');
-            $(this).attr('required',true);
         }else{
             let itemId = $(this).closest('.documentsTableTr').find('.nom_id').data('id');
             getCount($(this),itemId);

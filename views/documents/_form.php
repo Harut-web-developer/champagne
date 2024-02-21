@@ -33,6 +33,8 @@ $session = Yii::$app->session;
         $value = 'Մերժված';
     }elseif ($model->document_type === '8'){
         $value = 'Մուտք(վերադարցրած)';
+    }elseif ($model->document_type === '9'){
+        $value = 'Պատվերից ելքագրված';
     }
     ?>
     <div class="documents-form">

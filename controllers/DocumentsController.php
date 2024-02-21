@@ -1238,18 +1238,6 @@ class DocumentsController extends Controller
         $document_items = DocumentItems::find()->where(['document_id' => $id])->asArray()->all();
         if (!empty($document_items)){
             for ($k = 0;$k < count($document_items); $k++){
-                $new_document_items = new DocumentItems();
-                $new_document_items->document_id = $new_document->id;
-                $new_document_items->nomenclature_id = $document_items[$k]['nomenclature_id'];
-                $new_document_items->count = $document_items[$k]['count'];
-                $new_document_items->price = $document_items[$k]['price'];
-                $new_document_items->price_with_aah = $document_items[$k]['price_with_aah'];
-                $new_document_items->AAH =  $document_items[$k]['AAH'];
-                $new_document_items->status = '1';
-                $new_document_items->created_at = date('Y-m-d H:i:s');
-                $new_document_items->updated_at = date('Y-m-d H:i:s');
-                $new_document_items->save(false);
-
                 $new_product = new Products();
                 $new_product->warehouse_id = $document->warehouse_id;
                 $new_product->nomenclature_id = $document_items[$k]['nomenclature_id'];
@@ -1268,6 +1256,21 @@ class DocumentsController extends Controller
                 $new_product->created_at = date('Y-m-d H:i:s');
                 $new_product->updated_at = date('Y-m-d H:i:s');
                 $new_product->save(false);
+
+                $new_document_items = new DocumentItems();
+                $new_document_items->document_id = $new_document->id;
+                $new_document_items->nomenclature_id = $document_items[$k]['nomenclature_id'];
+                $new_document_items->refuse_product_id = $new_product->id;
+                $new_document_items->count = $document_items[$k]['count'];
+                $new_document_items->price = $document_items[$k]['price'];
+                $new_document_items->price_with_aah = $document_items[$k]['price_with_aah'];
+                $new_document_items->AAH =  $document_items[$k]['AAH'];
+                $new_document_items->status = '1';
+                $new_document_items->created_at = date('Y-m-d H:i:s');
+                $new_document_items->updated_at = date('Y-m-d H:i:s');
+                $new_document_items->save(false);
+
+
             }
         }
 
@@ -1347,6 +1350,7 @@ class DocumentsController extends Controller
      */
     public function actionDelete($id)
     {
+        echo "<pre>";
         $have_access = Users::checkPremission(39);
         if(!$have_access){
             $this->redirect('/site/403');
@@ -1363,44 +1367,39 @@ class DocumentsController extends Controller
             ->asArray()
             ->one();
         $documents = Documents::findOne($id);
-        $documents->status = '0';
-        $documents->save();
-        Log::afterSaves('Delete', '', $oldattributes['name'] . ' ' . $oldattributes['username'], '#', $premission);
-        return $this->redirect(['index']);
-    }
-
-    public function actionDeleteDocumentItems(){
-        if ($this->request->isPost){
-            $items_id = $this->request->post('docItemsId');
-//            $nom_id = $this->request->post('nomId');
-//            $document_id = $this->request->post('urlId');
-            $doc_type = $this->request->post('docType');
-//            var_dump($doc_type);
-//            die;
-            if ($doc_type == 'Մուտք'){
-            $delete_items = DocumentItems::findOne($items_id);
-            $delete_items->status = '0';
-            $delete_items->save(false);
-            $delete_product = Products::findOne($delete_items->refuse_product_id);
-            $delete_product->status = '0';
-            $delete_product->save(false);
-                return json_encode(true);
-            }elseif ($doc_type == 'Ելք'){
-                $delete_items = DocumentItems::findOne($items_id);
-                $delete_items->status = '0';
-                $delete_items->save(false);
-                $delete_product = Products::findOne($delete_items->refuse_product_id);
+        if ($documents->document_type == '1'){
+            $documents->status = '0';
+            $documents->save(false);
+            $delete_document_items =DocumentItems::find()->where(['document_id' => $id])->andWhere(['status' => '1'])->all();
+            foreach ($delete_document_items as $item){
+                $item->status = '0';
+                $item->save(false);
+                $delete_product = Products::findOne($item->refuse_product_id);
+                $delete_product->status = '0';
+                $delete_product->save(false);
+            }
+        }elseif ($documents->document_type == '2'){
+            $documents->status = '0';
+            $documents->save(false);
+            $delete_document_items =DocumentItems::find()->where(['document_id' => $id])->andWhere(['status' => '1'])->all();
+            foreach ($delete_document_items as $item){
+                $item->status = '0';
+                $item->save(false);
+                $delete_product = Products::findOne($item->refuse_product_id);
                 $delete_product->status = '0';
                 $delete_product->save(false);
                 $refuse_product = Products::findOne($delete_product->parent_id);
                 $refuse_product->count_balance += $delete_product->count;
                 $refuse_product->save(false);
-                return json_encode(true);
-            }elseif ($doc_type == 'Տեղափոխություն'){
-                $delete_items = DocumentItems::findOne($items_id);
-                $delete_items->status = '0';
-                $delete_items->save(false);
-                $delete_product = Products::findOne($delete_items->refuse_product_id);
+            }
+        }elseif ($documents->document_type == '3'){
+            $documents->status = '0';
+            $documents->save(false);
+            $delete_document_items =DocumentItems::find()->where(['document_id' => $id])->andWhere(['status' => '1'])->all();
+            foreach ($delete_document_items as $item) {
+                $item->status = '0';
+                $item->save(false);
+                $delete_product = Products::findOne($item->refuse_product_id);
                 $delete_product->status = '0';
                 $delete_product->save(false);
                 $refuse_product = Products::findOne($delete_product->parent_id);
@@ -1409,31 +1408,134 @@ class DocumentsController extends Controller
                 $exit_product = Products::findOne(['parent_id' => $delete_product->id,'document_id' => $delete_product->document_id, 'type' => 3]);
                 $exit_product->status = '0';
                 $exit_product->save(false);
-                return json_encode(true);
-//                var_dump($exit_product);
-//                exit();
-            }elseif($doc_type == 'Խոտան'){
-                $delete_items = DocumentItems::findOne($items_id);
-                $delete_items->status = '0';
-                $delete_items->save(false);
-                $delete_product = Products::findOne($delete_items->refuse_product_id);
+            }
+        }elseif ($documents->document_type == '4'){
+            $documents->status = '0';
+            $documents->save(false);
+            $delete_document_items =DocumentItems::find()->where(['document_id' => $id])->andWhere(['status' => '1'])->all();
+            foreach ($delete_document_items as $item) {
+                $item->status = '0';
+                $item->save(false);
+                $delete_product = Products::findOne($item->refuse_product_id);
                 $delete_product->status = '0';
                 $delete_product->save(false);
                 $refuse_product = Products::findOne($delete_product->parent_id);
                 $refuse_product->count_balance += $delete_product->count;
                 $refuse_product->save(false);
-                return json_encode(true);
             }
-//            exit();
+        }elseif ($documents->document_type == '6'){
+            $documents->status = '0';
+            $documents->save(false);
+            $delete_document_items =DocumentItems::find()->where(['document_id' => $id])->andWhere(['status' => '1'])->all();
+            foreach ($delete_document_items as $item) {
+                $item->status = '0';
+                $item->save(false);
+                $delete_product = Products::findOne($item->refuse_product_id);
+                $delete_product->status = '0';
+                $delete_product->save(false); // popoxvac apranqi kam yndhanur apranqi depqum stugel petqa es tox te che
+            }
+        }elseif ($documents->document_type == '7'){
+            $documents->status = '0';
+            $documents->save(false);
+            $delete_document_items =DocumentItems::find()->where(['document_id' => $id])->andWhere(['status' => '1'])->all();
+            foreach ($delete_document_items as $item) {
+                $item->status = '0';
+                $item->save(false);
+                $delete_product = Products::findOne($item->refuse_product_id);
+                $delete_product->status = '0';
+                $delete_product->save(false);
+            }
+        }elseif ($documents->document_type == '8'){
+            $documents->status = '0';
+            $documents->save(false);
+            $delete_document_items =DocumentItems::find()->where(['document_id' => $id])->andWhere(['status' => '1'])->all();
+            foreach ($delete_document_items as $item) {
+                $item->status = '0';
+                $item->save(false);
+                $delete_product = Products::findOne($item->refuse_product_id);
+                $delete_product->status = '0';
+                $delete_product->save(false);
+            }
+        }elseif ($documents->document_type == '9'){
+            $documents->status = '0';
+            $documents->save(false);
+            $delete_document_items =DocumentItems::find()->where(['document_id' => $id])->andWhere(['status' => '1'])->all();
+            foreach ($delete_document_items as $item) {
+                $item->status = '0';
+                $item->save(false);
+                $delete_product = Products::findOne($item->refuse_product_id);
+                $delete_product->status = '0';
+                $delete_product->save(false);
+                $refuse_product = Products::findOne($delete_product->parent_id);
+                $refuse_product->count_balance += $delete_product->count;
+                $refuse_product->save(false);
+            }
+        }
+//        var_dump($documents->document_type);
+//        $documents->status = '0';
+//        $documents->save();
+//        exit();
+        Log::afterSaves('Delete', '', $oldattributes['name'] . ' ' . $oldattributes['username'], '#', $premission);
+        return $this->redirect(['index']);
+    }
 
-//            $documents = Documents::findOne($document_id);
-//            $delete_product_items = Products::find()->where(['nomenclature_id' => $nom_id,'document_id' => $document_id,'type' => $documents->document_type])->all();
-//            foreach ($delete_product_items as $delete_product_item){
-//                $delete_product_item->delete();
-//            }
+    public function actionDeleteDocumentItems(){
+        if ($this->request->isPost){
+            $items_id = $this->request->post('docItemsId');
+            $doc_type = $this->request->post('docType');
+            $exist_document = DocumentItems::find()->where(['id' => $items_id])->asArray()->one();
+            $exist_document_items = DocumentItems::find()->where(['status' => '1'])->andWhere(['document_id' => $exist_document['document_id']])->count();
+            if ($exist_document_items == 1){
+                return json_encode(false);
 
-//            if (isset($delete_items) && isset($delete_product_items)){
-//            }
+            }else{
+                if ($doc_type == 'Մուտք'){
+                    $delete_items = DocumentItems::findOne($items_id);
+                    $delete_items->status = '0';
+                    $delete_items->save(false);
+                    $delete_product = Products::findOne($delete_items->refuse_product_id);
+                    $delete_product->status = '0';
+                    $delete_product->save(false);
+                    return json_encode(true);
+                }elseif ($doc_type == 'Ելք'){
+                    $delete_items = DocumentItems::findOne($items_id);
+                    $delete_items->status = '0';
+                    $delete_items->save(false);
+                    $delete_product = Products::findOne($delete_items->refuse_product_id);
+                    $delete_product->status = '0';
+                    $delete_product->save(false);
+                    $refuse_product = Products::findOne($delete_product->parent_id);
+                    $refuse_product->count_balance += $delete_product->count;
+                    $refuse_product->save(false);
+                    return json_encode(true);
+                }elseif ($doc_type == 'Տեղափոխություն'){
+                    $delete_items = DocumentItems::findOne($items_id);
+                    $delete_items->status = '0';
+                    $delete_items->save(false);
+                    $delete_product = Products::findOne($delete_items->refuse_product_id);
+                    $delete_product->status = '0';
+                    $delete_product->save(false);
+                    $refuse_product = Products::findOne($delete_product->parent_id);
+                    $refuse_product->count_balance += $delete_product->count;
+                    $refuse_product->save(false);
+                    $exit_product = Products::findOne(['parent_id' => $delete_product->id,'document_id' => $delete_product->document_id, 'type' => 3]);
+                    $exit_product->status = '0';
+                    $exit_product->save(false);
+                    return json_encode(true);
+
+                }elseif($doc_type == 'Խոտան'){
+                    $delete_items = DocumentItems::findOne($items_id);
+                    $delete_items->status = '0';
+                    $delete_items->save(false);
+                    $delete_product = Products::findOne($delete_items->refuse_product_id);
+                    $delete_product->status = '0';
+                    $delete_product->save(false);
+                    $refuse_product = Products::findOne($delete_product->parent_id);
+                    $refuse_product->count_balance += $delete_product->count;
+                    $refuse_product->save(false);
+                    return json_encode(true);
+                }
+            }
         }
     }
 
