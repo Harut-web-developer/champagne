@@ -667,3 +667,12 @@
 .bx-block:hover{
     cursor:pointer;
 }
+.print_document_table{
+    width: 40px;
+    height: 40px;
+    cursor:pointer;
+}
+.documents_downloadXLSX{
+    cursor: pointer;
+    height: 40px;
+}

@@ -280,7 +280,7 @@ $(document).ready(function() {
         }
     });
 
-    // downloadXLSX
+    // downloadXLSX orders
     $('.downloadXLSX').click(function () {
         var excel = new ExcelJS.Workbook();
         var tables = '';
@@ -292,7 +292,6 @@ $(document).ready(function() {
         let clickXLSX = 'clickXLSX';
         let ordersDate = $('.ordersDate').val();
         // let type = $(this).val()
-        // console.log(clientsVal,managerId,numberVal,clickXLSX,ordersDate)
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:'/orders/filter-status',
@@ -363,32 +362,107 @@ $(document).ready(function() {
         });
     });
 
-    var tableToExcel =
-        (function() {
-            var uri = 'data:application/vnd.ms-excel;base64,',
-                template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">' +
-                    '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->' +
-                    '<meta http-equiv="content-type" content="text/plain; charset=UTF-8"/>' +
-                    '</head><body><table>{table}</table></body></html>'
-                , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) },
-                format = function(s, c) {
-                return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; })    }
-                , downloadURI = function(uri, name) {
-                var link = document.createElement("a");
-                link.download = $('h1').text();
-                link.href = uri;
-                link.click();    }
-            return function(table, name, fileName) {
-                table = $('#' + table).clone();
-                table.find('.hidden-item').remove();
-                table.find('.action-column').remove();
-                table.find('#w0-filters').remove();
-                table.find('a').removeAttr("href");
-                var ctx = {worksheet: $('h1').text() || 'Worksheet', table: table.html()}
-                var resuri = uri + base64(format(template, ctx))
-                downloadURI(resuri, fileName);
-            }
+    // var tableToExcel =
+    //     //     (function() {
+    //     //         var uri = 'data:application/vnd.ms-excel;base64,',
+    //     //             template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">' +
+    //     //                 '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->' +
+    //     //                 '<meta http-equiv="content-type" content="text/plain; charset=UTF-8"/>' +
+    //     //                 '</head><body><table>{table}</table></body></html>'
+    //     //             , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) },
+    //     //             format = function(s, c) {
+    //     //             return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; })    }
+    //     //             , downloadURI = function(uri, name) {
+    //     //             var link = document.createElement("a");
+    //     //             link.download = $('h1').text();
+    //     //             link.href = uri;
+    //     //             link.click();    }
+    //     //         return function(table, name, fileName) {
+    //     //             table = $('#' + table).clone();
+    //     //             table.find('.hidden-item').remove();
+    //     //             table.find('.action-column').remove();
+    //     //             table.find('#w0-filters').remove();
+    //     //             table.find('a').removeAttr("href");
+    //     //             var ctx = {worksheet: $('h1').text() || 'Worksheet', table: table.html()}
+    //     //             var resuri = uri + base64(format(template, ctx))
+    //     //             downloadURI(resuri, fileName);
+    //     //         }
+    //     //     });
+
+    // downloadXLSX documents
+    $('.documents_downloadXLSX').click(function () {
+        var excel = new ExcelJS.Workbook();
+        var tables = '';
+        var sheetNumber = 1;
+        var PromiseArray = [];
+        let numberVal = $('.documents-index').find('.documentStatus').val();
+        let clickXLSX = 'clickXLSX';
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/documents/filter-status',
+            method: 'get',
+            data: {
+                _csrf: csrfToken,
+                action: 'xls-alldata',
+                numberVal:numberVal,
+                clickXLSX:clickXLSX,
+            },
+            dataType: "html",
+            success: function(data) {
+                $('body').append(data);
+                tables = document.getElementsByClassName("chatgbti_");
+                $(".chatgbti_").hide();
+                $(".deletesummary").hide();
+                for (var i = 0; i < tables.length; i++) {
+                    var table = tables[i];
+                    var sheet = excel.addWorksheet("Sheet " + sheetNumber);
+                    var headRow = table.querySelector("thead tr");
+                    if (headRow) {
+                        var headerData = [];
+                        var headerCells = headRow.querySelectorAll("th:not(:last-child)");
+                        headerCells.forEach(function (headerCell) {
+                            headerData.push(headerCell.textContent);
+                        });
+                        sheet.addRow(headerData);
+                    }
+                    var rows = table.querySelectorAll("tbody tr");
+                    rows.forEach(function (row) {
+                        var rowData = [];
+                        var cells = row.querySelectorAll("td:not(:last-child)");
+                        cells.forEach(function (cell) {
+                            rowData.push(cell.textContent);
+                        });
+                        if (rowData.length > 0) {
+                            sheet.addRow(rowData);
+                        }
+                    });
+
+                    sheetNumber++;
+                }
+                Promise.all(PromiseArray)
+                    .then(function () {
+                        return excel.xlsx.writeBuffer();
+                    })
+                    .then(function (buffer) {
+                        var blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        var tablename = Math.floor(Math.random() * (1000000 - 1000 + 1)) + 1000;
+                        a.download = tablename + "table_data.xlsx";
+                        a.style.display = 'none';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    })
+                    .catch(function (error) {
+                        console.error('Error:', error);
+                    });
+                $(".chatgbti_").removeClass();
+            },
         });
+    });
+
     $('body').on('change','.byType',function () {
         let ordersDate = $('.ordersDate').val();
         let managerId = $('.changeManager').val();
@@ -689,6 +763,61 @@ $(document).ready(function() {
                                         <th>Ընդհանուր զեղչված գումար</th>
                                         <th>Ընդհանուր քանակ</th>
                                         <th>Պատվերի ամսաթիվ</th>
+                                    </tr>
+                                `;
+            el.find('td:nth-child(1), td:nth-child(2)').remove();
+            let id = $(this).data('key');
+            if (id) {
+                $.ajax({
+                    url: url,
+                    method: 'get',
+                    dataType: 'html',
+                    data: { id: id },
+                    success: function (data) {
+                        table += thead;
+                        table += '<tr>' + el.html() + '</tr>';
+                        table += data;
+                        for (let i = 0; i < 20; i++){
+                            table += '<tr><td colspan="7"></td></tr>';
+                        }
+                        if (--t_length == 0) {
+                            table += '</table>';
+                            var $table = $(table);
+                            $table.print({
+                                globalStyles: false,
+                                mediaPrint: false,
+                                stylesheet: "http://fonts.googleapis.com/css?family=Inconsolata",
+                                iframe: false,
+                                noPrintSelector: ".avoid-this",
+                                deferred: $.Deferred().done(function () {
+                                    console.log('Printing done', arguments);
+                                })
+                            });
+                        }
+                    }
+
+                })
+            }
+        })
+    }
+
+    //print document table
+    $('body').on('click','.print_document_table',function (){
+        printTable('/documents/print-doc');
+    });
+    function printTable(url) {
+        var t_length = $('body').find('#w0 table tbody tr').length;
+        var table = '<table id="ele4">';
+        $('body').find('table tbody tr').each(function () {
+            var el = $(this).clone();
+            var thead = `
+                                    <tr>
+                                        <th>Փաստաթղթի տեսակ</th>
+                                        <th>Օգտատեր</th>
+                                        <th>Պահեստ</th>
+                                        <th>Փոխարժեք</th>
+                                        <th>Մեկնաբանություն</th>
+                                        <th>Ստեղծման Ժամանակ</th>
                                     </tr>
                                 `;
             el.find('td:nth-child(1), td:nth-child(2)').remove();
