@@ -22,6 +22,20 @@ $session = Yii::$app->session;
                 <div class="panel-title premission">
                     <span class="non-active">Վաճառք</span>
                 </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                    <?php
+                    if ($session['role_id'] == 1){
+                        ?>
+                        <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                        <?php
+                    }elseif($session['role_id'] == 2){ ?>
+                        <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
+                    <?php }elseif ($session['role_id'] == 3 || $session['role_id'] == 4){
+                        $manager_id = Orders::findOne($model->id);
+                        ?>
+                        <?= $form->field($model, 'user_id')->hiddenInput(['value' => $manager_id->user_id])->label(false) ?>
+                    <?php } ?>
+                </div>
                 <div class="clientSelectSingle">
                     <label for="singleClients">Հաճախորդ</label>
                     <?php if ($session['role_id'] == 4){ ?>
@@ -53,20 +67,7 @@ $session = Yii::$app->session;
                         <?php } } ?>
                     </select>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?php
-                    if ($session['role_id'] == 1){
-                    ?>
-                        <?= $form->field($model, 'user_id')->dropDownList($users) ?>
-                    <?php
-                    }elseif($session['role_id'] == 2){ ?>
-                        <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
-                    <?php }elseif ($session['role_id'] == 3 || $session['role_id'] == 4){
-                        $manager_id = Orders::findOne($model->id);
-                        ?>
-                        <?= $form->field($model, 'user_id')->hiddenInput(['value' => $manager_id->user_id])->label(false) ?>
-                    <?php } ?>
-                </div>
+
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'comment')->textarea() ?>
                 </div>
@@ -95,7 +96,10 @@ $session = Yii::$app->session;
                                 <th>Զեղչված գին</th>
                                 <th>Ընդհանուր գումար</th>
                                 <th>Ընդհանուր զեղչված գումար</th>
-                                <th>Գործողություն</th>
+                                <?php if ($session['role_id'] != 4){ ?>
+                                    <th>Գործողություն</th>
+                                <?php } ?>
+
                             </tr>
                             </thead>
                             <tbody class="table-border-bottom-0 old_tbody">
@@ -150,9 +154,11 @@ $session = Yii::$app->session;
                                         </td>
                                         <td>
                                         <?php if ($oldattributes['is_exit'] == 0){?>
+                                            <?php if ($session['role_id'] != 4){ ?>
                                             <button type="button" data-orders="<?=$item['id']?>" class="btn rounded-pill btn-outline-info changeCount" data-bs-toggle="modal" data-bs-target="#modalCenter">
                                                 Փոփոխել
                                             </button>
+                                            <?php } ?>
                                         <?php } ?>
                                             <div class="modal fade" id="modalCenter" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -175,7 +181,10 @@ $session = Yii::$app->session;
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsFromDB">Ջնջել</button>
+                                            <?php if ($session['role_id'] != 4){ ?>
+                                                <button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsFromDB">Ջնջել</button>
+                                            <?php } ?>
+
                                         </td>
                                     </tr>
                                <?php }?>
@@ -186,9 +195,7 @@ $session = Yii::$app->session;
                 <!-- Button trigger modal -->
                 <?php
                 if ($model->is_exit == 1){?>
-                    <?php if ($session['role_id'] == 4){ ?>
-                        <button type="button" class="btn rounded-pill btn-secondary addOrders addOrders_get_warh_id_update" data-bs-toggle="modal" data-bs-target="#largeModal">Ավելացնել ապրանք</button>
-                    <?php } else {?>
+                    <?php if ($session['role_id'] != 4){ ?>
                         <button type="button" class="btn rounded-pill btn-secondary addOrders addOrders_get_warh_id_update" data-bs-toggle="modal" data-bs-target="#largeModal">Ավելացնել ապրանք</button>
                     <?php } ?>
                 <?php }?>
@@ -281,7 +288,10 @@ $session = Yii::$app->session;
                 </div>
             </div>
             <div class="card-footer">
-                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
+                <?php if ($session['role_id'] != 4){ ?>
+                    <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
+                <?php } ?>
+
             </div>
             <?php ActiveForm::end(); ?>
         </div>
@@ -295,6 +305,19 @@ $session = Yii::$app->session;
                     <span class="non-active">Վաճառք</span>
                 </div>
                 <div class="clientSelectSingle">
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                        <?php
+                        if ($session['role_id'] == 1){
+                            ?>
+                            <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                            <?php
+                        }elseif($session['role_id'] == 2){
+                            ?>
+                            <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
+                            <?php
+                        }
+                        ?>
+                    </div>
                     <label for="singleClients">Հաճախորդ</label>
                     <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
                         <option  value=""></option>
@@ -312,19 +335,7 @@ $session = Yii::$app->session;
                         <?php } ?>
                     </select>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?php
-                    if ($session['role_id'] == 1){
-                        ?>
-                        <?= $form->field($model, 'user_id')->dropDownList($users) ?>
-                        <?php
-                    }elseif($session['role_id'] == 2){
-                        ?>
-                        <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
-                        <?php
-                    }
-                    ?>
-                </div>
+
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'comment')->textarea() ?>
                 </div>
