@@ -22,6 +22,7 @@ $session = Yii::$app->session;
 $have_access_create = Users::checkPremission(37);
 $have_access_update = Users::checkPremission(38);
 $have_access_delete = Users::checkPremission(39);
+$have_access_available = Users::checkPremission(56);
 $have_access_confirm_return = Users::checkPremission(75);
 $have_access_custom_field = Users::checkPremission(71);
 //$have_access_confirm_return = Users::checkPremission(75);
@@ -37,12 +38,21 @@ if($have_access_confirm_return){
 if($have_access_update){
     $access_buttons .='{update}';
 }
-
+if($have_access_available){
+    $access_buttons .='{reports}';
+}
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => $access_buttons,
         'buttons' =>[
+            'reports'=>function ($url, $model, $key) {
+                return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
+                    'title' => Yii::t('yii', 'Հաշվետվություն'),
+                    'class' => 'reportsOrders',
+                    'target' => '_blank',
+                ]);
+            },
             'delivered'=>function ($url, $model, $key) {
                 return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132; padding:0px 2px" ></i>', $url, [
                     'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
@@ -58,7 +68,8 @@ if($have_access_update){
     ];
 ?>
 
-<?php  if (!isset($page_value)){ ?>
+<?php  if (!isset($page_value)){
+    if(!isset($data_size)){ ?>
     <?= CustomGridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],
@@ -66,10 +77,10 @@ if($have_access_update){
             'query' => $dataProvider->query->andWhere(['status' => '1']),
         ]),
         'columns' => [
-//            ['class' => 'yii\grid\SerialColumn'],
+            ['class' => 'yii\grid\SerialColumn'],
             ...$action_column,
             [
-                'attribute' => 'Օգտատեր',
+                'attribute' => 'Փաստաթղթի տեսակ',
                 'value' => function ($model) {
                     if ($model->document_type == 1) {
                         return 'Մուտքի';
@@ -140,7 +151,96 @@ if($have_access_update){
             ],
         ],
     ]); ?>
-<?php } else { ?>
+    <?php }
+    else{
+        $dataProvider->pagination = false; ?>
+        <?= CustomGridView::widget([
+            'tableOptions' => [
+                'class'=>'table chatgbti_',
+            ],
+            'options' => [
+                'class' => 'summary deletesummary'
+            ],
+            'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
+            'summaryOptions' => ['class' => 'summary'],
+            'dataProvider' => $dataProvider,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                [
+                    'attribute' => 'Փաստաթղթի տեսակ',
+                    'value' => function ($model) {
+                        if ($model->document_type == 1) {
+                            return 'Մուտքի';
+                        } elseif($model->document_type == 2) {
+                            return 'Ելքի';
+                        } elseif($model->document_type == 3) {
+                            return 'Տեղափոխություն';
+                        } elseif($model->document_type == 4) {
+                            return 'Խոտան';
+                        } elseif($model->document_type == 6) {
+                            return 'Վերադարձրած';
+                        } elseif($model->document_type == 7) {
+                            return 'Մերժված';
+                        } elseif($model->document_type == 8){
+                            return 'Մուտք(վերադարցրած)';
+                        }
+                    }
+                ],
+                [
+                    'attribute' => 'Օգտատեր',
+                    'value' => function ($model) {
+                        if ($model->usersName) {
+                            return $model->usersName->name;
+                        } else {
+                            return 'Դատարկ';
+                        }
+                    }
+                ],
+                [
+                    'attribute' => 'Պահեստ',
+                    'value' => function ($model) {
+                        if ($model->warehouseName) {
+                            return $model->warehouseName->name;
+                        } else {
+                            return 'Դատարկ';
+                        }
+                    }
+                ],
+                [
+                    'attribute' => 'Փոխարժեք',
+                    'value' => function ($model) {
+                        if ($model->rateName) {
+                            return $model->rateName->name;
+                        } else {
+                            return 'Դատարկ';
+                        }
+                    }
+                ],
+                [
+                    'attribute' => 'Մեկնաբանություն',
+                    'value' => function ($model) {
+                        if ($model->comment) {
+                            return $model->comment;
+                        } else {
+                            return 'Դատարկ';
+                        }
+                    }
+                ],
+                [
+                    'attribute' => 'Ստեցծման ժամանակ',
+                    'value' => function ($model) {
+                        if ($model->date) {
+                            return $model->date;
+                        } else {
+                            return 'Դատարկ';
+                        }
+                    }
+                ],
+            ],
+        ]); ?>
+    <?php }
+}
+else { ?>
     <div class="documents-index">
         <div class="titleAndPrev">
             <div class="titleAndConfig">
@@ -173,85 +273,172 @@ if($have_access_update){
             </div>
         </div>
         <div class="card pageStyle documentsCard">
-            <?= CustomGridView::widget([
-                'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
-                'summaryOptions' => ['class' => 'summary'],
-                'dataProvider' => new ActiveDataProvider([
-                    'query' => $dataProvider->query->andWhere(['status' => '1']),
-                ]),
-                'columns' => [
-//                    ['class' => 'yii\grid\SerialColumn'],
-                    ...$action_column,
-                    [
-                        'attribute' => 'Օգտատեր',
-                        'value' => function ($model) {
-                            if ($model->document_type == 1) {
-                                return 'Մուտքի';
-                            } elseif($model->document_type == 2) {
-                                return 'Ելքի';
-                            } elseif($model->document_type == 3) {
-                                return 'Տեղափոխություն';
-                            } elseif($model->document_type == 4) {
-                                return 'Խոտան';
-                            } elseif($model->document_type == 6) {
-                                return 'Վերադարձրած';
-                            } elseif($model->document_type == 7) {
-                                return 'Մերժված';
+            <?php if(!isset($data_size)){ ?>
+                <?= CustomGridView::widget([
+                    'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
+                    'summaryOptions' => ['class' => 'summary'],
+                    'dataProvider' => new ActiveDataProvider([
+                        'query' => $dataProvider->query->andWhere(['status' => '1']),
+                    ]),
+                    'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
+                        ...$action_column,
+                        [
+                            'attribute' => 'Փաստաթղթի տեսակ',
+                            'value' => function ($model) {
+                                if ($model->document_type == 1) {
+                                    return 'Մուտքի';
+                                } elseif($model->document_type == 2) {
+                                    return 'Ելքի';
+                                } elseif($model->document_type == 3) {
+                                    return 'Տեղափոխություն';
+                                } elseif($model->document_type == 4) {
+                                    return 'Խոտան';
+                                } elseif($model->document_type == 6) {
+                                    return 'Վերադարձրած';
+                                } elseif($model->document_type == 7) {
+                                    return 'Մերժված';
+                                }
                             }
-                        }
-                    ],
-                    [
-                        'attribute' => 'Օգտատեր',
-                        'value' => function ($model) {
-                            if ($model->usersName) {
-                                return $model->usersName->name;
-                            } else {
-                                return 'Դատարկ';
+                        ],
+                        [
+                            'attribute' => 'Օգտատեր',
+                            'value' => function ($model) {
+                                if ($model->usersName) {
+                                    return $model->usersName->name;
+                                } else {
+                                    return 'Դատարկ';
+                                }
                             }
-                        }
-                    ],
-                    [
-                        'attribute' => 'Պահեստ',
-                        'value' => function ($model) {
-                            if ($model->warehouseName) {
-                                return $model->warehouseName->name;
-                            } else {
-                                return 'Դատարկ';
+                        ],
+                        [
+                            'attribute' => 'Պահեստ',
+                            'value' => function ($model) {
+                                if ($model->warehouseName) {
+                                    return $model->warehouseName->name;
+                                } else {
+                                    return 'Դատարկ';
+                                }
                             }
-                        }
-                    ],
-                    [
-                        'attribute' => 'Փոխարժեք',
-                        'value' => function ($model) {
-                            if ($model->rateName) {
-                                return $model->rateName->name;
-                            } else {
-                                return 'Դատարկ';
+                        ],
+                        [
+                            'attribute' => 'Փոխարժեք',
+                            'value' => function ($model) {
+                                if ($model->rateName) {
+                                    return $model->rateName->name;
+                                } else {
+                                    return 'Դատարկ';
+                                }
                             }
-                        }
-                    ],
-                    [
-                        'attribute' => 'Մեկնաբանություն',
-                        'value' => function ($model) {
-                            if ($model->comment) {
-                                return $model->comment;
-                            } else {
-                                return 'Դատարկ';
+                        ],
+                        [
+                            'attribute' => 'Մեկնաբանություն',
+                            'value' => function ($model) {
+                                if ($model->comment) {
+                                    return $model->comment;
+                                } else {
+                                    return 'Դատարկ';
+                                }
                             }
-                        }
-                    ],
-                    [
-                        'attribute' => 'Ստեցծման ժամանակ',
-                        'value' => function ($model) {
-                            if ($model->date) {
-                                return $model->date;
-                            } else {
-                                return 'Դատարկ';
+                        ],
+                        [
+                            'attribute' => 'Ստեցծման ժամանակ',
+                            'value' => function ($model) {
+                                if ($model->date) {
+                                    return $model->date;
+                                } else {
+                                    return 'Դատարկ';
+                                }
                             }
-                        }
+                        ],
                     ],
-                ],
-            ]); ?>
+                ]); ?>
+            <?php }
+            else{ ?>
+                <?php $dataProvider->pagination = false; ?>
+                <?= CustomGridView::widget([
+                    'tableOptions' => [
+                        'class'=>'table chatgbti_',
+                    ],
+                    'options' => [
+                        'class' => 'summary deletesummary'
+                    ],
+                    'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
+                    'summaryOptions' => ['class' => 'summary'],
+                    'dataProvider' => $dataProvider,
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
+                        [
+                            'attribute' => 'Փաստաթղթի տեսակ',
+                            'value' => function ($model) {
+                                if ($model->document_type == 1) {
+                                    return 'Մուտքի';
+                                } elseif($model->document_type == 2) {
+                                    return 'Ելքի';
+                                } elseif($model->document_type == 3) {
+                                    return 'Տեղափոխություն';
+                                } elseif($model->document_type == 4) {
+                                    return 'Խոտան';
+                                } elseif($model->document_type == 6) {
+                                    return 'Վերադարձրած';
+                                } elseif($model->document_type == 7) {
+                                    return 'Մերժված';
+                                }
+                            }
+                        ],
+                        [
+                            'attribute' => 'Օգտատեր',
+                            'value' => function ($model) {
+                                if ($model->usersName) {
+                                    return $model->usersName->name;
+                                } else {
+                                    return 'Դատարկ';
+                                }
+                            }
+                        ],
+                        [
+                            'attribute' => 'Պահեստ',
+                            'value' => function ($model) {
+                                if ($model->warehouseName) {
+                                    return $model->warehouseName->name;
+                                } else {
+                                    return 'Դատարկ';
+                                }
+                            }
+                        ],
+                        [
+                            'attribute' => 'Փոխարժեք',
+                            'value' => function ($model) {
+                                if ($model->rateName) {
+                                    return $model->rateName->name;
+                                } else {
+                                    return 'Դատարկ';
+                                }
+                            }
+                        ],
+                        [
+                            'attribute' => 'Մեկնաբանություն',
+                            'value' => function ($model) {
+                                if ($model->comment) {
+                                    return $model->comment;
+                                } else {
+                                    return 'Դատարկ';
+                                }
+                            }
+                        ],
+                        [
+                            'attribute' => 'Ստեցծման ժամանակ',
+                            'value' => function ($model) {
+                                if ($model->date) {
+                                    return $model->date;
+                                } else {
+                                    return 'Դատարկ';
+                                }
+                            }
+                        ],
+                    ],
+                ]); ?>
+            <?php } ?>
         </div>
     </div>
 <?php } ?>

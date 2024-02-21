@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Clients;
 use app\models\DocumentItems;
 use app\models\Documents;
 use app\models\DocumentsSearch;
@@ -139,7 +140,6 @@ class DocumentsController extends Controller
             ->asArray()
             ->one();
         if ($this->request->isPost) {
-        echo "<pre>";
             $post = $this->request->post();
             date_default_timezone_set('Asia/Yerevan');
             $model->user_id = $post['Documents']['user_id'];
@@ -1488,5 +1488,88 @@ class DocumentsController extends Controller
             }
         }
     }
+
+    public function actionPrintDoc($id){
+        $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')
+            ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
+            ->where(['document_items.document_id' => $id])
+            ->andWhere(['document_items.status' => '1'])
+            ->asArray()->all();
+        return $this->renderAjax('get-update-trs', [
+            'document_items' => $document_items,
+        ]);
+    }
+
+    public  function actionFilterStatus(){
+        if ($_GET){
+            $page_value = null;
+            if(isset($_GET["page"]))
+                $page_value = intval($_GET["page"]);
+            $searchModel = new DocumentsSearch();
+            $dataProvider = $searchModel->search($this->request->queryParams);
+            $sub_page = [];
+            $date_tab = [];
+            $render_array = [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+                'sub_page' => $sub_page,
+                'date_tab' => $date_tab,
+                'page_value' => $page_value,
+            ];
+            if(Yii::$app->request->isAjax){
+                if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
+                    $this->layout = 'index.php';
+                    $render_array['data_size'] = 'max';
+                    return $this->renderAjax('widget', $render_array);
+                } else {
+                    return $this->renderAjax('widget', $render_array);
+                }
+
+            }else{
+                if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {
+                    $this->layout = 'index.php';
+                    $render_array['data_size'] = 'max';
+                    return $this->render('widget', $render_array);
+                } else {
+                    return $this->render('widget', $render_array);
+                }
+            }
+        }
+    }
+
+    public function actionReports($id){
+        $have_access = Users::checkPremission(22);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+        $model = $this->findModel($id);
+        $sub_page = [];
+        $date_tab = [];
+
+//        $clients = Clients::find()->select('id, name')->asArray()->all();
+//        $clients = ArrayHelper::map($clients,'id','name');
+        $users = Users::find()->select('id, name')->asArray()->all();
+        $users = ArrayHelper::map($users,'id','name');
+        $warehouse = Warehouse::find()->select('id,name')->asArray()->all();
+        $warehouse = ArrayHelper::map($warehouse,'id','name');
+        $rate = Rates::find()->select('id,name')->asArray()->all();
+        $rate = ArrayHelper::map($rate,'id','name');
+        $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')
+            ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
+            ->where(['document_items.document_id' => $id])
+            ->andWhere(['document_items.status' => '1'])
+            ->asArray()
+            ->all();
+        return $this->renderAjax('report', [
+            'document_items' => $document_items,
+            'model' => $model,
+            'users' => $users,
+            'warehouse' => $warehouse,
+            'rate' => $rate,
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+        ]);
+    }
+
 
 }
