@@ -18,12 +18,12 @@
                 <tr class="documentsTableTr">
                     <td>
                         <span><?=$keys + 1?></span>
-                        <input class="nom_id" data-id="<?=$nomenclature['id']?>" type="hidden">
+                        <input class="nom_id" data-id="<?=$nomenclature['nomenclature_id']?>" type="hidden">
                     </td>
                     <td class="imageNom"><img src="/upload/<?=$nomenclature['image']?>"></td>
                     <td class="documentsName"><?=$nomenclature['name']?></td>
                     <td class="documentsCount">
-                        <input type="number" class="form-control documentsCountInput" value="<?= $id_count[$nomenclature['id']] ?? '' ?>">
+                        <input type="number" class="form-control documentsCountInput" value="<?= $id_count[$nomenclature['nomenclature_id']] ?? '' ?>">
                         <input class="documentsPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
                     </td>
                 </tr>

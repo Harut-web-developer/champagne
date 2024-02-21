@@ -31,16 +31,16 @@ if(isset($action__)){
                 <div class="card-body formDesign">
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 nomenclatureImage">
                         <?= $form->field($model, 'image')->fileInput() ?>
-                        <img src="/upload/<?= $model->image ?>" alt="">
+                        <img style="width:50px" src="/upload/<?= $model->image ?>" alt="">
                     </div>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 nomenclatureName">
                         <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => true]) ?>
                     </div>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 nomenclaturePrice">
-                        <?= $form->field($model, 'cost')->input('number',['required' => true]) ?>
+                        <?= $form->field($model, 'cost')->input('text',['required' => true]) ?>
                     </div>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 nomenclaturePrice">
-                        <?= $form->field($model, 'price')->input('number',['required' => true]) ?>
+                        <?= $form->field($model, 'price')->input('text',['required' => true]) ?>
                     </div>
                 </div>
                 <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>2])->all(); ?>

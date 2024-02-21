@@ -984,6 +984,26 @@ $(document).ready(function() {
     $('body').on('click','.refuseDocument',function(){
         refuseDocument($(this));
     })
+    $('body').on('keyup','#nomenclature-cost', function () {
+        let inputValue = $(this).val();
+        let sanitizedValue = inputValue.replace(/[^0-9.]/g, '');
+        let parts = sanitizedValue.split('.');
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/\./g, '');
+            sanitizedValue = parts[0] + '.' + parts[1];
+        }
+        $(this).val(sanitizedValue);
+    })
+    $('body').on('keyup','#nomenclature-price', function () {
+        let inputValue = $(this).val();
+        let sanitizedValue = inputValue.replace(/[^0-9.]/g, '');
+        let parts = sanitizedValue.split('.');
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/\./g, '');
+            sanitizedValue = parts[0] + '.' + parts[1];
+        }
+        $(this).val(sanitizedValue);
+    })
     function refuseDocument(el) {
         let docId = el.data('id');
         let csrfToken = $('meta[name="csrf-token"]').attr("content");

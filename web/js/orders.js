@@ -1619,7 +1619,7 @@ $(document).ready(function () {
             },
             success:function (data){
                 if (data){
-                    alert('Փոփոխոիթյունը կատարվել է հաջողությամբ։');
+                    alert('Փոփոխությունը կատարվել է հաջողությամբ։');
                     location.reload();
                 }
             }

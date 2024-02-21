@@ -172,6 +172,9 @@ $session = Yii::$app->session;
                                     if ($model->document_type == '7'){?>
                                         <td class="count"><input type="number" name="count_[]" disabled value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="any"></td>
                                         <td class="price"><input type="number" name="price[]" disabled value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>
+                                    <?php }else if ($model->document_type == '1'){?>
+                                        <td class="count"><input type="number" name="count_[]" value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="1"></td>
+                                        <td class="price"><input type="number" name="price[]"  value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>
                                     <?php }else{?>
                                         <td class="count"><input type="number" name="count_[]" readonly value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="1"></td>
                                         <td class="price"><input type="number" name="price[]" readonly value="<?=$document_item['price']?>" class="form-control PriceDocuments"></td>

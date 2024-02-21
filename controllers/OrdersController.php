@@ -786,15 +786,6 @@ class OrdersController extends Controller
 
 
                 }
-
-//                exit();
-//                $document_exit = Documents::findOne(['orders_id' => $orders->id,'document_type' => 2]);
-//                $document_exit->status = '0';
-//                $document_exit->save(false);
-
-//                        $delete_document_items_exit = DocumentItems::findOne(['document_id' => $document_exit->id, 'nomenclature_id' => $item->nom_id_for_name,]);
-//                        $delete_document_items_exit->status = '0';
-//                        $delete_document_items_exit->save(false);
         }
         Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
@@ -888,7 +879,7 @@ class OrdersController extends Controller
             ->where(['orders.id' => $id])
             ->asArray()
             ->one();
-        $text = $user_name['name'] . '(ը) հաստատել է ' . $client_name['name'] . '(ի) պատվեի առաքումը։';
+        $text = $user_name['name'] . '(ը/ն) հաստատել է ' . $client_name['name'] . '(ի) պատվեի առաքումը։';
         Notifications::createNotifications('Հաստատել պատվեր', $text,'ordersdelivered');
         return $this->redirect(['index']);
     }

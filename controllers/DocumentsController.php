@@ -596,7 +596,7 @@ class DocumentsController extends Controller
         $document_type = $_POST['documents_type'];
         $query = Nomenclature::find();
         $countQuery = clone $query;
-        $nomenclatures = $query->select('*')
+        $nomenclatures = $query->select('nomenclature.id as nomenclature_id,nomenclature.name,nomenclature.image,nomenclature.cost,nomenclature.price')
             ->where(['status' => '1'])
             ->groupBy('nomenclature.id');
         if ($search_name){
@@ -620,7 +620,6 @@ class DocumentsController extends Controller
                 ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
                 ->groupBy('products.nomenclature_id')
                 ->having(['!=', 'SUM(count_balance)', 0]);
-
             if ($search_name){
                 $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
                     ->offset(0);
@@ -632,6 +631,9 @@ class DocumentsController extends Controller
             $nomenclatures = $nomenclatures
                 ->asArray()
                 ->all();
+//            echo "<pre>";
+//            var_dump($nomenclatures);
+//            exit();
         }
         $id_count = $_POST['id_count'] ?? [];
         return $this->renderAjax('get-nom', [
@@ -659,11 +661,13 @@ class DocumentsController extends Controller
             ->where(['document_items.document_id' => $urlId])
             ->asArray()->all();
         $query = Nomenclature::find();
-        $nomenclatures = $query->select('*')
-//            ->where(['not in','id' , array_column($document_items,'nomenclature_id')])
-            ->andWhere(['status' => '1'])
+        $nomenclatures = $query->select('*');
+            if ($document_type == 'Մուտք'){
+                $nomenclatures = $nomenclatures->where(['not in','id' , array_column($document_items,'nomenclature_id')]);
+            }
+        $nomenclatures = $nomenclatures->andWhere(['status' => '1'])
             ->groupBy('nomenclature.id');
-        $total = $query->count();
+        $total = $nomenclatures->count();
         if ($search_name){
             $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
                 ->offset(0);
@@ -713,7 +717,7 @@ class DocumentsController extends Controller
         $model = $this->findModel($id);
         $sub_page = [];
         $date_tab = [];
-
+        $model_new = [];
         $url = Url::to('', 'http');
         $oldattributes = Documents::find()
             ->select('*')
@@ -728,6 +732,8 @@ class DocumentsController extends Controller
         if ($this->request->isPost) {
             echo "<pre>";
             $post = $this->request->post();
+//            var_dump($post);
+//            exit();
             date_default_timezone_set('Asia/Yerevan');
             $model->user_id = $post['Documents']['user_id'];
             $model->warehouse_id = $post['Documents']['warehouse_id'];
@@ -745,105 +751,38 @@ class DocumentsController extends Controller
             foreach ($items as $j => $item){
                 if ($post['count_'][$j]) {
                     if ($item != 'null') {
-//                        $document_items_update = DocumentItems::findOne(intval($item));
-//                        $document_items_update->document_id = $id;
-//                        $document_items_update->nomenclature_id = $post['items'][$j];
-//                        $document_items_update->count = intval($post['count_'][$j]);
-//                        $document_items_update->price = floatval($post['price'][$j]);
-//                        $document_items_update->price_with_aah = floatval($post['pricewithaah'][$j]);
-//                        $document_items_update->AAH = $post['aah'];
-//                        $document_items_update->updated_at = date('Y-m-d H:i:s');
-//                        $document_items_update->save();
-//                        if ($post['Documents']['document_type'] === 'Մուտք') {
-//                            $product_write_in = Products::find()->select('products.*')
-//                                ->where(['and', ['document_id' => $model->id, 'type' => 1, 'nomenclature_id' => $post['items'][$j]]])->one();
-//                            $product_write_in->warehouse_id = $post['Documents']['warehouse_id'];
-//                            $product_write_in->nomenclature_id = $post['items'][$j];
-//                            $product_write_in->document_id = $model->id;
-//                            $product_write_in->type = 1;
-//                            $product_write_in->count = intval($post['count_'][$j]);
-//                            if ($post['aah'] == 'true') {
-//                                $product_write_in->price = floatval($post['pricewithaah'][$j]);
-//                                $product_write_in->AAH = 1;
-//                            } else {
-//                                $product_write_in->price = floatval($post['price'][$j]);
-//                                $product_write_in->AAH = 0;
-//                            }
-//                            $product_write_in->updated_at = date('Y-m-d H:i:s');
-//                            $product_write_in->save(false);
-//                        }
-//                        if ($post['Documents']['document_type'] === 'Ելք') {
-//                            $product_write_out = Products::find()->select('products.*')
-//                                ->where(['and', ['document_id' => $model->id, 'type' => 5, 'nomenclature_id' => $post['items'][$j]]])->one();
-//                            $product_write_out->warehouse_id = $post['Documents']['warehouse_id'];
-//                            $product_write_out->nomenclature_id = $post['items'][$j];
-//                            $product_write_out->document_id = $model->id;
-//                            $product_write_out->type = 5;
-//                            $product_write_out->count = -intval($post['count_'][$j]);
-//                            if ($post['aah'] == 'true') {
-//                                $product_write_out->price = floatval($post['pricewithaah'][$j]);
-//                                $product_write_out->AAH = 1;
-//                            } else {
-//                                $product_write_out->price = floatval($post['price'][$j]);
-//                                $product_write_out->AAH = 0;
-//                            }
-//                            $product_write_out->updated_at = date('Y-m-d H:i:s');
-//                            $product_write_out->save(false);
-//                        }
-//                        if ($post['Documents']['document_type'] === 'Տեղափոխություն') {
-//                            $product_write_out = Products::find()->select('products.*')
-//                                ->where(['and', ['warehouse_id' => $post['Documents']['warehouse_id'], 'document_id' => $model->id, 'type' => 3, 'nomenclature_id' => $post['items'][$j]]])->one();
-//                            $product_write_out->warehouse_id = $post['Documents']['warehouse_id'];
-//                            $product_write_out->nomenclature_id = $post['items'][$j];
-//                            $product_write_out->document_id = $model->id;
-//                            $product_write_out->type = 3;
-//                            $product_write_out->count = -intval($post['count_'][$j]);
-//                            if ($post['aah'] == 'true') {
-//                                $product_write_out->price = floatval($post['pricewithaah'][$j]);
-//                                $product_write_out->AAH = 1;
-//                            } else {
-//                                $product_write_out->price = floatval($post['price'][$j]);
-//                                $product_write_out->AAH = 0;
-//                            }
-//                            $product_write_out->updated_at = date('Y-m-d H:i:s');
-//                            $product_write_out->save(false);
-//
-//                            $product_write_in = Products::find()->select('products.*')
-//                                ->where(['and', ['warehouse_id' => $post['Documents']['to_warehouse'], 'document_id' => $model->id, 'type' => 3, 'nomenclature_id' => $post['items'][$j]]])->one();
-//                            $product_write_in->warehouse_id = $post['Documents']['to_warehouse'];
-//                            $product_write_in->nomenclature_id = $post['items'][$j];
-//                            $product_write_in->document_id = $model->id;
-//                            $product_write_in->type = 3;
-//                            $product_write_in->count = intval($post['count_'][$j]);
-//                            if ($post['aah'] == 'true') {
-//                                $product_write_in->price = floatval($post['pricewithaah'][$j]);
-//                                $product_write_in->AAH = 1;
-//                            } else {
-//                                $product_write_in->price = floatval($post['price'][$j]);
-//                                $product_write_in->AAH = 0;
-//                            }
-//                            $product_write_in->updated_at = date('Y-m-d H:i:s');
-//                            $product_write_in->save(false);
-//                        }
-//                        if ($post['Documents']['document_type'] === 'Խոտան') {
-//                            $product_write_out = Products::find()->select('products.*')
-//                                ->where(['and', ['document_id' => $model->id, 'type' => 4, 'nomenclature_id' => $post['items'][$j]]])->one();
-//                            $product_write_out->warehouse_id = $post['Documents']['warehouse_id'];
-//                            $product_write_out->nomenclature_id = $post['items'][$j];
-//                            $product_write_out->document_id = $model->id;
-//                            $product_write_out->type = 4;
-//                            $product_write_out->count = -intval($post['count_'][$j]);
-//                            if ($post['aah'] == 'true') {
-//                                $product_write_out->price = floatval($post['pricewithaah'][$j]);
-//                                $product_write_out->AAH = 1;
-//                            } else {
-//                                $product_write_out->price = floatval($post['price'][$j]);
-//                                $product_write_out->AAH = 0;
-//                            }
-//                            $product_write_out->updated_at = date('Y-m-d H:i:s');
-//                            $product_write_out->save(false);
-//                        }
+                        if ($post['Documents']['document_type'] === 'Մուտք') {
+                            $products = Products::find()->select('products.*')
+                                ->where(['and', ['document_id' => $model->id, 'type' => 1, 'nomenclature_id' => $post['items'][$j]]])->one();
+                            $products->warehouse_id = $post['Documents']['warehouse_id'];
+                            $products->nomenclature_id = $post['items'][$j];
+                            $products->document_id = $model->id;
+                            $products->type = 1;
+                            $products->count = intval($post['count_'][$j]);
+                            $products->count_balance = intval($post['count_'][$j]);
+                            if ($post['aah'] == 'true') {
+                                $products->price = floatval($post['pricewithaah'][$j]);
+                                $products->AAH = 1;
+                            } else {
+                                $products->price = floatval($post['price'][$j]);
+                                $products->AAH = 0;
+                            }
+                            $products->created_at = date('Y-m-d H:i:s');
+                            $products->updated_at = date('Y-m-d H:i:s');
+                            $products->save(false);
 
+                            $document_items_update = DocumentItems::findOne(intval($item));
+                            $document_items_update->document_id = $id;
+                            $document_items_update->nomenclature_id = $post['items'][$j];
+                            $document_items_update->count = intval($post['count_'][$j]);
+                            $document_items_update->price = floatval($post['price'][$j]);
+                            $document_items_update->refuse_product_id = $products->id;
+                            $document_items_update->price_with_aah = floatval($post['pricewithaah'][$j]);
+                            $document_items_update->AAH = $post['aah'];
+                            $document_items_update->created_at = date('Y-m-d H:i:s');
+                            $document_items_update->updated_at = date('Y-m-d H:i:s');
+                            $document_items_update->save();
+                        }
                     } else {
 
 
@@ -877,6 +816,13 @@ class DocumentsController extends Controller
                             $document_items_update->created_at = date('Y-m-d H:i:s');
                             $document_items_update->updated_at = date('Y-m-d H:i:s');
                             $document_items_update->save();
+
+                            foreach ($document_items_update as $name => $value) {
+                                $model_new[$name] = $value;
+                            }
+                            foreach ($model as $name => $value) {
+                                $model_new[$name] = $value;
+                            }
                         }
                         if ($post['Documents']['document_type'] === 'Ելք') {
                             $first_product = Products::find()
@@ -923,6 +869,12 @@ class DocumentsController extends Controller
                                     $document_items_update->created_at = date('Y-m-d H:i:s');
                                     $document_items_update->updated_at = date('Y-m-d H:i:s');
                                     $document_items_update->save();
+                                    foreach ($document_items_update as $name => $value) {
+                                        $model_new[$name] = $value;
+                                    }
+                                    foreach ($model as $name => $value) {
+                                        $model_new[$name] = $value;
+                                    }
                                     break;
                                 }else{
                                     $products = new Products();
@@ -958,6 +910,12 @@ class DocumentsController extends Controller
                                     $document_items_update->created_at = date('Y-m-d H:i:s');
                                     $document_items_update->updated_at = date('Y-m-d H:i:s');
                                     $document_items_update->save();
+                                    foreach ($document_items_update as $name => $value) {
+                                        $model_new[$name] = $value;
+                                    }
+                                    foreach ($model as $name => $value) {
+                                        $model_new[$name] = $value;
+                                    }
                                 }
                             }
                         }
@@ -1023,6 +981,12 @@ class DocumentsController extends Controller
                                     $document_items_update->created_at = date('Y-m-d H:i:s');
                                     $document_items_update->updated_at = date('Y-m-d H:i:s');
                                     $document_items_update->save();
+                                    foreach ($document_items_update as $name => $value) {
+                                        $model_new[$name] = $value;
+                                    }
+                                    foreach ($model as $name => $value) {
+                                        $model_new[$name] = $value;
+                                    }
                                     break;
                                 }else{
                                     $products = new Products();
@@ -1077,6 +1041,12 @@ class DocumentsController extends Controller
                                     $document_items_update->created_at = date('Y-m-d H:i:s');
                                     $document_items_update->updated_at = date('Y-m-d H:i:s');
                                     $document_items_update->save();
+                                    foreach ($document_items_update as $name => $value) {
+                                        $model_new[$name] = $value;
+                                    }
+                                    foreach ($model as $name => $value) {
+                                        $model_new[$name] = $value;
+                                    }
                                 }
                             }
                         }
@@ -1123,6 +1093,12 @@ class DocumentsController extends Controller
                                     $document_items_update->created_at = date('Y-m-d H:i:s');
                                     $document_items_update->updated_at = date('Y-m-d H:i:s');
                                     $document_items_update->save();
+                                    foreach ($document_items_update as $name => $value) {
+                                        $model_new[$name] = $value;
+                                    }
+                                    foreach ($model as $name => $value) {
+                                        $model_new[$name] = $value;
+                                    }
                                     break;
                                 }else{
                                     $products = new Products();
@@ -1158,22 +1134,19 @@ class DocumentsController extends Controller
                                     $document_items_update->created_at = date('Y-m-d H:i:s');
                                     $document_items_update->updated_at = date('Y-m-d H:i:s');
                                     $document_items_update->save();
+                                    foreach ($document_items_update as $name => $value) {
+                                        $model_new[$name] = $value;
+                                    }
+                                    foreach ($model as $name => $value) {
+                                        $model_new[$name] = $value;
+                                    }
                                 }
                             }
                         }
-                        //                    $document_items_update = new DocumentItems();
-                        //                    $document_items_update->document_id = $id;
-                        //                    $document_items_update->save();
                     }
                 }
             }
-            $model_new = [];
-            foreach ($document_items_update as $name => $value) {
-                $model_new[$name] = $value;
-            }
-            foreach ($model as $name => $value) {
-                $model_new[$name] = $value;
-            }
+
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }

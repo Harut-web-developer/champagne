@@ -46,7 +46,7 @@ $(document).ready(function () {
                                         <input class="itemsId" type="hidden" name="items[]" value="` + id  + `">
                                      </td>
                                      <td class="name">` + name + `</td>
-                                     <td class="count"><input type="number" readonly name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
+                                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                                      <td class="pricewithaah">
                                         <span>`+priceWithaah+`</span>
@@ -191,7 +191,6 @@ $(document).ready(function () {
                 datatype: 'json',
                 data: {
                     docItemsId: docItemsId,
-                    nomId:nomId,
                     docType:docType,
                     _csrf: csrfToken
                 },
@@ -299,7 +298,7 @@ $(document).ready(function () {
                         
                      </td>
                      <td class="name">` + name + `</td>
-                     <td class="count"><input type="number" readonly name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
+                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                      <td class="pricewithaah">
                         <span>`+priceWithaah+`</span>
@@ -374,7 +373,7 @@ $(document).ready(function () {
                         <input class="itemsId" type="hidden" name="items[]" value="` + id  + `">
                      </td>
                      <td class="name">` + name + `</td>
-                     <td class="count"><input type="number" readonly name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
+                     <td class="count"><input type="number" name="count_[]" value="` + count + `" class="form-control countDocuments" step="1" min="1" ></td>
                      <td class="price"><input type="text" name="price[]" value="` + price + `" class="form-control PriceDocuments"></td>
                      <td class="pricewithaah">
                          <span>`+priceWithaah+`</span>

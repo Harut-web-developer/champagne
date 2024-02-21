@@ -251,6 +251,7 @@ class ProductsController extends Controller
     public function actionGetProducts(){
         if ($this->request->isPost){
             $post = $this->request->post();
+
             $products_count = Products::find()->select('SUM(count_balance) as count')
                 ->where(['nomenclature_id' => intval($post['itemId'])])
                 ->andWhere(['warehouse_id' => $post['warehouse_id']])

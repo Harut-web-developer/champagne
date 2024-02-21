@@ -204,9 +204,12 @@ class DashboardController extends Controller
                     ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
                     ->asArray()
                     ->all();
+//                echo "<pre>";
+
                 if ($total_order[0]['total'] != null){
                     $chart_round_total = $total_order[0]['total'];
                 }
+
                 $chart_round_products = OrderItems::find()->select('SUM(order_items.price_by) as price,nomenclature.name')
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
@@ -215,6 +218,8 @@ class DashboardController extends Controller
                     ->groupBy('order_items.nom_id_for_name')
                     ->asArray()
                     ->all();
+//                var_dump($chart_round_products);
+
                 $round_chart_label = [];
                 $round_chart_percent = [];
                 if (!empty($chart_round_products)){
@@ -225,6 +230,7 @@ class DashboardController extends Controller
                 }else{
                     array_push($round_chart_percent,0);
                 }
+//                exit();
                     $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
                         ->leftJoin('clients', 'payments.client_id = clients.id')
                         ->where(['payments.status' => '1'])
