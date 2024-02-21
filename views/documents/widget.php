@@ -185,6 +185,8 @@ if($have_access_available){
                             return 'Մերժված';
                         } elseif($model->document_type == 8){
                             return 'Մուտք(վերադարցրած)';
+                        }elseif ($model->document_type == 9){
+                            return 'Պատվերից ելքագրված';
                         }
                     }
                 ],
