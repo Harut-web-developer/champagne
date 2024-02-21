@@ -10,7 +10,7 @@ $this->params['date_tab'] = $date_tab;
 
 <div id="events">
     <button type="button" onclick="printJS('print', 'html')">Print</button>
-    <button onclick="tableToExcel('w1','<?='888888'?>')">Export</button>
+    <button onclick="tableToExcel('w1','<?='documents'?>')">Export</button>
 </div>
 
 <?= $this->render('table', [
