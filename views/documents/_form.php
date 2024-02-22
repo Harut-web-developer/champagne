@@ -251,7 +251,7 @@ $session = Yii::$app->session;
                         ?>
                         <?= $form->field($model, 'warehouse_id')->hiddenInput(['value' => $storekeeper->warehouse_id])->label(false)?>
                     <?php }else{?>
-                        <?= $form->field($model, 'warehouse_id')->dropDownList(['' => 'Ընտրել պահեստը'] + $warehouse) ?>
+                        <?= $form->field($model, 'warehouse_id')->dropDownList(['null' => 'Ընտրել պահեստը'] + $warehouse) ?>
                     <?php }?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
@@ -262,13 +262,11 @@ $session = Yii::$app->session;
                 </div>
                     <?php
                     if($session['role_id'] == 1){?>
-                        <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                            <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                        <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName changeKeeper">
+
                         </div>
                     <?php }elseif ($session['role_id'] == 4){?>
-                        <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                            <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
-                        </div>
+                        <input name="user_id" type="hidden" value="<?=$session['user_id']?>">
                     <?php } ?>
 
                 <label class="rateLabel" for="rate">Փոխարժեք</label>

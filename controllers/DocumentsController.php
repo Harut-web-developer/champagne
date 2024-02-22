@@ -142,7 +142,7 @@ class DocumentsController extends Controller
         if ($this->request->isPost) {
             $post = $this->request->post();
             date_default_timezone_set('Asia/Yerevan');
-            $model->user_id = $post['Documents']['user_id'];
+            $model->user_id = $post['user_id'];
             $model->warehouse_id = $post['Documents']['warehouse_id'];
             if ($post['Documents']['document_type'] == '3'){
                 $model->to_warehouse = $post['Documents']['to_warehouse'];
@@ -503,13 +503,14 @@ class DocumentsController extends Controller
         } else {
             $model->loadDefaultValues();
         }
-        if ($session['role_id'] == 1){
-            $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['role_id' => '4'])->asArray()->all();
-            $users = ArrayHelper::map($users,'id','name');
-        }elseif($session['role_id'] == 4){
-            $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['id' => $session['user_id']])->asArray()->all();
-            $users = ArrayHelper::map($users,'id','name');
-        }
+
+//        if ($session['role_id'] == 1){
+//            $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['role_id' => '4'])->asArray()->all();
+//            $users = ArrayHelper::map($users,'id','name');
+//        }elseif($session['role_id'] == 4){
+//            $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['id' => $session['user_id']])->asArray()->all();
+//            $users = ArrayHelper::map($users,'id','name');
+//        }
         $warehouse = Warehouse::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
         $warehouse =  ArrayHelper::map($warehouse,'id','name');
         $rates = Rates::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
@@ -536,7 +537,7 @@ class DocumentsController extends Controller
         }
         return $this->render('create', [
             'model' => $model,
-            'users' => $users,
+//            'users' => $users,
             'warehouse' => $warehouse,
             'rates' => $rates,
             'nomenclatures' => $nomenclatures,
@@ -736,10 +737,7 @@ class DocumentsController extends Controller
             ->asArray()
             ->one();
         if ($this->request->isPost) {
-            echo "<pre>";
             $post = $this->request->post();
-//            var_dump($post);
-//            exit();
             date_default_timezone_set('Asia/Yerevan');
             $model->user_id = $post['Documents']['user_id'];
             $model->warehouse_id = $post['Documents']['warehouse_id'];
@@ -1158,7 +1156,7 @@ class DocumentsController extends Controller
         }
         $get_documents_id = Documents::findOne($id);
         if ($session['role_id'] == 1){
-            $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['role_id' => '4'])->asArray()->all();
+            $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['role_id' => '4'])->andWhere(['id' => $get_documents_id->user_id])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
         }elseif($session['role_id'] == 4){
             $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['id' => $session['user_id']])->asArray()->all();
@@ -1197,6 +1195,22 @@ class DocumentsController extends Controller
         ]);
     }
 
+    public function actionChangeStorekeeper(){
+        if($this->request->isGet){
+            $keeper = Users::findOne(['warehouse_id' => $this->request->get('warehouse_id')]);
+            if ($keeper != null){
+                $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['role_id' => '4'])->andWhere(['id' => $keeper->id])->asArray()->one();
+                return $this->renderAjax('users-input',[
+                    'users' => $users
+                ]);
+            }else{
+                $users = ['id' => null, 'name' => 'Դատարկ'];
+                return $this->renderAjax('users-input',[
+                    'users' => $users
+                ]);
+            }
+        }
+    }
     public function actionDelivered($id){
         $have_access = Users::checkPremission(75);
         if(!$have_access){
