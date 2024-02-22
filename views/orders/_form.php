@@ -31,8 +31,8 @@ $session = Yii::$app->session;
                     <?php } ?>
                 </div>
                 <div class="clientSelectSingle">
-                    <label for="singleClients">Հաճախորդ</label>
                     <?php if ($session['role_id'] == 4){ ?>
+                        <label class="label_clients" for="singleClients">Հաճախորդ</label>
                         <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
                             <?php foreach ($clients as $client){
                                 $isSelected = in_array($client['id'], $orders_clients);
@@ -41,6 +41,7 @@ $session = Yii::$app->session;
                             <?php } }?>
                         </select>
                     <?php } elseif ($session['role_id'] == 2){ ?>
+                        <label class="label_clients" for="singleClients">Հաճախորդ</label>
                         <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
                             <option  value=""></option>
                             <?php foreach ($clients as $client){
@@ -51,6 +52,7 @@ $session = Yii::$app->session;
                         </select>
                     <?php } elseif ($session['role_id'] == 1) {?>
                         <div class="clients_ajax_content">
+                            <label class="label_clients" for="singleClients">Հաճախորդ</label>
                             <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
                                 <option  value=""></option>
                                 <?php foreach ($clients as $client){
@@ -62,7 +64,7 @@ $session = Yii::$app->session;
                         </div>
                     <?php } ?>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12">
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouse_style">
                     <label for="warehouse">Պահեստներ</label>
                     <select class="form-select form-control warehouse_id " aria-label="Default select example" name="warehouse">
                         <?php foreach ($warehouse as $key => $value) {
@@ -317,8 +319,8 @@ $session = Yii::$app->session;
                             <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
                         <?php } ?>
                     </div>
-                    <label for="singleClients">Հաճախորդ</label>
                     <?php if ($session['role_id'] == 2){ ?>
+                        <label class="label_clients" for="singleClients">Հաճախորդ</label>
                         <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
                             <option  value=""></option>
                             <?php if (isset($clients)){
@@ -329,13 +331,14 @@ $session = Yii::$app->session;
                         </select>
                     <?php } elseif ($session['role_id'] == 1) {?>
                         <div class="clients_ajax_content">
+                            <label class="label_clients" for="singleClients">Հաճախորդ</label>
                             <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
 
                             </select>
                         </div>
                     <?php } ?>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12">
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouse_style">
                     <label for="warehouse">Պահեստներ</label>
                     <select class="form-select form-control warehouse_id" aria-label="Default select example" name="warehouse">
                         <?php foreach ($warehouse as $key => $value) { ?>

@@ -119,6 +119,9 @@
 .usersPassword{
     padding: 0px 10px;
 }
+.clients_ajax_content,.label_clients,.warehouse_style{
+    padding: 0px 10px;
+}
 .table > thead > tr > th{
     text-align: center ;
 }

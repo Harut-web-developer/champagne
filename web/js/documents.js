@@ -146,7 +146,6 @@ $(document).ready(function () {
     $('body').on('click', '.updateDocuments', function () {
         var documentsTableBody = '';
         let docType = $('body').find('#documents-document_type').val();
-        alert(docType)
         $('.documentsAddingTable tbody').html('')
         $('.documentsTableTr').each(function () {
             if ($(this).find(".documentsCountInput").val() != '') {
