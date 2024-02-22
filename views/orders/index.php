@@ -86,7 +86,7 @@ $action_column[] = [
                 <?php } ?>
             </p>
             <div class="filtersField" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
-                <select class="form-control byType">
+                <select class="form-control byType" style="margin: 0px 0px 10px 0px;">
                     <option value="order">Ըստ պատվերի</option>
                     <option value="product">Ըստ ապրանքի</option>
                 </select>
