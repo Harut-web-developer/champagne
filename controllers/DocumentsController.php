@@ -661,7 +661,7 @@ class DocumentsController extends Controller
             ->where(['document_items.document_id' => $urlId])
             ->asArray()->all();
         $query = Nomenclature::find();
-        $nomenclatures = $query->select('*');
+        $nomenclatures = $query->select('nomenclature.id as nomenclature_id,nomenclature.name,nomenclature.image,nomenclature.cost,nomenclature.price');
             if ($document_type == 'Մուտք'){
                 $nomenclatures = $nomenclatures->where(['not in','id' , array_column($document_items,'nomenclature_id')]);
             }

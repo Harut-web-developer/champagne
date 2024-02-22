@@ -1603,7 +1603,6 @@ $(document).ready(function () {
         let priceBy = $('body').find('#totalPriceModal').val();
         let priceBeforeDiscountBy = $('body').find('#totalBeforePriceModal').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
-        // console.log(itemsId,costBy,countBy,discountBy,priceBy,priceBeforeDiscountBy)
         $.ajax({
             url:'/orders/changing-items',
             method:'post',
@@ -1676,4 +1675,27 @@ $(document).ready(function () {
             $(this).find('td:first').find('span').text(++i);
         })
     }
+
+    $('body').on('change','#orders-user_id',function(){
+        console.log($('#orders-user_id').val() == '')
+        if($('#orders-user_id').val() != ''){
+            let user_id = $(this).val();
+            let csrfToken = $('meta[name="csrf-token"]').attr("content");
+            $.ajax({
+                url:'/orders/get-manager',
+                method:'get',
+                datatype:'html',
+                data:{
+                    user_id:user_id,
+                    _csrf:csrfToken
+                },
+                success:function (data){
+                    $('.clients_ajax_content').html(data);
+                }
+            })
+        }else if($('#orders-user_id').val() == ''){
+            // $('.clients_ajax_content').empty();
+        }
+    })
+
 })
