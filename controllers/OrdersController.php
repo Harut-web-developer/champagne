@@ -693,10 +693,10 @@ class OrdersController extends Controller
             ->where(['id' => 23])
             ->asArray()
             ->one();
-        echo "<pre>";
+//        echo "<pre>";
         $orders = Orders::findOne($id);
         $orders_items_refuse = OrderItems::findOne(['order_id' => $orders->id]);
-
+        $keeper = Users::findOne(['warehouse_id' => $orders_items_refuse->warehouse_id]);
         $order_items = OrderItems::find()->where(['order_id' => $orders->id])->andWhere(['status' => '1'])->all();
 
         if ($orders->is_exit == 1){
@@ -716,6 +716,7 @@ class OrdersController extends Controller
                 $orders->save(false);
 
                 $document = new Documents();
+                $document->user_id = $keeper->id;
                 $document->orders_id = $orders_items_refuse->order_id;
                 $document->warehouse_id = $orders_items_refuse->warehouse_id;
                 $document->rate_id = 1;
@@ -804,7 +805,9 @@ class OrdersController extends Controller
             ->select('order_items.order_id,order_items.warehouse_id,order_items.product_id,order_items.nom_id_for_name,
             order_items.count_by,order_items.count,products.AAH,products.price')
             ->leftJoin('products', 'order_items.product_id = products.id')
-            ->where(['order_items.order_id' => $id])->asArray()->all();
+            ->where(['order_items.order_id' => $id])
+            ->andWhere(['order_items.status' => '1'])
+            ->asArray()->all();
 
         $size = 1;
         $num = 0;
@@ -834,9 +837,11 @@ class OrdersController extends Controller
                 $num++;
             }
         }
-
+//        var_dump($order_items);
         if(!empty($changed_items)){
+            $keeper = Users::findOne(['warehouse_id' => $changed_items[0][1]]);
             $document = new Documents();
+            $document->user_id = $keeper->id;
             $document->orders_id = $changed_items[0][0];
             $document->warehouse_id = $changed_items[0][1];
             $document->rate_id = 1;
@@ -869,6 +874,7 @@ class OrdersController extends Controller
                     $new_document_items->save(false);
             }
         }
+//        exit();
         $orders = Orders::findOne($id);
         $orders->status = '2';
         $orders->save();
@@ -914,9 +920,8 @@ class OrdersController extends Controller
         }
         if (!empty($exit_documents)){
             $new_exit_document = new Documents();
-            if ($session['role_id'] == 4){
-                $new_exit_document->user_id = $session['user_id'];
-            }
+            $keeper = Users::findOne(['warehouse_id' => $exit_documents[0][2]]);
+            $new_exit_document->user_id = $keeper->id;
             $new_exit_document->orders_id = $exit_documents[0][0];
             $new_exit_document->warehouse_id = $exit_documents[0][2];
             $new_exit_document->rate_id = 1;
@@ -1087,8 +1092,7 @@ class OrdersController extends Controller
             $nom_id = intval($this->request->post('nomId'));
 
             $orders_id = OrderItems::find()->select('order_id,count,count_by,warehouse_id, nom_id_for_name,product_id')->where(['id' => $item_id])->one();
-
-
+            $keeper = Users::findOne(['warehouse_id' => $orders_id->warehouse_id]);
             $is_exit = Orders::findOne($orders_id->order_id);
             $exist_orders_items = OrderItems::find()->where(['status' => '1'])->andWhere(['order_id' => $orders_id->order_id])->count();
             if ($exist_orders_items == 1){
@@ -1128,6 +1132,7 @@ class OrdersController extends Controller
                         $delete_products->save(false);
 
                         $document = new Documents();
+                        $document->user_id = $keeper->id;
                         $document->orders_id = $orders_id->order_id;
                         $document->warehouse_id = $orders_id->warehouse_id;
                         $document->rate_id = 1;
@@ -1177,6 +1182,7 @@ class OrdersController extends Controller
                         $product_id->save(false);
 
                         $document = new Documents();
+                        $document->user_id = $keeper->id;
                         $document->orders_id = $orders_id->order_id;
                         $document->warehouse_id = $orders_id->warehouse_id;
                         $document->rate_id = 1;
@@ -1219,10 +1225,6 @@ class OrdersController extends Controller
 
                 }
             }
-            var_dump($exist_orders_items);
-            exit();
-
-
         }
     }
 

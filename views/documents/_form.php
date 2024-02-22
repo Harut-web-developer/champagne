@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\models\CustomfieldsBlocksTitle;
 use app\models\CustomfieldsBlocksInputs;
+use app\models\Users;
 
 /** @var yii\web\View $this */
 /** @var app\models\Documents $model */
@@ -16,7 +17,6 @@ if(isset($action__)){
 }
 $type = $model->document_type;
 $session = Yii::$app->session;
-
 ?>
 <?php if ($model->id){
     if ($model->document_type === '1'){
@@ -46,7 +46,11 @@ $session = Yii::$app->session;
                     <span class="non-active">Փաստաթուղթ</span>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'warehouse_id')->dropDownList($warehouse) ?>
+                    <?php if ($session['role_id'] == 4){?>
+                        <?= $form->field($model, 'warehouse_id')->hiddenInput(['value' => $warehouse])->label(false)?>
+                    <?php }else{?>
+                        <?= $form->field($model, 'warehouse_id')->dropDownList($warehouse) ?>
+                    <?php }?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <?= $form->field($model, 'document_type')->textInput([ 'value' => $value, 'readonly' => true ]) ?>
@@ -242,7 +246,13 @@ $session = Yii::$app->session;
                     <span class="non-active">Փաստաթուղթ</span>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'warehouse_id')->dropDownList(['' => 'Ընտրել պահեստը'] + $warehouse) ?>
+                    <?php if ($session['role_id'] == 4){
+                        $storekeeper = Users::findOne($session['user_id']);
+                        ?>
+                        <?= $form->field($model, 'warehouse_id')->hiddenInput(['value' => $storekeeper->warehouse_id])->label(false)?>
+                    <?php }else{?>
+                        <?= $form->field($model, 'warehouse_id')->dropDownList(['' => 'Ընտրել պահեստը'] + $warehouse) ?>
+                    <?php }?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <?= $form->field($model, 'document_type')->dropDownList([ '1' => 'Մուտք', '2' => 'Ելք','3' => 'Տեղափոխություն','4' => 'Խոտան', ]) ?>
@@ -250,14 +260,16 @@ $session = Yii::$app->session;
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName toWarehouse">
                     <?= $form->field($model, 'to_warehouse')->dropDownList(['' => 'Ընտրել պահեստը'] + $to_warehouse) ?>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <?php
                     if($session['role_id'] == 1){?>
-                        <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                        <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                            <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                        </div>
                     <?php }elseif ($session['role_id'] == 4){?>
-                        <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
+                        <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                            <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
+                        </div>
                     <?php } ?>
-                </div>
 
                 <label class="rateLabel" for="rate">Փոխարժեք</label>
                 <div id="rate" class="form-group col-md-12 col-lg-12 col-sm-12 rateDocument">

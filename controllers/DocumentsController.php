@@ -526,8 +526,14 @@ class DocumentsController extends Controller
 //            ->orderBy(['nomenclature.id'=> SORT_DESC])
             ->asArray()
             ->all();
+        if ($session['role_id'] == 4){
+            $storekeeper = Users::findOne($session['user_id']);
+            $to_warehouse =  Warehouse::find()->select('id,name')->where(['status' => '1'])->andWhere(['not', ['id' => $storekeeper->warehouse_id]])->asArray()->all();
+            $to_warehouse = ArrayHelper::map($to_warehouse,'id','name');
+        }else{
             $to_warehouse =  Warehouse::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
             $to_warehouse = ArrayHelper::map($to_warehouse,'id','name');
+        }
         return $this->render('create', [
             'model' => $model,
             'users' => $users,
@@ -1159,7 +1165,13 @@ class DocumentsController extends Controller
             $users = ArrayHelper::map($users,'id','name');
         }
         $warehouse = Warehouse::find()->select('id,name')->where(['id' => $get_documents_id->warehouse_id])->asArray()->all();
-        $warehouse =  ArrayHelper::map($warehouse,'id','name');
+        if ($session['role_id'] != 4){
+            $warehouse =  ArrayHelper::map($warehouse,'id','name');
+        }else{
+            $warehouse = $warehouse[0]['id'];
+        }
+//        var_dump($warehouse);
+
         $to_warehouse =  Warehouse::find()->select('id,name')->where(['id' => $get_documents_id->to_warehouse])->andWhere(['status' => '1'])->asArray()->all();
         $to_warehouse = ArrayHelper::map($to_warehouse,'id','name');
         $rates = Rates::find()->select('id,name')->asArray()->all();
@@ -1191,13 +1203,9 @@ class DocumentsController extends Controller
             $this->redirect('/site/403');
         }
         date_default_timezone_set('Asia/Yerevan');
-        $session = Yii::$app->session;
-//        echo "<pre>";
         $document = Documents::findOne($id);
         $new_document = new Documents();
-        if ($session['role_id'] == 4){
-            $new_document->user_id = $session['user_id'];
-        }
+        $new_document->user_id = $document->user_id;
         $new_document->warehouse_id = $document->warehouse_id;
         $new_document->rate_id = 1;
         $new_document->rate_value = 1;
