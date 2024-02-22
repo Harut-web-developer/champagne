@@ -1677,7 +1677,6 @@ $(document).ready(function () {
     }
 
     $('body').on('change','#orders-user_id',function(){
-        console.log($('#orders-user_id').val() == '')
         if($('#orders-user_id').val() != ''){
             let user_id = $(this).val();
             let csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -1694,7 +1693,7 @@ $(document).ready(function () {
                 }
             })
         }else if($('#orders-user_id').val() == ''){
-            // $('.clients_ajax_content').empty();
+            $('#singleClients').empty();
         }
     })
 
