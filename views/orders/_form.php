@@ -199,7 +199,7 @@ $session = Yii::$app->session;
                 <!-- Button trigger modal -->
                 <?php
                 if ($model->is_exit == 1){?>
-                    <?php if ($session['role_id'] != 4){ ?>
+                    <?php if ($session['role_id'] == 1 || $session['role_id'] == 2){ ?>
                         <button type="button" class="btn rounded-pill btn-secondary addOrders addOrders_get_warh_id_update" data-bs-toggle="modal" data-bs-target="#largeModal">Ավելացնել ապրանք</button>
                     <?php } ?>
                 <?php }?>
@@ -292,10 +292,10 @@ $session = Yii::$app->session;
                 </div>
             </div>
             <div class="card-footer">
-                <?php if ($session['role_id'] != 4){ ?>
+                <?php if ($model->is_exit == 1){?>
+                <?php if ($session['role_id'] == 1 || $session['role_id'] == 2){ ?>
                     <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
-                <?php } ?>
-
+                <?php }}?>
             </div>
             <?php ActiveForm::end(); ?>
         </div>

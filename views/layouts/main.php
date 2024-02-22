@@ -12,6 +12,7 @@ use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
 use yii\helpers\Url;
+use app\models\Roles;
 $session = Yii::$app->session;
 AppAsset::register($this);
 
@@ -325,7 +326,10 @@ $date_tab = $this->params['date_tab'];
                                             </div>
                                             <div class="flex-grow-1">
                                                 <span class="fw-medium d-block"><?=$session['name']?></span>
-                                                <small class="text-muted"><?=$session['username']?></small>
+                                                <?php
+                                                $role = Roles::find()->leftJoin('users', 'users.role_id = roles.id')->where(['users.id' => $session['user_id']])->one();
+                                                ?>
+                                                <small class="text-muted"><?=$role->name?></small>
                                             </div>
                                         </div>
                                     </a>
