@@ -11,6 +11,17 @@ $(document).ready(function () {
     $('body').on('input', '.documentsCountInput', function () {
         count_id($(this));
     });
+    $('body').on('input', '.countDocuments', function () {
+        let id = $(this).closest('tr').find('.itemsId').val();
+        let count = $(this).val();
+        if (count) {
+            id_count[String(id).trim()] = parseInt(count.trim());
+        }else{
+            delete id_count[String(id).trim()];
+        }
+        console.log(id_count)
+
+    });
     function count_id(el) {
         let id = el.closest('tr').find('.nom_id').data('id');
         let count = el.val();
@@ -19,12 +30,18 @@ $(document).ready(function () {
         }else{
             delete id_count[String(id).trim()];
         }
+        console.log(id_count)
+
     }
 
-    // function check_delete(){
-    //     var arj = $('.deleteItems').closest('tr').find(".itemsId").val();
-    //     $('.documentsTableTr').find('.nom_id[data-id="arj"]').siblings('.documentsCount').find('.documentsCountInput').val('');
-    // }
+    function check_delete(el){
+        let id = el.closest('tr').find(".itemsId").val();
+        console.log(id)
+        $('.documentsTableTr').find('.nom_id[data-id="id"]').siblings('.documentsCount').find('.documentsCountInput').val('');
+        delete id_count[String(id).trim()]
+        delete trs[id.trim()];
+        console.log(trs)
+    }
 
     var newTbody = $('<tbody></tbody>');
     var trs = {};
@@ -68,9 +85,14 @@ $(document).ready(function () {
 
     $('body').on('click', '.deleteItems', function () {
         let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
+        // let id = $('.countDocuments').closest('tr').find('.itemsId').val();
         if (confirmed){
+            check_delete($(this));
             $(this).closest('.tableDocuments').remove();
+            // delete id_count[String(id).trim()];
+
         }
+        console.log(id_count)
         alert('Հաջողությամբ ջնջված է:');
 
     })
@@ -576,4 +598,5 @@ $(document).ready(function () {
             $('body').find('.addDocuments').attr('disabled',false);
         }
     })
+
 })

@@ -214,12 +214,8 @@ class OrdersController extends Controller
             ->one();
         $session = Yii::$app->session;
         if ($this->request->isPost) {
-//            echo "<pre>";
-
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-//            var_dump($post);
-//            exit();
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price = $post['Orders']['total_price'];
@@ -296,20 +292,7 @@ class OrdersController extends Controller
         }
         $sub_page = [];
         $date_tab = [];
-        $user_id = $session['user_id'];
-        $manager_route_id = ManagerDeliverCondition::find()
-            ->select('route_id, deliver_id')
-            ->where(['manager_id' => $user_id])
-            ->andWhere(['status' => '1'])
-            ->asArray()
-            ->all();
-        $clients = Clients::find()
-            ->select('id, name')
-            ->where(['=','status',1]);
-        if ($session['role_id'] == 2) {
-            $clients->andWhere(['in', 'route_id', $manager_route_id]);
-        }
-        $clients =  $clients->asArray()->all();
+
         if($session['role_id'] == 1){
             $users = Users::find()->select('id, name')->where(['=','role_id',2])->andWhere(['=','status',1])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
@@ -317,6 +300,30 @@ class OrdersController extends Controller
             $users = Users::find()->select('id, name')->where(['=','id',$session['user_id']])->andWhere(['=','status',1])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
         }
+
+        $user_id = $session['user_id'];
+        $manager_route_id = ManagerDeliverCondition::find()
+            ->select('route_id, deliver_id');
+            if ($session['role_id'] == 2) {
+                $manager_route_id->where(['manager_id' => $user_id]);
+            }elseif ($session['role_id'] == 1){
+                $user_id = key($users); // arajin tarri keyn
+                $manager_route_id->where(['manager_id' => $user_id]);
+            }
+        $manager_route_id = $manager_route_id->andWhere(['status' => '1'])
+            ->asArray()
+            ->all();
+
+        $clients = Clients::find()
+            ->select('id, name')
+            ->where(['=','status',1]);
+        if ($session['role_id'] == 2) {
+            $clients->andWhere(['in', 'route_id', $manager_route_id]);
+        }elseif ($session['role_id'] == 1){
+            $clients->andWhere(['in', 'route_id', $manager_route_id]);
+        }
+        $clients =  $clients->asArray()->all();
+
         $warehouse = Warehouse::find()
             ->select('id, name')
             ->asArray()
@@ -328,10 +335,46 @@ class OrdersController extends Controller
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'warehouse' => $warehouse,
-//            'pagination' => $pagination,
-//            'count' => $count,
         ]);
     }
+
+    public function actionGetManager(){
+        $session = Yii::$app->session;
+        if($session['role_id'] == 1){
+            $users = Users::find()->select('id, name')->where(['=','role_id',2])->andWhere(['=','status',1])->asArray()->all();
+            $users = ArrayHelper::map($users,'id','name');
+        }elseif ($session['role_id'] == 2){
+            $users = Users::find()->select('id, name')->where(['=','id',$session['user_id']])->andWhere(['=','status',1])->asArray()->all();
+            $users = ArrayHelper::map($users,'id','name');
+        }
+
+        $user_id = $session['user_id'];
+        $manager_route_id = ManagerDeliverCondition::find()
+            ->select('route_id, deliver_id');
+        if ($session['role_id'] == 2) {
+            $manager_route_id->where(['manager_id' => $user_id]);
+        }elseif ($session['role_id'] == 1){
+            $user_id = $_GET['user_id'] ? $_GET['user_id'] : key($users); // arajin tarri keyn
+            $manager_route_id->where(['manager_id' => $user_id]);
+        }
+        $manager_route_id = $manager_route_id->andWhere(['status' => '1'])
+            ->asArray()
+            ->all();
+
+        $clients = Clients::find()
+            ->select('id, name')
+            ->where(['=','status',1]);
+        if ($session['role_id'] == 2) {
+            $clients->andWhere(['in', 'route_id', $manager_route_id]);
+        }elseif ($session['role_id'] == 1){
+            $clients->andWhere(['in', 'route_id', $manager_route_id]);
+        }
+        $clients =  $clients->asArray()->all();
+        return $this->renderAjax('clients_form', [
+            'clients' => $clients,
+        ]);
+    }
+
     /**
      * Updates an existing Orders model.
      * If update is successful, the browser will be redirected to the 'view' page.
