@@ -20,12 +20,9 @@ $session = Yii::$app->session;
                     <span class="non-active">Վաճառք</span>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?php
-                    if ($session['role_id'] == 1){
-                        ?>
+                    <?php if ($session['role_id'] == 1){ ?>
                         <?= $form->field($model, 'user_id')->dropDownList($users) ?>
-                        <?php
-                    }elseif($session['role_id'] == 2){ ?>
+                    <?php }elseif($session['role_id'] == 2){ ?>
                         <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
                     <?php }elseif ($session['role_id'] == 3 || $session['role_id'] == 4){
                         $manager_id = Orders::findOne($model->id);
@@ -43,15 +40,26 @@ $session = Yii::$app->session;
                                     <option <?= $isSelected ? 'selected' : '' ?> value="<?= $client['id'] ?>"><?= $client['name'] ?></option>
                             <?php } }?>
                         </select>
-                    <?php } else {?>
-                    <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
-                        <option  value=""></option>
-                        <?php foreach ($clients as $client){
-                            $isSelected = in_array($client['id'], $orders_clients);
-                            ?>
-                            <option <?= $isSelected ? 'selected' : '' ?> value="<?= $client['id'] ?>"><?= $client['name'] ?></option>
-                        <?php } ?>
-                    </select>
+                    <?php } elseif ($session['role_id'] == 2){ ?>
+                        <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
+                            <option  value=""></option>
+                            <?php foreach ($clients as $client){
+                                $isSelected = in_array($client['id'], $orders_clients);
+                                ?>
+                                <option <?= $isSelected ? 'selected' : '' ?> value="<?= $client['id'] ?>"><?= $client['name'] ?></option>
+                            <?php } ?>
+                        </select>
+                    <?php } elseif ($session['role_id'] == 1) {?>
+                        <div class="clients_ajax_content">
+                            <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
+                                <option  value=""></option>
+                                <?php foreach ($clients as $client){
+                                    $isSelected = in_array($client['id'], $orders_clients);
+                                    ?>
+                                    <option <?= $isSelected ? 'selected' : '' ?> value="<?= $client['id'] ?>"><?= $client['name'] ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
                     <?php } ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12">
@@ -64,7 +72,6 @@ $session = Yii::$app->session;
                         <?php } } ?>
                     </select>
                 </div>
-
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'comment')->textarea() ?>
                 </div>
@@ -323,6 +330,7 @@ $session = Yii::$app->session;
                     <?php } elseif ($session['role_id'] == 1) {?>
                         <div class="clients_ajax_content">
                             <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
+
                             </select>
                         </div>
                     <?php } ?>

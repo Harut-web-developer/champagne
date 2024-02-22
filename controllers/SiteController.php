@@ -196,6 +196,7 @@ class SiteController extends Controller
             $notification_badge_admin = Notifications::find()
                 ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn']])
                 ->andWhere(['NOT LIKE', 'watched', ',' . $session['role_id'] . ','])
+                ->andWhere(['>=', 'datetime', date('Y-m-d')])
                 ->count();
         }
         if ($session['role_id'] == '4') {
@@ -215,6 +216,7 @@ class SiteController extends Controller
             $notification_badge_storekeeper = Notifications::find()
                 ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'changeorderscount']])
                 ->andWhere(['NOT LIKE', 'watched', ',' . $session['role_id'] . ','])
+                ->andWhere(['>=', 'datetime', date('Y-m-d')])
                 ->count();
         }
         return json_encode([

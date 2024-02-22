@@ -211,9 +211,6 @@ $(document).ready(function() {
             url: '/site/check-notifications',
             type: 'GET',
             dataType: 'json',
-            data:{
-
-            },
             success: function (data) {
                 if (data.success !== undefined) {
                     displayNotificationtoast(data.notifications);
@@ -222,11 +219,7 @@ $(document).ready(function() {
         });
     }
     function displayNotifications(data, notifications) {
-        if(data['notification_badge_storekeeper'] != null){
-            $('.index_not').text(data['notification_badge_storekeeper'])
-        }else if(data['notification_badge_admin'] != null){
-            $('.index_not').text(data['notification_badge_admin'])
-        }
+        $('.index_not').text('')
         var notificationsDropdown = $("#notifications-dropdown");
         notificationsDropdown.empty();
         notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
@@ -258,14 +251,25 @@ $(document).ready(function() {
             $('.bs-toast .toast-body').html('');
             $('.bs-toast .toast-body').append(notification.message);
             $('.bs-toast').toast('show');
+            if ($('.index_not').text() == ''){
+                $('.index_not').text(1)
+            }else{
+                let not_index = parseInt($('.index_not').text());
+                not_index += 1;
+                $('.index_not').text(not_index)
+            }
+
         }
     }
     $(".bell-icon").click(function () {
         $("#notifications-dropdown").toggle();
         fetchNotifications();
+        $('.index_not').text('');
     });
     $('#notificationBell').click(function () {
         fetchNotifications();
+        $('.index_not').text('');
+
     });
     fetchNotifications();
     fetchNotificationstoast();
@@ -365,33 +369,6 @@ $(document).ready(function() {
             },
         });
     });
-
-    // var tableToExcel =
-    //     //     (function() {
-    //     //         var uri = 'data:application/vnd.ms-excel;base64,',
-    //     //             template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">' +
-    //     //                 '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->' +
-    //     //                 '<meta http-equiv="content-type" content="text/plain; charset=UTF-8"/>' +
-    //     //                 '</head><body><table>{table}</table></body></html>'
-    //     //             , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) },
-    //     //             format = function(s, c) {
-    //     //             return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; })    }
-    //     //             , downloadURI = function(uri, name) {
-    //     //             var link = document.createElement("a");
-    //     //             link.download = $('h1').text();
-    //     //             link.href = uri;
-    //     //             link.click();    }
-    //     //         return function(table, name, fileName) {
-    //     //             table = $('#' + table).clone();
-    //     //             table.find('.hidden-item').remove();
-    //     //             table.find('.action-column').remove();
-    //     //             table.find('#w0-filters').remove();
-    //     //             table.find('a').removeAttr("href");
-    //     //             var ctx = {worksheet: $('h1').text() || 'Worksheet', table: table.html()}
-    //     //             var resuri = uri + base64(format(template, ctx))
-    //     //             downloadURI(resuri, fileName);
-    //     //         }
-    //     //     });
 
     // downloadXLSX documents
     $('.documents_downloadXLSX').click(function () {
@@ -503,7 +480,6 @@ $(document).ready(function() {
         let type = $('.byType').val();
         let clientsVal = $('.changeClients').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
-        // console.log(managerId,numberVal)
         $.ajax({
             url:'/orders/filter-status',
             method:'get',
@@ -529,7 +505,6 @@ $(document).ready(function() {
         let numberVal = $('.orderStatus').val();
         let clientsVal = $('.changeClients').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
-        // console.log(managerId,numberVal)
         $.ajax({
             url:'/orders/filter-status',
             method:'get',
@@ -683,7 +658,6 @@ $(document).ready(function() {
             $(element).find('.balance').each(function (x,el) {
                 if ($(el).text() == 0){
                     let id = $(el).closest('tr').find('.orderIdDebt').text();
-                    // console.log(id)
                     let csrfToken = $('meta[name="csrf-token"]').attr("content");
                     $.ajax({
                         url:'/clients/get-order-id',
@@ -720,7 +694,6 @@ $(document).ready(function() {
             },
             success: function (data) {
                 let param = JSON.parse(data)
-                console.log(param)
                 if (param == 'others') {
                     // alert(2222)
                     $('body').find('#payments-rate_value').attr('readonly', false);

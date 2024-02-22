@@ -21,8 +21,6 @@ $this->params['date_tab'] = $date_tab;
         'users' => $users,
         'clients' => $clients,
         'warehouse' => $warehouse,
-//        'pagination' => $pagination,
-//        'count' => $count,
     ]) ?>
 
 </div>
