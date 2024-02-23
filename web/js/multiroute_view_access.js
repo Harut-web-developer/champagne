@@ -18,7 +18,6 @@ function init () {
                 _csrf:csrfToken,
             },
             success:function(data){
-                console.log(data)
                 if (data['location'].length != 0) {
                     $('#map').html('');
                     var geolocation = ymaps.geolocation,

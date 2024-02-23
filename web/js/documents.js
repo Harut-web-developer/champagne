@@ -46,17 +46,17 @@ $(document).ready(function () {
         }else{
             delete id_count[String(id).trim()];
         }
-        console.log(id_count)
+        // console.log(id_count)
 
     }
 
     function check_delete(el){
         let id = el.closest('tr').find(".itemsId").val();
-        console.log(id)
+        // console.log(id)
         $('.documentsTableTr').find('.nom_id[data-id="id"]').siblings('.documentsCount').find('.documentsCountInput').val('');
         delete id_count[String(id).trim()]
         delete trs[id.trim()];
-        console.log(trs)
+        // console.log(trs)
     }
 
     var newTbody = $('<tbody></tbody>');
@@ -116,6 +116,7 @@ $(document).ready(function () {
         }
         newTbody.append(documentsTableBody);
         $('.documentsAddingTable tbody').replaceWith(newTbody);
+            $('body').find('.saveAll').attr('disabled',false);
         trCounter($('body').find('.documentsAddingTable'));
     })
 
@@ -128,7 +129,7 @@ $(document).ready(function () {
             // delete id_count[String(id).trim()];
 
         }
-        console.log(id_count)
+        // console.log(id_count)
         alert('Հաջողությամբ ջնջված է:');
 
     })
@@ -732,6 +733,13 @@ $(document).ready(function () {
     $('body').on('change','#documents-warehouse_id, #documents-document_type, #documents-date',function(){
         if($('#documents-warehouse_id').val() != '' && $('#documents-document_type').val() != '' && $('#documents-date').val() != ''){
             $('body').find('.addDocuments').attr('disabled',false);
+        }
+    })
+
+    $(window).on('load', function () {
+
+        if($('body').find('.documentsAddingTable body').length == 0){
+            $('body').find('.saveAll').attr('disabled',true);
         }
     })
 

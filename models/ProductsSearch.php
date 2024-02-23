@@ -60,7 +60,7 @@ class ProductsSearch extends Products
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-                'query' => $query->groupBy('id'),
+                'query' => $query->groupBy('warehouse_id, nomenclature_id')->having(['!=', 'SUM(count_balance)', 0]),
         ]);
 
         $this->load($params);

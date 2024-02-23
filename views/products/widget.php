@@ -84,7 +84,7 @@ if ($have_access_update && $have_access_delete){
                 }
             ],
             [
-                'attribute' => 'Քանակ',
+                'attribute' => 'Մնացորդ',
                 'value' => function ($model) {
                     if ($model->count < 0) {
                         return $model->count * (-1);
