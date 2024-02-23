@@ -424,6 +424,7 @@ class OrdersController extends Controller
         ]);
     }
     public function actionGetNomiclatureUpdate(){
+//        echo "<pre>";
         $page = $_GET['paging'] ?? 1;
         $urlId = intval($_POST['urlId']);
         $_GET['warehouse_id'] = $_GET['warehouse_id'] ?? $_POST['warehouse_id'];
@@ -444,10 +445,16 @@ class OrdersController extends Controller
             ->all();
         $nomenclatures = $query
 //            ->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
-            ->select('products.id, products.count, products.price,products.warehouse_id, nomenclature.id as nomenclature_id, nomenclature.image, nomenclature.name, nomenclature.cost')
+            ->select('products.id, products.count, products.price,products.warehouse_id,SUM(products.count_balance) as all_count_balance,
+             nomenclature.id as nomenclature_id, nomenclature.image, nomenclature.name, nomenclature.cost')
             ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
-            ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
+            ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1]])
             ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
+            ->andWhere(['or',
+                ['products.type' => '1'],
+                ['products.type' => '3'],
+                ['products.type' => '8']
+            ])
             ->groupBy('products.nomenclature_id');
         if ($search_name){
             $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name]);
@@ -456,7 +463,7 @@ class OrdersController extends Controller
         }
         $product_count =
             $countQuery
-                ->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
+//                ->where(['not in', 'nomenclature.id', array_column($orders_items_update, 'nom_id_for_name')])
                 ->leftJoin('nomenclature', 'nomenclature.id = products.nomenclature_id')
                 ->andWhere(['and', ['products.status' => 1, 'nomenclature.status' => 1, 'products.type' => 1]])
                 ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
@@ -468,6 +475,8 @@ class OrdersController extends Controller
             ->limit($pageSize)
             ->asArray()
             ->all();
+//        var_dump($nomenclatures);
+//        exit();
         $id_count = $_POST['id_count'] ?? [];
         return $this->renderAjax('get-nom', [
             'nomenclatures' => $nomenclatures,

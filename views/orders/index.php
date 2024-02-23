@@ -58,9 +58,13 @@ $action_column[] = [
         ]);
     },
         'delivered'=>function ($url, $model, $key) {
-        return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
-            'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-        ]);
+         if($model->status != 1) {
+             return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
+                 'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
+             ]);
+         } else {
+             return '';
+         }
     },
         'exit'=>function ($url, $model, $key) {
             return Html::a('<i class="bx bx-receipt" style="color:#FF0000"></i>', $url, [

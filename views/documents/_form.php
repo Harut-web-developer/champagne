@@ -385,7 +385,7 @@ $session = Yii::$app->session;
                 </div>
             </div>
             <div class="card-footer">
-                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary']) ?>
+                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary saveAll']) ?>
             </div>
             <?php ActiveForm::end(); ?>
         </div>
