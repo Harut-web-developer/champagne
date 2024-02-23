@@ -727,9 +727,9 @@ $(document).ready(function() {
 
     //print orders table
     $('body').on('click','.print_orders_table',function (){
-        printTable('/orders/print-doc');
+        printTableOrder('/orders/print-doc');
     });
-    function printTable(url) {
+    function printTableOrder(url) {
         var t_length = $('body').find('#w0 table tbody tr').length;
         var table = '<table id="ele4">';
         $('body').find('table tbody tr').each(function () {
@@ -784,9 +784,9 @@ $(document).ready(function() {
 
     //print document table
     $('body').on('click','.print_document_table',function (){
-        printTable('/documents/print-doc');
+        printTableDocument('/documents/print-doc');
     });
-    function printTable(url) {
+    function printTableDocument(url) {
         var t_length = $('body').find('#w0 table tbody tr').length;
         var table = '<table id="ele4">';
         $('body').find('table tbody tr').each(function () {

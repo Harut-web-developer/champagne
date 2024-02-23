@@ -35,7 +35,7 @@ class Nomenclature extends \yii\db\ActiveRecord
             [['price','cost'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['name'], 'string', 'max' => 255],
-            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, xlsx'],
+            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, xlsx, jfif'],
         ];
     }
 
