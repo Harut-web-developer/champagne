@@ -295,7 +295,7 @@ class SiteController extends Controller
         if ($session['role_id'] == '1') {
             if (!empty($notification)){
                 if (!is_null($notification)){
-                    if (($notification->watched != ',') && ($notification->sort_ == 'ordersupdate' || $notification->sort_ == 'documentscreate' || $notification->sort_ == 'createclients' || $notification->sort_ == 'updateclients')) {
+                    if (($notification->watched != ',') && ($notification->sort_ == 'ordersupdate' || $notification->sort_ == 'createclients' || $notification->sort_ == 'updateclients')) {
                         $watched_array = explode(',', $notification->watched);
                         if (in_array('1', $watched_array)) {
                             $notification->status = 0;
@@ -312,7 +312,7 @@ class SiteController extends Controller
                                 'notifications' => $notification,
                             ];
                         }
-                    }elseif(($notification->watched == ',') && ($notification->sort_ == 'ordersupdate' || $notification->sort_ == 'documentscreate' || $notification->sort_ == 'createclients' || $notification->sort_ == 'updateclients')){
+                    }elseif(($notification->watched == ',') && ($notification->sort_ == 'ordersupdate' || $notification->sort_ == 'createclients' || $notification->sort_ == 'updateclients')){
                         $watched_value = $notification->watched . $session['role_id'] . ',';
                         $notification->watched = $watched_value;
                         $notification->save();
@@ -334,9 +334,7 @@ class SiteController extends Controller
                 ['NOT LIKE', 'watched', ',' . $session['role_id'] . ',']
             ])
             ->all();
-
         $not_count = count($notification_doc);
-
         for ($i = 0; $i < $not_count; $i++){
             if (in_array($notification_doc[$i]['sort_'], $users_premissions)) {
                 $notification_doc = $notification_doc[$i];
@@ -345,11 +343,10 @@ class SiteController extends Controller
                 $notification_doc = null;
             }
         }
-
         if ($session['role_id'] == '1') {
             if (!empty($notification_doc)){
                 if (!is_null($notification_doc)){
-                    if (($notification_doc->watched != ',') && ($notification_doc->sort_ == 'exitdocument' || $notification_doc->sort_ == 'refusalreturn' || $notification_doc->sort_ == 'createNomenclature' || $notification_doc->sort_ == 'updateNomenclature')) {
+                    if (($notification_doc->watched != ',') && ($notification_doc->sort_ == 'exitdocument' || $notification_doc->sort_ == 'refusalreturn' || $notification_doc->sort_ == 'createNomenclature' || $notification_doc->sort_ == 'updateNomenclature' || $notification_doc->sort_ == 'documentscreate')) {
                         $watched_array = explode(',', $notification_doc->watched);
                         if (in_array('1', $watched_array)) {
                             $notification_doc->status = 0;
@@ -366,7 +363,7 @@ class SiteController extends Controller
                                 'notifications' => $notification_doc,
                             ];
                         }
-                    }elseif(($notification_doc->watched == ',') && ($notification_doc->sort_ == 'exitdocument' || $notification_doc->sort_ == 'refusalreturn' || $notification_doc->sort_ == 'createNomenclature' || $notification_doc->sort_ == 'updateNomenclature')){
+                    }elseif(($notification_doc->watched == ',') && ($notification_doc->sort_ == 'exitdocument' || $notification_doc->sort_ == 'refusalreturn' || $notification_doc->sort_ == 'createNomenclature' || $notification_doc->sort_ == 'updateNomenclature' || $notification_doc->sort_ == 'documentscreate')){
                         $watched_value = $notification_doc->watched . $session['role_id'] . ',';
                         $notification_doc->watched = $watched_value;
                         $notification_doc->save();

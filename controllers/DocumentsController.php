@@ -85,9 +85,12 @@ class DocumentsController extends Controller
 
         $searchModel = new DocumentsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        $warehouse = Warehouse::find()->select('id,name')->asArray()->all();
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'warehouse' => $warehouse,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
 
@@ -1567,6 +1570,8 @@ class DocumentsController extends Controller
             $sub_page = [];
             $date_tab = [];
             $page_value = null;
+            $warehouse = Warehouse::find()->select('id,name')->asArray()->all();
+
             if(isset($_GET["dp-1-page"]))
                 $page_value = intval($_GET["dp-1-page"]);
             $render_array = [
@@ -1575,6 +1580,7 @@ class DocumentsController extends Controller
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
                 'page_value' => $page_value,
+                'warehouse' => $warehouse,
 
             ];
 

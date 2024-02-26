@@ -262,18 +262,39 @@ else { ?>
                     <?= Html::a('Ստեղծել փաստաթուղթ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
                 <?php } ?>
             </p>
-            <div class="filtersField" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
-                <select class="form-select documentStatus" aria-label="Default select example" style="width: 150px; margin: 0px 10px 15px 5px;">
-                    <?php
-                    if($session['role_id'] == '1'){?>
+            <div class="filtersField filtersFielddoc" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
+                <?php
+                if($session['role_id'] == '1'){?>
+                    <select class="form-select documentWarehouseStatus" aria-label="Default select example" style="width: 150px; margin: 0px 10px 15px 5px;">
+                        <option selected value="0">Ընդհանուր</option>
+                        <?php foreach ($warehouse as $warehouse_value) { ?>
+                            <option value="<?=$warehouse_value['id']?>"><?=$warehouse_value['name']?></option>
+                        <?php }?>
+                    </select>
+                <?php }?>
+                <?php
+                if($session['role_id'] == '1' || $session['role_id'] == '4'){?>
+                    <input type="date" class="form-control documentsDate" style="width: 150px; margin: 0px 10px 15px 5px;">
+                    <select class="form-select documentStatus" aria-label="Default select example" style="width: 150px; margin: 0px 10px 15px 5px;">
                         <option selected value="0">Ընդհանուր</option>
                         <option value="1">Մուտք</option>
                         <option value="2">Ելք</option>
                         <option value="3">Տեղափոխություն</option>
                         <option value="4">Խոտան</option>
                         <option value="6">Վերադարձ</option>
-                    <?php }?>
-                </select>
+                        <option value="7">Մերժված</option>
+                        <option value="8">Մուտք(վերադարցրած)</option>
+                        <option value="9">Պատվերից ելքագրված</option>
+                    </select>
+                <?php }?>
+                <div class="iconsPrintAndXlsx">
+                    <div>
+                        <img class="documents_downloadXLSX" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAC+klEQVR4nO2ZzWsTURDAFwW/kYre9CKKiB4ERT2of4AUveXqF1htZtaQ7rw0NDN9ehMUsTfxIggepPSioOJRz3rQg3gRqYI91I/Wg1rUykvzkk2atNl2d/uCHRjIMpnZ+c2b93Y28bxlWZZlmVf8gt4GJMNAMolKpheoU6DkJarBjJd68oo/LyLx2UqsUwMAkuFYk68oKLmcFsBkXAkvCQTGVPFyMRT3z24nudoxAEsCgTEDpA6BCQCkCoEJAaQGgQkCpAKRNICRZkdsbA+7NABaQsQxdsQFYEaSyBDEL5wBAMWPokIA8S9nAJJqvXnlvwEAxbetj9Z6BSh5V2+Xi9YOhcGzzgGgkimfSjuane9AMpbP59dW4FY1wqEjAKbKd6xfT5/egsQ/yjaSYggs52QL4Yz+xj69u+pLfBcUT+RyustcZ7XeYFbDZYBpVHLP+mb7S0eR5GYISJzdxFjtd/7jB3qP3czZAu81n6FY3Iwk35wHwBm93xgHSK4vJJa3JADE333fX10HoPhNJwFcmRWH+NScrafkJygeygZyOAiC9YtOfOEA/MmcNmXfoLQd+3mf3Q9I8qqF30f7vdglevUHz4cHMyC5Ya/9QE40qzwmlXxUAFD8OpPJrDR+ZhWQZNz8rtRbLG6qxiN53uAzlFjyUQEwkOM1P86HbAN1z4awT2HgUN39Auk2LQXEH8Lxkgcgfmp9zLyDSkarVSYZO631GmsHxQ+sLVvZL1WbSbwWdzQ1AF/xuUuBHDDa7EUdiEvWjsRnWh2T6MQxGkG9DgZ4DIpPdiLAX6AStHs/zz0Avhblfp5TAOUZSW9MFQAUT8QHIA/DsXM53QXEz0xbtTOmI/GTHq3XRQMgGYkLAJTcqqs21Y7TtjWQ7mgAfXqXGQliASAZCcfOFvVO01YRVnDcvGt7UeVCfmCreUlZbDuZfzvNU7puFZQcawuC5Asovd9zUZDkyFx/JoLir72BHPRcFmwB0RHJexVphOio5K1Uxu33qPhtOz3/DyrGtgq43BHiAAAAAElFTkSuQmCC">
+                    </div>
+                    <div>
+                        <img class="print_document_table" src="/upload/icons8-print-94.png">
+                    </div>
+                </div>
             </div>
         </div>
         <div class="card pageStyle documentsCard">
@@ -447,6 +468,8 @@ else { ?>
     </div>
 <?php } ?>
 
+<!--jquery-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
     $(document).ready(function() {

@@ -377,6 +377,8 @@ $(document).ready(function() {
         var sheetNumber = 1;
         var PromiseArray = [];
         let numberVal = $('.documents-index').find('.documentStatus').val();
+        let documentsDate = $('.documentsDate').val();
+        let warehouse_id = $('.documentWarehouseStatus').val();
         let clickXLSX = 'clickXLSX';
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
@@ -386,6 +388,8 @@ $(document).ready(function() {
                 _csrf: csrfToken,
                 action: 'xls-alldata',
                 numberVal:numberVal,
+                documentsDate:documentsDate,
+                warehouse_id:warehouse_id,
                 clickXLSX:clickXLSX,
             },
             dataType: "html",
@@ -837,8 +841,10 @@ $(document).ready(function() {
         })
     }
 
-    $('body').on('change', '.documentStatus', function () {
-        let numberVal = $(this).val();
+    $('body').on('change', '.documentsDate, .documentStatus, .documentWarehouseStatus', function () {
+        let numberVal = $('.documentStatus').val();
+        let documentsDate = $('.documentsDate').val();
+        let warehouse_id = $('.documentWarehouseStatus').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:'/documents/document-filter-status',
@@ -846,6 +852,8 @@ $(document).ready(function() {
             datatype:'json',
             data:{
                 numberVal:numberVal,
+                documentsDate:documentsDate,
+                warehouse_id:warehouse_id,
                 _csrf: csrfToken,
             },
             success:function (data){
