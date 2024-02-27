@@ -117,12 +117,12 @@ $action_column[] = [
                     <?= Html::a('Ստեղծել վաճառքներ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
                 <?php } ?>
             </p>
-            <div class="filtersField" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
-                <select class="form-control byType">
+            <div class="filtersField filtersFieldord" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
+                <select class="form-control byType" style="margin: 0px 0px 10px 0px;">
                     <option value="order">Ըստ պատվերի</option>
                     <option value="product">Ըստ ապրանքի</option>
                 </select>
-                <input type="date" class="form-control ordersDate" style="margin: 0px 5px 0px 10px;">
+                <input type="date" class="form-control ordersDate" style="margin: 0px 10px 15px 5px;">
                 <?php
                 $users = Users::find()->select('id,name')->where(['=','role_id',2])->asArray()->all();
                 if($session['role_id'] == '1' || $session['role_id'] == '4'){?>

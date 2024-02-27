@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Log;
 use app\models\Nomenclature;
+use app\models\Notifications;
 use app\models\Orders;
 use app\models\Payments;
 use app\models\Premissions;
@@ -160,6 +161,7 @@ class ClientsController extends Controller
             ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
+            $session = Yii::$app->session;
             $post = $this->request->post();
             $model->name = $post['Clients']['name'];
             $model->location = $post['Clients']['location'];
@@ -170,6 +172,11 @@ class ClientsController extends Controller
             $model = Clients::getDefVals($model);
             $model->save();
             Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
+            if ($session['role_id'] == '2') {
+                $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
+                $text = 'Մենեջեր՝ ' . $user_name['name'] . '(ն/ը) ' . 'ստեղծել է նոր հաճախորդ։ Հաճախորդը ստեղծվել է՝ «' . $model->name . '» անունով։';
+                Notifications::createNotifications('Ստեղծել հաճախորդ', $text, 'createclients');
+            }
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
@@ -277,6 +284,12 @@ class ClientsController extends Controller
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
+            $session = Yii::$app->session;
+            if ($session['role_id'] == '2') {
+                $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
+                $text = 'Մենեջեր՝ ' . $user_name['name'] . '(ն/ը) ' . 'փոփոխել է հաճախորդի ինֆորմացիան։ Փոփոխված հաճախորդն է՝ «' . $model->name . '»։';
+                Notifications::createNotifications('Փոփոխել հաճախորդ', $text, 'updateclients');
+            }
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);

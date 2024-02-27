@@ -283,7 +283,10 @@ class OrdersController extends Controller
             $model = Orders::getDefVals($model);
             $user_name = Users::find()->select('*')->where(['id' => $post['Orders']['user_id']])->asArray()->one();
             $client_name = Clients::find()->select('name')->where(['id' => $post['clients_id']])->one();
-            $text = $user_name['name'] . '(ն/ը) ' . 'ստեղծել է ' . $client_name['name'] . 'ի համար պատվեր։';
+            $text = $user_name['name'] . '(ն/ը) ' . 'ստեղծել է ' . $client_name['name'] . 'ի համար պատվեր։'
+                . '<a href="http://champagne/orders/update?id=' . $model->id . '">
+                    <img width="15" height="15" src="/upload/view.png" alt="view">
+                   </a>';
             Notifications::createNotifications($premission['name'], $text,'orderscreate');
             Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
             return $this->redirect(['index', 'id' => $model->id]);

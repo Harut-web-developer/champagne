@@ -377,6 +377,8 @@ $(document).ready(function() {
         var sheetNumber = 1;
         var PromiseArray = [];
         let numberVal = $('.documents-index').find('.documentStatus').val();
+        let documentsDate = $('.documentsDate').val();
+        let warehouse_id = $('.documentWarehouseStatus').val();
         let clickXLSX = 'clickXLSX';
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
@@ -386,6 +388,8 @@ $(document).ready(function() {
                 _csrf: csrfToken,
                 action: 'xls-alldata',
                 numberVal:numberVal,
+                documentsDate:documentsDate,
+                warehouse_id:warehouse_id,
                 clickXLSX:clickXLSX,
             },
             dataType: "html",
@@ -727,9 +731,9 @@ $(document).ready(function() {
 
     //print orders table
     $('body').on('click','.print_orders_table',function (){
-        printTable('/orders/print-doc');
+        printTableOrder('/orders/print-doc');
     });
-    function printTable(url) {
+    function printTableOrder(url) {
         var t_length = $('body').find('#w0 table tbody tr').length;
         var table = '<table id="ele4">';
         $('body').find('table tbody tr').each(function () {
@@ -784,9 +788,9 @@ $(document).ready(function() {
 
     //print document table
     $('body').on('click','.print_document_table',function (){
-        printTable('/documents/print-doc');
+        printTableDocument('/documents/print-doc');
     });
-    function printTable(url) {
+    function printTableDocument(url) {
         var t_length = $('body').find('#w0 table tbody tr').length;
         var table = '<table id="ele4">';
         $('body').find('table tbody tr').each(function () {
@@ -837,8 +841,10 @@ $(document).ready(function() {
         })
     }
 
-    $('body').on('change', '.documentStatus', function () {
-        let numberVal = $(this).val();
+    $('body').on('change', '.documentsDate, .documentStatus, .documentWarehouseStatus', function () {
+        let numberVal = $('.documentStatus').val();
+        let documentsDate = $('.documentsDate').val();
+        let warehouse_id = $('.documentWarehouseStatus').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:'/documents/document-filter-status',
@@ -846,6 +852,8 @@ $(document).ready(function() {
             datatype:'json',
             data:{
                 numberVal:numberVal,
+                documentsDate:documentsDate,
+                warehouse_id:warehouse_id,
                 _csrf: csrfToken,
             },
             success:function (data){

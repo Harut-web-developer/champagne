@@ -39,16 +39,6 @@ function init () {
                                 arr.push(data['location'][i-1][19]['location']);
                             };
                             arr.push(data['location'][i][j]['location']);
-                            // var customIcon = '/upload/icons8-location.png';
-                            // var myPlacemark1 = new ymaps.Placemark(data['location'][i][j]['location'], {
-                            //     balloonContent: 'Маленькая иконка'
-                            // }, {
-                            //     iconLayout: 'default#image',
-                            //     iconImageHref: customIcon,
-                            //     iconImageSize: [30, 30],
-                            //     iconImageOffset: [-15, -15]
-                            // });
-                            // myMap.geoObjects.add(myPlacemark1);
                         }
                         var multiRoute = new ymaps.multiRouter.MultiRoute({
                             referencePoints: arr,

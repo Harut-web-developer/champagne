@@ -299,6 +299,19 @@
     display:flex;
     flex-wrap:wrap;
 }
+@media only screen and (max-width: 1000px) {
+    .filtersFieldord{
+        display:flex;
+        flex-direction:column;
+        width: 210px; margin: 0px 10px 15px 5px;
+    }
+}
+@media only screen and (max-width: 650px) {
+    .filtersFielddoc{
+        display:flex;
+        flex-direction:column;
+    }
+}
 @media screen and (max-width: 424px) {
     .loguser, .logAction{
         width:80%;

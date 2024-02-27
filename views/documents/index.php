@@ -98,9 +98,19 @@ if($have_access_available){
                 <?= Html::a('Ստեղծել փաստաթուղթ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
             <?php } ?>
         </p>
-        <div class="filtersField" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
+        <div class="filtersField filtersFielddoc" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
+            <?php
+            if($session['role_id'] == '1'){?>
+                <select class="form-select documentWarehouseStatus" aria-label="Default select example" style="width: 150px; margin: 0px 10px 15px 5px;">
+                    <option selected value="0">Ընդհանուր</option>
+                    <?php foreach ($warehouse as $warehouse_value) { ?>
+                    <option value="<?=$warehouse_value['id']?>"><?=$warehouse_value['name']?></option>
+                    <?php }?>
+                </select>
+            <?php }?>
             <?php
             if($session['role_id'] == '1' || $session['role_id'] == '4'){?>
+            <input type="date" class="form-control documentsDate" style="width: 150px; margin: 0px 10px 15px 5px;">
             <select class="form-select documentStatus" aria-label="Default select example" style="width: 150px; margin: 0px 10px 15px 5px;">
                     <option selected value="0">Ընդհանուր</option>
                     <option value="1">Մուտք</option>

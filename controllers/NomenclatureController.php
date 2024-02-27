@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Clients;
 use app\models\Discount;
 use app\models\Log;
+use app\models\Notifications;
 use app\models\Premissions;
 use yii\helpers\Url;
 use Yii;
@@ -148,6 +149,15 @@ class NomenclatureController extends Controller
             $model = Nomenclature::getDefVals($model);
             $model->save(false);
             Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
+            $session = Yii::$app->session;
+            if ($session->has('role_id') && $session['role_id'] == 4) {
+                $user_name = Users::find()->select('name')->where(['id' => $session['user_id']])->asArray()->one();
+                $photoUrl = Yii::$app->urlManager->createAbsoluteUrl(['/upload/' . $model->image]);
+                $text = 'Պահեստապետ՝ ' . $user_name['name'] . '(ն/ը) ' . 'ստեղծել է անվանակարգ։ Անվանակարգը ստեղծվել է՝
+            «' . $model->name . '» անունով։ <img style="width:50px" src="' . $photoUrl . '" alt="photo">';
+                Notifications::createNotifications('Ստեղծել անվանակարգ', $text, 'createNomenclature');
+            }
+
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
@@ -245,6 +255,14 @@ class NomenclatureController extends Controller
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
+            $session = Yii::$app->session;
+            if ($session->has('role_id') && $session['role_id'] == 4) {
+                $user_name = Users::find()->select('name')->where(['id' => $session['user_id']])->asArray()->one();
+                $photoUrl = Yii::$app->urlManager->createAbsoluteUrl(['/upload/' . $model->image]);
+                $text = 'Պահեստապետ՝ ' . $user_name['name'] . '(ն/ը) ' . 'փոփոխել է անվանակարգը։ Փոփոխված անվանակարգն է՝
+            «' . $model->name . '»։ <img style="width:50px" src="' . $photoUrl . '" alt="photo">';
+                Notifications::createNotifications('Փոփոխել անվանակարգ', $text, 'updateNomenclature');
+            }
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);

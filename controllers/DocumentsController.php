@@ -88,9 +88,12 @@ class DocumentsController extends Controller
 
         $searchModel = new DocumentsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        $warehouse = Warehouse::find()->select('id,name')->asArray()->all();
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'warehouse' => $warehouse,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
 
@@ -710,10 +713,11 @@ class DocumentsController extends Controller
                 $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
                     ->offset(0);
             }else{
+                $total = $nomenclatures->count();
                 $nomenclatures->offset($offset)
                     ->limit($pageSize);
             }
-            $total = $nomenclatures->count();
+//            $total = $nomenclatures->count();
             $nomenclatures = $nomenclatures
                 ->asArray()
                 ->all();
@@ -770,16 +774,18 @@ class DocumentsController extends Controller
                 nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
                 ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
                 ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
-                ->andWhere(['products.warehouse_id' => intval($warehouse_id)]);
-//                ->groupBy('products.nomenclature_id');
+                ->andWhere(['products.warehouse_id' => intval($warehouse_id)])
+                ->groupBy('products.nomenclature_id')
+                ->having(['!=', 'SUM(products.count_balance)', 0]);
             if ($search_name){
                 $nomenclatures->andWhere(['like', 'nomenclature.name', $search_name])
                     ->offset(0);
             }else{
+                $total = $nomenclatures->count();
                 $nomenclatures->offset($offset)
                     ->limit($pageSize);
             }
-            $total = $nomenclatures->count();
+//            $total = $nomenclatures->count();
             $nomenclatures = $nomenclatures
                 ->asArray()
                 ->all();
@@ -1646,6 +1652,8 @@ class DocumentsController extends Controller
             $sub_page = [];
             $date_tab = [];
             $page_value = null;
+            $warehouse = Warehouse::find()->select('id,name')->asArray()->all();
+
             if(isset($_GET["dp-1-page"]))
                 $page_value = intval($_GET["dp-1-page"]);
             $render_array = [
@@ -1654,6 +1662,7 @@ class DocumentsController extends Controller
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
                 'page_value' => $page_value,
+                'warehouse' => $warehouse,
 
             ];
 

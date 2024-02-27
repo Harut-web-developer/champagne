@@ -72,6 +72,17 @@ class DocumentsSearch extends Documents
             }elseif ($params['numberVal'] == 10){
                 $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']])->andWhere($warehouse);
             }
+        }
+        else{
+            $query->andWhere(['status' => '1'])->andWhere($warehouse);
+        }
+        if (isset($params['documentsDate']) && $params['documentsDate'] != ''){
+            $query->andWhere(['status' => '1'])->andWhere(['DATE_FORMAT(date, "%Y-%m-%d")' => $params['documentsDate']])->andWhere($warehouse);
+        }else{
+            $query->andWhere(['status' => '1'])->andWhere($warehouse);
+        }
+        if (isset($params['warehouse_id']) && $params['warehouse_id'] != 0){
+            $query->andWhere(['status' => '1'])->andWhere(['warehouse_id' => $params['warehouse_id']]);
         }else{
             $query->andWhere(['status' => '1'])->andWhere($warehouse);
         }
