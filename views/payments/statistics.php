@@ -22,8 +22,8 @@ $this->params['date_tab'] = $date_tab;
                     <tr>
                         <td><?=$keys + 1?></td>
                         <td><?=$statistic['name']?></td>
-                        <td><?=$statistic['debt']?></td>
-                        <td><?=$statistic['payment_sum']?></td>
+                        <td><?= array_sum(array_column($statistic['orders'] , 'total_price'))?></td>
+                        <td><?= array_sum(array_column($statistic['payments'] , 'payment_sum'))?></td>
                     </tr>
                 <?php
                 }

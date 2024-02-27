@@ -607,7 +607,7 @@ class DocumentsController extends Controller
             $client_id = $this->request->get('clientId');
             $delivered_documents = Orders::find()
                 ->select('orders.id, orders.orders_date')
-                ->where(['orders.status'=> ['2','3']])
+                ->where(['orders.status'=> ['2','3','4','5']])
                 ->andWhere(['clients_id' => $client_id])
                 ->asArray()
                 ->all();
