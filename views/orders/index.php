@@ -94,7 +94,7 @@ $action_column[] = [
                     <option value="order">Ըստ պատվերի</option>
                     <option value="product">Ըստ ապրանքի</option>
                 </select>
-                <input type="date" class="form-control ordersDate" style="margin: 0px 5px 0px 10px;">
+                <input type="date" class="form-control ordersDate" style="margin: 0px 10px 15px 5px;">
                 <?php
                 $users = Users::find()->select('id,name')->where(['=','role_id',2])->asArray()->all();
                 if($session['role_id'] == '1' || $session['role_id'] == '4'){?>
