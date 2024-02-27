@@ -895,58 +895,12 @@ $(document).ready(function() {
             $('body').find('.warehouseCheck').removeClass('activeForInput');
         }
     }
-    $(window).on('load',function (){
-        $('.ordersCard').find('tbody tr').each(function () {
-            let status_ = $(this).find('td:nth-child(6)').text();
-            let is_exit = $(this).find('td:nth-child(7)').text();
-                if (status_ == 'Հաստատված') {
-                    $(this).find('td:nth-child(2) a:not(.reportsOrders)').remove();
-                } else if (status_ == 'Մերժված') {
-                    $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
-                }
-                if (status_ != 'Ընթացքի մեջ'){
-                    $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
-                }
-                if (is_exit == 'Ելքագրված'){
-                    $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
-                }else {
-                    $(this).find('td:nth-child(2) a[title="Հաստատել"]').remove();
-                }
-        });
-    })
     $('body').find('.card thead th').each(function () {
         if ($(this).has('a')){
             $(this).html( $(this).find('a').html())
         }
     })
-    $(window).on('load',function (){
-        $('.documentsCard').find('tbody tr').each(function () {
-            let document_type = $(this).find('td:nth-child(3)').text();
-            if (document_type != 'Վերադարձրած') {
-                $(this).find('td:nth-child(2) a[title="Հաստատել"]').remove();
-                $(this).find('td:nth-child(2) .refuseDocument').remove();
-            }
-        })
-    })
-
     function clearWidget(){
-        $('body').find('#w0 table tbody tr').each(function(){
-            let status_ = $(this).find('td:nth-child(6)').text();
-            let is_exit = $(this).find('td:nth-child(7)').text();
-            if (status_ == 'Հաստատված') {
-                $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
-            } else if (status_ == 'Մերժված') {
-                $(this).find('td:nth-child(2) a:not([title="Հաշվետվություն"])').remove();
-            }
-            if (status_ != 'Ընթացքի մեջ'){
-                $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
-            }
-            if (is_exit == 'Ելքագրված'){
-                $(this).find('td:nth-child(2) a[title="Ելքագրել"]').remove();
-            }else {
-                $(this).find('td:nth-child(2) a[title="Հաստատել"]').remove();
-            }
-        });
         $('body').find('#w0 table thead th').each(function () {
             if ($(this).has('a')){
                 $(this).html( $(this).find('a').html())

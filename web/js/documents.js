@@ -122,16 +122,18 @@ $(document).ready(function () {
 
     $('body').on('click', '.deleteItems', function () {
         let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
-        // let id = $('.countDocuments').closest('tr').find('.itemsId').val();
         if (confirmed){
             check_delete($(this));
             $(this).closest('.tableDocuments').remove();
-            // delete id_count[String(id).trim()];
-
         }
-        // console.log(id_count)
         alert('Հաջողությամբ ջնջված է:');
-
+    })
+    $('body').on('click', '.deleteItemsRefuse', function () {
+        let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
+        if (confirmed){
+            $(this).closest('tr').remove();
+        }
+        alert('Հաջողությամբ ջնջված է:');
     })
 
     var old_table = $('.table.documentsAddingTable').find('.old_tbody').html();
@@ -587,36 +589,137 @@ $(document).ready(function () {
     $('body').on('change','#documents-document_type', function () {
         if ($(this).val() == 3){
             $('body').find('.toWarehouse').addClass('activeForInput');
+            $('body').find('.docType').removeClass('activeForInputDocument');
+            $('body').find('.deliveredOrders').removeClass('activeForInputDocument');
             $("#documents-to_warehouse").attr('required',true);
-        }else {
+            $('body').find('.documentsAddingTable tbody').html('');
+            $('body').find('.saveAll').attr('disabled',true);
+            $('body').find('.addDocuments').attr('disabled',true);
+
+        }else if($(this).val() == 10){
+            $('body').find('.docType').addClass('activeForInputDocument');
             $('body').find('.toWarehouse').removeClass('activeForInput');
             $("#documents-to_warehouse").removeAttr('required');
+            // $('body').find('.addDocuments').attr('disabled',true);
+        }
+        else {
+            $('body').find('.addDocuments').attr('disabled',true);
+            $('body').find('.toWarehouse').removeClass('activeForInput');
+            $('body').find('.docType').removeClass('activeForInputDocument');
+            $('body').find('.deliveredOrders').removeClass('activeForInputDocument');
+            $("#documents-to_warehouse").removeAttr('required');
+            $('body').find('.documentsAddingTable tbody').html('')
+            $('body').find('.saveAll').attr('disabled',true);
         }
     })
-    // $('body').on('click','.countDocuments',function (){
-    //     $(this).val(function(index, value) {
-    //         return value.replace(/-/g, '');
-    //     });
-    //     if ($(this).val() < 1 || $(this).val() === "") {
-    //         $(this).val('');
-    //         $(this).attr('required',true);
-    //     }else{
-    //         let itemId = $(this).closest('tr').find('.itemsId').val();
-    //         getCount($(this),itemId);
-    //     }
-    // })
-    // $('body').on('keyup','.countDocuments',function (){
-    //     $(this).val(function(index, value) {
-    //         return value.replace(/-/g, '');
-    //     });
-    //     if ($(this).val() < 1 || $(this).val() === "") {
-    //         $(this).val('');
-    //         $(this).attr('required',true);
-    //     }else{
-    //         let itemId = $(this).closest('tr').find('.itemsId').val();
-    //         getCount($(this),itemId);
-    //     }
-    // })
+    $('body').on('change', '#singleClients', function () {
+        let clientId = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $('body').find('.documentsAddingTable tbody').html('');
+        $('body').find('.saveAll').attr('disabled',true);
+
+        $.ajax({
+            url:'/documents/change-orders',
+            method:'get',
+            datatype:'html',
+            data:{
+              clientId:clientId,
+              _csrf:csrfToken
+            },
+            success:function (data) {
+                $('body').find('.deliveredOrders').html(data);
+                $('body').find('.deliveredOrders').addClass('activeForInputDocument');
+            }
+        })
+    })
+    $('body').on('change', '#deliveredorders', function () {
+        let ordersId = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/documents/delivered-orders',
+            method:'get',
+            datatype:'json',
+            data:{
+                ordersId:ordersId,
+                _csrf:csrfToken
+            },
+            success:function (data) {
+                let param = JSON.parse(data);
+                $('body').find('.documentsAddingTable tbody').html('')
+                // console.log(param)
+                let td_string = '';
+                for (let m = 0; m < param.length; m++){
+                    if (param[m].AAH == 1){
+                        td_string += `<tr>
+                                    <td>
+                                        <span>` + (m + 1) + `</span>
+                                        <input type="hidden" name="document_items[]" value="` + param[m].nom_id_for_name + `">
+                                        <input class="itemsId" type="hidden" name="items[]" value="` + param[m].id + `">
+                                    </td>
+                                    <td class="name">`+ param[m].name +`</td>
+                                    <td class="count"><input type="number" name="count_[]" value="` + param[m].count_by + `" class="form-control refuseCountDocuments" step="1" min="1" max="` + param[m].count_by + `"></td>
+                                     <td class="price"><input type="text" name="price[]" value="` + ((param[m].price * 5)/6).toFixed(2) + `" class="form-control refusePriceDocuments"></td>
+                                     <td class="pricewithaah">
+                                        <span>` + param[m].price.toFixed(2) + `</span>
+                                        <input type="hidden" name="pricewithaah[]" value="` + param[m].price.toFixed(2) + `" class="form-control PriceWithaah">
+                                     </td>
+                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsRefuse">Ջնջել</button></td>
+                                </tr>`;
+                    }else {
+                        let num = param[m].price + (param[m].price * 20)/100;
+                        td_string += `<tr>
+                                    <td>
+                                        <span>` + (m + 1) + `</span>
+                                        <input type="hidden" name="document_items[]" value="` + param[m].nom_id_for_name + `">
+                                        <input class="itemsId" type="hidden" name="items[]" value="` + param[m].id + `">
+                                    </td>
+                                    <td class="name">`+ param[m].name +`</td>
+                                    <td class="count"><input type="number" name="count_[]" value="` + param[m].count_by + `" class="form-control refuseCountDocuments" step="1" min="1" max="` + param[m].count_by + `"></td>
+                                     <td class="price"><input type="text" name="price[]" value="` + param[m].price.toFixed(2) + `" class="form-control refusePriceDocuments"></td>
+                                     <td class="pricewithaah">
+                                        <span>` + num.toFixed(2) + `</span>
+                                        <input type="hidden" name="pricewithaah[]" value="` + num.toFixed(2) + `" class="form-control PriceWithaah">
+                                     </td>
+                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsRefuse">Ջնջել</button></td>
+                                </tr>`;
+                    }
+                }
+                $('body').find('.documentsAddingTable tbody').append(td_string)
+                $('body').find('.saveAll').attr('disabled',false);
+            }
+        })
+    })
+
+    $('body').on('keyup','.refusePriceDocuments', function () {
+        let inputValue = $(this).val();
+        let sanitizedValue = inputValue.replace(/[^0-9.]/g, '');
+        let parts = sanitizedValue.split('.');
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/\./g, '');
+            sanitizedValue = parts[0] + '.' + parts[1];
+        }
+        $(this).val(sanitizedValue);
+        if (sanitizedValue < 1 || $(this).val()) {
+            $(this).attr('required', true);
+        }else {
+            let num = parseFloat(sanitizedValue) + (parseFloat(sanitizedValue) * 20) / 100;
+            $(this).closest('tr').find('.pricewithaah').children('span').text(num.toFixed(2))
+            $(this).closest('tr').find('.pricewithaah').children('input').val(num.toFixed(2))
+        }
+    })
+
+    $('body').on('keyup','.refuseCountDocuments',function (){
+        let inputValue = parseInt($(this).val());
+        let maxValue = parseInt($(this).attr('max'));
+        if (inputValue < 1 || inputValue === "") {
+            $(this).val('');
+            $(this).attr('required',true);
+        }else if (inputValue > maxValue){
+            $(this).val('');
+            $(this).attr('required',true);
+        }
+    })
+
     $('body').on('click','.documentsCountInput',function (){
         if ($(this).val() < 1) {
             $(this).val('');

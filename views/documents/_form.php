@@ -35,6 +35,8 @@ $session = Yii::$app->session;
         $value = 'Մուտք(վերադարցրած)';
     }elseif ($model->document_type === '9'){
         $value = 'Պատվերից ելքագրված';
+    }elseif ($model->document_type === '10'){
+        $value = 'Ետ վերադարցրած';
     }
     ?>
     <img style="height: 20px; float: right;"  class="downloadUpdateXLSX" onclick="window.open('/documents/reports?type=1&id=<?= $model->id ?>//','newwindow','width:500, height:700')" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAC+klEQVR4nO2ZzWsTURDAFwW/kYre9CKKiB4ERT2of4AUveXqF1htZtaQ7rw0NDN9ehMUsTfxIggepPSioOJRz3rQg3gRqYI91I/Wg1rUykvzkk2atNl2d/uCHRjIMpnZ+c2b93Y28bxlWZZlmVf8gt4GJMNAMolKpheoU6DkJarBjJd68oo/LyLx2UqsUwMAkuFYk68oKLmcFsBkXAkvCQTGVPFyMRT3z24nudoxAEsCgTEDpA6BCQCkCoEJAaQGgQkCpAKRNICRZkdsbA+7NABaQsQxdsQFYEaSyBDEL5wBAMWPokIA8S9nAJJqvXnlvwEAxbetj9Z6BSh5V2+Xi9YOhcGzzgGgkimfSjuane9AMpbP59dW4FY1wqEjAKbKd6xfT5/egsQ/yjaSYggs52QL4Yz+xj69u+pLfBcUT+RyustcZ7XeYFbDZYBpVHLP+mb7S0eR5GYISJzdxFjtd/7jB3qP3czZAu81n6FY3Iwk35wHwBm93xgHSK4vJJa3JADE333fX10HoPhNJwFcmRWH+NScrafkJygeygZyOAiC9YtOfOEA/MmcNmXfoLQd+3mf3Q9I8qqF30f7vdglevUHz4cHMyC5Ya/9QE40qzwmlXxUAFD8OpPJrDR+ZhWQZNz8rtRbLG6qxiN53uAzlFjyUQEwkOM1P86HbAN1z4awT2HgUN39Auk2LQXEH8Lxkgcgfmp9zLyDSkarVSYZO631GmsHxQ+sLVvZL1WbSbwWdzQ1AF/xuUuBHDDa7EUdiEvWjsRnWh2T6MQxGkG9DgZ4DIpPdiLAX6AStHs/zz0Avhblfp5TAOUZSW9MFQAUT8QHIA/DsXM53QXEz0xbtTOmI/GTHq3XRQMgGYkLAJTcqqs21Y7TtjWQ7mgAfXqXGQliASAZCcfOFvVO01YRVnDcvGt7UeVCfmCreUlZbDuZfzvNU7puFZQcawuC5Asovd9zUZDkyFx/JoLir72BHPRcFmwB0RHJexVphOio5K1Uxu33qPhtOz3/DyrGtgq43BHiAAAAAElFTkSuQmCC">
@@ -255,10 +257,22 @@ $session = Yii::$app->session;
                     <?php }?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'document_type')->dropDownList([ '1' => 'Մուտք', '2' => 'Ելք','3' => 'Տեղափոխություն','4' => 'Խոտան', ]) ?>
+                    <?= $form->field($model, 'document_type')->dropDownList([ '1' => 'Մուտք', '2' => 'Ելք','3' => 'Տեղափոխություն','4' => 'Խոտան','10' => 'Հետ վերադարձ', ]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName toWarehouse">
                     <?= $form->field($model, 'to_warehouse')->dropDownList(['' => 'Ընտրել պահեստը'] + $to_warehouse) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName docType">
+                    <label for="singleClients">Հաճախորդներ</label>
+                    <select id="singleClients" class="js-example-basic-single form-control" name="client_id">
+                        <option  value=""></option>
+                        <?php foreach ($clietns as $clietn){ ?>
+                            <option value="<?=$clietn['id']?>"><?=$clietn['name']?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName deliveredOrders">
+
                 </div>
                     <?php
                     if($session['role_id'] == 1){?>

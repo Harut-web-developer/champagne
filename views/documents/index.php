@@ -59,12 +59,20 @@ if($have_access_available){
                 ]);
             },
             'delivered'=>function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132; padding:0px 2px" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
+                if ($model->document_type == 6){
+                    return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132; padding:0px 2px" ></i>', $url, [
+                        'title' => Yii::t('yii', 'Հաստատել'),
+                    ]);
+                }else{
+                    return '';
+                }
             },
             'refuse'=>function ($url, $model, $key) {
-                return '<i class="bx bx-block refuseDocument" data-id="'. $key . '" title="Մերժել" style="color:red; padding:0px 2px"></i>';
+                if ($model->document_type == 6){
+                    return '<i class="bx bx-block refuseDocument" data-id="'. $key . '" title="Մերժել" style="color:red; padding:0px 2px"></i>';
+                }else{
+                    return '';
+                }
             },
         ],
 
@@ -103,6 +111,7 @@ if($have_access_available){
                     <option value="7">Մերժված</option>
                     <option value="8">Մուտք(վերադարցրած)</option>
                     <option value="9">Պատվերից ելքագրված</option>
+                    <option value="10">Ետ վերադարցրած</option>
             </select>
             <?php }?>
             <div class="iconsPrintAndXlsx">
@@ -144,6 +153,8 @@ if($have_access_available){
                         return 'Մուտք(վերադարցրած)';
                     } elseif ($model->document_type == 9){
                         return 'Պատվերից ելքագրված';
+                    } elseif ($model->document_type == 10){
+                        return 'Ետ վերադարցրած';
                     }
                 }
             ],

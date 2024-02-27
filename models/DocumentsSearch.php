@@ -69,6 +69,8 @@ class DocumentsSearch extends Documents
                 $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']])->andWhere($warehouse);
             }elseif ($params['numberVal'] == 9){
                 $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']])->andWhere($warehouse);
+            }elseif ($params['numberVal'] == 10){
+                $query->andWhere(['status' => '1'])->andWhere(['document_type' => $params['numberVal']])->andWhere($warehouse);
             }
         }else{
             $query->andWhere(['status' => '1'])->andWhere($warehouse);

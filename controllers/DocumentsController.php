@@ -9,7 +9,10 @@ use app\models\DocumentsSearch;
 use app\models\Nomenclature;
 use app\models\Log;
 use app\models\Notifications;
+use app\models\OrderItems;
+use app\models\Orders;
 use app\models\Premissions;
+use PhpParser\Comment\Doc;
 use yii\helpers\Url;
 use app\models\Products;
 use app\models\Rates;
@@ -141,11 +144,17 @@ class DocumentsController extends Controller
             ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
+//            echo "<pre>";
+//            var_dump($post);
+//            exit();
             date_default_timezone_set('Asia/Yerevan');
             $model->user_id = $post['user_id'];
             $model->warehouse_id = $post['Documents']['warehouse_id'];
             if ($post['Documents']['document_type'] == '3'){
                 $model->to_warehouse = $post['Documents']['to_warehouse'];
+            }
+            if ($post['Documents']['document_type'] === '10'){
+                $model->orders_id = $post['order_id'];
             }
             $model->rate_id = $post['Documents']['rate_id'];
             $model->rate_value = $post['Documents']['rate_value'];
@@ -190,7 +199,39 @@ class DocumentsController extends Controller
                         $document_items->save(false);
                     }
                 }
+            if ($post['Documents']['document_type'] === '10'){
+                for ($i = 0; $i < count($post['document_items']); $i++) {
+                    $products = new Products();
+                    $products->warehouse_id = $post['Documents']['warehouse_id'];
+                    $products->nomenclature_id = $post['document_items'][$i];
+                    $products->document_id = $model->id;
+                    $products->type = 1;
+                    $products->count = intval($post['count_'][$i]);
+                    $products->count_balance = intval($post['count_'][$i]);
+                    if ($post['aah'] == 'true'){
+                        $products->price = floatval($post['pricewithaah'][$i]);
+                        $products->AAH = 1;
+                    }else{
+                        $products->price = floatval($post['price'][$i]);
+                        $products->AAH = 0;
+                    }
+                    $products->created_at = date('Y-m-d H:i:s');
+                    $products->updated_at = date('Y-m-d H:i:s');
+                    $products->save(false);
 
+                    $document_items = new DocumentItems();
+                    $document_items->document_id = $model->id;
+                    $document_items->nomenclature_id = $post['document_items'][$i];
+                    $document_items->count = $post['count_'][$i];
+                    $document_items->price = floatval($post['price'][$i]);
+                    $document_items->refuse_product_id = $products->id;
+                    $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
+                    $document_items->AAH = $post['aah'];
+                    $document_items->created_at = date('Y-m-d H:i:s');
+                    $document_items->updated_at = date('Y-m-d H:i:s');
+                    $document_items->save(false);
+                }
+            }
                 if ($post['Documents']['document_type'] == '2'){
                     for ($i = 0; $i < count($post['document_items']); $i++) {
                         $first_product = Products::find()
@@ -494,6 +535,7 @@ class DocumentsController extends Controller
                 '4' => 'խոտանի',
                 '6' => 'վերադարձի',
                 '7' => 'մերժման',
+                '10' => 'ետ վերադարձի',
             ];
             $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
             $text = $user_name['name'] . '(ն\ը) ստեղծել է ' . $document_tipe->{$post['Documents']['document_type']} . ' փաստաթուղթ։';
@@ -535,9 +577,17 @@ class DocumentsController extends Controller
             $to_warehouse =  Warehouse::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
             $to_warehouse = ArrayHelper::map($to_warehouse,'id','name');
         }
+        $clietns = Clients::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
+//        $delivered_documents = Orders::find()
+//            ->select('orders.id, orders.orders_date, documents.comment, clients.name')
+//            ->leftJoin('documents', 'documents.orders_id = orders.id')
+//            ->leftJoin('clients', 'clients.id = orders.clients_id')
+//            ->where(['orders.status'=> ['2','3']])
+//            ->andWhere(['documents.document_type' => '9'])
+//            ->asArray()->all();
         return $this->render('create', [
             'model' => $model,
-//            'users' => $users,
+            'clietns' => $clietns,
             'warehouse' => $warehouse,
             'rates' => $rates,
             'nomenclatures' => $nomenclatures,
@@ -545,9 +595,38 @@ class DocumentsController extends Controller
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'to_warehouse' => $to_warehouse,
+//            'delivered_documents' => $delivered_documents
         ]);
     }
 
+    public function actionChangeOrders(){
+        if ($this->request->isGet){
+            $client_id = $this->request->get('clientId');
+            $delivered_documents = Orders::find()
+                ->select('orders.id, orders.orders_date')
+                ->where(['orders.status'=> ['2','3']])
+                ->andWhere(['clients_id' => $client_id])
+                ->asArray()
+                ->all();
+            return $this->renderAjax('delivered-orders',[
+               'delivered_documents' => $delivered_documents
+            ]);
+        }
+    }
+    public function actionDeliveredOrders(){
+        if ($this->request->isGet){
+            $orders = Orders::find()
+                ->select('order_items.id,order_items.count_by,nomenclature.name, order_items.nom_id_for_name, products.AAH, products.price')
+                ->leftJoin('order_items', 'order_items.order_id = orders.id')
+                ->leftJoin('products', 'order_items.product_id = products.id')
+                ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
+                ->where(['orders.id' => $this->request->get('ordersId')])
+                ->andWhere(['order_items.status' => '1'])
+                ->asArray()
+                ->all();
+            return json_encode($orders);
+        }
+    }
     public function actionCreateFields()
     {
         $have_access = Users::checkPremission(71);

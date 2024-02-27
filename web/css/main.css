@@ -654,11 +654,21 @@
 .toWarehouse{
     display:none;
 }
+.docType{
+    display:none;
+}
+.deliveredOrders{
+    display:none;
+}
 .warehouseCheck{
     display:none;
 }
 .activeForInput{
     display:block;
+}
+.activeForInputDocument{
+    display:flex;
+    flex-direction:column;
 }
 .table > tbody > tr > td > a{
     padding: 0px 5px !important;

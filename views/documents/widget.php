@@ -54,12 +54,20 @@ if($have_access_available){
                 ]);
             },
             'delivered'=>function ($url, $model, $key) {
-                return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132; padding:0px 2px" ></i>', $url, [
-                    'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
-                ]);
+                if ($model->document_type == 6){
+                    return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132; padding:0px 2px" ></i>', $url, [
+                        'title' => Yii::t('yii', 'Հաստատել'),
+                    ]);
+                }else{
+                    return '';
+                }
             },
             'refuse'=>function ($url, $model, $key) {
-                return '<i class="bx bx-block refuseDocument" data-id="'. $key . '" title="Մերժել" style="color:red; padding:0px 2px"></i>';
+                if ($model->document_type == 6){
+                    return '<i class="bx bx-block refuseDocument" data-id="'. $key . '" title="Մերժել" style="color:red; padding:0px 2px"></i>';
+                }else{
+                    return '';
+                }
             },
 ],
         'urlCreator' => function ($action, Documents $model, $key, $index, $column) {
@@ -96,8 +104,10 @@ if($have_access_available){
                         return 'Մերժված';
                     } elseif($model->document_type == 8){
                         return 'Մուտք(վերադարցրած)';
-                    }elseif ($model->document_type == 9){
+                    } elseif ($model->document_type == 9){
                         return 'Պատվերից ելքագրված';
+                    } elseif ($model->document_type == 10){
+                        return 'Ետ վերադարցրած';
                     }
                 }
             ],
@@ -185,8 +195,10 @@ if($have_access_available){
                             return 'Մերժված';
                         } elseif($model->document_type == 8){
                             return 'Մուտք(վերադարցրած)';
-                        }elseif ($model->document_type == 9){
+                        } elseif ($model->document_type == 9){
                             return 'Պատվերից ելքագրված';
+                        } elseif ($model->document_type == 10){
+                            return 'Ետ վերադարցրած';
                         }
                     }
                 ],
@@ -265,13 +277,17 @@ else { ?>
             <div class="filtersField" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
                 <select class="form-select documentStatus" aria-label="Default select example" style="width: 150px; margin: 0px 10px 15px 5px;">
                     <?php
-                    if($session['role_id'] == '1'){?>
+                    if($session['role_id'] == '1' || $session['role_id'] == '4'){?>
                         <option selected value="0">Ընդհանուր</option>
                         <option value="1">Մուտք</option>
                         <option value="2">Ելք</option>
                         <option value="3">Տեղափոխություն</option>
                         <option value="4">Խոտան</option>
                         <option value="6">Վերադարձ</option>
+                        <option value="7">Մերժված</option>
+                        <option value="8">Մուտք(վերադարցրած)</option>
+                        <option value="9">Պատվերից ելքագրված</option>
+                        <option value="10">Ետ վերադարցրած</option>
                     <?php }?>
                 </select>
             </div>
@@ -302,6 +318,12 @@ else { ?>
                                     return 'Վերադարձրած';
                                 } elseif($model->document_type == 7) {
                                     return 'Մերժված';
+                                } elseif($model->document_type == 8){
+                                    return 'Մուտք(վերադարցրած)';
+                                } elseif ($model->document_type == 9){
+                                    return 'Պատվերից ելքագրված';
+                                } elseif ($model->document_type == 10){
+                                    return 'Ետ վերադարցրած';
                                 }
                             }
                         ],
@@ -387,6 +409,12 @@ else { ?>
                                     return 'Վերադարձրած';
                                 } elseif($model->document_type == 7) {
                                     return 'Մերժված';
+                                } elseif($model->document_type == 8){
+                                    return 'Մուտք(վերադարցրած)';
+                                } elseif ($model->document_type == 9){
+                                    return 'Պատվերից ելքագրված';
+                                } elseif ($model->document_type == 10){
+                                    return 'Ետ վերադարցրած';
                                 }
                             }
                         ],
@@ -447,15 +475,3 @@ else { ?>
     </div>
 <?php } ?>
 
-
-<script>
-    $(document).ready(function() {
-        $('.documentsCard').find('tbody tr').each(function () {
-            let document_type = $(this).find('td:nth-child(3)').text();
-            if (document_type != 'Վերադարձրած') {
-                $(this).find('td:nth-child(2) a[title="Հաստատել"]').remove();
-                $(this).find('td:nth-child(2) .refuseDocument').remove();
-            }
-        })
-    })
-</script>
