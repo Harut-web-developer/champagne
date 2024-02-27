@@ -293,7 +293,7 @@ $date_tab = $this->params['date_tab'];
 
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
                         <!-- Place this tag where you want the button to render. -->
-                        <?php if ($session['role_id'] == 1 || $session['role_id'] == 2 || $session['role_id'] == 4) { ?>
+                        <?php if ($session['role_id'] == 1 || $session['role_id'] == 4) { ?>
                             <li class="nav-item lh-1 me-3">
                                 <div class="notifications-container">
                                     <div class="bell-icon"><i id="notificationBell" class="bx bx-bell notificationIcon"></i>

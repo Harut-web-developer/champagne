@@ -230,6 +230,7 @@ class DiscountController extends Controller
                     $all_client_groups_id[$t] = ClientsGroups::find()
                         ->select('clients_id')
                         ->where(['groups_id' => $client_groups_id[$t]])
+                        ->andWhere(['status' => 1])
                         ->asArray()
                         ->all();
                 }
@@ -324,6 +325,7 @@ class DiscountController extends Controller
         $oldattributes = Discount::find()
             ->select('*')
             ->where(['id' => $id])
+            ->andWhere(['status' => 1])
             ->asArray()
             ->one();
         $premission = Premissions::find()

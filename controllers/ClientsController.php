@@ -122,6 +122,7 @@ class ClientsController extends Controller
             ->leftJoin('clients', 'orders.clients_id = clients.id')
             ->where(['orders.clients_id' => $id])
             ->andwhere(['or',['orders.status' => '2'],['orders.status' => '3'],['orders.status' => '4'],['orders.status' => '5']])
+            ->andWhere(['clients.status' => 1])
             ->groupBy('orders.id')
             ->asArray()
             ->all();
@@ -157,6 +158,7 @@ class ClientsController extends Controller
         $premission = Premissions::find()
             ->select('name')
             ->where(['id' => 5])
+            ->andWhere(['status' => 1])
             ->asArray()
             ->one();
         if ($this->request->isPost) {
@@ -185,7 +187,7 @@ class ClientsController extends Controller
         } else {
             $model->loadDefaultValues();
         }
-        $route = Route::find()->select('id, route')->asArray()->all();
+        $route = Route::find()->select('id, route')->where(['status' => 1])->asArray()->all();
         return $this->render('create', [
             'model' => $model,
             'route' => $route,
@@ -208,7 +210,7 @@ class ClientsController extends Controller
     public function actionClientsLocation()
     {
         if ($this->request->isPost) {
-            $allDataClients = Clients::find()->select('location')->asArray()->all();
+            $allDataClients = Clients::find()->select('location')->where(['status' => 1])->asArray()->all();
             return json_encode($allDataClients);
         }
     }
@@ -266,11 +268,13 @@ class ClientsController extends Controller
         $oldattributes = Clients::find()
             ->select('*')
             ->where(['id' => $id])
+            ->andWhere(['status' => 1])
             ->asArray()
             ->one();
         $premission = Premissions::find()
             ->select('name')
             ->where(['id' => 6])
+            ->andWhere(['status' => 1])
             ->asArray()
             ->one();
         $route_value_update = Clients::find()->select('id, route_id')->where(['id' => $model->id])->one();
@@ -323,12 +327,14 @@ class ClientsController extends Controller
         $oldattributes = Clients::find()
             ->select('name')
             ->where(['id' => $id])
+            ->andWhere(['status' => 1])
             ->asArray()
             ->one();
 
         $premission = Premissions::find()
             ->select('name')
             ->where(['id' => 7])
+            ->andWhere(['status' => 1])
             ->asArray()
             ->one();
         $clients = Clients::findOne($id);
