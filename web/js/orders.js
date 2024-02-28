@@ -1,9 +1,5 @@
 $(document).ready(function () {
     var id_count = {};
-    var warehouse_id = $('body').find('.warehouse_id').val();
-    $('body').on('change','.warehouse_id',function () {
-        warehouse_id = $(this).val();
-    })
     $('body').on('input', '.ordersCountInput', function () {
         count_id($(this));
     });
@@ -68,7 +64,9 @@ $(document).ready(function () {
     })
 
     $('body').on('click', '.addOrders_get_warh_id', function (e) {
+        var warehouse_id = $('body').find('.warehouse_id').val();
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        console.log(warehouse_id)
         $.ajax({
             url:'/orders/get-nomiclature',
             method:'post',
@@ -85,6 +83,7 @@ $(document).ready(function () {
     })
 
     $('body').on('click', '.addOrders_get_warh_id_update', function (e) {
+        var warehouse_id = $('body').find('.warehouse_id').val();
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
         let url_id = window.location.href;
         let url = new URL(url_id);
@@ -1656,6 +1655,7 @@ $(document).ready(function () {
         let url_id = window.location.href;
         let url = new URL(url_id);
         let urlId = url.searchParams.get("id");
+        var warehouse_id = $('body').find('.warehouse_id').val();
         $.ajax({
             url:href_+'&warehouse_id='+warehouse_id,
             method:'post',
@@ -1694,6 +1694,29 @@ $(document).ready(function () {
             })
         }else if($('#orders-user_id').val() == ''){
             $('#singleClients').empty();
+        }
+    })
+
+    $('body').on('change','#singleClients',function(){
+        if($('#singleClients').val() != ''){
+            let url_id = window.location.href;
+            let url = new URL(url_id);
+            let urlId = url.searchParams.get("id");
+            let client_id = $(this).val();
+            let csrfToken = $('meta[name="csrf-token"]').attr("content");
+            $.ajax({
+                url:'/orders/get-warehouse',
+                method:'post',
+                datatype:'json',
+                data:{
+                    urlId:urlId,
+                    client_id:client_id,
+                    _csrf:csrfToken,
+                },
+                success:function (data){
+                    $('.warhouse_ajax_content').html(data);
+                }
+            })
         }
     })
 

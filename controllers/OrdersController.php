@@ -327,17 +327,18 @@ class OrdersController extends Controller
         }
         $clients =  $clients->asArray()->all();
 
-        $warehouse = Warehouse::find()
-            ->select('id, name')
-            ->asArray()
-            ->all();
+//        $warehouse = Warehouse::find()
+//            ->select('id, name')
+//            ->where(['status' => '1'])
+//            ->asArray()
+//            ->all();
         return $this->render('create', [
             'model' => $model,
             'users' => $users,
             'clients' => $clients,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-            'warehouse' => $warehouse,
+//            'warehouse' => $warehouse,
         ]);
     }
 
@@ -374,9 +375,28 @@ class OrdersController extends Controller
         }
         $clients =  $clients->asArray()->all();
 
-    return $this->renderAjax('clients_form', [
-        'clients' => $clients,
-    ]);
+        return $this->renderAjax('clients_form', [
+            'clients' => $clients,
+        ]);
+    }
+
+    public function actionGetWarehouse(){
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            $client_id =$post['client_id'];
+            $warehouse = Warehouse::find()
+                ->select('warehouse.id, warehouse.name')
+                ->leftJoin('clients', 'clients.client_warehouse_id = warehouse.id')
+                ->where(['warehouse.status' => '1'])
+                ->andWhere(['clients.status' => '1'])
+                ->andWhere(['clients.id' => $client_id])
+                ->asArray()
+                ->all();
+
+            return $this->renderAjax('warhouse_form', [
+                'warehouse' => $warehouse,
+            ]);
+        }
     }
 
     /**

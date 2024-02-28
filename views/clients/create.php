@@ -18,6 +18,8 @@ $this->params['date_tab'] = $date_tab;
     <?= $this->render('_form', [
         'model' => $model,
         'route' => $route,
+        'warehouse' => $warehouse,
+
     ]) ?>
 
 </div>

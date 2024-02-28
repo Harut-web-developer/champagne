@@ -64,15 +64,8 @@ $session = Yii::$app->session;
                         </div>
                     <?php } ?>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouse_style">
-                    <label for="warehouse">Պահեստներ</label>
-                    <select class="form-select form-control warehouse_id " aria-label="Default select example" name="warehouse">
-                        <?php foreach ($warehouse as $key => $value) {
-                            $isSelected = ($value['id'] == $warehouse_value_update["warehouse_id"]);
-                            if ($isSelected == true){?>
-                                <option <?= $isSelected ? 'selected' : '' ?> value="<?= $value['id'] ?>"><?= $value['name']?></option>
-                        <?php } } ?>
-                    </select>
+                <div class="warhouse_ajax_content">
+                    <input <?= $warehouse_value_update["warehouse_id"] ? 'value="' . $warehouse_value_update['warehouse_id'] . '"' : 'value=""' ?> type="hidden" name="warehouse" class="warehouse_id">
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'comment')->textarea() ?>
@@ -338,15 +331,9 @@ $session = Yii::$app->session;
                         </div>
                     <?php } ?>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouse_style">
-                    <label for="warehouse">Պահեստներ</label>
-                    <select class="form-select form-control warehouse_id" aria-label="Default select example" name="warehouse">
-                        <?php foreach ($warehouse as $key => $value) { ?>
-                            <option value="<?= $value['id'] ?>"><?= $value['name']?></option>
-                        <?php } ?>
-                    </select>
-                </div>
+                <div class="warhouse_ajax_content">
 
+                </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersTotalCount">
                     <?= $form->field($model, 'comment')->textarea() ?>
                 </div>

@@ -8,6 +8,7 @@ use app\models\Notifications;
 use app\models\Orders;
 use app\models\Payments;
 use app\models\Premissions;
+use app\models\Warehouse;
 use Psy\Command\EditCommand;
 use Yii;
 use yii\helpers\Url;
@@ -174,6 +175,7 @@ class ClientsController extends Controller
             $model->name = $post['Clients']['name'];
             $model->location = $post['Clients']['location'];
             $model->route_id = $post['Clients']['route'];
+            $model->client_warehouse_id = $post['Clients']['warehouse_id'];
             $model->phone = $post['Clients']['phone'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
@@ -194,12 +196,14 @@ class ClientsController extends Controller
             $model->loadDefaultValues();
         }
         $route = Route::find()->select('id, route')->where(['status' => 1])->asArray()->all();
+        $warehouse = Warehouse::find()->select('id, name')->where(['status' => 1])->asArray()->all();
+
         return $this->render('create', [
             'model' => $model,
+            'warehouse' => $warehouse,
             'route' => $route,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
         ]);
     }
 
@@ -284,12 +288,15 @@ class ClientsController extends Controller
             ->asArray()
             ->one();
         $route_value_update = Clients::find()->select('id, route_id')->where(['id' => $model->id])->one();
+        $warehouse_value_update = Clients::find()->select('id, client_warehouse_id')->where(['id' => $model->id])->one();
+
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
             $model->name = $post['Clients']['name'];
             $model->location = $post['Clients']['location'];
             $model->route_id = $post['Clients']['route'];
+            $model->client_warehouse_id = $post['Clients']['warehouse_id'];
             $model->phone = $post['Clients']['phone'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
@@ -306,13 +313,16 @@ class ClientsController extends Controller
             }
             return $this->redirect(['index', 'id' => $model->id]);
         }
-        $route = Route::find()->select('id, route')->asArray()->all();
+        $route = Route::find()->select('id, route')->where(['status' => 1])->asArray()->all();
+        $warehouse = Warehouse::find()->select('id, name')->where(['status' => 1])->asArray()->all();
         return $this->render('update', [
             'model' => $model,
             'route' => $route,
             'route_value_update' => $route_value_update,
+            'warehouse_value_update' => $warehouse_value_update,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'warehouse' => $warehouse,
 
         ]);
     }

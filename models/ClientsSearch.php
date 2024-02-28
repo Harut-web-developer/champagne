@@ -18,7 +18,7 @@ class ClientsSearch extends Clients
     {
         return [
             [['id', 'phone'], 'integer'],
-            [['name', 'location', 'route_id', 'status', 'created_at', 'updated_at'], 'safe'],
+            [['name', 'location', 'route_id', 'client_warehouse_id', 'status', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
