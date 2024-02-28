@@ -49,6 +49,7 @@ class Clients extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'route_id' => 'Երթուղի',
+            'client_warehouse_id' => 'Պահեստ',
             'sort_' => 'Երթուղու համար',
             'name' => 'Անուն',
             'location' => 'Տեղադիրք',
@@ -72,6 +73,9 @@ class Clients extends \yii\db\ActiveRecord
     }
     public function getRouteName(){
         return $this->hasOne(Route::className(), ['id'=>'route_id']);
+    }
+    public function getWarehouseName(){
+        return $this->hasOne(Warehouse::className(), ['id'=>'client_warehouse_id']);
     }
     public function getOrders()
     {

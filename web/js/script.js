@@ -404,7 +404,8 @@ $(document).ready(function() {
                     var headRow = table.querySelector("thead tr");
                     if (headRow) {
                         var headerData = [];
-                        var headerCells = headRow.querySelectorAll("th:not(:last-child)");
+                        // var headerCells = headRow.querySelectorAll("th:not(:last-child)");
+                        var headerCells = headRow.querySelectorAll("th");
                         headerCells.forEach(function (headerCell) {
                             headerData.push(headerCell.textContent);
                         });
@@ -413,7 +414,8 @@ $(document).ready(function() {
                     var rows = table.querySelectorAll("tbody tr");
                     rows.forEach(function (row) {
                         var rowData = [];
-                        var cells = row.querySelectorAll("td:not(:last-child)");
+                        // var cells = row.querySelectorAll("td:not(:last-child)");
+                        var cells = row.querySelectorAll("td");
                         cells.forEach(function (cell) {
                             rowData.push(cell.textContent);
                         });

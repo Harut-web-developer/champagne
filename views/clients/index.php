@@ -150,9 +150,6 @@ if ($have_access_update && $have_access_delete && $have_access_debt_statistic){
         'summaryOptions' => ['class' => 'summary'],
         'dataProvider' => new ActiveDataProvider([
             'query' => $dataProvider->query->andWhere(['status' => '1']),
-//                'pagination' => [
-//                    'pageSize' => 20,
-//                ],
         ]),
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
@@ -167,9 +164,17 @@ if ($have_access_update && $have_access_delete && $have_access_debt_statistic){
                     }
                 }
             ],
-//            'route_id',
+            [
+                'attribute' => 'client_warehouse_id',
+                'value' => function ($model) {
+                    if ($model->warehouseName) {
+                        return $model->warehouseName->name;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
             'name',
-//            'location',
             'phone',
         ],
     ]); ?>

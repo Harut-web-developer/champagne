@@ -46,12 +46,30 @@ if(isset($action__)){
                             <?php } ?>
                         </select>
                     </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouse">
+                        <label for="warehouseSelect">Պահեստներ</label>
+                        <select id="warehouse Select" class="form-select form-control" aria-label="Default select example" name="Clients[warehouse_id]" required>
+                            <option value="">Ընտրել պահեստ</option>
+                            <?php foreach ($warehouse as $index => $warehous ){ ?>
+                                <option value="<?= $warehous['id'] ?>"><?= $warehous['name'] ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
                 <?php } else { ?>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 route">
                         <label for="multipleClients">Երթուղիներ</label>
                         <select class="form-select form-control" aria-label="Default select example" name="Clients[route]">
                             <?php foreach ($route as $index => $rout) { ?>
                                 <option value="<?= $rout['id'] ?>" <?= ($rout['id'] == $route_value_update['route_id']) ? 'selected' : '' ?> ><?= $rout['route']?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouse">
+                        <label for="warehouseSelect">Պահեստներ</label>
+                        <select id="warehouse Select" class="form-select form-control" aria-label="Default select example" name="Clients[warehouse_id]" required>
+                            <option value="">Ընտրել պահեստ</option>
+                            <?php foreach ($warehouse as $index => $warehous ){ ?>
+                                <option value="<?= $warehous['id'] ?>" <?= ($warehous['id'] == $warehouse_value_update['client_warehouse_id']) ? 'selected' : '' ?> ><?= $warehous['name']?></option>
                             <?php } ?>
                         </select>
                     </div>
