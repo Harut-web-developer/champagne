@@ -147,7 +147,7 @@ class DocumentsController extends Controller
             ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
-//            echo "<pre>";
+            echo "<pre>";
 //            var_dump($post);
 //            exit();
             date_default_timezone_set('Asia/Yerevan');
@@ -233,7 +233,61 @@ class DocumentsController extends Controller
                     $document_items->created_at = date('Y-m-d H:i:s');
                     $document_items->updated_at = date('Y-m-d H:i:s');
                     $document_items->save(false);
+
+                    $orders_items = OrderItems::findOne($post['items'][$i]);
+                    $orders_items->count_by -= $post['count_'][$i];
+                    if ($orders_items->count_by == 0){
+                        $orders_items->status = '0';
+                    }
+                    $orders_items->price_by = ($orders_items->price / $orders_items->count) * $orders_items->count_by;
+                    $orders_items->cost_by = ($orders_items->cost / $orders_items->count) * $orders_items->count_by;
+                    $orders_items->discount_by = ($orders_items->discount / $orders_items->count) * $orders_items->count_by;
+                    $orders_items->price_before_discount_by = ($orders_items->price_before_discount / $orders_items->count) * $orders_items->count_by;
+                    $orders_items->save(false);
+
+                    $change_products = Products::findOne($orders_items->product_id);
+                    $change_products->count = $orders_items->count_by;
+                    if ($orders_items->count_by == 0){
+                        $change_products->status = '0';
+                    }
+                    $change_products->save(false);
                 }
+                $end_order_items = OrderItems::find()->select('SUM(count_by) as total_count,
+                SUM(price_by) as total_price,SUM(price_before_discount_by) as total_price_before_discount,SUM(discount_by) as total_discount')
+                    ->where(['order_id' => $post['order_id']])
+                    ->andWhere(['status' => 1])
+                    ->asArray()
+                    ->all();
+                $orders = Orders::findOne($post['order_id']);
+                if ($end_order_items[0]['total_price'] == null){
+                    $orders->total_price = 0;
+                }else{
+                    $orders->total_price = $end_order_items[0]['total_price'];
+                }
+                if ($end_order_items[0]['total_count'] == null){
+                    $orders->total_count = 0;
+                }else{
+                    $orders->total_count = $end_order_items[0]['total_count'];
+                }
+                if ($end_order_items[0]['total_price_before_discount'] == null){
+                    $orders->total_price_before_discount = 0;
+                }else{
+                    $orders->total_price_before_discount = $end_order_items[0]['total_price_before_discount'];
+                }
+                if ($end_order_items[0]['total_discount'] == null){
+                    $orders->total_discount = 0;
+                }else{
+                    $orders->total_discount = $end_order_items[0]['total_discount'];
+                }
+                if ($orders->status == 2){
+                    $orders->status = '4';
+                }elseif($orders->status == 3){
+                    $orders->status = '5';
+                }
+                if ($orders->total_count == 0){
+                    $orders->status = '0';
+                }
+                $orders->save(false);
             }
                 if ($post['Documents']['document_type'] == '2'){
                     for ($i = 0; $i < count($post['document_items']); $i++) {

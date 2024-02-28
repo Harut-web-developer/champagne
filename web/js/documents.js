@@ -834,7 +834,7 @@ $(document).ready(function () {
     })
 
     $('body').on('change','#documents-warehouse_id, #documents-document_type, #documents-date',function(){
-        if($('#documents-warehouse_id').val() != '' && $('#documents-document_type').val() != '' && $('#documents-date').val() != ''){
+        if($('#documents-warehouse_id').val() != '' && $('#documents-document_type').val() != 10 && $('#documents-date').val() != '' ){
             $('body').find('.addDocuments').attr('disabled',false);
         }
     })
