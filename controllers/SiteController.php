@@ -29,8 +29,12 @@ class SiteController extends Controller
             return $this->redirect(['site/login']);
         } else if($action->id == 'login' && !(isset($session['user_id']) && $session['logged'])){
             return $this->actionLogin();
-        } else if($action->id == 'login') {
+        } else if($action->id == 'login' && ($session['role_id'] == 1 || $session['role_id'] == 2)) {
             return $this->redirect('/dashboard');
+        } else if($action->id == 'login' && $session['role_id'] == 4) {
+            return $this->redirect('/warehouse');
+        } else if($action->id == 'login' && $session['role_id'] == 3) {
+            return $this->redirect('/map');
         }
 //        else if ($action->id === 'forgot-password'){
 //            return  $this->redirect('site/forgot-password');
@@ -117,7 +121,13 @@ class SiteController extends Controller
                 $session->set('user_id',$identity->id);
                 $session->set('role_id', $identity->role_id);
                 $session->set('logged',true);
-                return $this->redirect('/dashboard');
+                if($session['role_id'] == 1 || $session['role_id'] == 2) {
+                    return $this->redirect('/dashboard');
+                } else if($session['role_id'] == 4) {
+                    return $this->redirect('/warehouse');
+                } else if($session['role_id'] == 3) {
+                    return $this->redirect('/map');
+                }
             } else {
                 return $this->redirect('');
             }

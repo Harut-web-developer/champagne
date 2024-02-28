@@ -731,9 +731,7 @@ $(document).ready(function() {
 
     //print orders table
     $('body').on('click','.print_orders_table',function (){
-        printTableOrder('/orders/print-doc');
-    });
-    function printTableOrder(url) {
+        var url = '/orders/print-doc';
         var t_length = $('body').find('#w0 table tbody tr').length;
         var table = '<table id="ele4">';
         $('body').find('table tbody tr').each(function () {
@@ -784,13 +782,11 @@ $(document).ready(function() {
                 })
             }
         })
-    }
+    });
 
     //print document table
     $('body').on('click','.print_document_table',function (){
-        printTableDocument('/documents/print-doc');
-    });
-    function printTableDocument(url) {
+        var url = '/documents/print-doc';
         var t_length = $('body').find('#w0 table tbody tr').length;
         var table = '<table id="ele4">';
         $('body').find('table tbody tr').each(function () {
@@ -839,7 +835,7 @@ $(document).ready(function() {
                 })
             }
         })
-    }
+    });
 
     $('body').on('change', '.documentsDate, .documentStatus, .documentWarehouseStatus', function () {
         let numberVal = $('.documentStatus').val();

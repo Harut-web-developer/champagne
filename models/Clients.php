@@ -73,4 +73,12 @@ class Clients extends \yii\db\ActiveRecord
     public function getRouteName(){
         return $this->hasOne(Route::className(), ['id'=>'route_id']);
     }
+    public function getOrders()
+    {
+        return $this->hasMany(Orders::class, ['clients_id' => 'id'])->onCondition(['orders.status' => '2']);
+    }
+    public function getPayments()
+    {
+        return $this->hasMany(Payments::class, ['client_id' => 'id'])->onCondition(['payments.status' => '1']);
+    }
 }

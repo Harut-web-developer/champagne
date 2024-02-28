@@ -95,14 +95,9 @@ class PaymentsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $statistics = Payments::find()->select('orders.id as orders_id,SUM(orders.total_price) as debt,orders.status,
-         clients.name, payments.id as payment_id,payments.payment_sum,')
-            ->leftJoin('orders','orders.clients_id = payments.client_id')
-            ->leftJoin('clients', 'clients.id = payments.client_id')
-            ->where(['orders.status' => '2'])
-            ->andWhere(['payments.status' => '1'])
-            ->groupBy('payments.client_id')
-            ->orderBy(['payments.created_at'=> SORT_DESC])
+
+        $statistics = Clients::find()
+            ->innerJoinWith(['orders' , 'payments'])
             ->asArray()
             ->all();
 
@@ -162,7 +157,7 @@ class PaymentsController extends Controller
                     ->select(['orders.id', 'orders.total_price as debt'])
                     ->leftJoin('clients', 'orders.clients_id = clients.id')
                     ->where(['orders.clients_id' => $post['client_id']])
-                    ->andWhere(['or',['orders.status' => '2'],['orders.status' => '3']])
+                    ->andwhere(['or',['orders.status' => '2'],['orders.status' => '3'],['orders.status' => '4'],['orders.status' => '5']])
                     ->groupBy('orders.id')
                     ->asArray()
                     ->all();

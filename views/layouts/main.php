@@ -66,44 +66,33 @@ $date_tab = $this->params['date_tab'];
         <!-- Menu -->
 
         <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme" data-bg-class="bg-menu-theme">
-<!--            <div class="app-brand demo logoLoc">-->
-<!--                <a href="index.html" class="app-brand-link">-->
-<!--              <span class="app-brand-logo demo">-->
-<!--                  <img src="/img/logo.png">-->
-<!--              </span>-->
-<!--                    <span class="app-brand-text demo menu-text fw-bold ms-2">Champagne</span>-->
-<!--                </a>-->
-<!---->
-<!--                <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-xl-none">-->
-<!--                    <i class="bx bx-chevron-left bx-sm align-middle"></i>-->
-<!--                </a>-->
-<!--            </div>-->
-
             <div class="menu-inner-shadow"></div>
-
             <ul class="menu-inner py-1 ps ps--active-y scrollMenu">
                 <!-- Dashboards -->
                 <li class="menu-item open">
                     <div class="dashboardName">
                         <img src="/img/logo.png">
-<!--                        <i class="menu-icon tf-icons bx bx-home-circle"></i>-->
                         <div data-i18n="Dashboards"><a href="/dashboard">Dashboards</a></div>
                     </div>
                 </li>
                 <li class="menu-item open">
                     <ul class="menu-sub main_menu">
-                        <li class="menu-item ">
-                            <a href="/dashboard" class="menu-link">
-                                <i class='bx bx-bar-chart-alt-2'></i>
-                                <div data-i18n="Analytics">Վահանակ</div>
-                            </a>
-                        </li>
-                        <li class="menu-item ">
-                            <a href="/map" class="menu-link">
-                                <i class='bx bx-map-alt'></i>
-                                <div data-i18n="Analytics">Քարտեզ</div>
-                            </a>
-                        </li>
+                        <?php if ($session['role_id'] == 1 || $session['role_id'] == 2) { ?>
+                            <li class="menu-item ">
+                                <a href="/dashboard" class="menu-link">
+                                    <i class='bx bx-bar-chart-alt-2'></i>
+                                    <div data-i18n="Analytics">Վահանակ</div>
+                                </a>
+                            </li>
+                        <?php } ?>
+                        <?php if ($session['role_id'] == 1 || $session['role_id'] == 2 || $session['role_id'] == 3) { ?>
+                            <li class="menu-item ">
+                                <a href="/map" class="menu-link">
+                                    <i class='bx bx-map-alt'></i>
+                                    <div data-i18n="Analytics">Քարտեզ</div>
+                                </a>
+                            </li>
+                        <?php } ?>
                         <li class="menu-item ">
                             <a href="/orders" class="menu-link">
                                 <i class='bx bx-cart-add' ></i>
@@ -111,141 +100,151 @@ $date_tab = $this->params['date_tab'];
                             </a>
                         </li>
                         <li class="menu-item" style="">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bx-building"></i>
-                                <div data-i18n="warehouse">Պահեստներ</div>
-                            </a>
-
+                            <?php if ($session['role_id'] == 1 || $session['role_id'] == 2 || $session['role_id'] == 4) { ?>
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <i class="menu-icon tf-icons bx bx-building"></i>
+                                    <div data-i18n="warehouse">Պահեստներ</div>
+                                </a>
+                            <?php } ?>
                             <ul class="menu-sub sub_menu_sub">
-                                <li class="menu-item">
-                                    <a href="/documents" class="menu-link">
-                                        <div data-i18n="documents">Փաստաթուղթ</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/nomenclature" class="menu-link">
-                                        <div data-i18n="nomenclature">Անվանակարգ</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/products" class="menu-link">
-                                        <div data-i18n="products">Ապրանքներ</div>
-                                    </a>
-                                </li>
-                                <?php
-                                if ($session['role_id'] == 1){
-                                    ?>
+                                <?php if ($session['role_id'] == 1 || $session['role_id'] == 4) { ?>
+                                    <li class="menu-item">
+                                        <a href="/documents" class="menu-link">
+                                            <div data-i18n="documents">Փաստաթուղթ</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/nomenclature" class="menu-link">
+                                            <div data-i18n="nomenclature">Անվանակարգ</div>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                                <?php if ($session['role_id'] == 1 || $session['role_id'] == 2 || $session['role_id'] == 4) { ?>
+                                    <li class="menu-item">
+                                        <a href="/products" class="menu-link">
+                                            <div data-i18n="products">Ապրանքներ</div>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                                <?php if ($session['role_id'] == 1){ ?>
                                     <li class="menu-item">
                                         <a href="/log" class="menu-link">
                                             <div data-i18n="log">Տեղեկամատյան</div>
                                         </a>
                                     </li>
-                                <?php
-                                }
-                                ?>
+                                <?php } ?>
+                                <?php if ($session['role_id'] == 1 || $session['role_id'] == 2 || $session['role_id'] == 4) { ?>
+                                    <li class="menu-item">
+                                        <a href="/warehouse" class="menu-link">
+                                            <div data-i18n="Blank">Պահեստներ</div>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                            </ul>
+                        </li>
+                        <?php if ($session['role_id'] == 1 || $session['role_id'] == 2) { ?>
+                            <li class="menu-item">
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <i class="menu-icon tf-icons bx bx-male-female"></i>
+                                    <div data-i18n="users">Հաճախորդներ</div>
+                                </a>
+                                <ul class="menu-sub sub_menu_sub">
+                                    <?php if ($session['role_id'] == 1) { ?>
+                                        <li class="menu-item">
+                                            <a href="/groups-name" class="menu-link">
+                                                <div data-i18n="groups-name">Խմբեր</div>
+                                            </a>
+                                        </li>
+                                    <? } ?>
+                                    <li class="menu-item">
+                                        <a href="/clients" class="menu-link">
+                                            <div data-i18n="clients">Հաճախորդներ</div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        <? } ?>
+                        <?php if ($session['role_id'] == 1 || $session['role_id'] == 2) { ?>
+                            <li class="menu-item" style="">
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <i class="menu-icon tf-icons bx bx-male-female"></i>
+                                    <div data-i18n="users">Օգտատեր</div>
+                                </a>
+                                <ul class="menu-sub sub_menu_sub">
+                                    <?php if ($session['role_id'] == 1) { ?>
+                                        <li class="menu-item">
+                                            <a href="/roles" class="menu-link">
+                                                <div data-i18n="roles">Կարգավիճակ</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if ($session['role_id'] == 1 || $session['role_id'] == 2) { ?>
+                                        <li class="menu-item">
+                                            <a href="/users" class="menu-link">
+                                                <div data-i18n="users">Օգտատեր</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if ($session['role_id'] == 1 ) { ?>
+                                        <li class="menu-item">
+                                            <a href="/manager-deliver-condition" class="menu-link">
+                                                <div data-i18n="users">Մենեջեր-առաքիչ</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                            </li>
+                        <?php } ?>
+                        <?php if ($session['role_id'] == 1) { ?>
+                            <li class="menu-item" style="">
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <i class="menu-icon tf-icons bx bx-money-withdraw"></i>
+                                    <div data-i18n="users">Վճարումներ</div>
+                                </a>
 
-                                <li class="menu-item">
-                                    <a href="/warehouse" class="menu-link">
-                                        <div data-i18n="Blank">Պահեստներ</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item" style="">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon bx bx-store-alt"></i>
-                                <div data-i18n="clients">Հաճախորդներ</div>
-                            </a>
-                            <ul class="menu-sub sub_menu_sub">
-                                <li class="menu-item">
-                                    <a href="/groups-name" class="menu-link">
-                                        <div data-i18n="groups-name">Խմբեր</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/clients" class="menu-link">
-                                        <div data-i18n="clients">Հաճախորդներ</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item" style="">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bx-male-female"></i>
-                                <div data-i18n="users">Օգտատեր</div>
-                            </a>
-
-                            <ul class="menu-sub sub_menu_sub">
-                                <li class="menu-item">
-                                    <a href="/roles" class="menu-link">
-                                        <div data-i18n="roles">Կարգավիճակ</div>
-                                    </a>
-                                </li>
-<!--                                <li class="menu-item">-->
-<!--                                    <a href="/premissions" class="menu-link">-->
-<!--                                        <div data-i18n="premissions">Թույլտվություններ</div>-->
-<!--                                    </a>-->
-<!--                                </li>-->
-                                <li class="menu-item">
-                                    <a href="/users" class="menu-link">
-                                        <div data-i18n="users">Օգտատեր</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/manager-deliver-condition" class="menu-link">
-                                        <div data-i18n="users">Մենեջեր-առաքիչ</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item" style="">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bx-money-withdraw"></i>
-                                <div data-i18n="users">Վճարումներ</div>
-                            </a>
-
-                            <ul class="menu-sub sub_menu_sub">
-                                <li class="menu-item">
-                                    <a href="/payments" class="menu-link">
-                                        <div data-i18n="roles">Վճարումներ</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/payments/statistics" class="menu-link">
-                                        <div data-i18n="premissions">Վիճակագրություն</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/rates" class="menu-link">
-                                        <div data-i18n="users">Փոխարժեք</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item" style="">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bxs-bank"></i>
-                                <div data-i18n="users">Զեղչեր</div>
-                            </a>
-                            <ul class="menu-sub sub_menu_sub">
-                                <li class="menu-item">
-                                    <a href="/discount" class="menu-link">
-                                        <div data-i18n="discount">Ակտիվ զեղչեր</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/discount/inactive" class="menu-link">
-                                        <div data-i18n="discount">Ոչ ակտիվ զեղչեր</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item ">
-                            <a href="/route" class="menu-link">
-                                <i class='bx bxs-direction-left'></i>
-                                <div data-i18n="Analytics">Երթուղի</div>
-                            </a>
-                        </li>
+                                <ul class="menu-sub sub_menu_sub">
+                                    <li class="menu-item">
+                                        <a href="/payments" class="menu-link">
+                                            <div data-i18n="roles">Վճարումներ</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/payments/statistics" class="menu-link">
+                                            <div data-i18n="premissions">Վիճակագրություն</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/rates" class="menu-link">
+                                            <div data-i18n="users">Փոխարժեք</div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="menu-item" style="">
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <i class="menu-icon tf-icons bx bxs-bank"></i>
+                                    <div data-i18n="users">Զեղչեր</div>
+                                </a>
+                                <ul class="menu-sub sub_menu_sub">
+                                    <li class="menu-item">
+                                        <a href="/discount" class="menu-link">
+                                            <div data-i18n="discount">Ակտիվ զեղչեր</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/discount/inactive" class="menu-link">
+                                            <div data-i18n="discount">Ոչ ակտիվ զեղչեր</div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="menu-item ">
+                                <a href="/route" class="menu-link">
+                                    <i class='bx bxs-direction-left'></i>
+                                    <div data-i18n="Analytics">Երթուղի</div>
+                                </a>
+                            </li>
+                        <?php } ?>
                     </ul>
                 </li>
 
@@ -294,19 +293,20 @@ $date_tab = $this->params['date_tab'];
 
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
                         <!-- Place this tag where you want the button to render. -->
-                        <li class="nav-item lh-1 me-3">
-                            <div class="notifications-container">
-                                <div class="bell-icon"><i id="notificationBell" class="bx bx-bell notificationIcon"></i>
-                                    <span class="badge badge-light index_not"></span>
-                                </div>
-                                <div id="notifications-dropdown">
-                                    <div class="notification-ui_dd-header">
-                                        <h3 class="text-center">Notification</h3>
+                        <?php if ($session['role_id'] == 1 || $session['role_id'] == 4) { ?>
+                            <li class="nav-item lh-1 me-3">
+                                <div class="notifications-container">
+                                    <div class="bell-icon"><i id="notificationBell" class="bx bx-bell notificationIcon"></i>
+                                        <span class="badge badge-light index_not"></span>
+                                    </div>
+                                    <div id="notifications-dropdown">
+                                        <div class="notification-ui_dd-header">
+                                            <h3 class="text-center">Notification</h3>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </li>
-
+                            </li>
+                        <? } ?>
                         <!-- User -->
                         <li class="nav-item navbar-dropdown dropdown-user dropdown">
                             <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
