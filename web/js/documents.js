@@ -587,6 +587,7 @@ $(document).ready(function () {
         })
     })
     $('body').on('change','#documents-document_type', function () {
+        $('body').find('.forDocTypeTen').addClass('d-none');
         if ($(this).val() == 3){
             $('body').find('.toWarehouse').addClass('activeForInput');
             $('body').find('.docType').removeClass('activeForInputDocument');
@@ -597,6 +598,8 @@ $(document).ready(function () {
             $('body').find('.addDocuments').attr('disabled',true);
 
         }else if($(this).val() == 10){
+            $('body').find('.documentsAddingTable tbody').html('');
+            $('body').find('.forDocTypeTen').removeClass('d-none');
             $('body').find('.docType').addClass('activeForInputDocument');
             $('body').find('.toWarehouse').removeClass('activeForInput');
             $("#documents-to_warehouse").removeAttr('required');
@@ -658,12 +661,13 @@ $(document).ready(function () {
                                     </td>
                                     <td class="name">`+ param[m].name +`</td>
                                     <td class="count"><input type="number" name="count_[]" value="` + param[m].count_by + `" class="form-control refuseCountDocuments" step="1" min="1" max="` + param[m].count_by + `"></td>
-                                     <td class="price"><input type="text" name="price[]" value="` + ((param[m].price * 5)/6).toFixed(2) + `" class="form-control refusePriceDocuments"></td>
-                                     <td class="pricewithaah">
+                                    <td class="raw"><input type="number" name="raw[]" value="" class="form-control rawInput" step="1" min="0" max="` + param[m].count_by + `"></td>
+                                    <td class="price"><input type="text" name="price[]" value="` + ((param[m].price * 5)/6).toFixed(2) + `" class="form-control refusePriceDocuments"></td>
+                                    <td class="pricewithaah">
                                         <span>` + param[m].price.toFixed(2) + `</span>
                                         <input type="hidden" name="pricewithaah[]" value="` + param[m].price.toFixed(2) + `" class="form-control PriceWithaah">
-                                     </td>
-                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsRefuse">Ջնջել</button></td>
+                                    </td>
+                                    <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsRefuse">Ջնջել</button></td>
                                 </tr>`;
                     }else {
                         let num = param[m].price + (param[m].price * 20)/100;
@@ -675,12 +679,13 @@ $(document).ready(function () {
                                     </td>
                                     <td class="name">`+ param[m].name +`</td>
                                     <td class="count"><input type="number" name="count_[]" value="` + param[m].count_by + `" class="form-control refuseCountDocuments" step="1" min="1" max="` + param[m].count_by + `"></td>
-                                     <td class="price"><input type="text" name="price[]" value="` + param[m].price.toFixed(2) + `" class="form-control refusePriceDocuments"></td>
-                                     <td class="pricewithaah">
+                                    <td class="raw"><input type="number" name="raw[]" value="" class="form-control rawInput" step="1" min="0" max="` + param[m].count_by + `"></td>
+                                    <td class="price"><input type="text" name="price[]" value="` + param[m].price.toFixed(2) + `" class="form-control refusePriceDocuments"></td>
+                                    <td class="pricewithaah">
                                         <span>` + num.toFixed(2) + `</span>
                                         <input type="hidden" name="pricewithaah[]" value="` + num.toFixed(2) + `" class="form-control PriceWithaah">
-                                     </td>
-                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsRefuse">Ջնջել</button></td>
+                                    </td>
+                                    <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItemsRefuse">Ջնջել</button></td>
                                 </tr>`;
                     }
                 }
@@ -698,8 +703,8 @@ $(document).ready(function () {
             parts[1] = parts[1].replace(/\./g, '');
             sanitizedValue = parts[0] + '.' + parts[1];
         }
-        $(this).val(sanitizedValue);
-        if (sanitizedValue < 1 || $(this).val()) {
+        // $(this).val(sanitizedValue);
+        if (sanitizedValue < 1 || $(this).val() == '') {
             $(this).attr('required', true);
         }else {
             let num = parseFloat(sanitizedValue) + (parseFloat(sanitizedValue) * 20) / 100;
@@ -709,9 +714,28 @@ $(document).ready(function () {
     })
 
     $('body').on('keyup','.refuseCountDocuments',function (){
+        $(this).val(function(index, value) {
+            return value.replace(/-/g, '');
+        });
         let inputValue = parseInt($(this).val());
         let maxValue = parseInt($(this).attr('max'));
         if (inputValue < 1 || inputValue === "") {
+            $(this).val('');
+            $(this).attr('required',true);
+        }else if (inputValue > maxValue){
+            $(this).val('');
+            $(this).attr('required',true);
+        }else {
+            $(this).closest('tr').find('.rawInput').attr('max',$(this).val());
+        }
+    })
+    $('body').on('keyup','.rawInput',function (){
+        $(this).val(function(index, value) {
+            return value.replace(/-/g, '');
+        });
+        let inputValue = parseInt($(this).val());
+        let maxValue = parseInt($(this).attr('max'));
+        if (inputValue < 0 || inputValue === "") {
             $(this).val('');
             $(this).attr('required',true);
         }else if (inputValue > maxValue){
@@ -836,6 +860,10 @@ $(document).ready(function () {
     $('body').on('change','#documents-warehouse_id, #documents-document_type, #documents-date',function(){
         if($('#documents-warehouse_id').val() != '' && $('#documents-document_type').val() != 10 && $('#documents-date').val() != '' ){
             $('body').find('.addDocuments').attr('disabled',false);
+        }
+        else if($('#documents-document_type').val() == 10){
+            $('body').find('.addDocuments').attr('disabled',true);
+            // $('body').find('.saveAll').attr('disabled',true);
         }
     })
 

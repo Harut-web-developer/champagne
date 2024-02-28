@@ -147,7 +147,7 @@ class DocumentsController extends Controller
             ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
-            echo "<pre>";
+//            echo "<pre>";
 //            var_dump($post);
 //            exit();
             date_default_timezone_set('Asia/Yerevan');
@@ -209,8 +209,13 @@ class DocumentsController extends Controller
                     $products->nomenclature_id = $post['document_items'][$i];
                     $products->document_id = $model->id;
                     $products->type = 1;
-                    $products->count = intval($post['count_'][$i]);
-                    $products->count_balance = intval($post['count_'][$i]);
+                    if ($post['raw'][$i] == ''){
+                        $products->count = intval($post['count_'][$i]);
+                        $products->count_balance = intval($post['count_'][$i]);
+                    }else{
+                        $products->count = intval($post['count_'][$i]) - intval($post['raw'][$i]);
+                        $products->count_balance = intval($post['count_'][$i]) - intval($post['raw'][$i]);
+                    }
                     if ($post['aah'] == 'true'){
                         $products->price = floatval($post['pricewithaah'][$i]);
                         $products->AAH = 1;
@@ -225,7 +230,7 @@ class DocumentsController extends Controller
                     $document_items = new DocumentItems();
                     $document_items->document_id = $model->id;
                     $document_items->nomenclature_id = $post['document_items'][$i];
-                    $document_items->count = $post['count_'][$i];
+                    $document_items->count = $products->count;
                     $document_items->price = floatval($post['price'][$i]);
                     $document_items->refuse_product_id = $products->id;
                     $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
@@ -1501,7 +1506,7 @@ class DocumentsController extends Controller
             ->asArray()
             ->one();
         $documents = Documents::findOne($id);
-        if ($documents->document_type == '1'){
+        if ($documents->document_type == '1' || $documents->document_type == '10'){
             $documents->status = '0';
             $documents->save(false);
             $delete_document_items =DocumentItems::find()->where(['document_id' => $id])->andWhere(['status' => '1'])->all();

@@ -52,10 +52,10 @@ AppAsset::register($this);
                             <p class="mb-4">Խնդրում ենք մուտք գործել ձեր հաշիվ</p>
                             <?= $content ?>
                             <p class="text-center">
-                                <span>Նորությո՞ւն մեր հարթակում:</span>
-                                <a href="auth-register-basic.html">
-                                    <span>Ստեղծել հաշիվ</span>
-                                </a>
+<!--                                <span>Նորությո՞ւն մեր հարթակում:</span>-->
+<!--                                <a href="auth-register-basic.html">-->
+<!--                                    <span>Ստեղծել հաշիվ</span>-->
+<!--                                </a>-->
                             </p>
                         </div>
                     </div>

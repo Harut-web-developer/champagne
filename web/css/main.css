@@ -706,3 +706,13 @@
     cursor: pointer;
     height: 40px;
 }
+.refusePriceDocuments{
+    max-width:130px;
+    margin: 0px auto;
+}
+.refuseCountDocuments{
+    min-width: 100px;
+}
+.rawInput{
+    min-width: 100px;
+}

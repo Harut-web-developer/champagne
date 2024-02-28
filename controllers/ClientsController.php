@@ -68,13 +68,19 @@ class ClientsController extends Controller
      */
     public function actionIndex()
     {
+        $session = Yii::$app->session;
         $have_access = Users::checkPremission(8);
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [
-            ['name' => 'Խմբեր','address' => '/groups-name'],
-        ];
+        if ($session['role_id'] == 1) {
+            $sub_page = [
+                ['name' => 'Խմբեր','address' => '/groups-name'],
+            ];
+        }elseif ($session['role_id'] == 2){
+            $sub_page = [];
+        }
+
         $date_tab = [];
         $searchModel = new ClientsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);

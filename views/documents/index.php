@@ -169,7 +169,7 @@ if($have_access_available){
                 }
             ],
             [
-                'attribute' => 'Օգտատեր',
+                'attribute' => 'Պահեստապետ',
                 'value' => function ($model) {
                     if ($model->usersName) {
                         return $model->usersName->name;

@@ -20,7 +20,7 @@ if(isset($_COOKIE['username']) && isset($_COOKIE['password'])){
 ?>
     <?php $form = ActiveForm::begin(['id' => 'formAuthentication']); ?>
         <div class="mb-3">
-            <label for="email" class="form-label">Էլփոստ կամ օգտանուն</label>
+            <label for="email" class="form-label">օգտանուն</label>
             <input type="text" class="form-control" value="<?=$username?>" id="email" name="username" placeholder="Մուտքագրեք ձեր էլփոստը կամ օգտվողի անունը" autofocus />
         </div>
         <div class="mb-3 form-password-toggle">
@@ -31,9 +31,9 @@ if(isset($_COOKIE['username']) && isset($_COOKIE['password'])){
                 <input type="password" id="password" value="<?=$password?>" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                 <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
             </div>
-            <a href="<?= Url::to(['site/forgot-password']) ?>">
-                <small>Մոռացել եք գաղտնաբառը?</small>
-            </a>
+<!--            <a href="--><?php //= Url::to(['site/forgot-password']) ?><!--">-->
+<!--                <small>Մոռացել եք գաղտնաբառը?</small>-->
+<!--            </a>-->
         </div>
         <div class="mb-3">
             <div class="form-check">

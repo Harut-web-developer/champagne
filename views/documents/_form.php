@@ -363,6 +363,7 @@ $session = Yii::$app->session;
                                 <th>#</th>
                                 <th>Անուն</th>
                                 <th>Քանակ</th>
+                                <th class=" d-none forDocTypeTen">Խոտան</th>
                                 <th>Գինը առանց ԱԱՀ-ի</th>
                                 <th>Գինը ներառյալ ԱԱՀ-ն</th>
                                 <th>Գործողություն</th>

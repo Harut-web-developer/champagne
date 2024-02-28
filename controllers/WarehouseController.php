@@ -63,18 +63,31 @@ class WarehouseController extends Controller
      */
     public function actionIndex()
     {
+        $session = Yii::$app->session;
         $have_access = Users::checkPremission(4);
         if(!$have_access){
             $this->redirect('/site/403');
         }
         $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'warehouse']);
-        $sub_page = [
-            ['name' => 'Փաստաթղթեր','address' => '/documents'],
-            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-            ['name' => 'Ապրանք','address' => '/products'],
-            ['name' => 'Տեղեկամատյան','address' => '/log'],
+        if ($session['role_id'] == 1) {
+            $sub_page = [
+                ['name' => 'Փաստաթղթեր','address' => '/documents'],
+                ['name' => 'Անվանակարգ','address' => '/nomenclature'],
+                ['name' => 'Ապրանք','address' => '/products'],
+                ['name' => 'Տեղեկամատյան','address' => '/log'],
+            ];
+        }elseif ($session['role_id'] == 2){
+            $sub_page = [
+                ['name' => 'Ապրանք','address' => '/products'],
+            ];
+        }elseif ($session['role_id'] == 4){
+            $sub_page = [
+                ['name' => 'Փաստաթղթեր','address' => '/documents'],
+                ['name' => 'Անվանակարգ','address' => '/nomenclature'],
+                ['name' => 'Ապրանք','address' => '/products'],
+            ];
+        }
 
-        ];
         $date_tab = [];
 
         $searchModel = new WarehouseSearch();

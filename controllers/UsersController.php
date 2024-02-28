@@ -68,16 +68,20 @@ class UsersController extends Controller
      */
     public function actionIndex()
     {
+        $session = Yii::$app->session;
         $have_access = Users::checkPremission(16);
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [
-            ['name' => 'Կարգավիճակ','address' => '/roles'],
-            ['name' => 'Մենեջեր-առաքիչ','address' => '/manager-deliver-condition'],
+        if ($session['role_id'] == 1) {
+            $sub_page = [
+                ['name' => 'Կարգավիճակ','address' => '/roles'],
+                ['name' => 'Մենեջեր-առաքիչ','address' => '/manager-deliver-condition'],
 //            ['name' => 'Թույլտվություն','address' => '/premissions'], փակ մնա
-
-        ];
+            ];
+        }elseif ($session['role_id'] == 2){
+            $sub_page = [];
+        }
         $date_tab = [];
 
         $searchModel = new UsersSearch();
