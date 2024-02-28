@@ -7,3 +7,6 @@
             <option  value="<?= $client['id'] ?>"><?= $client['name'] ?></option>
         <?php } }?>
 </select>
+<script>
+    $('.js-example-basic-single').select2();
+</script>

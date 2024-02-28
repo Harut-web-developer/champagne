@@ -221,6 +221,26 @@ class UsersController extends Controller
         ]);
     }
 
+    public function actionCheckUsers(){
+        if ($this->request->isPost){
+            $users = Users::find()->where(['username' => $this->request->post('userText')])->andWhere(['status' => '1'])->exists();
+            if ($users){
+                return json_encode(true);
+            }else{
+                return json_encode(false);
+            }
+        }
+    }
+    public function actionCheckMail(){
+        if ($this->request->isPost){
+            $users = Users::find()->where(['email' => $this->request->post('userText')])->andWhere(['status' => '1'])->exists();
+            if ($users){
+                return json_encode(true);
+            }else{
+                return json_encode(false);
+            }
+        }
+    }
     public function actionCreateFields()
     {
         $have_access = Users::checkPremission(74);

@@ -221,6 +221,8 @@ $action_column[] = [
                                 return 'Հաստատված';
                             } elseif($model->status == 0){
                                 return 'Մերժված';
+                            } elseif($model->status == 4){
+                                return 'Ետ վերադարցրած';
                             }
                         }
                     ],

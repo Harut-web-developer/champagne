@@ -100,7 +100,6 @@ class MapController extends Controller
             $value = $get['locationvalue'];
             $valuedate =$get['date'];
             date_default_timezone_set('UTC');
-            $warehouse = Warehouse::find()->select('location')->where(['id' => 1])->asArray()->one();
             $formattedSelectedDate = Yii::$app->formatter->asDatetime($valuedate, 'yyyy-MM-dd');
             if (isset($get['manager'])){
                 $manager_id = $get['manager'];
@@ -130,12 +129,13 @@ class MapController extends Controller
                 $countToday_manager = array_intersect($today_manager, $find_manager);
             }
             $locationsQuery  = Orders::find()
-                ->select(["clients.location", 'DATE_FORMAT(orders.orders_date, "%Y-%m-%d") as orders_date'])
+                ->select(['clients.client_warehouse_id,clients.location, DATE_FORMAT(orders.orders_date, "%Y-%m-%d") as orders_date'])
                 ->leftJoin('clients','clients.id = orders.clients_id')
                 ->where(['route_id' => $value])
                 ->andWhere(['and',['>=','orders.orders_date', $formattedSelectedDate.' 00:00:00'],
                     ['<','orders.orders_date', $formattedSelectedDate.' 23:59:59']])
                 ->andWhere(['orders.status' => '1']);
+
 //            echo "<pre>";
 //            var_dump($find_manager);
 //            var_dump($today_manager);
@@ -152,10 +152,16 @@ class MapController extends Controller
                 $locationsQuery->andWhere(['=', 'orders.user_id', $manager_id]);
             }
 //            die;
+//            echo '<pre>';
             $locations = $locationsQuery
                 ->asArray()
                 ->orderBy('clients.sort_', SORT_DESC)
                 ->all();
+
+            $warehouse = Warehouse::find()->select('location')
+                ->where(['id' => $locations[0]['client_warehouse_id']])
+                ->asArray()->one();
+
             $locations = array_chunk($locations,20);
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 

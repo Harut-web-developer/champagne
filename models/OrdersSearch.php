@@ -50,15 +50,15 @@ class OrdersSearch extends Orders
         $is_manager = false;
         switch ($session['role_id']){
             case 1:
-                $statuses = ['0','1','2'];
+                $statuses = ['0','1','2','4'];
                 $manager_array = [];
                 break;
             case 2:
-                $statuses = ['1','2'];
+                $statuses = ['1','2','4'];
                 $manager_array = ['user_id' => $session['user_id']];
                 break;
             case 3:
-                $statuses = ['1','2'];
+                $statuses = ['1','2','4'];
                 $manager = ManagerDeliverCondition::find()->where(['deliver_id' => $session['user_id']])->andWhere(['status' => '1'])->asArray()->all();
                 $is_manager = true;
                 $manager_array_list = [];
@@ -68,7 +68,7 @@ class OrdersSearch extends Orders
                 $manager_array = ['user_id' => $manager_array_list];
                 break;
             case 4:
-                $statuses = ['1','2'];
+                $statuses = ['1','2','4'];
                 $manager_array = [];
         }
         if (empty($params)){
@@ -87,7 +87,7 @@ class OrdersSearch extends Orders
                 }elseif ($params['numberVal'] == 1){
                     $query->where(['status' => '1']);
                 }elseif ($params['numberVal'] == 2){
-                    $query->where(['status' => '2']);
+                    $query->where(['status' => ['2','4']]);
                 }elseif ($params['numberVal'] == 0){
                     $query->where(['status' => '0']);
                 }

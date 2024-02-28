@@ -953,7 +953,48 @@ $(document).ready(function() {
             }
         })
     }
-
+    $('body').on('keyup', '#users-username', function (){
+        let this_ = $(this);
+        let userText = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/users/check-users',
+            method:'post',
+            datatype:'json',
+            data:{
+                userText:userText,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                let param = JSON.parse(data);
+                if (param == true){
+                    alert('Նման օգտանունով գրանցում կա:');
+                    this_.val('');
+                }
+            }
+        })
+    })
+    $('body').on('keyup', '#users-email', function (){
+        let this_ = $(this);
+        let userText = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/users/check-mail',
+            method:'post',
+            datatype:'json',
+            data:{
+                userText:userText,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                let param = JSON.parse(data);
+                if (param == true){
+                    alert('Նման էլ:հասցեով գրանցում կա:');
+                    this_.val('');
+                }
+            }
+        })
+    })
 });
 
 
