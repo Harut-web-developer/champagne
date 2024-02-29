@@ -966,7 +966,7 @@ class OrdersController extends Controller
             ->where(['orders.id' => $id])
             ->asArray()
             ->one();
-        $text = $user_name['name'] . '(ը/ն) հաստատել է ' . $client_name['name'] . '(ի) պատվեի առաքումը։';
+        $text = $user_name['name'] . '(ն/ը) հաստատել է ' . $client_name['name'] . '(ի) պատվեի առաքումը։';
         Notifications::createNotifications('Հաստատել պատվեր', $text,'ordersdelivered');
         return $this->redirect(['index']);
     }
