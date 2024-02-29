@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Clients;
 use app\models\ClientsGroups;
+use app\models\DiscountClients;
 use app\models\GroupsName;
 use app\models\GroupsNameSearch;
 use app\models\Users;
@@ -177,7 +178,9 @@ class GroupsNameController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-            $clients_groups = ClientsGroups::find()->where(['groups_id' => $id])->exists();
+            $clients_groups = ClientsGroups::find()
+                ->where(['groups_id' => $id])
+                ->exists();
             if ($clients_groups){
                 ClientsGroups::deleteAll(['groups_id' => $id]);
             }
@@ -187,6 +190,7 @@ class GroupsNameController extends Controller
             $client_id = GroupsName::find()
                 ->select('id')
                 ->where(['groups_name' => $post['GroupsName']['groups_name']])
+                ->andWhere(['status' => '1'])
                 ->asArray()
                 ->one();
 
@@ -211,10 +215,11 @@ class GroupsNameController extends Controller
             ->leftJoin('clients', 'clients.id = clients_groups.clients_id')
             ->leftJoin('groups_name', 'groups_name.id = clients_groups.groups_id')
             ->where(['clients_groups.groups_id' => $id])
+            ->andWhere(['groups_name.status' => '1'])
             ->asArray()
             ->all();
         $clients_groups = array_column($clients_groups,'id');
-        $clients = Clients::find()->select('id, name')->asArray()->all();
+        $clients = Clients::find()->select('id, name')->where(['status' => '1'])->asArray()->all();
         return $this->render('update', [
             'model' => $model,
             'clients' => $clients,
@@ -241,6 +246,15 @@ class GroupsNameController extends Controller
         $groups_name = GroupsName::findOne($id);
         $groups_name->status = '0';
         $groups_name->save(false);
+        $discount_clients = DiscountClients::find()
+            ->select('id')
+            ->where(['group_id' => $id])
+            ->andWhere(['status' => '1'])
+            ->asArray()
+            ->all();
+        foreach ($discount_clients as $clients) {
+            DiscountClients::updateAll(['status' => '0'], ['id' => $clients['id']]);
+        }
         return $this->redirect(['index']);
     }
 

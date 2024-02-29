@@ -228,9 +228,10 @@ class DiscountController extends Controller
                 for ($t=0; $t < count($client_groups_id); $t++)
                 {
                     $all_client_groups_id[$t] = ClientsGroups::find()
-                        ->select('clients_id')
+                        ->select('clients_groups.clients_id')
+                        ->leftJoin('groups_name','groups_name.id = clients_groups.groups_id')
                         ->where(['groups_id' => $client_groups_id[$t]])
-                        ->andWhere(['status' => 1])
+                        ->andWhere(['groups_name.status' => 1])
                         ->asArray()
                         ->all();
                 }
@@ -384,8 +385,10 @@ class DiscountController extends Controller
                 for ($t=0; $t < count($client_groups_id); $t++)
                 {
                     $all_client_groups_id[$t] = ClientsGroups::find()
-                        ->select('clients_id')
+                        ->select('clients_groups.clients_id')
+                        ->leftJoin('groups_name','groups_name.id = clients_groups.groups_id')
                         ->where(['groups_id' => $client_groups_id[$t]])
+                        ->andWhere(['groups_name.status' => 1])
                         ->asArray()
                         ->all();
                 }
@@ -456,14 +459,14 @@ class DiscountController extends Controller
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $clients = Clients::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
-        $discount_clients_id = DiscountClients::find()->select('client_id')->where(['discount_id' => $id, 'group_id' => 0])->asArray()->all();
+        $discount_clients_id = DiscountClients::find()->select('client_id')->where(['discount_id' => $id, 'group_id' => 0])->andWhere(['status' => '1'])->asArray()->all();
         $discount_clients_id = array_column($discount_clients_id,'client_id');
         $products = Nomenclature::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
         $discount_products_id = DiscountProducts::find()->select('product_id')->where(['discount_id' => $id])->asArray()->all();
         $discount_products_id = array_column($discount_products_id,'product_id');
         $min = Discount::find()->select('min')->where(['id' => $id])->asArray()->one();
         $max = Discount::find()->select('max')->where(['id' => $id])->asArray()->one();
-        $discount_client_groups = GroupsName::find()->select('*')->asArray()->all();
+        $discount_client_groups = GroupsName::find()->select('*')->where(['status' => '1'])->asArray()->all();
         $discount_client_groups_name = GroupsName::find()
             ->select('groups_name')
             ->leftJoin('discount_clients', 'discount_clients.group_id = groups_name.id')
@@ -528,6 +531,15 @@ class DiscountController extends Controller
         $discount = Discount::findOne($id);
         $discount->status = '0';
         $discount->save();
+        $discount_ = DiscountClients::find()
+            ->select('id')
+            ->where(['discount_id' => $id])
+            ->andWhere(['status' => '1'])
+            ->asArray()
+            ->all();
+        foreach ($discount_ as $discount_in) {
+            DiscountClients::updateAll(['status' => '0'], ['id' => $discount_in['id']]);
+        }
         Log::afterSaves('Delete', '', $oldattributes['discount'], '#', $premission);
         return $this->redirect(['index']);
     }
