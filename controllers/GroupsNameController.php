@@ -208,6 +208,29 @@ class GroupsNameController extends Controller
                     DiscountClients::deleteAll(['discount_id' => $id]);
                 }
             }
+            $old_discs = DiscountClients::find()
+                ->select(['discount_id'])
+                ->where(['group_id' => $id])
+                ->andWhere(['status' => 1])
+                ->groupBy(['discount_id'])
+                ->asArray()
+                ->indexBy('discount_id')
+                ->column();
+
+            if (!empty($post['clients']) && !empty($old_discs)) {
+                DiscountClients::deleteAll(['in', 'discount_id', array_keys($old_discs)]);
+                foreach ($old_discs as $old_disc) {
+                    foreach ($post['clients'] as $client) {
+                        $new_disc = new DiscountClients();
+                        $new_disc->discount_id = $old_disc;
+                        $new_disc->group_id = $id;
+                        $new_disc->client_id = intval($client);
+                        $new_disc->created_at = date('Y-m-d H:i:s');
+                        $new_disc->updated_at = date('Y-m-d H:i:s');
+                        $new_disc->save(false);
+                    }
+                }
+            }
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $clients_groups = ClientsGroups::find()
