@@ -182,13 +182,73 @@ class SiteController extends Controller
      *
      * @return string
      */
+    public function actionIndexNotificationsClick()
+    {
+        $session = Yii::$app->session;
+        if (isset($_GET)){
+            if ($session['role_id'] == '1') {
+                $notification_badge_admin_index = Notifications::find()
+                    ->select('id, status')
+                    ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn'], ['sort_' => 'createclients'], ['sort_' => 'updateclients'], ['sort_' => 'createNomenclature'], ['sort_' => 'updateNomenclature']])
+                    ->andWhere(['NOT LIKE', 'status', ',' . $session['role_id'] . ','])
+                    ->andWhere(['>=', 'datetime', date('Y-m-d')])
+                    ->asArray()
+                    ->all();
+                foreach ($notification_badge_admin_index as $notification) {
+                    $status_value = $notification['status'] . $session['role_id'] . ',';
+                    Notifications::updateAll(['status' => $status_value], ['id' => $notification['id']]);
+                }
+            }
+            if ($session['role_id'] == '4') {
+                $notification_badge_storekeeper = Notifications::find()
+                    ->select('id, status')
+                    ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'changeorderscount']])
+                    ->andWhere(['NOT LIKE', 'status', ',' . $session['role_id'] . ','])
+                    ->andWhere(['>=', 'datetime', date('Y-m-d')])
+                    ->asArray()
+                    ->all();
+                foreach ($notification_badge_storekeeper as $notification) {
+                    $status_value = $notification['status'] . $session['role_id'] . ',';
+                    Notifications::updateAll(['status' => $status_value], ['id' => $notification['id']]);
+                }
+            }
+        }
+    }
+    public function actionIndexNotifications()
+    {
+        $session = Yii::$app->session;
+        $render_array = [];
+        if (isset($_GET)) {
+            if ($session['role_id'] == '1') {
+                $notification_badge_admin = Notifications::find()
+                    ->select('id')
+                    ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn'], ['sort_' => 'createclients'], ['sort_' => 'updateclients'], ['sort_' => 'createNomenclature'], ['sort_' => 'updateNomenclature']])
+                    ->andWhere(['NOT LIKE', 'status', ',' . $session['role_id'] . ','])
+                    ->andWhere(['>=', 'datetime', date('Y-m-d')])
+                    ->count();
+                $render_array = [
+                    'notification_badge' => $notification_badge_admin,
+                ];
+            }
+            if ($session['role_id'] == '4') {
+                $notification_badge_storekeeper = Notifications::find()
+                    ->select('id')
+                    ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'changeorderscount']])
+                    ->andWhere(['NOT LIKE', 'status', ',' . $session['role_id'] . ','])
+                    ->andWhere(['>=', 'datetime', date('Y-m-d')])
+                    ->count();
+                $render_array = [
+                    'notification_badge' => $notification_badge_storekeeper,
+                ];
+            }
+        }
+        return json_encode($render_array);
+    }
     public function actionGetNotifications()
     {
         $session = Yii::$app->session;
         $notifications_today = 0;
         $notifications_all = 0;
-        $notification_badge_admin = null;
-        $notification_badge_storekeeper = null;
         if ($session['role_id'] == '1') {
             $notifications_today = Notifications::find()
                 ->select(['title', 'message', 'datetime'])
@@ -203,11 +263,6 @@ class SiteController extends Controller
                 ->orderBy(['datetime' => SORT_DESC])
                 ->asArray()
                 ->all();
-            $notification_badge_admin = Notifications::find()
-                ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn'], ['sort_' => 'createclients'], ['sort_' => 'updateclients'], ['sort_' => 'createNomenclature'], ['sort_' => 'updateNomenclature']])
-                ->andWhere(['NOT LIKE', 'watched', ',' . $session['role_id'] . ','])
-                ->andWhere(['>=', 'datetime', date('Y-m-d')])
-                ->count();
         }
         if ($session['role_id'] == '4') {
             $notifications_today = Notifications::find()
@@ -223,18 +278,11 @@ class SiteController extends Controller
                 ->orderBy(['datetime' => SORT_DESC])
                 ->asArray()
                 ->all();
-            $notification_badge_storekeeper = Notifications::find()
-                ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'changeorderscount']])
-                ->andWhere(['NOT LIKE', 'watched', ',' . $session['role_id'] . ','])
-                ->andWhere(['>=', 'datetime', date('Y-m-d')])
-                ->count();
         }
         return json_encode([
             'notifications_today' => $notifications_today,
             'notifications_all' => $notifications_all,
-            'notification_badge_storekeeper' => $notification_badge_storekeeper,
-            'notification_badge_admin' => $notification_badge_admin,
-            ]);
+        ]);
     }
 
     public function actionCheckNotifications()
@@ -250,7 +298,7 @@ class SiteController extends Controller
         }
         $notification = Notifications::find()
             ->andWhere(['>=', 'datetime', date('Y-m-d')])
-            ->andWhere(['status' => '1'])
+//            ->andWhere(['status' => ','])
             ->andWhere(['role_id' => '2'])
             ->andWhere([
                 'or',
@@ -336,7 +384,7 @@ class SiteController extends Controller
         }
         $notification_doc = Notifications::find()
             ->andWhere(['>=', 'datetime', date('Y-m-d')])
-            ->andWhere(['status' => '1'])
+//            ->andWhere(['status' => '1'])
             ->andWhere(['role_id' => '4'])
             ->andWhere([
                 'or',

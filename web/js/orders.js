@@ -1699,9 +1699,6 @@ $(document).ready(function () {
 
     $('body').on('change','#singleClients',function(){
         if($('#singleClients').val() != ''){
-            let url_id = window.location.href;
-            let url = new URL(url_id);
-            let urlId = url.searchParams.get("id");
             let client_id = $(this).val();
             let csrfToken = $('meta[name="csrf-token"]').attr("content");
             $.ajax({
@@ -1709,7 +1706,6 @@ $(document).ready(function () {
                 method:'post',
                 datatype:'json',
                 data:{
-                    urlId:urlId,
                     client_id:client_id,
                     _csrf:csrfToken,
                 },
