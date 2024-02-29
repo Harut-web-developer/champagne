@@ -204,9 +204,6 @@ $(document).ready(function() {
     }
     function fetchNotificationstoast() {
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
-        let url_id = window.location.href;
-        let url = new URL(url_id);
-        let urlId = url.searchParams.get("id");
         $.ajax({
             url: '/site/check-notifications',
             type: 'GET',
@@ -217,6 +214,19 @@ $(document).ready(function() {
                 }
             },
         });
+        $.ajax({
+            url:"/site/index-notifications",
+            method: 'get',
+            dataType:'json',
+            data:{
+                _csrf : csrfToken
+            },
+            success:function(data){
+                if (data['notification_badge']>0){
+                    $('.index_not').text(data['notification_badge'])
+                }
+            }
+        })
     }
     function displayNotifications(data, notifications) {
         $('.index_not').text('')
@@ -251,25 +261,24 @@ $(document).ready(function() {
             $('.bs-toast .toast-body').html('');
             $('.bs-toast .toast-body').append(notification.message);
             $('.bs-toast').toast('show');
-            if ($('.index_not').text() == ''){
-                $('.index_not').text(1)
-            }else{
-                let not_index = parseInt($('.index_not').text());
-                not_index += 1;
-                $('.index_not').text(not_index)
-            }
-
         }
     }
     $(".bell-icon").click(function () {
         $("#notifications-dropdown").toggle();
         fetchNotifications();
         $('.index_not').text('');
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:"/site/index-notifications-click",
+            method: 'get',
+            dataType:'json',
+            data:{
+                _csrf : csrfToken
+            },
+        })
     });
     $('#notificationBell').click(function () {
         fetchNotifications();
-        $('.index_not').text('');
-
     });
     fetchNotifications();
     fetchNotificationstoast();
