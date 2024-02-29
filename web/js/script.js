@@ -644,7 +644,7 @@ $(document).ready(function() {
             }
         })
     })
-    $('body').on('keyup', '.min-value, .max-value', function (){
+    $('body').on('change', '.min-value, .max-value', function (){
         let min = $('.min-value').val();
         let max = $('.max-value').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -658,10 +658,10 @@ $(document).ready(function() {
                 _csrf: csrfToken,
             },
             success:function (data){
-                let pars = JSON.parse(data);
-
-                if(pars == 'maxMoreThanMin'){
-                    alert('Թվերը գրել ճիշտ:')
+                let param = JSON.parse(data);
+                // console.log(param)
+                if(param == 'maxMoreThanMin'){
+                    alert('Թվերը գրել ճիշտ հերթականությամբ:');
                     $('.min-value').val('');
                     $('.max-value').val('');
                 }
@@ -1003,6 +1003,11 @@ $(document).ready(function() {
                 }
             }
         })
+    })
+    $('body').on('keyup', '#users-phone', function () {
+        var inputValue = $(this).val();
+        var sanitizedValue = inputValue.replace(/[^0-9]/g, '');
+        $(this).val(sanitizedValue);
     })
 });
 

@@ -666,7 +666,7 @@ class DocumentsController extends Controller
             $client_id = $this->request->get('clientId');
             $delivered_documents = Orders::find()
                 ->select('orders.id, orders.orders_date')
-                ->where(['orders.status'=> ['2','3','4','5']])
+                ->where(['orders.status'=> ['2','3']])
                 ->andWhere(['clients_id' => $client_id])
                 ->asArray()
                 ->all();
@@ -1460,7 +1460,7 @@ class DocumentsController extends Controller
             }
             if($session['role_id'] == 4){
                 $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
-                $text = $user_name['name'] . '(ն/ը) ' . 'մերժել է ապրանքի հետ վերդարձը, նշելով մերժման պատճառն ՝ «'
+                $text = $user_name['name'] . '(ն/ը) ' . 'մերժել է ապրանքի հետ վերդարձը, նշելով մերժման պատճառը ՝ «'
                     . $ch . '»: '
                     . "\n" .
                     '<a href="http://champagne/documents/update?id=' . $post['document_id'] . '">
@@ -1489,7 +1489,7 @@ class DocumentsController extends Controller
      */
     public function actionDelete($id)
     {
-        echo "<pre>";
+//        echo "<pre>";
         $have_access = Users::checkPremission(39);
         if(!$have_access){
             $this->redirect('/site/403');
@@ -1743,7 +1743,34 @@ class DocumentsController extends Controller
             'document_items' => $document_items,
         ]);
     }
-
+    public function actionChangeWastrel(){
+        if ($this->request->isGet){
+            $items = $this->request->get('documentItemsId');
+            $document_items = DocumentItems::find()
+                ->select('document_items.id,document_items.count,document_items.price,nomenclature.name')
+                ->leftJoin('nomenclature', 'nomenclature.id = document_items.nomenclature_id')
+                ->where(['document_items.id' => intval($items)])
+                ->asArray()
+                ->one();
+            return $this->renderAjax('change-wastrel',[
+                'document_items' => $document_items,
+            ]);
+        }
+    }
+    public function actionChangingCount(){
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            $document_items = DocumentItems::findOne($post['itemsId']);
+            $document_items->count -= intval($post['wastrel']);
+            if ($document_items->wastrel == null){
+                $document_items->wastrel = intval($post['wastrel']);
+            }else{
+                $document_items->wastrel += intval($post['wastrel']);
+            }
+            $document_items->save(false);
+            return json_encode('change');
+        }
+    }
     public  function actionFilterStatus(){
         if ($_GET){
             $page_value = null;

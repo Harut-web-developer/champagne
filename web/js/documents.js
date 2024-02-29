@@ -867,6 +867,44 @@ $(document).ready(function () {
         }
     })
 
+    $('body').on('click', '.changeWastrel',function () {
+        let documentItemsId = $(this).data('document');
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url: '/documents/change-wastrel',
+            method: 'get',
+            datatype:'html',
+            data:{
+                documentItemsId:documentItemsId,
+                _csrf:csrfToken
+            },
+            success: function (data){
+                $('.changeModalBody').html(data);
+            }
+        })
+    })
+    $('body').on('click', '.addChange', function (){
+        let this_ = $(this);
+        let itemsId = $('body').find('.wastrelId').val();
+        let wastrel = $('body').find('#wastrel').val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/documents/changing-count',
+            method:'post',
+            datatype:'json',
+            data:{
+                itemsId:itemsId,
+                wastrel:wastrel,
+                _csrf:csrfToken
+            },
+            success:function (data){
+                if (data){
+                    alert('Փոփոխությունը կատարվել է հաջողությամբ։');
+                    location.reload();
+                }
+            }
+        })
+    })
     $(window).on('load', function () {
 
         if($('body').find('.documentsAddingTable body').length == 0){

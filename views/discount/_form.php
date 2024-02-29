@@ -68,8 +68,8 @@ use yii\widgets\ActiveForm;
                             </div>
                             <div id="slider-range" class="price-filter-range" name="rangeInput"></div>
                             <div>
-                                <input type="number" name="min" min=0 max="500000" value="<?=$min['min']?>" oninput="validity.valid||(value='0');" id="min_price" class="price-range-field min-value" />
-                                <input type="number" name="max" min=0 max="1000000" value="<?=$max['max']?>" oninput="validity.valid||(value='1000000');" id="max_price" class="price-range-field max-value" />
+                                <input type="number" name="min" min=0 max="10000000" value="<?=$min['min']?>" oninput="validity.valid||(value='0');" id="min_price" class="price-range-field min-value" />
+                                <input type="number" name="max" min=0 max="100000000" value="<?=$max['max']?>" oninput="validity.valid||(value='1000000');" id="max_price" class="price-range-field max-value" />
                             </div>
                             <!--                        <div id="searchResults" class="search-results-block"></div>-->
                         </div>

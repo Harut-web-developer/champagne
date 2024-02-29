@@ -23,6 +23,7 @@ $have_access_update = Users::checkPremission(14);
 $have_access_delete = Users::checkPremission(15);
 $have_access_custom_field = Users::checkPremission(74);
 $action_column = [];
+$role = [];
 if ($have_access_update && $have_access_delete){
     $action_column[] = [
         'header' => 'Գործողություն',
@@ -48,6 +49,19 @@ if ($have_access_update && $have_access_delete){
         'template' => '{delete}',
         'urlCreator' => function ($action, Users $model, $key, $index, $column) {
             return Url::toRoute([$action, 'id' => $model->id]);
+        }
+    ];
+}
+$session = Yii::$app->session;
+if ($session['role_id'] == 1){
+    $role[] = [
+        'attribute' => 'username',
+        'value' => function ($model) {
+            if ($model->username) {
+                return $model->username;
+            } else {
+                return 'Դատարկ';
+            }
         }
     ];
 }
@@ -77,7 +91,7 @@ if ($have_access_update && $have_access_delete){
             ['class' => 'yii\grid\SerialColumn'],
             ...$action_column,
             'name',
-            'username',
+            ...$role,
             [
                 'attribute' => 'Կարգավիճակ',
                 'value' => function ($model) {
