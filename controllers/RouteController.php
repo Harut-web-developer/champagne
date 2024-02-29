@@ -369,7 +369,7 @@ class RouteController extends Controller
                 ->where(['route_id' => $valueurlId])
                 ->andWhere(['and',['>=','orders.orders_date', $formattedSelectedDate.' 00:00:00'],
                     ['<','orders.orders_date', $formattedSelectedDate.' 23:59:59']])
-//                ->andWhere(['orders.status' => '1'])
+                ->andWhere(['orders.status' => '1'])
 //                ->andwhere(['=', 'orders.user_id', $userId])
                 ->asArray()
                 ->orderBy('clients.sort_',SORT_DESC)

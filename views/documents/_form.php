@@ -152,15 +152,11 @@ $session = Yii::$app->session;
                             <tr>
                                 <th>#</th>
                                 <th>Անուն</th>
-                                <?php
-                                if ($type == '6'){?>
-                                    <th>Խոտան</th>
-                                <?php }?>
                                 <th>Քանակ</th>
                                 <th>Գինը առանց ԱԱՀ-ի</th>
                                 <th>Գինը ներառյալ ԱԱՀ-ն</th>
                                 <?php
-                                if ($type == '1' || $type == '2' || $type == '3' || $type == '4'){?>
+                                if ($type == '1' || $type == '2' || $type == '3' || $type == '4' || $type == '6'){?>
                                     <th>Գործողություն</th>
                                 <?php }?>
                             </tr>
@@ -178,10 +174,6 @@ $session = Yii::$app->session;
                                         <input class="itemsId" type="hidden" name="items[]" value="<?=$document_item['nom_id']?>">
                                     </td>
                                     <td class="name"><?=$document_item['name']?></td>
-                                    <?php
-                                    if ($type == '6'){?>
-                                        <td class="raw"><input type="number" name="raw[]" value="" class="form-control rawInput" step="1" min="0" max="<?=$document_item['count']?>"></td>
-                                    <?php }?>
                                     <?php
                                     if ($model->document_type == '7'){?>
                                         <td class="count"><input type="number" name="count_[]" disabled value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="any"></td>
@@ -201,6 +193,32 @@ $session = Yii::$app->session;
                                     <?php
                                     if ($type == '1' || $type == '2' || $type == '3' || $type == '4'){?>
                                         <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteDocumentItems">Ջնջել</button></td>
+                                    <?php }?>
+                                    <?php
+                                    if ($type == '6'){?>
+                                        <td><button type="button" data-document="<?=$document_item['id']?>" class="btn rounded-pill btn-outline-info changeWastrel" data-bs-toggle="modal" data-bs-target="#modalCenter">
+                                                Խոտան
+                                            </button>
+                                            <div class="modal fade" id="modalCenter" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="modalCenterTitle">Modal title</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body changeModalBody">
+
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                                Փակել
+                                                            </button>
+                                                            <button type="button" class="btn btn-primary addChange" data-bs-dismiss="modal">Պահպանել</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
                                     <?php }?>
                                 </tr>
                                 <?php

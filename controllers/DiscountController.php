@@ -561,8 +561,14 @@ class DiscountController extends Controller
     public function actionCheckFilterValue(){
         if ($this->request->isPost){
             $post = $this->request->post();
-            if (!empty($post['min']) && !empty($post['max']) && $post['min'] > $post['max']){
-                return json_encode('maxMoreThanMin');
+            if ($post['min'] != '' && $post['max'] != ''){
+                if ($post['min'] > $post['max']){
+                    return json_encode('maxMoreThanMin');
+                }else{
+                    return json_encode(false);
+                }
+            }else{
+                return json_encode('empty');
             }
         }
     }
