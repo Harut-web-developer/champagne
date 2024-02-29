@@ -78,7 +78,7 @@ class Products extends \yii\db\ActiveRecord
             $client_id = $data['client_id'];
 //            $product_id = $data['prod_id'];
             $nom_id = $data['nom_id'];
-            $orders_date = $data['orders_date'];
+            $orders_date = Yii::$app->formatter->asDatetime($data['orders_date'], 'yyyy-MM-dd');
             $name = $data['name'];
 //            $orders_price = $data['orders_price'];
             $warehouse_id = $data['warehouse_id'];
