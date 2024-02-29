@@ -989,7 +989,7 @@ $(document).ready(function() {
             success:function (data){
                 let param = JSON.parse(data);
                 if (param == true){
-                    alert('Նման էլ:հասցեով գրանցում կա:');
+                    alert('Նման էլ. հասցեով գրանցում կա:');
                     this_.val('');
                 }
             }

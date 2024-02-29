@@ -48,25 +48,29 @@ $session = Yii::$app->session;
             </div>
         </div>
         <!-- Transactions -->
-        <?php if ($session['role_id'] == 1){ ?>
             <div class="col-md-6 col-lg-4 order-1 mb-4">
                 <div class="card h-100" style="max-height: 610px;">
                     <div class="card-header">
                         <h5 class="card-title m-0 me-2">Վճարումներ</h5>
-                        <select id="singleClients" class="js-example-basic-single form-control mt-2 filterClientsChart" name="client_id">
-                            <option value="null">Ընտրել հաճախորդին</option>
-                            <?php
-                            foreach ($get_clients as $client){
-                                ?>
-                                <option value="<?=$client['id']?>"><?=$client['name']?></option>
+                        <?php if ($session['role_id'] == 1){ ?>
+
+                            <select id="singleClients" class="js-example-basic-single form-control mt-2 filterClientsChart" name="client_id">
+                                <option value="null">Ընտրել հաճախորդին</option>
                                 <?php
-                            }
-                            ?>
-                        </select>
+                                foreach ($get_clients as $client){
+                                    ?>
+                                    <option value="<?=$client['id']?>"><?=$client['name']?></option>
+                                    <?php
+                                }
+                                ?>
+                            </select>
+                        <?php } ?>
+
                     </div>
                     <div class="card-body  paymentsPart" style="overflow-y: scroll;">
                         <ul class="p-0 m-0">
                             <?php
+                            if ($session['role_id'] == 1){
                             if (!empty($clients_payment)){
                                 foreach ($clients_payment as $item){
                                     ?>
@@ -92,11 +96,14 @@ $session = Yii::$app->session;
                                 <li class="d-flex mb-4 pb-1">Վճարված ապրանք չկա</li>
                                 <?php
                             }
-                            ?>
+                            }elseif ($session['role_id'] == 2){?>
+                                <li class="d-flex mb-4 pb-1">Սահմանափակված տվյալներ</li>
+                            <?php } ?>
                         </ul>
                     </div>
                 </div>
             </div>
+
             <div class="col-md-4 col-lg-4 order-2">
                 <div class="row">
                     <div class="col-lg-6 col-md-12 col-6 mb-4">
@@ -131,7 +138,12 @@ $session = Yii::$app->session;
                                 </div>
                             </div>
                             <span class="fw-medium d-block mb-1">Վճարումներ</span>
-                            <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_pay"><?=number_format($payment) . ' դր.'?></h4>
+                            <?php if ($session['role_id'] == 1){ ?>
+                                <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_pay"><?=number_format($payment) . ' դր.'?></h4>
+                            <?php }elseif ($session['role_id'] == 2){?>
+                                <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_pay">Սահմանափակված</h4>
+                            <?php } ?>
+
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-12 col-6 mb-4">
@@ -147,17 +159,14 @@ $session = Yii::$app->session;
                     </div>
                 </div>
             </div>
-        <?php } ?>
 
     </div>
-    <?php if ($session['role_id'] == 1){ ?>
         <div class="row">
             <div id="chart"></div>
         </div>
         <div class="row">
             <div id="chart2"></div>
         </div>
-    <?php } ?>
 
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.42.0/apexcharts.min.js" ></script>
@@ -192,10 +201,8 @@ $session = Yii::$app->session;
             },
         },
     };
-    <?php if ($session['role_id'] == 1){ ?>
         var chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
-    <?php }?>
 
 
     var options1 = {
@@ -264,10 +271,8 @@ $session = Yii::$app->session;
     };
 
 
-    <?php if ($session['role_id'] == 1){ ?>
         var chart2 = new ApexCharts(document.querySelector("#chart2"), options2);
         chart2.render();
-    <?php }?>
 
 </script>
 

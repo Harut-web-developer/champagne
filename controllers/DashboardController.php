@@ -248,7 +248,6 @@ class DashboardController extends Controller
                         ->asArray()
                         ->all();
                 $line_chart_debt = Orders::find()->select('SUM(total_price) as debt')
-                    ->where(['orders.status' => '2'])
                     ->where(['or',['orders.status' => '2'],['orders.status' => '4']])
                     ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
                     ->andWhere($role)

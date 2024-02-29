@@ -152,6 +152,10 @@ $session = Yii::$app->session;
                             <tr>
                                 <th>#</th>
                                 <th>Անուն</th>
+                                <?php
+                                if ($type == '6'){?>
+                                    <th>Խոտան</th>
+                                <?php }?>
                                 <th>Քանակ</th>
                                 <th>Գինը առանց ԱԱՀ-ի</th>
                                 <th>Գինը ներառյալ ԱԱՀ-ն</th>
@@ -174,6 +178,10 @@ $session = Yii::$app->session;
                                         <input class="itemsId" type="hidden" name="items[]" value="<?=$document_item['nom_id']?>">
                                     </td>
                                     <td class="name"><?=$document_item['name']?></td>
+                                    <?php
+                                    if ($type == '6'){?>
+                                        <td class="raw"><input type="number" name="raw[]" value="" class="form-control rawInput" step="1" min="0" max="<?=$document_item['count']?>"></td>
+                                    <?php }?>
                                     <?php
                                     if ($model->document_type == '7'){?>
                                         <td class="count"><input type="number" name="count_[]" disabled value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="any"></td>
