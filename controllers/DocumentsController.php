@@ -231,6 +231,9 @@ class DocumentsController extends Controller
                     $document_items->document_id = $model->id;
                     $document_items->nomenclature_id = $post['document_items'][$i];
                     $document_items->count = $products->count;
+                    if ($post['raw'][$i] != '') {
+                        $document_items->wastrel = $post['raw'][$i];
+                    }
                     $document_items->price = floatval($post['price'][$i]);
                     $document_items->refuse_product_id = $products->id;
                     $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
@@ -1760,15 +1763,18 @@ class DocumentsController extends Controller
     public function actionChangingCount(){
         if ($this->request->isPost) {
             $post = $this->request->post();
-            $document_items = DocumentItems::findOne($post['itemsId']);
-            $document_items->count -= intval($post['wastrel']);
-            if ($document_items->wastrel == null){
-                $document_items->wastrel = intval($post['wastrel']);
-            }else{
-                $document_items->wastrel += intval($post['wastrel']);
+            if ($post['wastrel'] != ''){
+                $document_items = DocumentItems::findOne($post['itemsId']);
+                $document_items->count -= intval($post['wastrel']);
+                if ($document_items->wastrel == null){
+                    $document_items->wastrel = intval($post['wastrel']);
+                }else{
+                    $document_items->wastrel += intval($post['wastrel']);
+                }
+                $document_items->save(false);
+                return json_encode('change');
             }
-            $document_items->save(false);
-            return json_encode('change');
+
         }
     }
     public  function actionFilterStatus(){
