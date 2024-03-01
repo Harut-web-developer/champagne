@@ -348,7 +348,6 @@ $(document).ready(function() {
                             sheet.addRow(rowData);
                         }
                     });
-
                     sheetNumber++;
                 }
                 Promise.all(PromiseArray)
@@ -738,14 +737,17 @@ $(document).ready(function() {
             }
         })
     })
-
-
     //print orders table
     $('body').on('click','.print_orders_table',function (){
         var url = '/orders/print-doc';
         var t_length = $('body').find('#w0 table tbody tr').length;
         var table = '<table id="ele4">';
-        $('body').find('table tbody tr').each(function () {
+        $('body').find('table').each(function (){
+            if($(this).css('display') === 'none'){
+                $(this).remove();
+            }
+        })
+        $('body').find('table').find('tbody tr').each(function () {
             var el = $(this).clone();
             var thead = `
                                     <tr>
@@ -800,6 +802,11 @@ $(document).ready(function() {
         var url = '/documents/print-doc';
         var t_length = $('body').find('#w0 table tbody tr').length;
         var table = '<table id="ele4">';
+        $('body').find('table').each(function (){
+            if($(this).css('display') === 'none'){
+                $(this).remove();
+            }
+        })
         $('body').find('table tbody tr').each(function () {
             var el = $(this).clone();
             var thead = `

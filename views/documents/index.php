@@ -199,6 +199,16 @@ if($have_access_available){
                 }
             ],
             [
+                'attribute' => 'Առաքիչ',
+                'value' => function ($model) {
+                    if ($model->deliverName) {
+                        return $model->deliverName->name;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
+            [
                 'attribute' => 'Մեկնաբանություն',
                 'value' => function ($model) {
                     if ($model->comment) {

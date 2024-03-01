@@ -66,7 +66,6 @@ $(document).ready(function () {
     $('body').on('click', '.addOrders_get_warh_id', function (e) {
         var warehouse_id = $('body').find('.warehouse_id').val();
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
-        console.log(warehouse_id)
         $.ajax({
             url:'/orders/get-nomiclature',
             method:'post',
@@ -400,7 +399,7 @@ $(document).ready(function () {
         if (confirmed){
             $(this).closest('.tableNomenclature').remove();
             alert('Հաջողությամբ ջնջված է:');
-            let id_delete = $(this).closest('.tableNomenclature').find('.nom_Id').val();
+            let id_delete = $(this).closest('.tableNomenclature').find('.prodId').val();
             if (id_delete) {
                 delete count_product[id_delete];
             }
