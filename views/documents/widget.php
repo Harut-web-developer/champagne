@@ -142,6 +142,16 @@ if($have_access_available){
                 }
             ],
             [
+                'attribute' => 'Առաքիչ',
+                'value' => function ($model) {
+                    if ($model->deliverName) {
+                        return $model->deliverName->name;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
+            [
                 'attribute' => 'Մեկնաբանություն',
                 'value' => function ($model) {
                     if ($model->comment) {
@@ -227,6 +237,16 @@ if($have_access_available){
                     'value' => function ($model) {
                         if ($model->rateName) {
                             return $model->rateName->name;
+                        } else {
+                            return 'Դատարկ';
+                        }
+                    }
+                ],
+                [
+                    'attribute' => 'Առաքիչ',
+                    'value' => function ($model) {
+                        if ($model->deliverName) {
+                            return $model->deliverName->name;
                         } else {
                             return 'Դատարկ';
                         }
@@ -376,6 +396,16 @@ else { ?>
                             }
                         ],
                         [
+                            'attribute' => 'Առաքիչ',
+                            'value' => function ($model) {
+                                if ($model->deliverName) {
+                                    return $model->deliverName->name;
+                                } else {
+                                    return 'Դատարկ';
+                                }
+                            }
+                        ],
+                        [
                             'attribute' => 'Մեկնաբանություն',
                             'value' => function ($model) {
                                 if ($model->comment) {
@@ -461,6 +491,16 @@ else { ?>
                             'value' => function ($model) {
                                 if ($model->rateName) {
                                     return $model->rateName->name;
+                                } else {
+                                    return 'Դատարկ';
+                                }
+                            }
+                        ],
+                        [
+                            'attribute' => 'Առաքիչ',
+                            'value' => function ($model) {
+                                if ($model->deliverName) {
+                                    return $model->deliverName->name;
                                 } else {
                                     return 'Դատարկ';
                                 }

@@ -798,6 +798,11 @@ class OrdersController extends Controller
 
                 $document = new Documents();
                 $document->user_id = $keeper->id;
+                $session = Yii::$app->session;
+                if ($session['role_id'] == 3)
+                {
+                    $document->deliver_id = $session['user_id'];
+                }
                 $document->orders_id = $orders_items_refuse->order_id;
                 $document->warehouse_id = $orders_items_refuse->warehouse_id;
                 $document->rate_id = 1;
@@ -923,6 +928,10 @@ class OrdersController extends Controller
             $keeper = Users::findOne(['warehouse_id' => $changed_items[0][1]]);
             $document = new Documents();
             $document->user_id = $keeper->id;
+            $session = Yii::$app->session;
+            if ($session['role_id'] == 3) {
+                $document->deliver_id = $session['user_id'];
+            }
             $document->orders_id = $changed_items[0][0];
             $document->warehouse_id = $changed_items[0][1];
             $document->rate_id = 1;
@@ -1214,6 +1223,11 @@ class OrdersController extends Controller
 
                         $document = new Documents();
                         $document->user_id = $keeper->id;
+                        $session = Yii::$app->session;
+                        if ($session['role_id'] == 3)
+                        {
+                            $document->deliver_id = $session['user_id'];
+                        }
                         $document->orders_id = $orders_id->order_id;
                         $document->warehouse_id = $orders_id->warehouse_id;
                         $document->rate_id = 1;
@@ -1264,6 +1278,11 @@ class OrdersController extends Controller
 
                         $document = new Documents();
                         $document->user_id = $keeper->id;
+                        $session = Yii::$app->session;
+                        if ($session['role_id'] == 3)
+                        {
+                            $document->deliver_id = $session['user_id'];
+                        }
                         $document->orders_id = $orders_id->order_id;
                         $document->warehouse_id = $orders_id->warehouse_id;
                         $document->rate_id = 1;
