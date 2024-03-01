@@ -91,10 +91,8 @@ $action_column[] = [
             }
         },
         'exit'=>function ($url, $model, $key) {
-            if($model->is_exit == 1){
-                return Html::a('<i class="bx bx-receipt" style="color:#FF0000"></i>', $url, [
-                    'title' => Yii::t('yii', 'Ելքագրել'), // Add a title if needed
-                ]);
+            if($model->is_exit == 1 && $model->status == 1){
+                return '<i class="bx bx-receipt exitOrders" data-id="'. $key . '" title="Ելքագրել" style="color:red; padding:0px 2px"></i>';
             }else{
                 return '';
             }
@@ -243,3 +241,6 @@ $action_column[] = [
             ]); ?>
         </div>
     </div>
+<div class="modalsExit">
+
+</div>

@@ -779,7 +779,6 @@ class OrdersController extends Controller
         $orders_items_refuse = OrderItems::findOne(['order_id' => $orders->id]);
         $keeper = Users::findOne(['warehouse_id' => $orders_items_refuse->warehouse_id]);
         $order_items = OrderItems::find()->where(['order_id' => $orders->id])->andWhere(['status' => '1'])->all();
-
         if ($orders->is_exit == 1){
             $orders->status = '0';
             $orders->save(false);
@@ -979,80 +978,81 @@ class OrdersController extends Controller
         Notifications::createNotifications('Հաստատել պատվեր', $text,'ordersdelivered');
         return $this->redirect(['index']);
     }
-    public function actionExit($id){
+    public function actionExit(){
         $have_access = Users::checkPremission(76);
         if(!$have_access){
             $this->redirect('/site/403');
         }
-//        echo "<pre>";
-        $session = Yii::$app->session;
-        date_default_timezone_set('Asia/Yerevan');
-        $exit_documents = [];
-        $order_items = OrderItems::find()->select('order_items.id,order_items.order_id,order_items.warehouse_id,order_items.product_id,
-        order_items.nom_id_for_name,order_items.count_by,products.AAH,products.price')
-            ->leftJoin('products','products.id = order_items.product_id')
-            ->where(['order_items.order_id' => $id])
-            ->andWhere(['order_items.status' => '1'])
-            ->asArray()->all();
-//        echo "<pre>";
-//        var_dump($order_items);
-//        exit();
-        for ($i = 0;$i < count($order_items);$i++){
-            $exit_documents[$i] = [
-              $order_items[$i]['order_id'],
-              $order_items[$i]['product_id'],
-              $order_items[$i]['warehouse_id'],
-              $order_items[$i]['nom_id_for_name'],
-              $order_items[$i]['count_by'],
-              $order_items[$i]['AAH'],
-              $order_items[$i]['price'],
-            ];
-        }
-        if (!empty($exit_documents)){
-            $new_exit_document = new Documents();
-            $keeper = Users::findOne(['warehouse_id' => $exit_documents[0][2]]);
-            $new_exit_document->user_id = $keeper->id;
-            $new_exit_document->orders_id = $exit_documents[0][0];
-            $new_exit_document->warehouse_id = $exit_documents[0][2];
-            $new_exit_document->rate_id = 1;
-            $new_exit_document->rate_value = 1;
-            $new_exit_document->document_type = 9;
-            $new_exit_document->comment = 'Ելքագրված փաստաթուղթ';
-            $new_exit_document->date = date('Y-m-d H:i:s');
-            $new_exit_document->status = '1';
-            $new_exit_document->created_at = date('Y-m-d H:i:s');
-            $new_exit_document->updated_at = date('Y-m-d H:i:s');
-            $new_exit_document->save(false);
-            for ($j = 0; $j< count($exit_documents); $j++){
-                $new_exit_document_items = new DocumentItems();
-                $new_exit_document_items->document_id = $new_exit_document->id;
-                $new_exit_document_items->nomenclature_id = $exit_documents[$j][3];
-                $new_exit_document_items->count = $exit_documents[$j][4];
-                $new_exit_document_items->refuse_product_id = $exit_documents[$j][1];
-                if ($exit_documents[$j][5] == 1){
-                    $new_exit_document_items->price_with_aah = $exit_documents[$j][6];
-                    $new_exit_document_items->AAH = 'true';
-                    $new_exit_document_items->price = number_format((($exit_documents[$j][6] * 5)/6),2,'.','');
-                }else{
-                    $new_exit_document_items->price = $exit_documents[$j][6];
-                    $new_exit_document_items->AAH = 'false';
-                    $new_exit_document_items->price_with_aah = $exit_documents[$j][6] + ($exit_documents[$j][6] * 20) / 100;
+        if ($this->request->isPost){
+            $id = $this->request->post('orders_id');
+            $deliver_id = $this->request->post('deliver_id');
+            $session = Yii::$app->session;
+            date_default_timezone_set('Asia/Yerevan');
+            $exit_documents = [];
+            $order_items = OrderItems::find()->select('order_items.id,order_items.order_id,order_items.warehouse_id,order_items.product_id,
+            order_items.nom_id_for_name,order_items.count_by,products.AAH,products.price')
+                ->leftJoin('products','products.id = order_items.product_id')
+                ->where(['order_items.order_id' => intval($id)])
+                ->andWhere(['order_items.status' => '1'])
+                ->asArray()->all();
+            for ($i = 0;$i < count($order_items);$i++){
+                $exit_documents[$i] = [
+                    $order_items[$i]['order_id'],
+                    $order_items[$i]['product_id'],
+                    $order_items[$i]['warehouse_id'],
+                    $order_items[$i]['nom_id_for_name'],
+                    $order_items[$i]['count_by'],
+                    $order_items[$i]['AAH'],
+                    $order_items[$i]['price'],
+                ];
+            }
+            if (!empty($exit_documents)){
+                $new_exit_document = new Documents();
+                $keeper = Users::findOne(['warehouse_id' => $exit_documents[0][2]]);
+                $new_exit_document->user_id = $keeper->id;
+                $new_exit_document->deliver_id = $deliver_id;
+                $new_exit_document->orders_id = $exit_documents[0][0];
+                $new_exit_document->warehouse_id = $exit_documents[0][2];
+                $new_exit_document->rate_id = 1;
+                $new_exit_document->rate_value = 1;
+                $new_exit_document->document_type = 9;
+                $new_exit_document->comment = 'Ելքագրված փաստաթուղթ';
+                $new_exit_document->date = date('Y-m-d H:i:s');
+                $new_exit_document->status = '1';
+                $new_exit_document->created_at = date('Y-m-d H:i:s');
+                $new_exit_document->updated_at = date('Y-m-d H:i:s');
+                $new_exit_document->save(false);
+                for ($j = 0; $j< count($exit_documents); $j++){
+                    $new_exit_document_items = new DocumentItems();
+                    $new_exit_document_items->document_id = $new_exit_document->id;
+                    $new_exit_document_items->nomenclature_id = $exit_documents[$j][3];
+                    $new_exit_document_items->count = $exit_documents[$j][4];
+                    $new_exit_document_items->refuse_product_id = $exit_documents[$j][1];
+                    if ($exit_documents[$j][5] == 1){
+                        $new_exit_document_items->price_with_aah = $exit_documents[$j][6];
+                        $new_exit_document_items->AAH = 'true';
+                        $new_exit_document_items->price = number_format((($exit_documents[$j][6] * 5)/6),2,'.','');
+                    }else{
+                        $new_exit_document_items->price = $exit_documents[$j][6];
+                        $new_exit_document_items->AAH = 'false';
+                        $new_exit_document_items->price_with_aah = $exit_documents[$j][6] + ($exit_documents[$j][6] * 20) / 100;
+                    }
+                    $new_exit_document_items->status = '1';
+                    $new_exit_document_items->created_at = date('Y-m-d H:i:s');
+                    $new_exit_document_items->updated_at = date('Y-m-d H:i:s');
+                    $new_exit_document_items->save(false);
                 }
-                $new_exit_document_items->status = '1';
-                $new_exit_document_items->created_at = date('Y-m-d H:i:s');
-                $new_exit_document_items->updated_at = date('Y-m-d H:i:s');
-                $new_exit_document_items->save(false);
+                if ($session['role_id'] == 4){
+                    $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
+                    $text = $user_name['name'] . '(ն\ը) ելքագրել է ապրանք։';
+                    Notifications::createNotifications('Ելքագրել փաստաթուղթ', $text,'exitdocument');
+                }
             }
-            if ($session['role_id'] == 4){
-                $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
-                $text = $user_name['name'] . '(ն\ը) ելքագրել է ապրանք։';
-                Notifications::createNotifications('Ելքագրել փաստաթուղթ', $text,'exitdocument');
-            }
+            $is_exit_orders = Orders::findOne($id);
+            $is_exit_orders->is_exit = '0';
+            $is_exit_orders->save(false);
+            return $this->redirect(['index']);
         }
-        $is_exit_orders = Orders::findOne($id);
-        $is_exit_orders->is_exit = '0';
-        $is_exit_orders->save(false);
-        return $this->redirect(['index']);
     }
     public  function actionFilterStatus(){
         if ($_GET){
@@ -1170,7 +1170,16 @@ class OrdersController extends Controller
             return json_encode('change');
         }
     }
-
+    public function actionExitModal(){
+        if($this->request->isGet){
+            $get = $this->request->get('ordersId');
+            $users = Users::find()->where(['role_id' => 3])->andWhere(['status' => '1'])->asArray()->all();
+        }
+        return $this->renderAjax('exit-modal',[
+            'id' => $get,
+            'deliver' => $users,
+        ]);
+    }
     public function actionDeleteItems(){
 //        echo "<pre>";
         if ($this->request->isPost){

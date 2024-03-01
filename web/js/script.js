@@ -929,10 +929,26 @@ $(document).ready(function() {
             }
         })
     }
-
+    $('body').on('click','.exitOrders',function(){
+        let ordersId = $(this).data('id');
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/orders/exit-modal',
+            method:'get',
+            datatype:'html',
+            data:{
+                ordersId:ordersId,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.modalsExit').html(data);
+            }
+        })
+    })
     $('body').on('click','.refuseDocument',function(){
         refuseDocument($(this));
     })
+
     $('body').on('keyup','#nomenclature-cost', function () {
         let inputValue = $(this).val();
         let sanitizedValue = inputValue.replace(/[^0-9.]/g, '');

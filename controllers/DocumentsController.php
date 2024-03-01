@@ -147,7 +147,7 @@ class DocumentsController extends Controller
             ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
-//            echo "<pre>";
+            echo "<pre>";
 //            var_dump($post);
 //            exit();
             date_default_timezone_set('Asia/Yerevan');
@@ -167,7 +167,7 @@ class DocumentsController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model = Documents::getDefVals($model);
-            $model->save(false);
+//            $model->save(false);
                 if ($post['Documents']['document_type'] === '1'){
                     for ($i = 0; $i < count($post['document_items']); $i++) {
                         $products = new Products();
@@ -204,98 +204,119 @@ class DocumentsController extends Controller
                 }
             if ($post['Documents']['document_type'] === '10'){
                 for ($i = 0; $i < count($post['document_items']); $i++) {
-                    $products = new Products();
-                    $products->warehouse_id = $post['Documents']['warehouse_id'];
-                    $products->nomenclature_id = $post['document_items'][$i];
-                    $products->document_id = $model->id;
-                    $products->type = 1;
-                    if ($post['raw'][$i] == ''){
-                        $products->count = intval($post['count_'][$i]);
-                        $products->count_balance = intval($post['count_'][$i]);
-                    }else{
-                        $products->count = intval($post['count_'][$i]) - intval($post['raw'][$i]);
-                        $products->count_balance = intval($post['count_'][$i]) - intval($post['raw'][$i]);
-                    }
-                    if ($post['aah'] == 'true'){
-                        $products->price = floatval($post['pricewithaah'][$i]);
-                        $products->AAH = 1;
-                    }else{
-                        $products->price = floatval($post['price'][$i]);
-                        $products->AAH = 0;
-                    }
-                    $products->created_at = date('Y-m-d H:i:s');
-                    $products->updated_at = date('Y-m-d H:i:s');
-                    $products->save(false);
+                    $items = OrderItems::find()->where(['id' => $post['items']])->asArray()->one();
+                    $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count_by,order_items.nom_id_for_name,products.price,products.AAH')
+                        ->leftJoin('products','products.id = order_items.product_id')
+                        ->where(['order_items.order_id' => $items['order_id']])->andWhere(['order_items.status' => '1'])->all();
+                    $bal = $post['count_'][$i];;
+                    foreach ($order_items as $item){
+                        if ($item->count_by - $bal >= 0) {
 
-                    $document_items = new DocumentItems();
-                    $document_items->document_id = $model->id;
-                    $document_items->nomenclature_id = $post['document_items'][$i];
-                    $document_items->count = $products->count;
-                    if ($post['raw'][$i] != '') {
-                        $document_items->wastrel = $post['raw'][$i];
-                    }
-                    $document_items->price = floatval($post['price'][$i]);
-                    $document_items->refuse_product_id = $products->id;
-                    $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
-                    $document_items->AAH = $post['aah'];
-                    $document_items->created_at = date('Y-m-d H:i:s');
-                    $document_items->updated_at = date('Y-m-d H:i:s');
-                    $document_items->save(false);
+                        }else{
+                            $bal -= $item->count_by;
 
-                    $orders_items = OrderItems::findOne($post['items'][$i]);
-                    $orders_items->count_by -= $post['count_'][$i];
-                    if ($orders_items->count_by == 0){
-                        $orders_items->status = '0';
-                    }
-                    $orders_items->price_by = ($orders_items->price / $orders_items->count) * $orders_items->count_by;
-                    $orders_items->cost_by = ($orders_items->cost / $orders_items->count) * $orders_items->count_by;
-                    $orders_items->discount_by = ($orders_items->discount / $orders_items->count) * $orders_items->count_by;
-                    $orders_items->price_before_discount_by = ($orders_items->price_before_discount / $orders_items->count) * $orders_items->count_by;
-                    $orders_items->save(false);
+                            $products = new Products();
+                            $products->warehouse_id = $post['Documents']['warehouse_id'];
+                            $products->nomenclature_id = $post['document_items'][$i];
+                            $products->document_id = $model->id;
+                            $products->type = 1;
+                            if ($post['raw'][$i] == ''){
+                                $products->count = $item->count_by;
+                                $products->count_balance = $item->count_by;
+                            }else{
+                                $products->count = intval($post['count_'][$i]) - intval($post['raw'][$i]);
+                                $products->count_balance = intval($post['count_'][$i]) - intval($post['raw'][$i]);
+                            }
+                            if ($post['aah'] == 'true'){
+                                $products->price = floatval($post['pricewithaah'][$i]);
+                                $products->AAH = 1;
+                            }else{
+                                $products->price = floatval($post['price'][$i]);
+                                $products->AAH = 0;
+                            }
+                            $products->created_at = date('Y-m-d H:i:s');
+                            $products->updated_at = date('Y-m-d H:i:s');
+                            $products->save(false);
 
-                    $change_products = Products::findOne($orders_items->product_id);
-                    $change_products->count = $orders_items->count_by;
-                    if ($orders_items->count_by == 0){
-                        $change_products->status = '0';
+                        }
                     }
-                    $change_products->save(false);
+                    var_dump($order_items);
+
+
+
+//
+
+//
+//                    $document_items = new DocumentItems();
+//                    $document_items->document_id = $model->id;
+//                    $document_items->nomenclature_id = $post['document_items'][$i];
+//                    $document_items->count = $products->count;
+//                    if ($post['raw'][$i] != '') {
+//                        $document_items->wastrel = $post['raw'][$i];
+//                    }
+//                    $document_items->price = floatval($post['price'][$i]);
+//                    $document_items->refuse_product_id = $products->id;
+//                    $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
+//                    $document_items->AAH = $post['aah'];
+//                    $document_items->created_at = date('Y-m-d H:i:s');
+//                    $document_items->updated_at = date('Y-m-d H:i:s');
+//                    $document_items->save(false);
+//
+//                    $orders_items = OrderItems::findOne($post['items'][$i]);
+//                    $orders_items->count_by -= $post['count_'][$i];
+//                    if ($orders_items->count_by == 0){
+//                        $orders_items->status = '0';
+//                    }
+//                    $orders_items->price_by = ($orders_items->price / $orders_items->count) * $orders_items->count_by;
+//                    $orders_items->cost_by = ($orders_items->cost / $orders_items->count) * $orders_items->count_by;
+//                    $orders_items->discount_by = ($orders_items->discount / $orders_items->count) * $orders_items->count_by;
+//                    $orders_items->price_before_discount_by = ($orders_items->price_before_discount / $orders_items->count) * $orders_items->count_by;
+//                    $orders_items->save(false);
+//
+//                    $change_products = Products::findOne($orders_items->product_id);
+//                    $change_products->count = $orders_items->count_by;
+//                    if ($orders_items->count_by == 0){
+//                        $change_products->status = '0';
+//                    }
+//                    $change_products->save(false);
                 }
-                $end_order_items = OrderItems::find()->select('SUM(count_by) as total_count,
-                SUM(price_by) as total_price,SUM(price_before_discount_by) as total_price_before_discount,SUM(discount_by) as total_discount')
-                    ->where(['order_id' => $post['order_id']])
-                    ->andWhere(['status' => 1])
-                    ->asArray()
-                    ->all();
-                $orders = Orders::findOne($post['order_id']);
-                if ($end_order_items[0]['total_price'] == null){
-                    $orders->total_price = 0;
-                }else{
-                    $orders->total_price = $end_order_items[0]['total_price'];
-                }
-                if ($end_order_items[0]['total_count'] == null){
-                    $orders->total_count = 0;
-                }else{
-                    $orders->total_count = $end_order_items[0]['total_count'];
-                }
-                if ($end_order_items[0]['total_price_before_discount'] == null){
-                    $orders->total_price_before_discount = 0;
-                }else{
-                    $orders->total_price_before_discount = $end_order_items[0]['total_price_before_discount'];
-                }
-                if ($end_order_items[0]['total_discount'] == null){
-                    $orders->total_discount = 0;
-                }else{
-                    $orders->total_discount = $end_order_items[0]['total_discount'];
-                }
-                if ($orders->status == 2){
-                    $orders->status = '4';
-                }elseif($orders->status == 3){
-                    $orders->status = '5';
-                }
-                if ($orders->total_count == 0){
-                    $orders->status = '0';
-                }
-                $orders->save(false);
+                exit();
+//                $end_order_items = OrderItems::find()->select('SUM(count_by) as total_count,
+//                SUM(price_by) as total_price,SUM(price_before_discount_by) as total_price_before_discount,SUM(discount_by) as total_discount')
+//                    ->where(['order_id' => $post['order_id']])
+//                    ->andWhere(['status' => 1])
+//                    ->asArray()
+//                    ->all();
+//                $orders = Orders::findOne($post['order_id']);
+//                if ($end_order_items[0]['total_price'] == null){
+//                    $orders->total_price = 0;
+//                }else{
+//                    $orders->total_price = $end_order_items[0]['total_price'];
+//                }
+//                if ($end_order_items[0]['total_count'] == null){
+//                    $orders->total_count = 0;
+//                }else{
+//                    $orders->total_count = $end_order_items[0]['total_count'];
+//                }
+//                if ($end_order_items[0]['total_price_before_discount'] == null){
+//                    $orders->total_price_before_discount = 0;
+//                }else{
+//                    $orders->total_price_before_discount = $end_order_items[0]['total_price_before_discount'];
+//                }
+//                if ($end_order_items[0]['total_discount'] == null){
+//                    $orders->total_discount = 0;
+//                }else{
+//                    $orders->total_discount = $end_order_items[0]['total_discount'];
+//                }
+//                if ($orders->status == 2){
+//                    $orders->status = '4';
+//                }elseif($orders->status == 3){
+//                    $orders->status = '5';
+//                }
+//                if ($orders->total_count == 0){
+//                    $orders->status = '0';
+//                }
+//                $orders->save(false);
             }
                 if ($post['Documents']['document_type'] == '2'){
                     for ($i = 0; $i < count($post['document_items']); $i++) {
@@ -681,14 +702,17 @@ class DocumentsController extends Controller
     public function actionDeliveredOrders(){
         if ($this->request->isGet){
             $orders = Orders::find()
-                ->select('order_items.id,order_items.count_by,nomenclature.name, order_items.nom_id_for_name, products.AAH, products.price')
+                ->select('order_items.id,SUM(order_items.count_by) as count_by,nomenclature.name, order_items.nom_id_for_name, products.AAH, products.price')
                 ->leftJoin('order_items', 'order_items.order_id = orders.id')
                 ->leftJoin('products', 'order_items.product_id = products.id')
                 ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
                 ->where(['orders.id' => $this->request->get('ordersId')])
                 ->andWhere(['order_items.status' => '1'])
+                ->groupBy('order_items.nom_id_for_name')
                 ->asArray()
                 ->all();
+//            var_dump($orders);
+//            exit();
             return json_encode($orders);
         }
     }
@@ -1365,8 +1389,12 @@ class DocumentsController extends Controller
         }
         date_default_timezone_set('Asia/Yerevan');
         $document = Documents::findOne($id);
+//        echo "<pre>";
+//        var_dump($document);
+//        exit();
         $new_document = new Documents();
         $new_document->user_id = $document->user_id;
+        $new_document->deliver_id = $document->deliver_id;
         $new_document->warehouse_id = $document->warehouse_id;
         $new_document->rate_id = 1;
         $new_document->rate_value = 1;
@@ -1378,6 +1406,8 @@ class DocumentsController extends Controller
         $new_document->updated_at = date('Y-m-d H:i:s');
         $new_document->save(false);
         $document_items = DocumentItems::find()->where(['document_id' => $id])->asArray()->all();
+//                var_dump($document_items);
+//        exit();
         if (!empty($document_items)){
             for ($k = 0;$k < count($document_items); $k++){
                 $new_product = new Products();
@@ -1404,6 +1434,9 @@ class DocumentsController extends Controller
                 $new_document_items->nomenclature_id = $document_items[$k]['nomenclature_id'];
                 $new_document_items->refuse_product_id = $new_product->id;
                 $new_document_items->count = $document_items[$k]['count'];
+                if ($document_items[$k]['wastrel'] != ''){
+                    $new_document_items->wastrel = $document_items[$k]['wastrel'];
+                }
                 $new_document_items->price = $document_items[$k]['price'];
                 $new_document_items->price_with_aah = $document_items[$k]['price_with_aah'];
                 $new_document_items->AAH =  $document_items[$k]['AAH'];
