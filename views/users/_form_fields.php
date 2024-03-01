@@ -21,23 +21,14 @@ if(isset($action__)){
         <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
         <div class="dinamic-form">
             <input type="hidden" name="page" value="users">
-            <div class="default-panel" data-id="1" data-page="users">
+            <div class="default-panel" data-id="18" data-page="users">
                 <div class="panel-title">
                     <span class="non-active"><?=$model->DefaultTitle->title?></span>
                     <input type="text" name="newblocks[<?php echo $model->DefaultTitle->id;?>]" value="<?=$model->DefaultTitle->title?>"  class="only-active form-control">
                     <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
                     <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 usersName">
-                    <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => $req]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 usersUsername">
-                    <?= $form->field($model, 'username')->textInput(['maxlength' => true,'required' => $req]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 usersPassword">
-                    <?= $form->field($model, 'password')->passwordInput(['required' => $req]) ?>
-                </div>
-                <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>1])->all(); ?>
+                <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>18])->all(); ?>
                 <?php if(!empty($fields)){ ?>
                     <?php foreach ($fields as $fild => $fild_simple){ ?>
                         <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id, false);?>

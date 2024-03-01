@@ -82,9 +82,9 @@ class CustomFieldsController extends Controller
             $post = $this->request->post();
 
             if(count($post['newblocks']) >= 1){
-
                 foreach ($post['newblocks'] as $newBlock => $block_val){
                     $model = CustomfieldsBlocksTitle::findOne(['id'=>$newBlock,'page'=>$post['page']]);
+
                     if(!$model){
                         $model = new CustomfieldsBlocksTitle();
                         $model->block_type = 1;
@@ -93,7 +93,8 @@ class CustomFieldsController extends Controller
                     $model->page = $post['page'];
                     $model->order_number = 1;
                     $model->save(false);
-
+//                     var_dump($post['new_fild_name']);
+//                     exit;
                     if(!empty($post['new_fild_name'][$newBlock])){
                        foreach ($post['new_fild_name'][$newBlock] as $input_item => $input_val){
 

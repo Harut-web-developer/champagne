@@ -28,15 +28,6 @@ if(isset($action__)){
                     <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
                     <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 clientName">
-                    <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => $req]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 clientLocation">
-                    <?= $form->field($model, 'location')->textInput(['maxlength' => true,'required' => $req]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 clientPhone">
-                    <?= $form->field($model, 'phone')->input('number',['required' => $req]) ?>
-                </div>
                 <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>17])->all(); ?>
                 <?php if(!empty($fields)){ ?>
                     <?php foreach ($fields as $fild => $fild_simple){ ?>

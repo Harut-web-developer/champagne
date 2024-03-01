@@ -256,6 +256,7 @@ class UsersController extends Controller
         $date_tab = [];
 
         $model = new Users();
+
         if ($this->request->isPost) {
             $post = $this->request->post();
 

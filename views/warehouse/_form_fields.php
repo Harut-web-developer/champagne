@@ -28,15 +28,6 @@ if(isset($action__)){
                     <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
                     <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseName">
-                    <?= $form->field($model, 'name')->textInput(['required'=>$req]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseLocation">
-                    <?= $form->field($model, 'location')->textInput(['required'=>$req]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseType">
-                    <?= $form->field($model, 'type')->dropDownList([ 'usual' => 'Սովորական', 'virtual' => 'Վիրտուալ', ], ['prompt' => 'Ընտրել տեսակը','options' => ['required' => $req,]]) ?>
-                </div>
                 <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>1])->all(); ?>
                 <?php if(!empty($fields)){ ?>
                     <?php foreach ($fields as $fild => $fild_simple){ ?>

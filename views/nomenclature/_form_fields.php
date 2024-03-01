@@ -28,14 +28,6 @@ if(isset($action__)){
                     <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
                     <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
                 </div>
-                <div class="card-body formDesign">
-                    <div class="form-group col-md-12 col-lg-12 col-sm-12 nomenclatureName">
-                        <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => $req]) ?>
-                    </div>
-                    <div class="form-group col-md-12 col-lg-12 col-sm-12 nomenclaturePrice">
-                        <?= $form->field($model, 'price')->input('number',['required' => $req]) ?>
-                    </div>
-                </div>
                 <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>2])->all(); ?>
                 <?php if(!empty($fields)){ ?>
                     <?php foreach ($fields as $fild => $fild_simple){ ?>

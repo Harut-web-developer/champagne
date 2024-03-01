@@ -69,6 +69,7 @@ class WarehouseController extends Controller
             $this->redirect('/site/403');
         }
         $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'warehouse']);
+
         if ($session['role_id'] == 1) {
             $sub_page = [
                 ['name' => 'Փաստաթղթեր','address' => '/documents'],
