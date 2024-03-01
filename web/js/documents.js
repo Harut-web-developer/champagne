@@ -912,4 +912,30 @@ $(document).ready(function () {
         }
     })
 
+    $('body').on('click','#wastrel', function (){
+        $(this).val(function(index, value) {
+            return value.replace(/-/g, '');
+        });
+        if (parseInt($(this).val()) > parseInt($('#wastrel').attr('max'))){
+            alert("Ավել հնարավոր չէ փոխել։")
+            $(this).val($('#wastrel').attr('max'));
+        }else if (parseInt($(this).val()) < 0){
+            alert("Նշված դաշտը չի կարող լինել 0-ից պակաս։")
+            $(this).val($('#wastrel').attr('min'));
+        }
+    })
+
+    $('body').on('keyup', '#wastrel', function() {
+        $(this).val(function(index, value) {
+            return value.replace(/-/g, '');
+        });
+        if (parseInt($('#wastrel').val()) > parseInt($('#wastrel').attr('max'))) {
+            alert("Ավել հնարավոր չէ փոխել։")
+            $(this).val($('#wastrel').attr('max'));
+        } else if ($(this).val() < 0) {
+            alert("Նշված դաշտը չի կարող լինել 0-ից պակաս։")
+            $(this).val($('#wastrel').attr('min'));
+        }
+    })
+
 })

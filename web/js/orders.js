@@ -1624,10 +1624,13 @@ $(document).ready(function () {
         })
     })
     $('body').on('click','#countByModal', function (){
-        if ($(this).val() > $('#countModal').val()){
+        $(this).val(function(index, value) {
+            return value.replace(/-/g, '');
+        });
+        if (parseInt($(this).val()) > parseInt($('#countModal').val())){
             alert("Պատվերի քանակից ավել հնարավոր չէ փոխել։")
             $(this).val($('#countModal').val());
-        }else if ($(this).val() < 1 || $(this).val() == ''){
+        }else if (parseInt($(this).val()) < 1 || $(this).val() == ''){
             alert("Նշված դաշտը չի կարող լինել դատարկ կամ 1-ից պակաս։")
             $(this).val($('#countModal').val());
         }else {
@@ -1640,13 +1643,14 @@ $(document).ready(function () {
         $(this).val(function(index, value) {
             return value.replace(/-/g, '');
         });
-        if ($(this).val() > $('#countModal').val()) {
+        if (parseInt($('#countByModal').val()) > parseInt($('#countByModal').attr('max'))) {
             alert("Ավել հնարավոր չէ փոխել։")
-            $(this).val($('#countModal').val());
-        } else if ($(this).val() < 1 || $(this).val() === "") {
-            alert("Նշված դաշտը չի կարող լինել դատարկ կամ 1-ից պակաս։")
-            $(this).val($('#countModal').val());
+            $(this).val($('#countByModal').attr('max'));
+        } else if ($(this).val() < 1) {
+            alert("Նշված դաշտը չի կարող լինել 1-ից պակաս կամ դատարկ։")
+            $('.addChange').prop('disabled', true);
         } else {
+            $('.addChange').prop('disabled', false);
             $('#totalBeforePriceModal').val(+parseFloat($('#beforePriceModal').val() * $(this).val()).toFixed(2))
             $('#totalPriceModal').val(+parseFloat($('#priceModal').val() * $(this).val()).toFixed(2))
         }

@@ -40,6 +40,7 @@ $have_access_delete = Users::checkPremission(43);
                 <thead>
                 <tr>
                     <th>#</th>
+                    <th>Գործողուրյուն</th>
                     <th>Անուն</th>
                     <th>Տեսակ</th>
                     <th>Տոկոս</th>
@@ -51,7 +52,6 @@ $have_access_delete = Users::checkPremission(43);
                     <th>Զեղչի տեսակ</th>
                     <th>Նվազագույն</th>
                     <th>Առավելագույն</th>
-                    <th>Գործողուրյուն</th>
                 </tr>
                 </thead>
                 <tbody class="table-border-bottom-0 sortable-ul">
