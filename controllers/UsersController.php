@@ -105,7 +105,9 @@ class UsersController extends Controller
         if($this->request->isPost){
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-            $model->password = $post['Users']['password'];
+            $password = $post['Users']['password'];
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $model->password = $hash;
             $model->email = $post['Users']['email'];
             $model->phone = $post['Users']['phone'];
             $model->updated_at = date('Y-m-d H:i:s');
@@ -169,9 +171,6 @@ class UsersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-//            echo "<pre>";
-//            var_dump($post);
-//            exit();
             $model->name = $post['Users']['name'];
             $model->username = $post['Users']['username'];
             $model->role_id = $post['Users']['role_id'];
@@ -180,8 +179,10 @@ class UsersController extends Controller
             }else{
                 $model->warehouse_id = null;
             }
+            $password = $post['Users']['password'];
+            $hash = password_hash($password, PASSWORD_DEFAULT);
             $model->auth_key = $this->generateRandomString();
-            $model->password = $post['Users']['password'];
+            $model->password = $hash;
             $model->email = $post['Users']['email'];
             $model->phone = $post['Users']['phone'];
             $model->created_at = date('Y-m-d H:i:s');
@@ -313,6 +314,8 @@ class UsersController extends Controller
             }else{
                 $model->warehouse_id = null;
             }
+            $password = $post['Users']['password'];
+            $hash = password_hash($password, PASSWORD_DEFAULT);
             $model->name = $post['Users']['name'];
             $model->username = $post['Users']['username'];
             $model->role_id = $post['Users']['role_id'];
@@ -320,7 +323,7 @@ class UsersController extends Controller
                 $model->warehouse_id = $post['Users']['warehouse_id'];
             }
             $model->auth_key = $this->generateRandomString();
-            $model->password = $post['Users']['password'];
+            $model->password = $hash;
             $model->email = $post['Users']['email'];
             $model->phone = $post['Users']['phone'];
             $model->updated_at = date('Y-m-d H:i:s');
