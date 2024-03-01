@@ -1,5 +1,10 @@
-<?php
-?>
+<label for="deliverorders">Առաքիչ</label>
+<select id="deliverorders" class="js-example-basic-single form-control" name="Documents[deliver_id]">
+    <option  value=""></option>
+    <?php foreach ($deliver as $deliver_value){ ?>
+        <option value="<?=$deliver_value['id']?>"> <?=$deliver_value['name']?></option>
+    <?php } ?>
+</select>
 <label for="deliveredorders">Հաստատված փաստաթղթեր</label>
 <select id="deliveredorders" class="js-example-basic-single form-control" name="order_id">
     <option  value=""></option>

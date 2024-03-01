@@ -73,6 +73,8 @@ class UsersController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'users']);
+
         if ($session['role_id'] == 1) {
             $sub_page = [
                 ['name' => 'Կարգավիճակ','address' => '/roles'],
@@ -92,6 +94,7 @@ class UsersController extends Controller
             'dataProvider' => $dataProvider,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'new_fields'=>$res,
 
         ]);
     }
@@ -203,8 +206,8 @@ class UsersController extends Controller
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
-                Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission_users);
-                return $this->redirect(['index', 'id' => $model->id]);
+            Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission_users);
+            return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }

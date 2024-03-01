@@ -300,7 +300,7 @@ class SiteController extends Controller
         $notification = Notifications::find()
             ->andWhere(['>=', 'datetime', date('Y-m-d')])
 //            ->andWhere(['status' => ','])
-            ->andWhere(['role_id' => '2'])
+            ->andWhere(['or', ['role_id' => '2'], ['role_id' => '3']])
             ->andWhere([
                 'or',
                 ['watched' => ','],

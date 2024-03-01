@@ -1,5 +1,6 @@
 <?php
 
+use app\models\CustomfieldsBlocksInputValues;
 use app\models\Documents;
 use app\models\Users;
 use yii\data\ActiveDataProvider;
@@ -74,6 +75,16 @@ if($have_access_available){
             return Url::toRoute([$action, 'id' => $model->id]);
         }
     ];
+$fields_arr = [];
+
+if(!empty($new_fields)){
+    for ($i = 0; $i < count($new_fields); $i++){
+        $fields_arr[$i]['attribute'] = $new_fields[$i]['attribute'];
+        $fields_arr[$i]['value'] = function ($model,$key, $index, $column) {
+            return CustomfieldsBlocksInputValues::getValue($model->id, $column->filterAttribute);
+        };
+    }
+}
 ?>
 
 <?php  if (!isset($page_value)){
@@ -171,6 +182,8 @@ if($have_access_available){
                     }
                 }
             ],
+            ...$fields_arr,
+
         ],
     ]); ?>
     <?php }
@@ -272,6 +285,8 @@ if($have_access_available){
                         }
                     }
                 ],
+                ...$fields_arr,
+
             ],
         ]); ?>
     <?php }
@@ -425,6 +440,8 @@ else { ?>
                                 }
                             }
                         ],
+                        ...$fields_arr,
+
                     ],
                 ]); ?>
             <?php }
@@ -526,6 +543,8 @@ else { ?>
                                 }
                             }
                         ],
+                        ...$fields_arr,
+
                     ],
                 ]); ?>
             <?php } ?>

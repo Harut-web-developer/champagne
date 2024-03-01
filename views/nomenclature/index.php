@@ -1,5 +1,6 @@
 <?php
 
+use app\models\CustomfieldsBlocksInputValues;
 use app\models\Nomenclature;
 use app\models\Users;
 use yii\data\ActiveDataProvider;
@@ -52,6 +53,16 @@ if ($have_access_update && $have_access_delete){
         }
     ];
 }
+$fields_arr = [];
+
+if(!empty($new_fields)){
+    for ($i = 0; $i < count($new_fields); $i++){
+        $fields_arr[$i]['attribute'] = $new_fields[$i]['attribute'];
+        $fields_arr[$i]['value'] = function ($model,$key, $index, $column) {
+            return CustomfieldsBlocksInputValues::getValue($model->id, $column->filterAttribute);
+        };
+    }
+}
 ?>
 <div class="nomenclature-index">
     <div class="titleAndPrev">
@@ -92,6 +103,7 @@ if ($have_access_update && $have_access_delete){
                 'name',
                 'price',
                 'cost',
+                ...$fields_arr,
             ],
         ]); ?>
     </div>
