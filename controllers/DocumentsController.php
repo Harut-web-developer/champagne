@@ -167,7 +167,7 @@ class DocumentsController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model = Documents::getDefVals($model);
-//            $model->save(false);
+            $model->save(false);
                 if ($post['Documents']['document_type'] === '1'){
                     for ($i = 0; $i < count($post['document_items']); $i++) {
                         $products = new Products();
@@ -205,15 +205,17 @@ class DocumentsController extends Controller
             if ($post['Documents']['document_type'] === '10'){
                 for ($i = 0; $i < count($post['document_items']); $i++) {
                     $items = OrderItems::find()->where(['id' => $post['items']])->asArray()->one();
-                    $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count_by,order_items.nom_id_for_name,products.price,products.AAH')
+                    $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count_by,
+                    order_items.nom_id_for_name,products.price,products.AAH')
                         ->leftJoin('products','products.id = order_items.product_id')
-                        ->where(['order_items.order_id' => $items['order_id']])->andWhere(['order_items.status' => '1'])->all();
-                    $bal = $post['count_'][$i];;
+                        ->where(['order_items.order_id' => $items['order_id']])
+                        ->andWhere(['order_items.nom_id_for_name' => $post['document_items'][$i]])
+                        ->andWhere(['order_items.status' => '1'])->all();
+//                    var_dump($order_items);
+
+                    $bal = $post['count_'][$i];
                     foreach ($order_items as $item){
                         if ($item->count_by - $bal >= 0) {
-
-                        }else{
-                            $bal -= $item->count_by;
 
                             $products = new Products();
                             $products->warehouse_id = $post['Documents']['warehouse_id'];
@@ -221,8 +223,8 @@ class DocumentsController extends Controller
                             $products->document_id = $model->id;
                             $products->type = 1;
                             if ($post['raw'][$i] == ''){
-                                $products->count = $item->count_by;
-                                $products->count_balance = $item->count_by;
+                                $products->count = intval($post['count_'][$i]);
+                                $products->count_balance = intval($post['count_'][$i]);
                             }else{
                                 $products->count = intval($post['count_'][$i]) - intval($post['raw'][$i]);
                                 $products->count_balance = intval($post['count_'][$i]) - intval($post['raw'][$i]);
@@ -238,85 +240,96 @@ class DocumentsController extends Controller
                             $products->updated_at = date('Y-m-d H:i:s');
                             $products->save(false);
 
+                            $document_items = new DocumentItems();
+                            $document_items->document_id = $model->id;
+                            $document_items->nomenclature_id = $post['document_items'][$i];
+                            $document_items->count = $products->count;
+                            if ($post['raw'][$i] != '') {
+                                $document_items->wastrel = $post['raw'][$i];
+                            }
+                            $document_items->price = floatval($post['price'][$i]);
+                            $document_items->refuse_product_id = $products->id;
+                            $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
+                            $document_items->AAH = $post['aah'];
+                            $document_items->created_at = date('Y-m-d H:i:s');
+                            $document_items->updated_at = date('Y-m-d H:i:s');
+                            $document_items->save(false);
+
+                            $orders_items = OrderItems::findOne($item->id);
+                            $orders_items->count_by -= $bal;
+                            if ($orders_items->count_by == 0){
+                                $orders_items->status = '0';
+                            }
+                            $orders_items->price_by = ($orders_items->price / $orders_items->count) * $orders_items->count_by;
+                            $orders_items->cost_by = ($orders_items->cost / $orders_items->count) * $orders_items->count_by;
+                            $orders_items->discount_by = ($orders_items->discount / $orders_items->count) * $orders_items->count_by;
+                            $orders_items->price_before_discount_by = ($orders_items->price_before_discount / $orders_items->count) * $orders_items->count_by;
+                            $orders_items->save(false);
+
+                            $change_products = Products::findOne($orders_items->product_id);
+                            $change_products->count = $orders_items->count_by;
+                            if ($orders_items->count_by == 0){
+                                $change_products->status = '0';
+                            }
+                            $change_products->save(false);
+
+                            break;
+                        }else{
+                            $bal -= $item->count_by;
+
+                            $orders_items = OrderItems::findOne($item->id);
+                            $orders_items->count_by = 0;
+                            $orders_items->price_by = 0;
+                            $orders_items->cost_by = 0;
+                            $orders_items->discount_by = 0;
+                            $orders_items->price_before_discount_by = 0;
+                            $orders_items->status = '0';
+                            $orders_items->save(false);
+
+                            $change_products = Products::findOne($orders_items->product_id);
+                            $change_products->count = 0;
+                            $change_products->status = '0';
+                            $change_products->save(false);
+
                         }
                     }
-                    var_dump($order_items);
-
-
-
-//
-
-//
-//                    $document_items = new DocumentItems();
-//                    $document_items->document_id = $model->id;
-//                    $document_items->nomenclature_id = $post['document_items'][$i];
-//                    $document_items->count = $products->count;
-//                    if ($post['raw'][$i] != '') {
-//                        $document_items->wastrel = $post['raw'][$i];
-//                    }
-//                    $document_items->price = floatval($post['price'][$i]);
-//                    $document_items->refuse_product_id = $products->id;
-//                    $document_items->price_with_aah = floatval($post['pricewithaah'][$i]);
-//                    $document_items->AAH = $post['aah'];
-//                    $document_items->created_at = date('Y-m-d H:i:s');
-//                    $document_items->updated_at = date('Y-m-d H:i:s');
-//                    $document_items->save(false);
-//
-//                    $orders_items = OrderItems::findOne($post['items'][$i]);
-//                    $orders_items->count_by -= $post['count_'][$i];
-//                    if ($orders_items->count_by == 0){
-//                        $orders_items->status = '0';
-//                    }
-//                    $orders_items->price_by = ($orders_items->price / $orders_items->count) * $orders_items->count_by;
-//                    $orders_items->cost_by = ($orders_items->cost / $orders_items->count) * $orders_items->count_by;
-//                    $orders_items->discount_by = ($orders_items->discount / $orders_items->count) * $orders_items->count_by;
-//                    $orders_items->price_before_discount_by = ($orders_items->price_before_discount / $orders_items->count) * $orders_items->count_by;
-//                    $orders_items->save(false);
-//
-//                    $change_products = Products::findOne($orders_items->product_id);
-//                    $change_products->count = $orders_items->count_by;
-//                    if ($orders_items->count_by == 0){
-//                        $change_products->status = '0';
-//                    }
-//                    $change_products->save(false);
                 }
-                exit();
-//                $end_order_items = OrderItems::find()->select('SUM(count_by) as total_count,
-//                SUM(price_by) as total_price,SUM(price_before_discount_by) as total_price_before_discount,SUM(discount_by) as total_discount')
-//                    ->where(['order_id' => $post['order_id']])
-//                    ->andWhere(['status' => 1])
-//                    ->asArray()
-//                    ->all();
-//                $orders = Orders::findOne($post['order_id']);
-//                if ($end_order_items[0]['total_price'] == null){
-//                    $orders->total_price = 0;
-//                }else{
-//                    $orders->total_price = $end_order_items[0]['total_price'];
-//                }
-//                if ($end_order_items[0]['total_count'] == null){
-//                    $orders->total_count = 0;
-//                }else{
-//                    $orders->total_count = $end_order_items[0]['total_count'];
-//                }
-//                if ($end_order_items[0]['total_price_before_discount'] == null){
-//                    $orders->total_price_before_discount = 0;
-//                }else{
-//                    $orders->total_price_before_discount = $end_order_items[0]['total_price_before_discount'];
-//                }
-//                if ($end_order_items[0]['total_discount'] == null){
-//                    $orders->total_discount = 0;
-//                }else{
-//                    $orders->total_discount = $end_order_items[0]['total_discount'];
-//                }
-//                if ($orders->status == 2){
-//                    $orders->status = '4';
-//                }elseif($orders->status == 3){
-//                    $orders->status = '5';
-//                }
-//                if ($orders->total_count == 0){
-//                    $orders->status = '0';
-//                }
-//                $orders->save(false);
+                $end_order_items = OrderItems::find()->select('SUM(count_by) as total_count,
+                SUM(price_by) as total_price,SUM(price_before_discount_by) as total_price_before_discount,SUM(discount_by) as total_discount')
+                    ->where(['order_id' => $post['order_id']])
+                    ->andWhere(['status' => '1'])
+                    ->asArray()
+                    ->all();
+                $orders = Orders::findOne($post['order_id']);
+                if ($end_order_items[0]['total_price'] == null){
+                    $orders->total_price = 0;
+                }else{
+                    $orders->total_price = $end_order_items[0]['total_price'];
+                }
+                if ($end_order_items[0]['total_count'] == null){
+                    $orders->total_count = 0;
+                }else{
+                    $orders->total_count = $end_order_items[0]['total_count'];
+                }
+                if ($end_order_items[0]['total_price_before_discount'] == null){
+                    $orders->total_price_before_discount = 0;
+                }else{
+                    $orders->total_price_before_discount = $end_order_items[0]['total_price_before_discount'];
+                }
+                if ($end_order_items[0]['total_discount'] == null){
+                    $orders->total_discount = 0;
+                }else{
+                    $orders->total_discount = $end_order_items[0]['total_discount'];
+                }
+                if ($orders->status == 2){
+                    $orders->status = '4';
+                }elseif($orders->status == 3){
+                    $orders->status = '5';
+                }
+                if ($orders->total_count == 0){
+                    $orders->status = '0';
+                }
+                $orders->save(false);
             }
                 if ($post['Documents']['document_type'] == '2'){
                     for ($i = 0; $i < count($post['document_items']); $i++) {
@@ -700,19 +713,20 @@ class DocumentsController extends Controller
         }
     }
     public function actionDeliveredOrders(){
+//        echo '<pre>';
         if ($this->request->isGet){
             $orders = Orders::find()
-                ->select('order_items.id,SUM(order_items.count_by) as count_by,nomenclature.name, order_items.nom_id_for_name, products.AAH, products.price')
+                ->select('order_items.id,SUM(order_items.count_by) as count_by,nomenclature.name, order_items.nom_id_for_name, products.AAH,
+                  GROUP_CONCAT(`products`.`price`) as price,products.created_at')
                 ->leftJoin('order_items', 'order_items.order_id = orders.id')
                 ->leftJoin('products', 'order_items.product_id = products.id')
                 ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
                 ->where(['orders.id' => $this->request->get('ordersId')])
                 ->andWhere(['order_items.status' => '1'])
                 ->groupBy('order_items.nom_id_for_name')
+                ->orderBy(['products.id' => SORT_ASC])
                 ->asArray()
                 ->all();
-//            var_dump($orders);
-//            exit();
             return json_encode($orders);
         }
     }

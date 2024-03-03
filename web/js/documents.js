@@ -652,6 +652,8 @@ $(document).ready(function () {
                 // console.log(param)
                 let td_string = '';
                 for (let m = 0; m < param.length; m++){
+                    param[m].price = parseFloat(param[m].price.split(",").pop());
+
                     if (param[m].AAH == 1){
                         td_string += `<tr>
                                     <td>
