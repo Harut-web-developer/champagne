@@ -807,49 +807,64 @@ $(document).ready(function() {
                 $(this).remove();
             }
         })
-        $('body').find('table tbody tr').each(function () {
-            var el = $(this).clone();
-            var thead = `
-                                    <tr>
-                                        <th>Փաստաթղթի տեսակ</th>
-                                        <th>Օգտատեր</th>
-                                        <th>Պահեստ</th>
-                                        <th>Փոխարժեք</th>
-                                        <th>Մեկնաբանություն</th>
-                                        <th>Ստեղծման Ժամանակ</th>
-                                    </tr>
-                                `;
-            el.find('td:nth-child(1), td:nth-child(2)').remove();
-            let id = $(this).data('key');
-            if (id) {
-                $.ajax({
-                    url: url,
-                    method: 'get',
-                    dataType: 'html',
-                    data: { id: id },
-                    success: function (data) {
-                        table += thead;
-                        table += '<tr>' + el.html() + '</tr>';
-                        table += data;
-                        for (let i = 0; i < 20; i++){
-                            table += '<tr><td colspan="7"></td></tr>';
-                        }
-                        if (--t_length == 0) {
-                            table += '</table>';
-                            var $table = $(table);
-                            $table.print({
-                                globalStyles: false,
-                                mediaPrint: false,
-                                stylesheet: "http://fonts.googleapis.com/css?family=Inconsolata",
-                                iframe: false,
-                                noPrintSelector: ".avoid-this",
-                                deferred: $.Deferred().done(function () {
-                                    console.log('Printing done', arguments);
-                                })
-                            });
-                        }
-                    }
+        var thead = `
+                            <th>Փաստաթղթի տեսակ</th>
+                            <th>Պահեստապետ</th>
+                            <th>Պահեստ</th>
+                            <th>Փոխարժեք</th>
+                            <th>Առաքիչ</th>
+                            <th>Մեկնաբանություն</th>
+                            <th>Ստեղծման Ժամանակ</th>
+                        `;
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url: '/documents/print-doc-fild',
+            method: 'get',
+            datatype: 'json',
+            data: {
+                _csrf: csrfToken
+            },
+            success: function(data1) {
+                let param = JSON.parse(data1)
+                for (let i = 0; i < param['attribute'].length; i++) {
+                    thead += `<th>${param['attribute'][i]}</th>`;
+                }
+                thead = `<tr>`+ thead +`</tr>`;
+                $('body').find('table tbody tr').each(function () {
+                    var el = $(this).clone();
+                    el.find('td:nth-child(1), td:nth-child(2)').remove();
+                    let id = $(this).data('key');
+                    if (id) {
+                        $.ajax({
+                            url: url,
+                            method: 'get',
+                            dataType: 'html',
+                            data: { id: id },
+                            success: function (data) {
+                                table += thead;
+                                table += '<tr>' + el.html() + '</tr>';
+                                table += data;
+                                for (let i = 0; i < 20; i++){
+                                    table += '<tr><td colspan="7"></td></tr>';
+                                }
+                                if (--t_length == 0) {
+                                    table += '</table>';
+                                    var $table = $(table);
+                                    $table.print({
+                                        globalStyles: false,
+                                        mediaPrint: false,
+                                        stylesheet: "http://fonts.googleapis.com/css?family=Inconsolata",
+                                        iframe: false,
+                                        noPrintSelector: ".avoid-this",
+                                        deferred: $.Deferred().done(function () {
+                                            console.log('Printing done', arguments);
+                                        })
+                                    });
+                                }
+                            }
 
+                        })
+                    }
                 })
             }
         })

@@ -62,6 +62,28 @@ $session = Yii::$app->session;
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                         <?= $form->field($model, 'document_type')->textInput([ 'value' => $value, 'readonly' => true ]) ?>
                     </div>
+                    <?php if ($model->document_type == 10) { ?>
+                        <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName ">
+                            <label for="singleClients">Հաճախորդներ</label>
+                            <select id="singleClients" class="js-example-basic-single form-control" name="client_id">
+                                <option  value="<?=$delivered_documents['clients_id']?>"><?=$delivered_documents['name']?></option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName ">
+                            <label for="deliveredorders">Հաստատված փաստաթղթեր</label>
+                            <select id="deliveredorders" class="js-example-basic-single form-control" name="order_id">
+                                <option value="<?=$delivered_documents['id']?>">Հաստատված պատվեր <?=$delivered_documents['orders_date']?></option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                            <label for="deliverorders">Առաքիչ</label>
+                            <select id="deliverorders" class="js-example-basic-single form-control" name="Documents[deliver_id]">
+                                <option value="<?=$delivered_documents['deliver_id']?>"> <?=$delivered_documents['deliver_name']?></option>
+                            </select>
+                        </div>
+
+                    <?php } ?>
+
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName toWarehouse">
                         <?= $form->field($model, 'to_warehouse')->dropDownList($to_warehouse) ?>
                     </div>

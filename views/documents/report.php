@@ -5,7 +5,6 @@ $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/colresizable/1.6.0
 ]);
 $this->params['sub_page'] = $sub_page;
 $this->params['date_tab'] = $date_tab;
-
 ?>
 
 <div id="events">
@@ -22,6 +21,7 @@ $this->params['date_tab'] = $date_tab;
     'sub_page' => $sub_page,
     'date_tab' => $date_tab,
     'is_export' => true,
+    'delivered_documents' => $delivered_documents,
 ]) ?>
 <script src="https://cdn.jsdelivr.net/npm/print-js"></script>
 

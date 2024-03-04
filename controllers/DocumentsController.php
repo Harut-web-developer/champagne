@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Clients;
+use app\models\CustomfieldsBlocksInputValues;
 use app\models\DocumentItems;
 use app\models\Documents;
 use app\models\DocumentsSearch;
@@ -1389,6 +1390,17 @@ class DocumentsController extends Controller
             ->andWhere(['document_items.status' => '1'])
             ->asArray()->all();
 
+        $delivered_documents = Orders::find()
+            ->select('orders.id, orders.orders_date, clients.id as clients_id, clients.name, users.id as deliver_id, users.name as deliver_name')
+            ->leftJoin('documents', 'documents.orders_id = orders.id')
+            ->leftJoin('clients', 'clients.id = orders.clients_id')
+            ->leftJoin('users', 'users.id = documents.deliver_id')
+            ->where(['orders.status'=> ['4','5']])
+            ->where(['documents.id' => $id])
+            ->andWhere(['documents.orders_id' => new \yii\db\Expression('orders.id')])
+            ->andWhere(['documents.document_type' => '10'])
+            ->asArray()->one();
+
         $aah = DocumentItems::find()->select('AAH')->where(['document_id' => $id])->asArray()->one();
         return $this->render('update', [
             'model' => $model,
@@ -1400,6 +1412,7 @@ class DocumentsController extends Controller
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'to_warehouse' => $to_warehouse,
+            'delivered_documents' => $delivered_documents,
         ]);
     }
 
@@ -1809,6 +1822,14 @@ class DocumentsController extends Controller
             'document_items' => $document_items,
         ]);
     }
+    public function actionPrintDocFild(){
+        $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'documents']);
+        $attribute = [];
+        for ($i = 0; $i < count($res); $i++) {
+            array_push($attribute, $res[$i]['attribute']);
+        }
+        return json_encode(['attribute' => $attribute]);
+    }
     public function actionChangeWastrel(){
         if ($this->request->isGet){
             $items = $this->request->get('documentItemsId');
@@ -1901,6 +1922,16 @@ class DocumentsController extends Controller
             ->andWhere(['document_items.status' => '1'])
             ->asArray()
             ->all();
+        $delivered_documents = Orders::find()
+            ->select('orders.id, orders.orders_date, clients.id as clients_id, clients.name, users.id as deliver_id, users.name as deliver_name')
+            ->leftJoin('documents', 'documents.orders_id = orders.id')
+            ->leftJoin('clients', 'clients.id = orders.clients_id')
+            ->leftJoin('users', 'users.id = documents.deliver_id')
+            ->where(['orders.status'=> ['4','5']])
+            ->where(['documents.id' => $id])
+            ->andWhere(['documents.orders_id' => new \yii\db\Expression('orders.id')])
+            ->andWhere(['documents.document_type' => '10'])
+            ->asArray()->one();
         return $this->renderAjax('report', [
             'document_items' => $document_items,
             'model' => $model,
@@ -1909,6 +1940,7 @@ class DocumentsController extends Controller
             'rate' => $rate,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'delivered_documents' => $delivered_documents,
         ]);
     }
 
