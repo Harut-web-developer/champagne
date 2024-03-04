@@ -592,6 +592,8 @@ $(document).ready(function () {
             $('body').find('.toWarehouse').addClass('activeForInput');
             $('body').find('.docType').removeClass('activeForInputDocument');
             $('body').find('.deliveredOrders').removeClass('activeForInputDocument');
+            $('body').find('.deliverOrdersId').removeClass('activeForInputDocument');
+
             $("#documents-to_warehouse").attr('required',true);
             $('body').find('.documentsAddingTable tbody').html('');
             $('body').find('.saveAll').attr('disabled',true);
@@ -603,6 +605,7 @@ $(document).ready(function () {
             $('body').find('.docType').addClass('activeForInputDocument');
             $('body').find('.toWarehouse').removeClass('activeForInput');
             $("#documents-to_warehouse").removeAttr('required');
+            $('body').find('.deliverOrdersId').removeClass('activeForInputDocument');
             // $('body').find('.addDocuments').attr('disabled',true);
         }
         else {
@@ -613,6 +616,8 @@ $(document).ready(function () {
             $("#documents-to_warehouse").removeAttr('required');
             $('body').find('.documentsAddingTable tbody').html('')
             $('body').find('.saveAll').attr('disabled',true);
+            $('body').find('.deliverOrdersId').removeClass('activeForInputDocument');
+
         }
     })
     $('body').on('change', '#singleClients', function () {
@@ -632,6 +637,25 @@ $(document).ready(function () {
             success:function (data) {
                 $('body').find('.deliveredOrders').html(data);
                 $('body').find('.deliveredOrders').addClass('activeForInputDocument');
+                $('body').find('.deliverOrdersId').removeClass('activeForInputDocument');
+
+            }
+        })
+    })
+    $('body').on('change', '#deliveredorders', function () {
+        let ordersId = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/documents/get-deliver',
+            method:'get',
+            datatype:'html',
+            data:{
+                ordersId:ordersId,
+                _csrf:csrfToken
+            },
+            success:function (data) {
+                $('body').find('.deliverOrdersId').html(data);
+                $('body').find('.deliverOrdersId').addClass('activeForInputDocument');
             }
         })
     })
@@ -653,7 +677,7 @@ $(document).ready(function () {
                 let td_string = '';
                 for (let m = 0; m < param.length; m++){
                     param[m].price = parseFloat(param[m].price.split(",").pop());
-
+                    param[m].AAH = parseInt(param[m].AAH.split(",").pop());
                     if (param[m].AAH == 1){
                         td_string += `<tr>
                                     <td>

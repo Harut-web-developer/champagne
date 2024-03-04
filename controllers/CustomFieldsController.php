@@ -80,7 +80,6 @@ class CustomFieldsController extends Controller
         // $model = new CustomfieldsBlocksTitle();
         if ($this->request->isPost) {
             $post = $this->request->post();
-
             if(count($post['newblocks']) >= 1){
                 foreach ($post['newblocks'] as $newBlock => $block_val){
                     $model = CustomfieldsBlocksTitle::findOne(['id'=>$newBlock,'page'=>$post['page']]);

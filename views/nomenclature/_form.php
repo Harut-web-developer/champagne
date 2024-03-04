@@ -46,13 +46,13 @@ if(isset($action__)){
                 <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>2])->all(); ?>
                 <?php if(!empty($fields)){ ?>
                     <?php foreach ($fields as $fild => $fild_simple){ ?>
-                        <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id, false);?>
+                        <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
                     <?php } ?>
                 <?php } ?>
             </div>
             <?php if(!empty($blocks)){ ?>
                 <?php foreach ($blocks as $block => $block_val){ ?>
-                    <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="clients">
+                    <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="nomenclature">
                         <div class="panel-title">
                             <span class="non-active"><?=$block_val->title?></span>
                             <input type="text" name="newblocks[<?php echo $block_val->id;?>]" value="<?=$block_val->title?>"  class="only-active form-control">

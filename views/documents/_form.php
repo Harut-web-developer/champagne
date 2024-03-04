@@ -42,105 +42,111 @@ $session = Yii::$app->session;
     <img style="height: 20px; float: right;"  class="downloadUpdateXLSX" onclick="window.open('/documents/reports?type=1&id=<?= $model->id ?>//','newwindow','width:500, height:700')" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAC+klEQVR4nO2ZzWsTURDAFwW/kYre9CKKiB4ERT2of4AUveXqF1htZtaQ7rw0NDN9ehMUsTfxIggepPSioOJRz3rQg3gRqYI91I/Wg1rUykvzkk2atNl2d/uCHRjIMpnZ+c2b93Y28bxlWZZlmVf8gt4GJMNAMolKpheoU6DkJarBjJd68oo/LyLx2UqsUwMAkuFYk68oKLmcFsBkXAkvCQTGVPFyMRT3z24nudoxAEsCgTEDpA6BCQCkCoEJAaQGgQkCpAKRNICRZkdsbA+7NABaQsQxdsQFYEaSyBDEL5wBAMWPokIA8S9nAJJqvXnlvwEAxbetj9Z6BSh5V2+Xi9YOhcGzzgGgkimfSjuane9AMpbP59dW4FY1wqEjAKbKd6xfT5/egsQ/yjaSYggs52QL4Yz+xj69u+pLfBcUT+RyustcZ7XeYFbDZYBpVHLP+mb7S0eR5GYISJzdxFjtd/7jB3qP3czZAu81n6FY3Iwk35wHwBm93xgHSK4vJJa3JADE333fX10HoPhNJwFcmRWH+NScrafkJygeygZyOAiC9YtOfOEA/MmcNmXfoLQd+3mf3Q9I8qqF30f7vdglevUHz4cHMyC5Ya/9QE40qzwmlXxUAFD8OpPJrDR+ZhWQZNz8rtRbLG6qxiN53uAzlFjyUQEwkOM1P86HbAN1z4awT2HgUN39Auk2LQXEH8Lxkgcgfmp9zLyDSkarVSYZO631GmsHxQ+sLVvZL1WbSbwWdzQ1AF/xuUuBHDDa7EUdiEvWjsRnWh2T6MQxGkG9DgZ4DIpPdiLAX6AStHs/zz0Avhblfp5TAOUZSW9MFQAUT8QHIA/DsXM53QXEz0xbtTOmI/GTHq3XRQMgGYkLAJTcqqs21Y7TtjWQ7mgAfXqXGQliASAZCcfOFvVO01YRVnDcvGt7UeVCfmCreUlZbDuZfzvNU7puFZQcawuC5Asovd9zUZDkyFx/JoLir72BHPRcFmwB0RHJexVphOio5K1Uxu33qPhtOz3/DyrGtgq43BHiAAAAAElFTkSuQmCC">
     <div class="documents-form">
         <div class="card card-primary">
-            <?php $form = ActiveForm::begin(); ?>
-            <div class="default-panel">
-                <div class="panel-title premission">
-                    <span class="non-active">Փաստաթուղթ</span>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?php if ($session['role_id'] == 4){?>
-                        <?= $form->field($model, 'warehouse_id')->hiddenInput(['value' => $warehouse])->label(false)?>
-                    <?php }else{?>
-                        <?= $form->field($model, 'warehouse_id')->dropDownList($warehouse) ?>
-                    <?php }?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'document_type')->textInput([ 'value' => $value, 'readonly' => true ]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName toWarehouse">
-                    <?= $form->field($model, 'to_warehouse')->dropDownList($to_warehouse) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?php
-                    if($session['role_id'] == 1){?>
-                       <?= $form->field($model, 'user_id')->dropDownList($users) ?>
-                   <?php }elseif ($session['role_id'] == 4){?>
-                        <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
+            <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+            <div class="dinamic-form">
+                <input type="hidden" name="page" value="documents">
+                <div class="default-panel" data-id="41" data-page="documents">
+                    <div class="panel-title">
+                        <span class="non-active"><?=$model->DefaultTitle->title?></span>
+                        <input type="text" name="newblocks[<?php echo $model->DefaultTitle->id;?>]" value="<?=$model->DefaultTitle->title?>"  class="only-active form-control">
+                        <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
+                        <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
+                    </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                        <?php if ($session['role_id'] == 4){?>
+                            <?= $form->field($model, 'warehouse_id')->hiddenInput(['value' => $warehouse])->label(false)?>
+                        <?php }else{?>
+                            <?= $form->field($model, 'warehouse_id')->dropDownList($warehouse) ?>
+                        <?php }?>
+                    </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                        <?= $form->field($model, 'document_type')->textInput([ 'value' => $value, 'readonly' => true ]) ?>
+                    </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName toWarehouse">
+                        <?= $form->field($model, 'to_warehouse')->dropDownList($to_warehouse) ?>
+                    </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                        <?php
+                        if($session['role_id'] == 1){?>
+                           <?= $form->field($model, 'user_id')->dropDownList($users) ?>
+                       <?php }elseif ($session['role_id'] == 4){?>
+                            <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>
+                        <?php } ?>
+                    </div>
+
+                    <label class="rateLabel" for="rate">Փոխարժեք</label>
+                    <div id="rate" class="form-group col-md-12 col-lg-12 col-sm-12 rateDocument">
+                        <div class="rateType">
+                            <?= $form->field($model, 'rate_id')->dropDownList($rates)->label(false) ?>
+                        </div>
+                        <div class="rateValue">
+                            <?= $form->field($model, 'rate_value')->input('number')->label(false) ?>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                        <label for="aah">ԱԱՀ</label>
+                        <select class="form-control" name="aah" id="aah">
+                            <option value="true" <?php if(isset($aah['AAH']) && $aah['AAH'] === 'true'){ echo  'selected';} ?>>20%</option>
+                            <option value="false" <?php if(isset($aah['AAH']) && $aah['AAH'] === 'false'){ echo  'selected';} ?>>0%</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                        <?php
+                        if ($type == '7'){?>
+                            <?= $form->field($model, 'comment')->textArea(['maxlength' => true, 'disabled' => true]) ?>
+                        <?php }elseif($type == '6'){?>
+                            <?= $form->field($model, 'comment')->textArea(['maxlength' => true, 'disabled' => true]) ?>
+                        <?php }else{?>
+                            <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
+                        <?php }?>
+                    </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                        <?= $form->field($model, 'date')->input('datetime-local') ?>
+                    </div>
+                    <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>41])->all(); ?>
+                    <?php if(!empty($fields)){ ?>
+                        <?php foreach ($fields as $fild => $fild_simple){ ?>
+                            <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
+                        <?php } ?>
                     <?php } ?>
                 </div>
-
-                <label class="rateLabel" for="rate">Փոխարժեք</label>
-                <div id="rate" class="form-group col-md-12 col-lg-12 col-sm-12 rateDocument">
-                    <div class="rateType">
-                        <?= $form->field($model, 'rate_id')->dropDownList($rates)->label(false) ?>
-                    </div>
-                    <div class="rateValue">
-                        <?= $form->field($model, 'rate_value')->input('number')->label(false) ?>
-                    </div>
-                </div>
-
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <label for="aah">ԱԱՀ</label>
-                    <select class="form-control" name="aah" id="aah">
-                        <option value="true" <?php if(isset($aah['AAH']) && $aah['AAH'] === 'true'){ echo  'selected';} ?>>20%</option>
-                        <option value="false" <?php if(isset($aah['AAH']) && $aah['AAH'] === 'false'){ echo  'selected';} ?>>0%</option>
-                    </select>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?php
-                    if ($type == '7'){?>
-                        <?= $form->field($model, 'comment')->textArea(['maxlength' => true, 'disabled' => true]) ?>
-                    <?php }elseif($type == '6'){?>
-                        <?= $form->field($model, 'comment')->textArea(['maxlength' => true, 'disabled' => true]) ?>
-                    <?php }else{?>
-                        <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
-                    <?php }?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'date')->input('datetime-local') ?>
-                </div>
-                <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>41])->all(); ?>
-                <?php if(!empty($fields)){ ?>
-                    <?php foreach ($fields as $fild => $fild_simple){ ?>
-                        <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
+                <?php if(!empty($blocks)){ ?>
+                    <?php foreach ($blocks as $block => $block_val){ ?>
+                        <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="documents">
+                            <div class="panel-title">
+                                <span class="non-active"><?=$block_val->title?></span>
+                                <input type="text" name="newblocks[<?php echo $block_val->id;?>]" value="<?=$block_val->title?>"  class="only-active form-control">
+                                <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
+                                <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
+                                <button type="button" class="btn btn-default btn-sm edite-block-trash"><i class="bx bx-trash"></i></button>
+                            </div>
+                            <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->all(); ?>
+                            <?php if(!empty($fields)){ ?>
+                                <?php foreach ($fields as $fild => $fild_simple){ ?>
+                                    <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id,false);?>
+                                <?php } ?>
+                            <?php } ?>
+                            <div class="actions">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Ստեղծել դաշտ
+                                    </button>
+                                    <ul class="dropdown-menu custom_field_menu" style="">
+                                        <li data-type="number">NUMBER <br><span>Թվային արժեք ավելացնելու դաշտ:</span></li>
+                                        <li data-type="varchar">TEXT (255 Simbols) <br><span>Տեքստ ավելացնելու դաշտ:</span></li>
+                                        <li data-type="list">LIST <br><span>Ցուցակներ լրացնելու դաշտ:</span></li>
+                                        <li data-type="file">FILE <br><span>Նկար ավելացնելու դաշտ:</span></li>
+                                        <li data-type="text">TEXTAREA <br><span>Մեշ ծավալով տեքստ ավելացնելու դաշտ:</span></li>
+                                        <li data-type="date">DATE <br><span>Ամսաթիվ ավելացնելու դաշտ:</span></li>
+                                        <li data-type="datetime">DATETIME <br><span>Ժամ և ամսաթիվ ավելացնելու դաշտ:</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     <?php } ?>
                 <?php } ?>
             </div>
-            <?php if(!empty($blocks)){ ?>
-                <?php foreach ($blocks as $block => $block_val){ ?>
-                    <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="clients">
-                        <div class="panel-title">
-                            <span class="non-active"><?=$block_val->title?></span>
-                            <input type="text" name="newblocks[<?php echo $block_val->id;?>]" value="<?=$block_val->title?>"  class="only-active form-control">
-                            <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
-                            <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
-                            <button type="button" class="btn btn-default btn-sm edite-block-trash"><i class="bx bx-trash"></i></button>
-                        </div>
-                        <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->all(); ?>
-                        <?php if(!empty($fields)){ ?>
-                            <?php foreach ($fields as $fild => $fild_simple){ ?>
-                                <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id,false);?>
-                            <?php } ?>
-                        <?php } ?>
-                        <div class="actions">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Ստեղծել դաշտ
-                                </button>
-                                <ul class="dropdown-menu custom_field_menu" style="">
-                                    <li data-type="number">NUMBER <br><span>Թվային արժեք ավելացնելու դաշտ:</span></li>
-                                    <li data-type="varchar">TEXT (255 Simbols) <br><span>Տեքստ ավելացնելու դաշտ:</span></li>
-                                    <li data-type="list">LIST <br><span>Ցուցակներ լրացնելու դաշտ:</span></li>
-                                    <li data-type="file">FILE <br><span>Նկար ավելացնելու դաշտ:</span></li>
-                                    <li data-type="text">TEXTAREA <br><span>Մեշ ծավալով տեքստ ավելացնելու դաշտ:</span></li>
-                                    <li data-type="date">DATE <br><span>Ամսաթիվ ավելացնելու դաշտ:</span></li>
-                                    <li data-type="datetime">DATETIME <br><span>Ժամ և ամսաթիվ ավելացնելու դաշտ:</span></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                <?php } ?>
-            <?php } ?>
             <div class="default-panel">
                 <div class="panel-title premission">
                     <span class="non-active">Ապրանքացուցակ</span>
@@ -268,115 +274,124 @@ $session = Yii::$app->session;
     ?>
     <div class="documents-form">
         <div class="card card-primary">
-            <?php $form = ActiveForm::begin(); ?>
-            <div class="default-panel">
-                <div class="panel-title premission">
-                    <span class="non-active">Փաստաթուղթ</span>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?php if ($session['role_id'] == 4){
-                        $storekeeper = Users::findOne($session['user_id']);
-                        ?>
-                        <?= $form->field($model, 'warehouse_id')->hiddenInput(['value' => $storekeeper->warehouse_id])->label(false)?>
-                    <?php }else{?>
-                        <?= $form->field($model, 'warehouse_id')->dropDownList(['null' => 'Ընտրել պահեստը'] + $warehouse) ?>
-                    <?php }?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'document_type')->dropDownList([ '1' => 'Մուտք', '2' => 'Ելք','3' => 'Տեղափոխություն','4' => 'Խոտան','10' => 'Հետ վերադարձ', ]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName toWarehouse">
-                    <?= $form->field($model, 'to_warehouse')->dropDownList(['' => 'Ընտրել պահեստը'] + $to_warehouse) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName docType">
-                    <label for="singleClients">Հաճախորդներ</label>
-                    <select id="singleClients" class="js-example-basic-single form-control" name="client_id">
-                        <option  value=""></option>
-                        <?php foreach ($clietns as $clietn){ ?>
-                            <option value="<?=$clietn['id']?>"><?=$clietn['name']?></option>
-                        <?php } ?>
-                    </select>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName deliveredOrders">
-
-                </div>
-                    <?php
-                    if($session['role_id'] == 1){?>
-                        <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName changeKeeper">
-
-                        </div>
-                    <?php }elseif ($session['role_id'] == 4){?>
-                        <input name="user_id" type="hidden" value="<?=$session['user_id']?>">
-                    <?php } ?>
-
-                <label class="rateLabel" for="rate">Փոխարժեք</label>
-                <div id="rate" class="form-group col-md-12 col-lg-12 col-sm-12 rateDocument">
-                    <div class="rateType">
-                        <?= $form->field($model, 'rate_id')->dropDownList($rates)->label(false) ?>
+            <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+            <div class="dinamic-form">
+                <input type="hidden" name="page" value="documents">
+                <div class="default-panel" data-id="41" data-page="documents">
+                    <div class="panel-title">
+                        <span class="non-active"><?=$model->DefaultTitle->title?></span>
+                        <input type="text" name="newblocks[<?php echo $model->DefaultTitle->id;?>]" value="<?=$model->DefaultTitle->title?>"  class="only-active form-control">
+                        <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
+                        <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
                     </div>
-                    <div class="rateValue">
-                        <?= $form->field($model, 'rate_value')->input('number', ['required' => true,'value' => 1, 'readonly' => true])->label(false) ?>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                        <?php if ($session['role_id'] == 4){
+                            $storekeeper = Users::findOne($session['user_id']);
+                            ?>
+                            <?= $form->field($model, 'warehouse_id')->hiddenInput(['value' => $storekeeper->warehouse_id])->label(false)?>
+                        <?php }else{?>
+                            <?= $form->field($model, 'warehouse_id')->dropDownList(['null' => 'Ընտրել պահեստը'] + $warehouse) ?>
+                        <?php }?>
                     </div>
-
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <label for="aah">ԱԱՀ</label>
-                    <select class="form-control" name="aah" id="aah">
-                        <option value="true">20%</option>
-                        <option value="false">0%</option>
-                    </select>
-                </div>
-
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                    <?= $form->field($model, 'date')->input('datetime-local') ?>
-                </div>
-                <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>41])->all(); ?>
-                <?php if(!empty($fields)){ ?>
-                    <?php foreach ($fields as $fild => $fild_simple){ ?>
-                        <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
-                    <?php } ?>
-                <?php } ?>
-            </div>
-            <?php if(!empty($blocks)){ ?>
-                <?php foreach ($blocks as $block => $block_val){ ?>
-                    <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="clients">
-                        <div class="panel-title">
-                            <span class="non-active"><?=$block_val->title?></span>
-                            <input type="text" name="newblocks[<?php echo $block_val->id;?>]" value="<?=$block_val->title?>"  class="only-active form-control">
-                            <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
-                            <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
-                            <button type="button" class="btn btn-default btn-sm edite-block-trash"><i class="bx bx-trash"></i></button>
-                        </div>
-                        <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->all(); ?>
-                        <?php if(!empty($fields)){ ?>
-                            <?php foreach ($fields as $fild => $fild_simple){ ?>
-                                <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id,false);?>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                        <?= $form->field($model, 'document_type')->dropDownList([ '1' => 'Մուտք', '2' => 'Ելք','3' => 'Տեղափոխություն','4' => 'Խոտան','10' => 'Հետ վերադարձ', ]) ?>
+                    </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName toWarehouse">
+                        <?= $form->field($model, 'to_warehouse')->dropDownList(['' => 'Ընտրել պահեստը'] + $to_warehouse) ?>
+                    </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName docType">
+                        <label for="singleClients">Հաճախորդներ</label>
+                        <select id="singleClients" class="js-example-basic-single form-control" name="client_id">
+                            <option  value=""></option>
+                            <?php foreach ($clietns as $clietn){ ?>
+                                <option value="<?=$clietn['id']?>"><?=$clietn['name']?></option>
                             <?php } ?>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName deliveredOrders">
+
+                    </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName deliverOrdersId">
+
+                    </div>
+                        <?php
+                        if($session['role_id'] == 1){?>
+                            <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName changeKeeper">
+
+                            </div>
+                        <?php }elseif ($session['role_id'] == 4){?>
+                            <input name="user_id" type="hidden" value="<?=$session['user_id']?>">
                         <?php } ?>
-                        <div class="actions">
-                            <div class="btn-group">
+
+                    <label class="rateLabel" for="rate">Փոխարժեք</label>
+                    <div id="rate" class="form-group col-md-12 col-lg-12 col-sm-12 rateDocument">
+                        <div class="rateType">
+                            <?= $form->field($model, 'rate_id')->dropDownList($rates)->label(false) ?>
+                        </div>
+                        <div class="rateValue">
+                            <?= $form->field($model, 'rate_value')->input('number', ['required' => true,'value' => 1, 'readonly' => true])->label(false) ?>
+                        </div>
+
+                    </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                        <label for="aah">ԱԱՀ</label>
+                        <select class="form-control" name="aah" id="aah">
+                            <option value="true">20%</option>
+                            <option value="false">0%</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                        <?= $form->field($model, 'comment')->textArea(['maxlength' => true]) ?>
+                    </div>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                        <?= $form->field($model, 'date')->input('datetime-local') ?>
+                    </div>
+                    <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>41])->all(); ?>
+                    <?php if(!empty($fields)){ ?>
+                        <?php foreach ($fields as $fild => $fild_simple){ ?>
+                            <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
+                        <?php } ?>
+                    <?php } ?>
+                </div>
+                <?php if(!empty($blocks)){ ?>
+                    <?php foreach ($blocks as $block => $block_val){ ?>
+                        <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="documents">
+                            <div class="panel-title">
+                                <span class="non-active"><?=$block_val->title?></span>
+                                <input type="text" name="newblocks[<?php echo $block_val->id;?>]" value="<?=$block_val->title?>"  class="only-active form-control">
+                                <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
+                                <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
+                                <button type="button" class="btn btn-default btn-sm edite-block-trash"><i class="bx bx-trash"></i></button>
+                            </div>
+                            <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->all(); ?>
+                            <?php if(!empty($fields)){ ?>
+                                <?php foreach ($fields as $fild => $fild_simple){ ?>
+                                    <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id,false);?>
+                                <?php } ?>
+                            <?php } ?>
+                            <div class="actions">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Ստեղծել դաշտ
-                                    </button>
-                                    <ul class="dropdown-menu custom_field_menu" style="">
-                                        <li data-type="number">NUMBER <br><span>Թվային արժեք ավելացնելու դաշտ:</span></li>
-                                        <li data-type="varchar">TEXT (255 Simbols) <br><span>Տեքստ ավելացնելու դաշտ:</span></li>
-                                        <li data-type="list">LIST <br><span>Ցուցակներ լրացնելու դաշտ:</span></li>
-                                        <li data-type="file">FILE <br><span>Նկար ավելացնելու դաշտ:</span></li>
-                                        <li data-type="text">TEXTAREA <br><span>Մեշ ծավալով տեքստ ավելացնելու դաշտ:</span></li>
-                                        <li data-type="date">DATE <br><span>Ամսաթիվ ավելացնելու դաշտ:</span></li>
-                                        <li data-type="datetime">DATETIME <br><span>Ժամ և ամսաթիվ ավելացնելու դաշտ:</span></li>
-                                    </ul>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Ստեղծել դաշտ
+                                        </button>
+                                        <ul class="dropdown-menu custom_field_menu" style="">
+                                            <li data-type="number">NUMBER <br><span>Թվային արժեք ավելացնելու դաշտ:</span></li>
+                                            <li data-type="varchar">TEXT (255 Simbols) <br><span>Տեքստ ավելացնելու դաշտ:</span></li>
+                                            <li data-type="list">LIST <br><span>Ցուցակներ լրացնելու դաշտ:</span></li>
+                                            <li data-type="file">FILE <br><span>Նկար ավելացնելու դաշտ:</span></li>
+                                            <li data-type="text">TEXTAREA <br><span>Մեշ ծավալով տեքստ ավելացնելու դաշտ:</span></li>
+                                            <li data-type="date">DATE <br><span>Ամսաթիվ ավելացնելու դաշտ:</span></li>
+                                            <li data-type="datetime">DATETIME <br><span>Ժամ և ամսաթիվ ավելացնելու դաշտ:</span></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    <?php } ?>
                 <?php } ?>
-            <?php } ?>
+            </div>
             <div class="default-panel">
                 <div class="panel-title premission">
                     <span class="non-active">Ապրանքացուցակ</span>

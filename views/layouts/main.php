@@ -72,7 +72,15 @@ $date_tab = $this->params['date_tab'];
                 <li class="menu-item open">
                     <div class="dashboardName">
                         <img src="/img/logo.png">
-                        <div data-i18n="Dashboards"><a href="/dashboard">Dashboards</a></div>
+                        <?php if ($session['role_id'] == 3) { ?>
+                            <div data-i18n="Dashboards"><a href="/map">Dashboards</a></div>
+                        <?php } ?>
+                        <?php if ($session['role_id'] == 1 || $session['role_id'] == 2) { ?>
+                            <div data-i18n="Dashboards"><a href="/dashboard">Dashboards</a></div>
+                        <?php } ?>
+                        <?php if ($session['role_id'] == 4) { ?>
+                            <div data-i18n="Dashboards"><a href="/warehouse">Dashboards</a></div>
+                        <?php } ?>
                     </div>
                 </li>
                 <li class="menu-item open">

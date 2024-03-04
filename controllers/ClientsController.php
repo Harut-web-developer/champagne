@@ -74,6 +74,8 @@ class ClientsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'clients']);
+
         if ($session['role_id'] == 1) {
             $sub_page = [
                 ['name' => 'Խմբեր','address' => '/groups-name'],
@@ -91,6 +93,8 @@ class ClientsController extends Controller
             'dataProvider' => $dataProvider,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'new_fields'=>$res,
+
         ]);
     }
 

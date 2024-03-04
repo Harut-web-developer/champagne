@@ -6,6 +6,7 @@ use app\models\Clients;
 use app\models\DocumentItems;
 use app\models\Documents;
 use app\models\DocumentsSearch;
+use app\models\ManagerDeliverCondition;
 use app\models\Nomenclature;
 use app\models\Log;
 use app\models\Notifications;
@@ -78,6 +79,7 @@ class DocumentsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'documents']);
         $sub_page = [
             ['name' => 'Պահեստ','address' => '/warehouse'],
             ['name' => 'Անվանակարգ','address' => '/nomenclature'],
@@ -94,6 +96,7 @@ class DocumentsController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'warehouse' => $warehouse,
+            'new_fields'=>$res,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
 
@@ -147,17 +150,16 @@ class DocumentsController extends Controller
             ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
-            echo "<pre>";
-//            var_dump($post);
-//            exit();
+//            echo "<pre>";
             date_default_timezone_set('Asia/Yerevan');
             $model->user_id = $post['user_id'];
             $model->warehouse_id = $post['Documents']['warehouse_id'];
             if ($post['Documents']['document_type'] == '3'){
                 $model->to_warehouse = $post['Documents']['to_warehouse'];
             }
-            if ($post['Documents']['document_type'] === '10'){
+            if ($post['Documents']['document_type'] == '10'){
                 $model->orders_id = $post['order_id'];
+                $model->deliver_id = $post['Documents']['deliver_id'];
             }
             $model->rate_id = $post['Documents']['rate_id'];
             $model->rate_value = $post['Documents']['rate_value'];
@@ -168,7 +170,7 @@ class DocumentsController extends Controller
             $model->updated_at = date('Y-m-d H:i:s');
             $model = Documents::getDefVals($model);
             $model->save(false);
-                if ($post['Documents']['document_type'] === '1'){
+                if ($post['Documents']['document_type'] == '1'){
                     for ($i = 0; $i < count($post['document_items']); $i++) {
                         $products = new Products();
                         $products->warehouse_id = $post['Documents']['warehouse_id'];
@@ -640,6 +642,11 @@ class DocumentsController extends Controller
             $text = $user_name['name'] . '(ն\ը) ստեղծել է ' . $document_tipe->{$post['Documents']['document_type']} . ' փաստաթուղթ։';
             Notifications::createNotifications('Ստեղծել փաստաթուղթ', $text,'documentscreate');
             Log::afterSaves('Create', $model_new, '', $url.'?'.'id'.'='.$model->id, $premission);
+            $_POST['item_id'] = $model->id;
+
+            if($post['newblocks'] || $post['new_fild_name']){
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
             return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
@@ -707,16 +714,22 @@ class DocumentsController extends Controller
                 ->andWhere(['clients_id' => $client_id])
                 ->asArray()
                 ->all();
+//            $deliver = Users::find()
+//                ->select('id, name')
+//                ->where(['status' => '1'])
+//                ->andWhere(['role_id' => '3'])
+//                ->asArray()
+//                ->all();
             return $this->renderAjax('delivered-orders',[
-               'delivered_documents' => $delivered_documents
+               'delivered_documents' => $delivered_documents,
+//                'deliver' => $deliver,
             ]);
         }
     }
     public function actionDeliveredOrders(){
-//        echo '<pre>';
         if ($this->request->isGet){
             $orders = Orders::find()
-                ->select('order_items.id,SUM(order_items.count_by) as count_by,nomenclature.name, order_items.nom_id_for_name, products.AAH,
+                ->select('order_items.id,SUM(order_items.count_by) as count_by,nomenclature.name, order_items.nom_id_for_name, GROUP_CONCAT(products.AAH) as AAH,
                   GROUP_CONCAT(`products`.`price`) as price,products.created_at')
                 ->leftJoin('order_items', 'order_items.order_id = orders.id')
                 ->leftJoin('products', 'order_items.product_id = products.id')
@@ -728,6 +741,21 @@ class DocumentsController extends Controller
                 ->asArray()
                 ->all();
             return json_encode($orders);
+        }
+    }
+    public function actionGetDeliver(){
+        if ($this->request->isGet) {
+            $manager_id = ManagerDeliverCondition::find()->select('users.id,users.name')
+                ->leftJoin('orders', 'manager_deliver_condition.manager_id = orders.user_id')
+                ->leftJoin('users', 'manager_deliver_condition.deliver_id = users.id')
+                ->where(['orders.id' => $this->request->get('ordersId')])
+                ->andWhere(['users.status' => '1'])
+                ->andWhere(['manager_deliver_condition.status' => '1'])
+                ->asArray()
+                ->all();
+            return $this->renderAjax('selected-shipper',[
+                'manager_id' => $manager_id,
+            ]);
         }
     }
     public function actionCreateFields()
@@ -750,7 +778,6 @@ class DocumentsController extends Controller
             $post = $this->request->post();
 
             if($post['newblocks'] || $post['new_fild_name']){
-
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
             return $this->redirect(['index']);
@@ -821,9 +848,6 @@ class DocumentsController extends Controller
             $nomenclatures = $nomenclatures
                 ->asArray()
                 ->all();
-//            echo "<pre>";
-//            var_dump($nomenclatures);
-//            exit();
         }
         $id_count = $_POST['id_count'] ?? [];
         return $this->renderAjax('get-nom', [
@@ -1021,8 +1045,6 @@ class DocumentsController extends Controller
                                 ->andWhere(['!=', 'count_balance', 0])
                                 ->andWhere(['status' => '1'])
                                 ->all();
-//                            var_dump($first_product);
-//                            exit();
                             $bal = $post['count_'][$j];;
                             foreach ($first_product as $item) {
                                 if ($item->count_balance - $bal >= 0) {
@@ -1335,7 +1357,10 @@ class DocumentsController extends Controller
                     }
                 }
             }
-
+            $_POST['item_id'] = $model->id;
+            if($post['newblocks'] || $post['new_fild_name']){
+                Yii::$app->runAction('custom-fields/create-title',$post);
+            }
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
@@ -1353,8 +1378,6 @@ class DocumentsController extends Controller
         }else{
             $warehouse = $warehouse[0]['id'];
         }
-//        var_dump($warehouse);
-
         $to_warehouse =  Warehouse::find()->select('id,name')->where(['id' => $get_documents_id->to_warehouse])->andWhere(['status' => '1'])->asArray()->all();
         $to_warehouse = ArrayHelper::map($to_warehouse,'id','name');
         $rates = Rates::find()->select('id,name')->asArray()->all();
@@ -1403,9 +1426,6 @@ class DocumentsController extends Controller
         }
         date_default_timezone_set('Asia/Yerevan');
         $document = Documents::findOne($id);
-//        echo "<pre>";
-//        var_dump($document);
-//        exit();
         $new_document = new Documents();
         $new_document->user_id = $document->user_id;
         $new_document->deliver_id = $document->deliver_id;
@@ -1420,8 +1440,6 @@ class DocumentsController extends Controller
         $new_document->updated_at = date('Y-m-d H:i:s');
         $new_document->save(false);
         $document_items = DocumentItems::find()->where(['document_id' => $id])->asArray()->all();
-//                var_dump($document_items);
-//        exit();
         if (!empty($document_items)){
             for ($k = 0;$k < count($document_items); $k++){
                 $new_product = new Products();
@@ -1660,10 +1678,6 @@ class DocumentsController extends Controller
                 $refuse_product->save(false);
             }
         }
-//        var_dump($documents->document_type);
-//        $documents->status = '0';
-//        $documents->save();
-//        exit();
         Log::afterSaves('Delete', '', $oldattributes['name'] . ' ' . $oldattributes['username'], '#', $premission);
         return $this->redirect(['index']);
     }
@@ -1762,6 +1776,7 @@ class DocumentsController extends Controller
             $date_tab = [];
             $page_value = null;
             $warehouse = Warehouse::find()->select('id,name')->asArray()->all();
+            $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'documents']);
 
             if(isset($_GET["dp-1-page"]))
                 $page_value = intval($_GET["dp-1-page"]);
@@ -1772,6 +1787,7 @@ class DocumentsController extends Controller
                 'dataProvider' => $dataProvider,
                 'page_value' => $page_value,
                 'warehouse' => $warehouse,
+                'new_fields'=>$res,
 
             ];
 
@@ -1831,6 +1847,8 @@ class DocumentsController extends Controller
                 $page_value = intval($_GET["page"]);
             $searchModel = new DocumentsSearch();
             $dataProvider = $searchModel->search($this->request->queryParams);
+            $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'documents']);
+
             $sub_page = [];
             $date_tab = [];
             $render_array = [
@@ -1839,6 +1857,8 @@ class DocumentsController extends Controller
                 'sub_page' => $sub_page,
                 'date_tab' => $date_tab,
                 'page_value' => $page_value,
+                'new_fields'=>$res,
+
             ];
             if(Yii::$app->request->isAjax){
                 if (isset($_GET['clickXLSX']) && $_GET['clickXLSX'] === 'clickXLSX') {

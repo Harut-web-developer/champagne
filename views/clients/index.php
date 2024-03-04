@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Clients;
+use app\models\CustomfieldsBlocksInputValues;
 use app\models\Users;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
@@ -127,6 +128,16 @@ if ($have_access_update && $have_access_delete && $have_access_debt_statistic){
         ],
     ];
 }
+$fields_arr = [];
+
+if(!empty($new_fields)){
+    for ($i = 0; $i < count($new_fields); $i++){
+        $fields_arr[$i]['attribute'] = $new_fields[$i]['attribute'];
+        $fields_arr[$i]['value'] = function ($model,$key, $index, $column) {
+            return CustomfieldsBlocksInputValues::getValue($model->id, $column->filterAttribute);
+        };
+    }
+}
 ?>
 <div class="clients-index">
     <div class="titleAndPrev">
@@ -176,6 +187,8 @@ if ($have_access_update && $have_access_delete && $have_access_debt_statistic){
             ],
             'name',
             'phone',
+            ...$fields_arr,
+
         ],
     ]); ?>
     </div>

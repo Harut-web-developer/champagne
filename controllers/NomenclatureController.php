@@ -71,6 +71,7 @@ class NomenclatureController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'nomenclature']);
         $sub_page = [
             ['name' => 'Պահեստ','address' => '/warehouse'],
             ['name' => 'Փաստաթղթեր','address' => '/documents'],
@@ -85,6 +86,7 @@ class NomenclatureController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'new_fields'=>$res,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
 

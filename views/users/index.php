@@ -1,5 +1,6 @@
 <?php
 
+use app\models\CustomfieldsBlocksInputValues;
 use app\models\Users;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
@@ -65,6 +66,16 @@ if ($session['role_id'] == 1){
         }
     ];
 }
+$fields_arr = [];
+
+if(!empty($new_fields)){
+    for ($i = 0; $i < count($new_fields); $i++){
+        $fields_arr[$i]['attribute'] = $new_fields[$i]['attribute'];
+        $fields_arr[$i]['value'] = function ($model,$key, $index, $column) {
+            return CustomfieldsBlocksInputValues::getValue($model->id, $column->filterAttribute);
+        };
+    }
+}
 ?>
 <div class="users-index">
     <div class="titleAndPrev">
@@ -102,10 +113,13 @@ if ($session['role_id'] == 1){
                     }
                 }
             ],
+            ...$fields_arr,
+
         ],
         'dataProvider' => new ActiveDataProvider([
             'query' => $dataProvider->query->andWhere(['status' => '1']),
         ]),
+
     ]); ?>
     </div>
 </div>

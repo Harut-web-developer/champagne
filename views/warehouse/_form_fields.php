@@ -52,7 +52,8 @@ if(isset($action__)){
                 </div>
             </div>
             <?php if(!empty($blocks)){ ?>
-                <?php foreach ($blocks as $block => $block_val){ ?>
+                <?php foreach ($blocks as $block => $block_val){
+                    ?>
                     <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="warehouse">
                         <div class="panel-title">
                             <span class="non-active"><?=$block_val->title?></span>

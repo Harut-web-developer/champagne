@@ -149,6 +149,9 @@ class WarehouseController extends Controller
             ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
+//            echo "<pre>";
+//            var_dump($post);
+//            exit();
             date_default_timezone_set('Asia/Yerevan');
 
             $model->name = $post['Warehouse']['name'];

@@ -679,6 +679,9 @@
 .warehouseCheck{
     display:none;
 }
+.deliverOrdersId{
+    display:none;
+}
 .activeForInput{
     display:block;
 }

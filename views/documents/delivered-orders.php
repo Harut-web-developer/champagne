@@ -1,5 +1,4 @@
-<?php
-?>
+
 <label for="deliveredorders">Հաստատված փաստաթղթեր</label>
 <select id="deliveredorders" class="js-example-basic-single form-control" name="order_id">
     <option  value=""></option>
