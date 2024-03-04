@@ -7,48 +7,88 @@ use app\widgets\CustomLinkPager;
 /** @var yii\widgets\ActiveForm $form */
 
 $this->registerCssFile('@web/css/bootstrap.min.css');
+$id = $_GET['id'];
+$res = Yii::$app->db->createCommand('SELECT customfields_blocks_inputs.label as `attribute`,customfields_blocks_inputs.id, customfields_blocks_input_values.value_, customfields_blocks_title.title FROM customfields_blocks_title 
+                                         LEFT JOIN customfields_blocks_inputs ON customfields_blocks_inputs.iblock_id = customfields_blocks_title.id      
+                                         LEFT JOIN customfields_blocks_input_values ON customfields_blocks_input_values.input_id = customfields_blocks_inputs.id      
+                                        WHERE page = "'.'documents'.'" ')
+                                        ->queryAll();
+$res_value = Yii::$app->db->createCommand('
+    SELECT customfields_blocks_inputs.label as `attribute`,
+           customfields_blocks_inputs.id, 
+           customfields_blocks_input_values.value_, 
+           customfields_blocks_title.title 
+    FROM customfields_blocks_title 
+    LEFT JOIN customfields_blocks_inputs ON customfields_blocks_inputs.iblock_id = customfields_blocks_title.id      
+    LEFT JOIN customfields_blocks_input_values ON customfields_blocks_input_values.input_id = customfields_blocks_inputs.id      
+    WHERE page = "documents" 
+    AND customfields_blocks_input_values.item_id = ' . $id)
+    ->queryAll();
 ?>
 <!-- Basic Bootstrap Table -->
 <div id="print">
     <div class="card">
         <div id="w1" class="table-responsive text-nowrap">
-            <h1>Փաստաթուղթ</h1>
+            <h1><?=$res[0]['title']?></h1>
             <table class="table">
                 <thead>
-                <tr>
-                    <th>Հ/Հ</th>
-                    <th>Փաստաթղթի տեսակ</th>
-                    <th>Օգտատեր</th>
+                    <tr>
+                    <th>№</th>
                     <th>Պահեստ</th>
+                    <th>Փաստաթղթի տեսակ</th>
+                    <?php if (isset($model->to_warehouse)) { ?>
+                        <th>Տեղափոխվող պահեստ</th>
+                    <?php } ?>
+                    <?php if (isset($model->document_type) && $model->document_type == 10) { ?>
+                        <th>Հաճախորդներ</th>
+                        <th>Հաստատված փաստաթղթեր</th>
+                        <th>Առաքիչ</th>
+                    <?php } ?>
+                    <th>Օգտատեր</th>
                     <th>Փոխարժեք</th>
                     <th>Մեկնաբանություն</th>
                     <th>Ստեղծման ժամանակ</th>
-                </tr>
+                    <?php if(!empty($res)){
+                        for ($i = 0; $i < count($res); $i++){ ?>
+                            <th><?= $res[$i]['attribute'] ?></th>
+                    <?php } } ?>
+                    </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <th>1</th>
+                    <td>1</td>
+                    <td><?=$warehouse[$model->warehouse_id]?></td>
                     <td>
                         <?php
-                            if ($model->document_type == 1){
-                                echo 'Մուտքի';
-                            }elseif($model->document_type == 2){
-                                echo 'Ելքի';
-                            }elseif($model->document_type == 3){
-                                echo 'Ելքի';
-                            }elseif ($model->document_type == 4){
-                                echo 'Խոտան';
-                            }elseif ($model->document_type == 6){
-                                echo 'Վերադարձրած';
-                            }elseif ($model->document_type == 7){
-                                echo 'Մերժված';
-                            }elseif ($model->document_type == 8){
-                                echo 'Մուտք(վերադարցրած)';
-                            }elseif ($model->document_type == 9){
-                                echo 'Ելքագրված';
-                            }
+                        if ($model->document_type == 1) {
+                            echo 'Մուտքի';
+                        } elseif($model->document_type == 2) {
+                            echo 'Ելքի';
+                        } elseif($model->document_type == 3) {
+                            echo 'Տեղափոխություն';
+                        } elseif($model->document_type == 4) {
+                            echo 'Խոտան';
+                        } elseif($model->document_type == 6) {
+                            echo 'Վերադարձրած';
+                        } elseif($model->document_type == 7) {
+                            echo 'Մերժված';
+                        } elseif($model->document_type == 8){
+                            echo 'Մուտք(վերադարցրած)';
+                        } elseif ($model->document_type == 9){
+                            echo 'Պատվերից ելքագրված';
+                        } elseif ($model->document_type == 10){
+                            echo 'Ետ վերադարցրած';
+                        }
                         ?>
                     </td>
+                    <?php if (isset($model->to_warehouse)) { ?>
+                        <td><?=$warehouse[$model->to_warehouse] ?></td>
+                    <?php } ?>
+                    <?php if (isset($model->document_type) && $model->document_type == 10) { ?>
+                        <td><?=$delivered_documents['name']?></td>
+                        <td>Հաստատված պատվեր <?=$delivered_documents['orders_date']?></td>
+                        <td><?=$delivered_documents['deliver_name']?></td>
+                    <?php } ?>
                     <td>
                         <?php
                         if ($model->user_id == null){
@@ -58,7 +98,6 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                         }
                          ?>
                     </td>
-                    <td><?=$warehouse[$model->warehouse_id]?></td>
                     <td><?=$rate[$model->rate_id]?></td>
                     <td><?php
                         if (!empty($model->comment)){
@@ -69,6 +108,10 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                         ?>
                     </td>
                     <td><?=$model->date?></td>
+                    <?php if(!empty($res)){
+                        for ($i = 0; $i < count($res_value); $i++){ ?>
+                            <td><?= $res[$i]['value_'] ?></td>
+                        <?php } } ?>
                 </tr>
                 </tbody>
             </table>
@@ -88,8 +131,6 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                 <tbody>
                 <?php
                 for ($i=0; $i<count($document_items); $i++){
-//                    var_dump($document_items[$i]);
-//                    exit();
                     ?>
                     <tr>
                         <td><?=$i + 1; ?></td>
