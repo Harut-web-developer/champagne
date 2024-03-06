@@ -120,19 +120,23 @@ class Products extends \yii\db\ActiveRecord
                 ->all();
             $end_result = [];
             $bal = $orders_count;
-
+            $string_product = '';
+            $string_count = '';
+            $string_count_balance = '';
+            $string_price = '';
+            $string_before_price = '';
             foreach ($first_product as $item){
                 if ($item->count_balance - $bal >= 0) {
                     $count_balance = $item->count_balance - $bal;
                     if ($discount) {
                         $desc = [];
-                        $arr = [];
                         $count = 0;
                         $count_discount_id = '';
                         $price = $item->price;
                         for ($j = 0; $j < count($discount); $j++) {
                             if ($discount[$j]['discount_available_type'] == 3 && (!empty($discount[$j]['nomenclatures']) && !empty($discount[$j]['clients']))) { //client + product isset
                                 if ($discount[$j]['discount_option'] == 1) {
+                                    $arr = [];
                                     $check_client_id = Discount::findOne($discount[$j]['id']);
                                     if (!empty($check_client_id['discount_option_check_client_id'])) {
                                         $arr = explode(',', $check_client_id['discount_option_check_client_id']);
@@ -339,6 +343,7 @@ class Products extends \yii\db\ActiveRecord
                             }
                             if ($discount[$j]['discount_available_type'] == 2  && (!empty($discount[$j]['nomenclatures']) && empty($discount[$j]['clients']))) {//for prod
                                 if ($discount[$j]['discount_option'] == 1) {
+                                    $arr = [];
                                     $check_client_id = Discount::findOne($discount[$j]['id']);
                                     if (!empty($check_client_id['discount_option_check_client_id'])) {
                                         $arr = explode(',', $check_client_id['discount_option_check_client_id']);
@@ -544,6 +549,8 @@ class Products extends \yii\db\ActiveRecord
                             }
                             if ($discount[$j]['discount_available_type'] == 1 && (empty($discount[$j]['nomenclatures']) && !empty($discount[$j]['clients']))) {//for client
                                 if ($discount[$j]['discount_option'] == 1) {
+                                    $arr = [];
+
                                     $check_client_id = Discount::findOne($discount[$j]['id']);
                                     if (!empty($check_client_id['discount_option_check_client_id'])) {
                                         $arr = explode(',', $check_client_id['discount_option_check_client_id']);
@@ -750,6 +757,7 @@ class Products extends \yii\db\ActiveRecord
                             }
                             if ($discount[$j]['discount_available_type'] == 4 && (empty($discount[$j]['nomenclatures']) && empty($discount[$j]['clients']))) {
                                 if ($discount[$j]['discount_option'] == 1) {
+                                    $arr = [];
                                     $check_client_id = Discount::findOne($discount[$j]['id']);
                                     if (!empty($check_client_id['discount_option_check_client_id'])) {
                                         $arr = explode(',', $check_client_id['discount_option_check_client_id']);
@@ -956,10 +964,16 @@ class Products extends \yii\db\ActiveRecord
                             }
                         }
                         $discount_name = Discount::find()->select('id,name,discount,type')->asArray()->all();
+                        $string_product .= $item->id . ',';
+                        $string_count .= $bal . ',';
+                        $string_count_balance .= $count_balance . ',';
+                        $string_price .= $price . ',';
+                        $string_before_price .= $item->price . ',';
                         $res['nomenclature_id'] = $nom_id;
                         $res['name'] = $name;
                         $res['cost'] = $orders_cost;
-                        $res['product_id'] = $item->id;
+//                        $res['product_id'] = $item->id;
+                        $res['product_id'] = substr($string_product,0,-1);
                         $res['discount_name'] = $discount_name;
                         $res['discount_desc'] = $discount_desc;
                         $res['discount_client_id_check'] = $discount_client_id_check;
@@ -973,20 +987,31 @@ class Products extends \yii\db\ActiveRecord
                             $res['count_discount_id'] = substr($count_discount_id,0,-1);
                         }
                         $res['format_before_price'] = $item->price;
-                        $res['count_balance'] = $count_balance;
+                        $res['string_count'] = substr($string_count,0,-1);
+                        $res['string_count_balance'] = substr($string_count_balance,0,-1);
+                        $res['string_price'] = substr($string_price,0,-1);
+                        $res['string_before_price'] = substr($string_before_price,0,-1);
+
+//                        $res['count_balance'] = $count_balance;
                         array_push($end_result,$res);
 
                             return json_encode($end_result);
                     }
                     else{
                         $desc = 'empty';
+                        $string_product .= $item->id . ',';
+                        $string_count .= $bal . ',';
+                        $string_count_balance .= $count_balance . ',';
+                        $string_price .= $item->price . ',';
+                        $string_before_price .= $item->price . ',';
                         array_push($discount_desc, $desc);
                         $discount_client_id = 'empty';
                         array_push($discount_client_id_check,$discount_client_id);
                         $res['nomenclature_id'] = $nom_id;
                         $res['name'] = $name;
                         $res['cost'] = $orders_cost;
-                        $res['product_id'] = $item->id;
+//                        $res['product_id'] = $item->id;
+                        $res['product_id'] = substr($string_product,0,-1);
                         $res['discount_name'] = 'empty';
                         $res['discount_desc'] = $discount_desc;
                         $res['discount_client_id_check'] = $discount_client_id_check;
@@ -996,7 +1021,11 @@ class Products extends \yii\db\ActiveRecord
                         $res['aah'] = $item->AAH;
                         $res['count_discount_id'] = 'չկա';
                         $res['format_before_price'] = $item->price;
-                        $res['count_balance'] = $count_balance;
+                        $res['string_count'] = substr($string_count,0,-1);
+                        $res['string_count_balance'] = substr($string_count_balance,0,-1);
+                        $res['string_price'] = substr($string_price,0,-1);
+                        $res['string_before_price'] = substr($string_before_price,0,-1);
+//                        $res['count_balance'] = $count_balance;
                         array_push($end_result,$res);
                         return json_encode($end_result);
 
@@ -1011,6 +1040,7 @@ class Products extends \yii\db\ActiveRecord
                         for ($j = 0; $j < count($discount); $j++) {
                             if ($discount[$j]['discount_available_type'] == 3 && (!empty($discount[$j]['nomenclatures']) && !empty($discount[$j]['clients']))) { //client + product isset
                                 if ($discount[$j]['discount_option'] == 1) {
+                                    $arr = [];
                                     $check_client_id = Discount::findOne($discount[$j]['id']);
                                     if (!empty($check_client_id['discount_option_check_client_id'])) {
                                         $arr = explode(',', $check_client_id['discount_option_check_client_id']);
@@ -1217,6 +1247,7 @@ class Products extends \yii\db\ActiveRecord
                             }
                             if ($discount[$j]['discount_available_type'] == 2  && (!empty($discount[$j]['nomenclatures']) && empty($discount[$j]['clients']))) {//for prod
                                 if ($discount[$j]['discount_option'] == 1) {
+                                    $arr = [];
                                     $check_client_id = Discount::findOne($discount[$j]['id']);
                                     if (!empty($check_client_id['discount_option_check_client_id'])) {
                                         $arr = explode(',', $check_client_id['discount_option_check_client_id']);
@@ -1422,6 +1453,7 @@ class Products extends \yii\db\ActiveRecord
                             }
                             if ($discount[$j]['discount_available_type'] == 1 && (empty($discount[$j]['nomenclatures']) && !empty($discount[$j]['clients']))) {//for client
                                 if ($discount[$j]['discount_option'] == 1) {
+                                    $arr = [];
                                     $check_client_id = Discount::findOne($discount[$j]['id']);
                                     if (!empty($check_client_id['discount_option_check_client_id'])) {
                                         $arr = explode(',', $check_client_id['discount_option_check_client_id']);
@@ -1628,6 +1660,7 @@ class Products extends \yii\db\ActiveRecord
                             }
                             if ($discount[$j]['discount_available_type'] == 4 && (empty($discount[$j]['nomenclatures']) && empty($discount[$j]['clients']))) {
                                 if ($discount[$j]['discount_option'] == 1) {
+                                    $arr = [];
                                     $check_client_id = Discount::findOne($discount[$j]['id']);
                                     if (!empty($check_client_id['discount_option_check_client_id'])) {
                                         $arr = explode(',', $check_client_id['discount_option_check_client_id']);
@@ -1834,10 +1867,15 @@ class Products extends \yii\db\ActiveRecord
                             }
                         }
                         $discount_name = Discount::find()->select('id,name,discount,type')->asArray()->all();
+                        $string_product .= $item->id . ',';
+                        $string_count .= $item->count_balance . ',';
+                        $string_price .= $price . ',';
+                        $string_before_price .= $item->price . ',';
                         $res['nomenclature_id'] = $nom_id;
                         $res['name'] = $name;
                         $res['cost'] = $orders_cost;
-                        $res['product_id'] = $item->id;
+//                        $res['product_id'] = $item->id;
+                        $res['product_id'] = substr($string_product,0,-1);
                         $res['discount_name'] = $discount_name;
                         $res['discount_desc'] = $discount_desc;
                         $res['discount_client_id_check'] = $discount_client_id_check;
@@ -1853,22 +1891,28 @@ class Products extends \yii\db\ActiveRecord
                         $res['format_before_price'] = $item->price;
                         $count_balance = 0;
                         $bal -= $item->count_balance;
-                        $res['count_balance'] = $count_balance;
-
+                        $string_count_balance .= $count_balance . ',';
+                        $res['string_count'] = substr($string_count,0,-1);
+                        $res['string_count_balance'] = substr($string_count_balance,0,-1);
+                        $res['string_price'] = substr($string_price,0,-1);
+                        $res['string_before_price'] = substr($string_before_price,0,-1);
+//                        $res['count_balance'] = $count_balance;
                         array_push($end_result,$res);
-
-//                        $item->count_balance = 0;
-//                        $item->save(false);
                     }
                     else{
                         $desc = 'empty';
+                        $string_product .= $item->id . ',';
+                        $string_count .= $item->count_balance . ',';
+                        $string_price .= $item->price . ',';
+                        $string_before_price .= $item->price . ',';
                         array_push($discount_desc, $desc);
                         $discount_client_id = 'empty';
                         array_push($discount_client_id_check,$discount_client_id);
                         $res['nomenclature_id'] = $nom_id;
                         $res['name'] = $name;
                         $res['cost'] = $orders_cost;
-                        $res['product_id'] = $item->id;
+//                        $res['product_id'] = $item->id;
+                        $res['product_id'] = substr($string_product,0,-1);
                         $res['discount_name'] = 'empty';
                         $res['discount_desc'] = $discount_desc;
                         $res['discount_client_id_check'] = $discount_client_id_check;
@@ -1880,7 +1924,12 @@ class Products extends \yii\db\ActiveRecord
                         $res['format_before_price'] = $item->price;
                         $count_balance = 0;
                         $bal -= $item->count_balance;
-                        $res['count_balance'] = $count_balance;
+                        $string_count_balance .= $count_balance . ',';
+                        $res['string_count'] = substr($string_count,0,-1);
+                        $res['string_count_balance'] = substr($string_count_balance,0,-1);
+                        $res['string_price'] = substr($string_price,0,-1);
+                        $res['string_before_price'] = substr($string_before_price,0,-1);
+//                        $res['count_balance'] = $count_balance;
                         array_push($end_result,$res);
                     }
                 }

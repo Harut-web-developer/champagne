@@ -154,64 +154,92 @@ $(document).ready(function () {
                         _csrf:csrfToken
                     },
                     success:function (data) {
+                        let countProd = 0;
+                        let discountProd = 0;
+                        let priceProd = 0;
+                        let beforePriceProd = 0;
+                        let lastPrice = 0;
+                        let lastBeforePrice = 0;
+                        let countDiscountId = '';
+                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature;
+                        let  prod_clients = '';
+
                         let pars = JSON.parse(data);
                         for (let k = 0; k < pars.length; k++){
                             // console.log(pars[k]);
                             if (pars[k].discount_desc != undefined){
                                 discount_desc.push(pars[k].discount_desc);
                             }
-                            let  prod_clients = '';
-                            if (pars[k].discount_client_id_check.length == 1 && pars[k].discount_client_id_check[0] == 'empty'){
-                                prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
-                            }else {
-                                for (let c = 0; c < pars[k].discount_client_id_check.length; c++){
-                                    if (pars[k].discount_client_id_check[c] != 'empty'){
-                                        prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars[k].discount_client_id_check[c].id+']" value="'+pars[k].discount_client_id_check[c].clients_id+'">';
+
+                            countProd += pars[k].count;
+                            priceProd += pars[k].price * pars[k].count;
+                            beforePriceProd += pars[k].format_before_price * pars[k].count;
+                            if(k == pars.length - 1){
+                                discountProd = pars[k].discount;
+                                countDiscountId = pars[k].count_discount_id;
+                                aah = pars[k].aah;
+                                cost = pars[k].cost;
+                                lastPrice = pars[k].price;
+                                lastBeforePrice = pars[k].format_before_price;
+                                name = pars[k].name;
+                                stringProductId = pars[k].product_id;
+                                stringCount = pars[k].string_count;
+                                stringCountBalance = pars[k].string_count_balance;
+                                stringPrice = pars[k].string_price;
+                                stringBeforePrice = pars[k].string_before_price;
+                                nomenclature = pars[k].nomenclature_id;
+                                if (pars[k].discount_client_id_check.length == 1 && pars[k].discount_client_id_check[0] == 'empty'){
+                                    prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
+                                }else {
+                                    for (let c = 0; c < pars[k].discount_client_id_check.length; c++){
+                                        if (pars[k].discount_client_id_check[c] != 'empty'){
+                                            prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars[k].discount_client_id_check[c].id+']" value="'+pars[k].discount_client_id_check[c].clients_id+'">';
+                                        }
                                     }
                                 }
-
                             }
-                            sequenceNumber++;
-                            trss[pars[k].product_id] = `<tr class="tableNomenclature">
+
+                        }
+                        sequenceNumber++;
+                        trss[pars.nomenclature_id] += `<tr class="tableNomenclature">
                                                      <td>
                                                         <span>`+sequenceNumber+`</span>
-                                                        <input type="hidden" name="order_items[]" value="`+pars[k].product_id+`">
-                                                        <input type="hidden" name="count_balance[]" value="`+pars[k].count_balance+`">
-                                                        <input class="prodId" type="hidden" name="product_id[]" value="`+pars[k].product_id+`">
-                                                        <input class="nom_Id" type="hidden" name="nom_id[]" value="`+pars[k].nomenclature_id+`">
-                                                        <input type="hidden" name="count_discount_id[]" value="`+pars[k].count_discount_id+`">
-                                                        <input type="hidden" name="aah[]" value="`+pars[k].aah+`">
+                                                        <input type="hidden" name="order_items[]" value="`+stringProductId+`">
+                                                        <input type="hidden" name="string_count[]" value="`+stringCount+`">
+                                                        <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
+                                                        <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
+                                                        <input class="nom_Id" type="hidden" name="nom_id[]" value="`+nomenclature+`">
+                                                        <input type="hidden" name="count_discount_id[]" value="`+countDiscountId+`">
+                                                        <input type="hidden" name="aah[]" value="`+aah+`">
                                                         `+prod_clients+`
-                                                        <input type="hidden" name="cost[]" value="`+pars[k].cost+`">
+                                                        <input type="hidden" name="cost[]" value="`+cost+`">
                                                      </td>
-                                                     <td  class="name">`+pars[k].name+`</td>
+                                                     <td  class="name">`+name+`</td>
                                                      <td class="count">
-                                                        <input type="number" readonly name="count_[]" value="`+pars[k].count+`" class="form-control countProduct">
+                                                        <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProduct">
                                                      </td>
                                                      <td class="discount">
-                                                        <span>`+parseFloat(pars[k].discount).toFixed(2)+`</span>
-                                                        <input type="hidden" name="discount[]" value="`+parseFloat(pars[k].discount).toFixed(2)+`">
+                                                        <span>`+parseFloat(discountProd).toFixed(2)+`</span>
+                                                        <input type="hidden" name="discount[]" value="`+parseFloat(discountProd).toFixed(2)+`">
                                                      </td>
                                                      <td class="beforePrice">
-                                                        <span>`+parseFloat(pars[k].format_before_price).toFixed(2)+`</span>
-                                                        <input type="hidden" name="beforePrice[]" value="`+parseFloat(pars[k].format_before_price).toFixed(2)+`">
+                                                        <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
+                                                        <input type="hidden" name="beforePrice[]" value="`+parseFloat(lastBeforePrice).toFixed(2)+`">
                                                      </td>
                                                      <td class="price">
-                                                        <span>`+parseFloat(pars[k].price).toFixed(2)+`</span>
-                                                        <input type="hidden" name="price[]" value="`+parseFloat(pars[k].price).toFixed(2)+`">
+                                                        <span>`+parseFloat(lastPrice).toFixed(2)+`</span>
+                                                        <input type="hidden" name="price[]" value="`+parseFloat(lastPrice).toFixed(2)+`">
                                                      </td>
                                                      <td class="totalBeforePrice">
-                                                        <span>`+parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2)+`</span>
-                                                        <input type="hidden" name="total_before_price[]" value="`+parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2)+`">
+                                                        <span>`+parseFloat(beforePriceProd).toFixed(2)+`</span>
+                                                        <input type="hidden" name="total_before_price[]" value="`+parseFloat(beforePriceProd).toFixed(2)+`">
                                                      </td>
                                                      <td class="totalPrice">
-                                                        <span>`+parseFloat(pars[k].price * pars[k].count).toFixed(2)+`</span>
-                                                        <input type="hidden" name="total_price[]" value="`+parseFloat(pars[k].price * pars[k].count).toFixed(2)+`">
+                                                        <span>`+parseFloat(priceProd).toFixed(2)+`</span>
+                                                        <input type="hidden" name="total_price[]" value="`+parseFloat(priceProd).toFixed(2)+`">
                                                      </td>
                                                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                                  </tr>`;
-                        }
-
 
 
                         ordersTableLength--;
@@ -237,10 +265,10 @@ $(document).ready(function () {
 
                             uniquePairs.forEach((item,index) => {
                                 discountBody += `<tr>
-                            //                          <td>`+(parseInt(index) + 1) +`</td>
-                            //                          <td>`+item[1]+`</td>
-                            //                          <td>`+(item[3] == 'percent' ? item[2] + ' %' : item[2] + ' դր․')+`</td>
-                            //                     </tr>`
+                                                      <td>`+(parseInt(index) + 1) +`</td>
+                                                      <td>`+item[1]+`</td>
+                                                      <td>`+(item[3] == 'percent' ? item[2] + ' %' : item[2] + ' դր․')+`</td>
+                                                 </tr>`
                             })
                             $('.discountDesc tbody').parent().append(discountBody);
                             for (let i in trss) {
@@ -471,6 +499,15 @@ $(document).ready(function () {
                         _csrf:csrfToken
                     },
                     success:function (data) {
+                        let countProd = 0;
+                        let discountProd = 0;
+                        let priceProd = 0;
+                        let beforePriceProd = 0;
+                        let lastPrice = 0;
+                        let lastBeforePrice = 0;
+                        let countDiscountId = '';
+                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature;
+                        let  prod_clients = '';
                         let addOrdersTableBody = '';
                         let pars = JSON.parse(data);
                         // console.log(pars);
@@ -481,58 +518,74 @@ $(document).ready(function () {
                             if (pars[k].discount_desc != undefined){
                                 discount_desc.push(pars[k].discount_desc);
                             }
-                            let  prod_clients = '';
-                            if (pars[k].discount_client_id_check.length == 1 && pars[k].discount_client_id_check[0] == 'empty'){
-                                prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
-                            }else {
-                                for (let c = 0; c < pars[k].discount_client_id_check.length; c++){
-                                    if (pars[k].discount_client_id_check[c] != 'empty'){
-                                        prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars[k].discount_client_id_check[c].id+']" value="'+pars[k].discount_client_id_check[c].clients_id+'">';
+                            countProd += pars[k].count;
+                            priceProd += pars[k].price * pars[k].count;
+                            beforePriceProd += pars[k].format_before_price * pars[k].count;
+                            if(k == pars.length - 1){
+                                discountProd = pars[k].discount;
+                                countDiscountId = pars[k].count_discount_id;
+                                aah = pars[k].aah;
+                                cost = pars[k].cost;
+                                lastPrice = pars[k].price;
+                                lastBeforePrice = pars[k].format_before_price;
+                                name = pars[k].name;
+                                stringProductId = pars[k].product_id;
+                                stringCount = pars[k].string_count;
+                                stringCountBalance = pars[k].string_count_balance;
+                                stringPrice = pars[k].string_price;
+                                stringBeforePrice = pars[k].string_before_price;
+                                nomenclature = pars[k].nomenclature_id;
+                                if (pars[k].discount_client_id_check.length == 1 && pars[k].discount_client_id_check[0] == 'empty'){
+                                    prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
+                                }else {
+                                    for (let c = 0; c < pars[k].discount_client_id_check.length; c++){
+                                        if (pars[k].discount_client_id_check[c] != 'empty'){
+                                            prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars[k].discount_client_id_check[c].id+']" value="'+pars[k].discount_client_id_check[c].clients_id+'">';
+                                        }
                                     }
                                 }
                             }
-                            acordingNumber++
-                            trss[pars[k].product_id] = `<tr class="tableNomenclature">
+                        }
+                        acordingNumber++
+                        trss[pars.nomenclature_id] = `<tr class="tableNomenclature">
                                      <td>
                                         <span>`+acordingNumber+`</span>
                                         <input type="hidden" name="order_items[]" value="null">
-                                        <input type="hidden" name="count_balance[]" value="`+pars[k].count_balance+`">
-                                        <input class="prodId" type="hidden" name="product_id[]" value="`+pars[k].product_id+`">
-                                        <input class="nomId"  type="hidden" name="nom_id[]" value="`+pars[k].nomenclature_id+`">
-                                        <input class="countDiscountId" type="hidden" name="count_discount_id[]" value="`+pars[k].count_discount_id+`">
-                                        <input type="hidden" name="aah[]" value="`+pars[k].aah+`">
+                                        <input type="hidden" name="string_count[]" value="`+stringCount+`">
+                                        <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
+                                        <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
+                                        <input class="nomId"  type="hidden" name="nom_id[]" value="`+nomenclature+`">
+                                        <input class="countDiscountId" type="hidden" name="count_discount_id[]" value="`+countDiscountId+`">
+                                        <input type="hidden" name="aah[]" value="`+aah+`">
                                         `+prod_clients+`
-                                        <input type="hidden" name="cost[]" value="`+pars[k].cost+`">
+                                        <input type="hidden" name="cost[]" value="`+cost+`">
                                      </td>
-                                     <td  class="name">`+pars[k].name+`</td>
+                                     <td  class="name">`+name+`</td>
                                      <td class="count">
-                                        <input type="number" readonly name="count_[]" value="`+pars[k].count+`" class="form-control countProductForUpdate">
+                                        <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProductForUpdate">
                                      </td>
                                      <td class="discount">
-                                        <span>`+parseFloat(pars[k].discount).toFixed(2)+`</span>
-                                        <input type="hidden" name="discount[]" value="`+parseFloat(pars[k].discount).toFixed(2)+`">
+                                        <span>`+parseFloat(discountProd).toFixed(2)+`</span>
+                                        <input type="hidden" name="discount[]" value="`+parseFloat(discountProd).toFixed(2)+`">
                                      </td>
                                      <td class="beforePrice">
-                                        <span>`+parseFloat(pars[k].format_before_price).toFixed(2)+`</span>
-                                        <input type="hidden" name="beforePrice[]" value="`+parseFloat(pars[k].format_before_price).toFixed(2)+`">
+                                        <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
+                                        <input type="hidden" name="beforePrice[]" value="`+parseFloat(lastBeforePrice).toFixed(2)+`">
                                      </td>
                                      <td class="price">
-                                        <span>`+parseFloat(pars[k].price).toFixed(2)+`</span>
-                                        <input type="hidden" name="price[]" value="`+parseFloat(pars[k].price).toFixed(2)+`">
+                                        <span>`+parseFloat(lastPrice).toFixed(2)+`</span>
+                                        <input type="hidden" name="price[]" value="`+parseFloat(lastPrice).toFixed(2)+`">
                                      </td>
                                      <td class="totalBeforePrice">
-                                        <span>`+parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2)+`</span>
-                                        <input type="hidden" name="total_before_price[]" value="`+parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2)+`">
+                                        <span>`+parseFloat(beforePriceProd).toFixed(2)+`</span>
+                                        <input type="hidden" name="total_before_price[]" value="`+parseFloat(beforePriceProd).toFixed(2)+`">
                                      </td>
                                      <td class="totalPrice">
-                                        <span>`+parseFloat(pars[k].price * pars[k].count).toFixed(2)+`</span>
-                                        <input type="hidden" name="total_price[]" value="`+parseFloat(pars[k].price * pars[k].count).toFixed(2)+`">
+                                        <span>`+parseFloat(priceProd).toFixed(2)+`</span>
+                                        <input type="hidden" name="total_price[]" value="`+parseFloat(priceProd).toFixed(2)+`">
                                      </td>
                                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteUpdateItems">Ջնջել</button></td>
                                  </tr>`
-                        }
-
-
 
                         ordersTableLength--;
                         if(ordersTableLength == 0) {
@@ -684,6 +737,15 @@ $(document).ready(function () {
                         _csrf:csrfToken
                     },
                     success:function (data) {
+                        let countProd = 0;
+                        let discountProd = 0;
+                        let priceProd = 0;
+                        let beforePriceProd = 0;
+                        let lastPrice = 0;
+                        let lastBeforePrice = 0;
+                        let countDiscountId = '';
+                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature;
+                        let  prod_clients = '';
                         let pars = JSON.parse(data);
                         for (let k = 0; k < pars.length; k++) {
                             if (pars[k].discount_desc != undefined){
@@ -692,61 +754,81 @@ $(document).ready(function () {
                             if (pars[k].discount_desc != undefined){
                                 discount_desc.push(pars[k].discount_desc);
                             }
-                            let  prod_clients = '';
-                            if (pars[k].discount_client_id_check.length == 1 && pars[k].discount_client_id_check[0] == 'empty'){
-                                prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
-                            }else {
-                                for (let c = 0; c < pars[k].discount_client_id_check.length; c++){
-                                    if (pars[k].discount_client_id_check[c] != 'empty'){
-                                        prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars[k].discount_client_id_check[c].id+']" value="'+pars[k].discount_client_id_check[c].clients_id+'">';
+                            countProd += pars[k].count;
+                            priceProd += pars[k].price * pars[k].count;
+                            beforePriceProd += pars[k].format_before_price * pars[k].count;
+                            if(k == pars.length - 1){
+                                discountProd = pars[k].discount;
+                                countDiscountId = pars[k].count_discount_id;
+                                aah = pars[k].aah;
+                                cost = pars[k].cost;
+                                lastPrice = pars[k].price;
+                                lastBeforePrice = pars[k].format_before_price;
+                                name = pars[k].name;
+                                stringProductId = pars[k].product_id;
+                                stringCount = pars[k].string_count;
+                                stringCountBalance = pars[k].string_count_balance;
+                                stringPrice = pars[k].string_price;
+                                stringBeforePrice = pars[k].string_before_price;
+                                nomenclature = pars[k].nomenclature_id;
+                                if (pars[k].discount_client_id_check.length == 1 && pars[k].discount_client_id_check[0] == 'empty'){
+                                    prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
+                                }else {
+                                    for (let c = 0; c < pars[k].discount_client_id_check.length; c++){
+                                        if (pars[k].discount_client_id_check[c] != 'empty'){
+                                            prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars[k].discount_client_id_check[c].id+']" value="'+pars[k].discount_client_id_check[c].clients_id+'">';
+                                        }
                                     }
                                 }
                             }
 
-                            sequenceNumber++;
                             ordersBeforTotalPriceSum += parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2);
                             ordersTotalPriceSum += parseFloat(pars[k].price * pars[k].count).toFixed(2);
                             ordersTotalCount += pars[k].count;
                             totalDiscount += parseFloat(pars[k].discount * pars[k].count).toFixed(2);
-                            trss[pars[k].product_id] = `<tr class="tableNomenclature">
+
+                        }
+
+                        sequenceNumber++
+                        trss[pars.nomenclature_id] = `<tr class="tableNomenclature">
                                      <td>
                                         <span>`+sequenceNumber+`</span>
                                         <input type="hidden" name="order_items[]" value="null">
-                                        <input type="hidden" name="count_balance[]" value="`+pars[k].count_balance+`">
-                                        <input class="prodId" type="hidden" name="product_id[]" value="`+pars[k].product_id+`">
-                                        <input type="hidden" name="nom_id[]" value="`+pars[k].nomenclature_id+`">
-                                        <input type="hidden" name="count_discount_id[]" value="`+pars[k].count_discount_id+`">
-                                        <input type="hidden" name="aah[]" value="`+pars[k].aah+`">
+                                        <input type="hidden" name="string_count[]" value="`+stringCount+`">
+                                        <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
+                                        <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
+                                        <input class="nomId"  type="hidden" name="nom_id[]" value="`+nomenclature+`">
+                                        <input class="countDiscountId" type="hidden" name="count_discount_id[]" value="`+countDiscountId+`">
+                                        <input type="hidden" name="aah[]" value="`+aah+`">
                                         `+prod_clients+`
-                                        <input type="hidden" name="cost[]" value="`+pars[k].cost+`">
+                                        <input type="hidden" name="cost[]" value="`+cost+`">
                                      </td>
-                                     <td  class="name">`+pars[k].name+`</td>
+                                     <td  class="name">`+name+`</td>
                                      <td class="count">
-                                        <input type="number" readonly name="count_[]" value="`+pars[k].count+`" class="form-control countProduct">
+                                        <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProductForUpdate">
                                      </td>
                                      <td class="discount">
-                                        <span>`+parseFloat(pars[k].discount).toFixed(2)+`</span>
-                                        <input type="hidden" name="discount[]" value="`+parseFloat(pars[k].discount).toFixed(2)+`">
+                                        <span>`+parseFloat(discountProd).toFixed(2)+`</span>
+                                        <input type="hidden" name="discount[]" value="`+parseFloat(discountProd).toFixed(2)+`">
                                      </td>
                                      <td class="beforePrice">
-                                        <span>`+parseFloat(pars[k].format_before_price).toFixed(2)+`</span>
-                                        <input type="hidden" name="beforePrice[]" value="`+parseFloat(pars[k].format_before_price).toFixed(2)+`">
+                                        <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
+                                        <input type="hidden" name="beforePrice[]" value="`+parseFloat(lastBeforePrice).toFixed(2)+`">
                                      </td>
                                      <td class="price">
-                                        <span>`+parseFloat(pars[k].price).toFixed(2)+`</span>
-                                        <input type="hidden" name="price[]" value="`+parseFloat(pars[k].price).toFixed(2)+`">
+                                        <span>`+parseFloat(lastPrice).toFixed(2)+`</span>
+                                        <input type="hidden" name="price[]" value="`+parseFloat(lastPrice).toFixed(2)+`">
                                      </td>
                                      <td class="totalBeforePrice">
-                                        <span>`+parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2)+`</span>
-                                        <input type="hidden" name="total_before_price[]" value="`+parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2)+`">
+                                        <span>`+parseFloat(beforePriceProd).toFixed(2)+`</span>
+                                        <input type="hidden" name="total_before_price[]" value="`+parseFloat(beforePriceProd).toFixed(2)+`">
                                      </td>
                                      <td class="totalPrice">
-                                        <span>`+parseFloat(pars[k].price * pars[k].count).toFixed(2)+`</span>
-                                        <input type="hidden" name="total_price[]" value="`+parseFloat(pars[k].price * pars[k].count).toFixed(2)+`">
+                                        <span>`+parseFloat(priceProd).toFixed(2)+`</span>
+                                        <input type="hidden" name="total_price[]" value="`+parseFloat(priceProd).toFixed(2)+`">
                                      </td>
                                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteUpdateItems">Ջնջել</button></td>
                                  </tr>`
-                        }
                         // $('.ordersAddingTable tbody').parent().append(aaa);
                         ordersTableLength--;
                         if(ordersTableLength == 0){
@@ -1177,64 +1259,93 @@ $(document).ready(function () {
                         _csrf:csrfToken
                     },
                     success:function (data) {
+                        let countProd = 0;
+                        let discountProd = 0;
+                        let priceProd = 0;
+                        let beforePriceProd = 0;
+                        let lastPrice = 0;
+                        let lastBeforePrice = 0;
+                        let countDiscountId = '';
+                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature;
+                        let  prod_clients = '';
                         let pars = JSON.parse(data);
                         for (let k = 0; k < pars.length; k++) {
                             if (pars[k].discount_desc != undefined){
                                 discount_desc.push(pars[k].discount_desc);
                             }
-                            let  prod_clients = '';
-                            if (pars[k].discount_client_id_check.length == 1 && pars[k].discount_client_id_check[0] == 'empty'){
-                                prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
-                            }else {
-                                for (let c = 0; c < pars[k].discount_client_id_check.length; c++){
-                                    if (pars[k].discount_client_id_check[c] != 'empty'){
-                                        prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars[k].discount_client_id_check[c].id+']" value="'+pars[k].discount_client_id_check[c].clients_id+'">';
+                            countProd += pars[k].count;
+                            priceProd += pars[k].price * pars[k].count;
+                            beforePriceProd += pars[k].format_before_price * pars[k].count;
+                            if(k == pars.length - 1){
+                                discountProd = pars[k].discount;
+                                countDiscountId = pars[k].count_discount_id;
+                                aah = pars[k].aah;
+                                cost = pars[k].cost;
+                                lastPrice = pars[k].price;
+                                lastBeforePrice = pars[k].format_before_price;
+                                name = pars[k].name;
+                                stringProductId = pars[k].product_id;
+                                stringCount = pars[k].string_count;
+                                stringCountBalance = pars[k].string_count_balance;
+                                stringPrice = pars[k].string_price;
+                                stringBeforePrice = pars[k].string_before_price;
+                                nomenclature = pars[k].nomenclature_id;
+                                if (pars[k].discount_client_id_check.length == 1 && pars[k].discount_client_id_check[0] == 'empty'){
+                                    prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
+                                }else {
+                                    for (let c = 0; c < pars[k].discount_client_id_check.length; c++){
+                                        if (pars[k].discount_client_id_check[c] != 'empty'){
+                                            prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars[k].discount_client_id_check[c].id+']" value="'+pars[k].discount_client_id_check[c].clients_id+'">';
+                                        }
                                     }
                                 }
                             }
-                            sequenceNumber++;
                             ordersBeforTotalPriceSum += parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2);
                             ordersTotalPriceSum += parseFloat(pars[k].price * pars[k].count).toFixed(2);
                             ordersTotalCount += pars[k].count;
                             totalDiscount += parseFloat(pars[k].discount * pars[k].count).toFixed(2);
-                            trss[pars[k].product_id] = `<tr class="tableNomenclature">
+
+                        }
+                        sequenceNumber++;
+                        trss[pars.nomenclature_id] = `<tr class="tableNomenclature">
                                      <td>
                                         <span>`+sequenceNumber+`</span>
-                                        <input type="hidden" name="order_items[]" value="`+pars[k].product_id+`">
-                                        <input class="prodId" type="hidden" name="product_id[]" value="`+pars[k].product_id+`">
-                                        <input type="hidden" name="nom_id[]" value="`+pars[k].nomenclature_id+`">
-                                        <input type="hidden" name="count_discount_id[]" value="`+pars[k].count_discount_id+`">
+                                        <input type="hidden" name="order_items[]" value="null">
+                                        <input type="hidden" name="string_count[]" value="`+stringCount+`">
+                                        <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
+                                        <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
+                                        <input class="nomId"  type="hidden" name="nom_id[]" value="`+nomenclature+`">
+                                        <input class="countDiscountId" type="hidden" name="count_discount_id[]" value="`+countDiscountId+`">
+                                        <input type="hidden" name="aah[]" value="`+aah+`">
                                         `+prod_clients+`
-                                        <input type="hidden" name="cost[]" value="`+pars[k].cost+`">
+                                        <input type="hidden" name="cost[]" value="`+cost+`">
                                      </td>
-                                     <td  class="name">`+pars[k].name+`</td>
+                                     <td  class="name">`+name+`</td>
                                      <td class="count">
-                                        <input type="number" readonly name="count_[]" value="`+pars[k].count+`" class="form-control countProduct">
+                                        <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProductForUpdate">
                                      </td>
                                      <td class="discount">
-                                        <span>`+parseFloat(pars[k].discount).toFixed(2)+`</span>
-                                        <input type="hidden" name="discount[]" value="`+parseFloat(pars[k].discount).toFixed(2)+`">
+                                        <span>`+parseFloat(discountProd).toFixed(2)+`</span>
+                                        <input type="hidden" name="discount[]" value="`+parseFloat(discountProd).toFixed(2)+`">
                                      </td>
                                      <td class="beforePrice">
-                                        <span>`+parseFloat(pars[k].format_before_price).toFixed(2)+`</span>
-                                        <input type="hidden" name="beforePrice[]" value="`+parseFloat(pars[k].format_before_price).toFixed(2)+`">
+                                        <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
+                                        <input type="hidden" name="beforePrice[]" value="`+parseFloat(lastBeforePrice).toFixed(2)+`">
                                      </td>
                                      <td class="price">
-                                        <span>`+parseFloat(pars[k].price).toFixed(2)+`</span>
-                                        <input type="hidden" name="price[]" value="`+parseFloat(pars[k].price).toFixed(2)+`">
+                                        <span>`+parseFloat(lastPrice).toFixed(2)+`</span>
+                                        <input type="hidden" name="price[]" value="`+parseFloat(lastPrice).toFixed(2)+`">
                                      </td>
                                      <td class="totalBeforePrice">
-                                        <span>`+parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2)+`</span>
-                                        <input type="hidden" name="total_before_price[]" value="`+parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2)+`">
+                                        <span>`+parseFloat(beforePriceProd).toFixed(2)+`</span>
+                                        <input type="hidden" name="total_before_price[]" value="`+parseFloat(beforePriceProd).toFixed(2)+`">
                                      </td>
                                      <td class="totalPrice">
-                                        <span>`+parseFloat(pars[k].price * pars[k].count).toFixed(2)+`</span>
-                                        <input type="hidden" name="total_price[]" value="`+parseFloat(pars[k].price * pars[k].count).toFixed(2)+`">
+                                        <span>`+parseFloat(priceProd).toFixed(2)+`</span>
+                                        <input type="hidden" name="total_price[]" value="`+parseFloat(priceProd).toFixed(2)+`">
                                      </td>
                                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteUpdateItems">Ջնջել</button></td>
                                  </tr>`
-                        }
-
 
                         ordersTableLength--;
                         if(ordersTableLength == 0){
@@ -1327,69 +1438,99 @@ $(document).ready(function () {
                         _csrf:csrfToken
                     },
                     success:function (data) {
+                        let countProd = 0;
+                        let discountProd = 0;
+                        let priceProd = 0;
+                        let beforePriceProd = 0;
+                        let lastPrice = 0;
+                        let lastBeforePrice = 0;
+                        let countDiscountId = '';
+                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature;
+                        let  prod_clients = '';
                         let pars = JSON.parse(data);
                         for (let k = 0; k < pars.length; k++) {
                             if (pars[k].discount_desc != undefined){
                                 discount_desc.push(pars[k].discount_desc);
                             }
-                            let  prod_clients = '';
-                            if (pars[k].discount_client_id_check.length == 1 && pars[k].discount_client_id_check[0] == 'empty'){
-                                prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
-                            }else {
-                                for (let c = 0; c < pars[k].discount_client_id_check.length; c++){
-                                    if (pars[k].discount_client_id_check[c] != 'empty'){
-                                        prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars[k].discount_client_id_check[c].id+']" value="'+pars[k].discount_client_id_check[c].clients_id+'">';
+
+                            countProd += pars[k].count;
+                            priceProd += pars[k].price * pars[k].count;
+                            beforePriceProd += pars[k].format_before_price * pars[k].count;
+                            if(k == pars.length - 1){
+                                discountProd = pars[k].discount;
+                                countDiscountId = pars[k].count_discount_id;
+                                aah = pars[k].aah;
+                                cost = pars[k].cost;
+                                lastPrice = pars[k].price;
+                                lastBeforePrice = pars[k].format_before_price;
+                                name = pars[k].name;
+                                stringProductId = pars[k].product_id;
+                                stringCount = pars[k].string_count;
+                                stringCountBalance = pars[k].string_count_balance;
+                                stringPrice = pars[k].string_price;
+                                stringBeforePrice = pars[k].string_before_price;
+                                nomenclature = pars[k].nomenclature_id;
+                                if (pars[k].discount_client_id_check.length == 1 && pars[k].discount_client_id_check[0] == 'empty'){
+                                    prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
+                                }else {
+                                    for (let c = 0; c < pars[k].discount_client_id_check.length; c++){
+                                        if (pars[k].discount_client_id_check[c] != 'empty'){
+                                            prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars[k].discount_client_id_check[c].id+']" value="'+pars[k].discount_client_id_check[c].clients_id+'">';
+                                        }
                                     }
                                 }
+
                             }
 
-                            sequenceNumber++;
+
                             ordersBeforTotalPriceSum += parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2);
                             ordersTotalPriceSum += parseFloat(pars[k].price * pars[k].count).toFixed(2);
                             ordersTotalCount += pars[k].count;
                             totalDiscount += parseFloat(pars[k].discount * pars[k].count).toFixed(2);
-                            trss[pars[k].product_id] = `<tr class="tableNomenclature">
-                                     <td>
-                                        <span>`+sequenceNumber+`</span>  
-                                        <input type="hidden" name="order_items[]" value="`+pars[k].product_id+`">
-                                        <input type="hidden" name="count_balance[]" value="`+pars[k].count_balance+`">
-                                        <input class="prodId" type="hidden" name="product_id[]" value="`+pars[k].product_id+`">
-                                        <input class="nom_Id" type="hidden" name="nom_id[]" value="`+pars[k].nomenclature_id+`">
-                                        <input type="hidden" name="count_discount_id[]" value="`+pars[k].count_discount_id+`">
-                                        <input type="hidden" name="aah[]" value="`+pars[k].aah+`">
-                                        `+prod_clients+`
-                                        <input type="hidden" name="cost[]" value="`+pars[k].cost+`">
-                                     </td>
-                                     <td  class="name">`+pars[k].name+`</td>
-                                     <td class="count">
-                                        <input type="number" readonly name="count_[]" value="`+pars[k].count+`" class="form-control countProduct">
-                                     </td>
-                                     <td class="discount">
-                                        <span>`+parseFloat(pars[k].discount).toFixed(2)+`</span>
-                                        <input type="hidden" name="discount[]" value="`+parseFloat(pars[k].discount).toFixed(2)+`">
-                                     </td>
-                                     <td class="beforePrice">
-                                        <span>`+parseFloat(pars[k].format_before_price).toFixed(2)+`</span>
-                                        <input type="hidden" name="beforePrice[]" value="`+Math.round(pars[k].format_before_price).toFixed(2)+`">
-                                     </td>
-                                     <td class="price">
-                                        <span>`+parseFloat(pars[k].price).toFixed(2)+`</span>
-                                        <input type="hidden" name="price[]" value="`+parseFloat(pars[k].price).toFixed(2)+`">
-                                     </td>
-                                     <td class="totalBeforePrice">
-                                        <span>`+parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2)+`</span>
-                                        <input type="hidden" name="total_before_price[]" value="`+parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2)+`">
-                                     </td>
-                                     <td class="totalPrice">
-                                        <span>`+parseFloat(pars[k].price * pars[k].count).toFixed(2)+`</span>
-                                        <input type="hidden" name="total_price[]" value="`+parseFloat(pars[k].price * pars[k].count).toFixed(2)+`">
-                                     </td>
-                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
-                                 </tr>`
+
 
                         }
 
-
+                        sequenceNumber++;
+                        trss[pars.nomenclature_id] += `<tr class="tableNomenclature">
+                                                     <td>
+                                                        <span>`+sequenceNumber+`</span>
+                                                        <input type="hidden" name="order_items[]" value="`+stringProductId+`">
+                                                        <input type="hidden" name="string_count[]" value="`+stringCount+`">
+                                                        <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
+                                                        <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
+                                                        <input class="nom_Id" type="hidden" name="nom_id[]" value="`+nomenclature+`">
+                                                        <input type="hidden" name="count_discount_id[]" value="`+countDiscountId+`">
+                                                        <input type="hidden" name="aah[]" value="`+aah+`">
+                                                        `+prod_clients+`
+                                                        <input type="hidden" name="cost[]" value="`+cost+`">
+                                                     </td>
+                                                     <td  class="name">`+name+`</td>
+                                                     <td class="count">
+                                                        <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProduct">
+                                                     </td>
+                                                     <td class="discount">
+                                                        <span>`+parseFloat(discountProd).toFixed(2)+`</span>
+                                                        <input type="hidden" name="discount[]" value="`+parseFloat(discountProd).toFixed(2)+`">
+                                                     </td>
+                                                     <td class="beforePrice">
+                                                        <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
+                                                        <input type="hidden" name="beforePrice[]" value="`+parseFloat(lastBeforePrice).toFixed(2)+`">
+                                                     </td>
+                                                     <td class="price">
+                                                        <span>`+parseFloat(lastPrice).toFixed(2)+`</span>
+                                                        <input type="hidden" name="price[]" value="`+parseFloat(lastPrice).toFixed(2)+`">
+                                                     </td>
+                                                     <td class="totalBeforePrice">
+                                                        <span>`+parseFloat(beforePriceProd).toFixed(2)+`</span>
+                                                        <input type="hidden" name="total_before_price[]" value="`+parseFloat(beforePriceProd).toFixed(2)+`">
+                                                     </td>
+                                                     <td class="totalPrice">
+                                                        <span>`+parseFloat(priceProd).toFixed(2)+`</span>
+                                                        <input type="hidden" name="total_price[]" value="`+parseFloat(priceProd).toFixed(2)+`">
+                                                     </td>
+                                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
+                                                 </tr>`;
 
                         ordersTableLength--;
                         if(ordersTableLength == 0){
@@ -1466,68 +1607,94 @@ $(document).ready(function () {
                         _csrf:csrfToken
                     },
                     success:function (data) {
+                        let countProd = 0;
+                        let discountProd = 0;
+                        let priceProd = 0;
+                        let beforePriceProd = 0;
+                        let lastPrice = 0;
+                        let lastBeforePrice = 0;
+                        let countDiscountId = '';
+                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature;
+                        let  prod_clients = '';
                         let pars = JSON.parse(data);
                         for (let k = 0; k < pars.length; k++) {
                             if (pars[k].discount_desc != undefined){
                                 discount_desc.push(pars[k].discount_desc);
                             }
-                            let  prod_clients = '';
-                            if (pars[k].discount_client_id_check.length == 1 && pars[k].discount_client_id_check[0] == 'empty'){
-                                prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
-                            }else {
-                                for (let c = 0; c < pars[k].discount_client_id_check.length; c++){
-                                    if (pars[k].discount_client_id_check[c] != 'empty'){
-                                        prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars[k].discount_client_id_check[c].id+']" value="'+pars[k].discount_client_id_check[c].clients_id+'">';
+                            countProd += pars[k].count;
+                            priceProd += pars[k].price * pars[k].count;
+                            beforePriceProd += pars[k].format_before_price * pars[k].count;
+                            if(k == pars.length - 1){
+                                discountProd = pars[k].discount;
+                                countDiscountId = pars[k].count_discount_id;
+                                aah = pars[k].aah;
+                                cost = pars[k].cost;
+                                lastPrice = pars[k].price;
+                                lastBeforePrice = pars[k].format_before_price;
+                                name = pars[k].name;
+                                stringProductId = pars[k].product_id;
+                                stringCount = pars[k].string_count;
+                                stringCountBalance = pars[k].string_count_balance;
+                                stringPrice = pars[k].string_price;
+                                stringBeforePrice = pars[k].string_before_price;
+                                nomenclature = pars[k].nomenclature_id;
+                                if (pars[k].discount_client_id_check.length == 1 && pars[k].discount_client_id_check[0] == 'empty'){
+                                    prod_clients = '<input type="hidden" class="discount_client_id" name="discount_client_id_check[empty]" value="empty">';
+                                }else {
+                                    for (let c = 0; c < pars[k].discount_client_id_check.length; c++){
+                                        if (pars[k].discount_client_id_check[c] != 'empty'){
+                                            prod_clients += '<input type="hidden" class="discount_client_id" name="discount_client_id_check['+pars[k].discount_client_id_check[c].id+']" value="'+pars[k].discount_client_id_check[c].clients_id+'">';
+                                        }
                                     }
                                 }
+
                             }
 
-                            sequenceNumber++;
                             ordersBeforTotalPriceSum += parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2);
                             ordersTotalPriceSum += parseFloat(pars[k].price * pars[k].count).toFixed(2);
                             ordersTotalCount += pars[k].count;
                             totalDiscount += parseFloat(pars[k].discount * pars[k].count).toFixed(2);
-                            trss[pars[k].product_id] = `<tr class="tableNomenclature">
-                                     <td>
-                                        <span>`+sequenceNumber+`</span>
-                                        <input type="hidden" name="order_items[]" value="`+pars[k].product_id+`">
-                                        <input type="hidden" name="count_balance[]" value="`+pars[k].count_balance+`">
-                                        <input class="prodId" type="hidden" name="product_id[]" value="`+pars[k].product_id+`">
-                                        <input class="nom_Id" type="hidden" name="nom_id[]" value="`+pars[k].nomenclature_id+`">
-                                        <input type="hidden" name="count_discount_id[]" value="`+pars[k].count_discount_id+`">
-                                        <input type="hidden" name="aah[]" value="`+pars[k].aah+`">
-                                        `+prod_clients+`
-                                        <input type="hidden" name="cost[]" value="`+pars[k].cost+`">
-                                     </td>
-                                     <td  class="name">`+pars[k].name+`</td>
-                                     <td class="count">
-                                        <input type="number" readonly name="count_[]" value="`+pars[k].count+`" class="form-control countProduct">
-                                     </td>
-                                     <td class="discount">
-                                        <span>`+parseFloat(pars[k].discount).toFixed(2)+`</span>
-                                        <input type="hidden" name="discount[]" value="`+parseFloat(pars[k].discount).toFixed(2)+`">
-                                     </td>
-                                     <td class="beforePrice">
-                                        <span>`+parseFloat(pars[k].format_before_price).toFixed(2)+`</span>
-                                        <input type="hidden" name="beforePrice[]" value="`+Math.round(pars[k].format_before_price).toFixed(2)+`">
-                                     </td>
-                                     <td class="price">
-                                        <span>`+parseFloat(pars[k].price).toFixed(2)+`</span>
-                                        <input type="hidden" name="price[]" value="`+parseFloat(pars[k].price).toFixed(2)+`">
-                                     </td>
-                                     <td class="totalBeforePrice">
-                                        <span>`+parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2)+`</span>
-                                        <input type="hidden" name="total_before_price[]" value="`+parseFloat(pars[k].format_before_price * pars[k].count).toFixed(2)+`">
-                                     </td>
-                                     <td class="totalPrice">
-                                        <span>`+parseFloat(pars[k].price * pars[k].count).toFixed(2)+`</span>
-                                        <input type="hidden" name="total_price[]" value="`+parseFloat(pars[k].price * pars[k].count).toFixed(2)+`">
-                                     </td>
-                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
-                                 </tr>`
-
                         }
-
+                        sequenceNumber++;
+                        trss[pars.nomenclature_id] += `<tr class="tableNomenclature">
+                                                     <td>
+                                                        <span>`+sequenceNumber+`</span>
+                                                        <input type="hidden" name="order_items[]" value="`+stringProductId+`">
+                                                        <input type="hidden" name="string_count[]" value="`+stringCount+`">
+                                                        <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
+                                                        <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
+                                                        <input class="nom_Id" type="hidden" name="nom_id[]" value="`+nomenclature+`">
+                                                        <input type="hidden" name="count_discount_id[]" value="`+countDiscountId+`">
+                                                        <input type="hidden" name="aah[]" value="`+aah+`">
+                                                        `+prod_clients+`
+                                                        <input type="hidden" name="cost[]" value="`+cost+`">
+                                                     </td>
+                                                     <td  class="name">`+name+`</td>
+                                                     <td class="count">
+                                                        <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProduct">
+                                                     </td>
+                                                     <td class="discount">
+                                                        <span>`+parseFloat(discountProd).toFixed(2)+`</span>
+                                                        <input type="hidden" name="discount[]" value="`+parseFloat(discountProd).toFixed(2)+`">
+                                                     </td>
+                                                     <td class="beforePrice">
+                                                        <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
+                                                        <input type="hidden" name="beforePrice[]" value="`+parseFloat(lastBeforePrice).toFixed(2)+`">
+                                                     </td>
+                                                     <td class="price">
+                                                        <span>`+parseFloat(lastPrice).toFixed(2)+`</span>
+                                                        <input type="hidden" name="price[]" value="`+parseFloat(lastPrice).toFixed(2)+`">
+                                                     </td>
+                                                     <td class="totalBeforePrice">
+                                                        <span>`+parseFloat(beforePriceProd).toFixed(2)+`</span>
+                                                        <input type="hidden" name="total_before_price[]" value="`+parseFloat(beforePriceProd).toFixed(2)+`">
+                                                     </td>
+                                                     <td class="totalPrice">
+                                                        <span>`+parseFloat(priceProd).toFixed(2)+`</span>
+                                                        <input type="hidden" name="total_price[]" value="`+parseFloat(priceProd).toFixed(2)+`">
+                                                     </td>
+                                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
+                                                 </tr>`;
 
 
 
