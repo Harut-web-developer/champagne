@@ -8,11 +8,28 @@ use app\widgets\CustomLinkPager;
 
 $this->registerCssFile('@web/css/bootstrap.min.css');
 $id = $_GET['id'];
+$id = rtrim($id, '//');
 $res = Yii::$app->db->createCommand('SELECT customfields_blocks_inputs.label as `attribute`,customfields_blocks_inputs.id, customfields_blocks_input_values.value_, customfields_blocks_title.title FROM customfields_blocks_title 
                                          LEFT JOIN customfields_blocks_inputs ON customfields_blocks_inputs.iblock_id = customfields_blocks_title.id      
                                          LEFT JOIN customfields_blocks_input_values ON customfields_blocks_input_values.input_id = customfields_blocks_inputs.id      
                                         WHERE page = "'.'documents'.'" ')
                                         ->queryAll();
+$res_title = Yii::$app->db->createCommand('
+    SELECT 
+        customfields_blocks_inputs.label as `attribute`,
+        customfields_blocks_inputs.id,
+        customfields_blocks_input_values.value_,
+        customfields_blocks_title.title 
+    FROM 
+        customfields_blocks_title 
+    LEFT JOIN 
+        customfields_blocks_inputs ON customfields_blocks_inputs.iblock_id = customfields_blocks_title.id      
+    LEFT JOIN 
+        customfields_blocks_input_values ON customfields_blocks_input_values.input_id = customfields_blocks_inputs.id      
+    WHERE 
+        page = "documents" 
+        AND customfields_blocks_title.block_type = "0"
+')->queryAll();
 $res_value = Yii::$app->db->createCommand('
     SELECT customfields_blocks_inputs.label as `attribute`,
            customfields_blocks_inputs.id, 
@@ -29,7 +46,7 @@ $res_value = Yii::$app->db->createCommand('
 <div id="print">
     <div class="card">
         <div id="w1" class="table-responsive text-nowrap">
-            <h1><?=$res[0]['title']?></h1>
+            <h1><?=$res_title[0]['title']?></h1>
             <table class="table">
                 <thead>
                     <tr>
