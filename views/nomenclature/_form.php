@@ -63,25 +63,9 @@ if(isset($action__)){
                         <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->all(); ?>
                         <?php if(!empty($fields)){ ?>
                             <?php foreach ($fields as $fild => $fild_simple){ ?>
-                                <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id,false);?>
+                                <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
                             <?php } ?>
                         <?php } ?>
-                        <div class="actions">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Ստեղծել դաշտ
-                                </button>
-                                <ul class="dropdown-menu custom_field_menu" style="">
-                                    <li data-type="number">NUMBER <br><span>Թվային արժեք ավելացնելու դաշտ:</span></li>
-                                    <li data-type="varchar">TEXT (255 Simbols) <br><span>Տեքստ ավելացնելու դաշտ:</span></li>
-                                    <li data-type="list">LIST <br><span>Ցուցակներ լրացնելու դաշտ:</span></li>
-                                    <li data-type="file">FILE <br><span>Նկար ավելացնելու դաշտ:</span></li>
-                                    <li data-type="text">TEXTAREA <br><span>Մեշ ծավալով տեքստ ավելացնելու դաշտ:</span></li>
-                                    <li data-type="date">DATE <br><span>Ամսաթիվ ավելացնելու դաշտ:</span></li>
-                                    <li data-type="datetime">DATETIME <br><span>Ժամ և ամսաթիվ ավելացնելու դաշտ:</span></li>
-                                </ul>
-                            </div>
-                        </div>
                     </div>
                 <?php } ?>
             <?php } ?>
