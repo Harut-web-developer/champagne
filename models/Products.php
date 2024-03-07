@@ -916,7 +916,8 @@ class Products extends \yii\db\ActiveRecord
                                             }
                                         }
                                         $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                    } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
+                                    }
+                                    elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
                                             if ($discount[$j]['type'] == 'percent') {
@@ -936,7 +937,8 @@ class Products extends \yii\db\ActiveRecord
                                             }
                                         }
                                         $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                    } elseif (empty($discount[$j]['discount_filter_type'])) {
+                                    }
+                                    elseif (empty($discount[$j]['discount_filter_type'])) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
                                             if ($discount[$j]['type'] == 'percent') {
@@ -967,7 +969,7 @@ class Products extends \yii\db\ActiveRecord
                         $string_product .= $item->id . ',';
                         $string_count .= $bal . ',';
                         $string_count_balance .= $count_balance . ',';
-                        $string_price .= $price . ',';
+                        $string_price .= number_format($price,2, '.', '') . ',';
                         $string_before_price .= $item->price . ',';
                         $res['nomenclature_id'] = $nom_id;
                         $res['name'] = $name;
@@ -1002,7 +1004,7 @@ class Products extends \yii\db\ActiveRecord
                         $string_product .= $item->id . ',';
                         $string_count .= $bal . ',';
                         $string_count_balance .= $count_balance . ',';
-                        $string_price .= $item->price . ',';
+                        $string_price .= number_format($item->price,2, '.', '') . ',';
                         $string_before_price .= $item->price . ',';
                         array_push($discount_desc, $desc);
                         $discount_client_id = 'empty';
@@ -1819,7 +1821,8 @@ class Products extends \yii\db\ActiveRecord
                                             }
                                         }
                                         $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                    } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
+                                    }
+                                    elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
                                             if ($discount[$j]['type'] == 'percent') {
@@ -1839,7 +1842,8 @@ class Products extends \yii\db\ActiveRecord
                                             }
                                         }
                                         $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                    } elseif (empty($discount[$j]['discount_filter_type'])) {
+                                    }
+                                    elseif (empty($discount[$j]['discount_filter_type'])) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
                                             if ($discount[$j]['type'] == 'percent') {
@@ -1869,7 +1873,7 @@ class Products extends \yii\db\ActiveRecord
                         $discount_name = Discount::find()->select('id,name,discount,type')->asArray()->all();
                         $string_product .= $item->id . ',';
                         $string_count .= $item->count_balance . ',';
-                        $string_price .= $price . ',';
+                        $string_price .= number_format($price,2, '.', '') . ',';
                         $string_before_price .= $item->price . ',';
                         $res['nomenclature_id'] = $nom_id;
                         $res['name'] = $name;
@@ -1903,7 +1907,7 @@ class Products extends \yii\db\ActiveRecord
                         $desc = 'empty';
                         $string_product .= $item->id . ',';
                         $string_count .= $item->count_balance . ',';
-                        $string_price .= $item->price . ',';
+                        $string_price .= number_format($item->price,2, '.', '') . ',';
                         $string_before_price .= $item->price . ',';
                         array_push($discount_desc, $desc);
                         $discount_client_id = 'empty';

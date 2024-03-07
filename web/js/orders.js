@@ -200,11 +200,14 @@ $(document).ready(function () {
                             }
 
                         }
+                        // console.log(stringPrice,stringBeforePrice)
                         sequenceNumber++;
                         trss[pars.nomenclature_id] += `<tr class="tableNomenclature">
                                                      <td>
                                                         <span>`+sequenceNumber+`</span>
                                                         <input type="hidden" name="order_items[]" value="`+stringProductId+`">
+                                                        <input type="hidden" name="string_price[]" value="`+stringPrice+`">
+                                                        <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
                                                         <input type="hidden" name="string_count[]" value="`+stringCount+`">
                                                         <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
                                                         <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
@@ -551,6 +554,8 @@ $(document).ready(function () {
                                      <td>
                                         <span>`+acordingNumber+`</span>
                                         <input type="hidden" name="order_items[]" value="null">
+                                        <input type="hidden" name="string_price[]" value="`+stringPrice+`">
+                                        <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
                                         <input type="hidden" name="string_count[]" value="`+stringCount+`">
                                         <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
                                         <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
@@ -794,6 +799,8 @@ $(document).ready(function () {
                                      <td>
                                         <span>`+sequenceNumber+`</span>
                                         <input type="hidden" name="order_items[]" value="null">
+                                        <input type="hidden" name="string_price[]" value="`+stringPrice+`">
+                                        <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
                                         <input type="hidden" name="string_count[]" value="`+stringCount+`">
                                         <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
                                         <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
@@ -1311,6 +1318,8 @@ $(document).ready(function () {
                                      <td>
                                         <span>`+sequenceNumber+`</span>
                                         <input type="hidden" name="order_items[]" value="null">
+                                        <input type="hidden" name="string_price[]" value="`+stringPrice+`">
+                                        <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
                                         <input type="hidden" name="string_count[]" value="`+stringCount+`">
                                         <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
                                         <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
@@ -1496,6 +1505,8 @@ $(document).ready(function () {
                                                      <td>
                                                         <span>`+sequenceNumber+`</span>
                                                         <input type="hidden" name="order_items[]" value="`+stringProductId+`">
+                                                        <input type="hidden" name="string_price[]" value="`+stringPrice+`">
+                                                        <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
                                                         <input type="hidden" name="string_count[]" value="`+stringCount+`">
                                                         <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
                                                         <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
@@ -1660,6 +1671,8 @@ $(document).ready(function () {
                                                      <td>
                                                         <span>`+sequenceNumber+`</span>
                                                         <input type="hidden" name="order_items[]" value="`+stringProductId+`">
+                                                        <input type="hidden" name="string_price[]" value="`+stringPrice+`">
+                                                        <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
                                                         <input type="hidden" name="string_count[]" value="`+stringCount+`">
                                                         <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
                                                         <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
@@ -1800,8 +1813,44 @@ $(document).ready(function () {
             alert("Նշված դաշտը չի կարող լինել դատարկ կամ 1-ից պակաս։")
             $(this).val($('#countModal').val());
         }else {
-            $('#totalBeforePriceModal').val(+parseFloat($('#beforePriceModal').val() * $(this).val()).toFixed(2))
-            $('#totalPriceModal').val(+parseFloat($('#priceModal').val() * $(this).val()).toFixed(2))
+            let bal = parseInt($(this).attr('max')) - $(this).val()
+            let priceArr = $('.stringPriceModal').val().split(',');
+            let beforePriceArr = $('.stringBeforePriceModal').val().split(',');
+            let stringCount = $('.stringCountModal').val().split(',');
+            let productId = $('.productIdModal').val().split(',');
+            let newPriceArr = priceArr;
+            let newBeforePriceArr = beforePriceArr;
+            let newStringCount = stringCount;
+            let newProductId = productId;
+            let newPrice = 0;
+            let newBeforePrice = 0;
+            for (let i = productId.length - 1; i >= 0; i--){
+                if (parseInt(stringCount[i]) - bal >= 0){
+                    stringCount[i] = parseInt(stringCount[i]) - bal;
+                    newPrice += bal * parseFloat(priceArr[i]);
+                    newBeforePrice += bal * parseFloat(beforePriceArr[i]);
+                    break;
+                }
+                else if (parseInt(stringCount[i]) - bal < 0){
+                    newPrice = parseInt(stringCount[i]) * parseFloat(priceArr[i]);
+                    newBeforePrice = parseInt(stringCount[i]) * parseFloat(beforePriceArr[i]);
+                    bal -= parseInt(stringCount[i]);
+                    newPriceArr.pop();
+                    newBeforePriceArr.pop();
+                    newStringCount.pop();
+                    newProductId.pop();
+                }
+            }
+            let newPriceArrStr = newPriceArr.join(',');
+            let newBeforePriceArrStr = newBeforePriceArr.join(',');
+            let newStringCountStr = newStringCount.join(',');
+            let newProductIdStr = newProductId.join(',');
+            $('#totalBeforePriceModal').val(parseFloat($('#totalBeforePriceModal').attr('max') - newBeforePrice).toFixed(2))
+            $('#totalPriceModal').val(parseFloat($('#totalPriceModal').attr('max') - newPrice).toFixed(2))
+            $('.newStringCountModal').val(newStringCountStr)
+            $('.newStringPriceModal').val(newPriceArrStr)
+            $('.newStringBeforePriceModal').val(newBeforePriceArrStr)
+            $('.newProductIdModal').val(newProductIdStr)
         }
     })
 
@@ -1810,10 +1859,10 @@ $(document).ready(function () {
             return value.replace(/-/g, '');
         });
         if (parseInt($('#countByModal').val()) > parseInt($('#countByModal').attr('max'))) {
-            alert("Ավել հնարավոր չէ փոխել։")
+            alert("Պատվերի քանակից ավել հնարավոր չէ փոխել։։")
             $(this).val($('#countByModal').attr('max'));
         } else if ($(this).val() < 1) {
-            alert("Նշված դաշտը չի կարող լինել 1-ից պակաս կամ դատարկ։")
+            alert("Նշված դաշտը չի կարող լինել դատարկ կամ 1-ից պակաս։")
             $('.addChange').prop('disabled', true);
         } else {
             $('.addChange').prop('disabled', false);
