@@ -15,7 +15,7 @@ use \app\models\OrderItems;
         <input type="hidden" class="newStringPriceModal" value="<?=$order_items['string_price']?>">
         <input type="hidden" class="stringBeforePriceModal" value="<?=$order_items['string_before_price']?>">
         <input type="hidden" class="newStringBeforePriceModal" value="<?=$order_items['string_before_price']?>">
-<!--        <input type="hidden" class="countBalanceModal" value="--><?php //=$order_items['count_balance']?><!--">-->
+        <input type="hidden" class="countBalanceModal" value="<?=$order_items['count_balance']?>">
 
         <input type="hidden" class="productIdModal" value="<?=$order_items['product_id']?>">
         <input type="hidden" class="newProductIdModal" value="<?=$order_items['product_id']?>">
