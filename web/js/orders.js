@@ -1449,6 +1449,10 @@ $(document).ready(function () {
         let discountBy = $('body').find('#discountByModal').val() * countBy;
         let priceBy = $('body').find('#totalPriceModal').val();
         let priceBeforeDiscountBy = $('body').find('#totalBeforePriceModal').val();
+        let newStringCount = $('body').find('.newStringCountModal').val()
+        let newStringPrice = $('body').find('.newStringPriceModal').val()
+        let newStringBeforePrice = $('body').find('.newStringBeforePriceModal').val()
+        let newStringProductId = $('body').find('.newProductIdModal').val()
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:'/orders/changing-items',
@@ -1461,12 +1465,16 @@ $(document).ready(function () {
                 discountBy:discountBy,
                 priceBy:priceBy,
                 priceBeforeDiscountBy:priceBeforeDiscountBy,
+                newStringCount:newStringCount,
+                newStringPrice:newStringPrice,
+                newStringBeforePrice:newStringBeforePrice,
+                newStringProductId:newStringProductId,
                 _csrf:csrfToken
             },
             success:function (data){
                 if (data){
-                    alert('Փոփոխությունը կատարվել է հաջողությամբ։');
-                    location.reload();
+                    // alert('Փոփոխությունը կատարվել է հաջողությամբ։');
+                    // location.reload();
                 }
             }
         })
@@ -1487,6 +1495,7 @@ $(document).ready(function () {
             let beforePriceArr = $('.stringBeforePriceModal').val().split(',');
             let stringCount = $('.stringCountModal').val().split(',');
             let productId = $('.productIdModal').val().split(',');
+            let countBalance = $('.countBalanceModal').val().split(',');
             let newPriceArr = priceArr;
             let newBeforePriceArr = beforePriceArr;
             let newStringCount = stringCount;
@@ -1496,6 +1505,7 @@ $(document).ready(function () {
             for (let i = productId.length - 1; i >= 0; i--){
                 if (parseInt(stringCount[i]) - bal >= 0){
                     stringCount[i] = parseInt(stringCount[i]) - bal;
+                    countBalance[i] = parseInt(countBalance[i]) + bal;
                     newPrice += bal * parseFloat(priceArr[i]);
                     newBeforePrice += bal * parseFloat(beforePriceArr[i]);
                     break;
