@@ -4,7 +4,7 @@ $(document).ready(function () {
         count_id($(this));
     });
     function count_id(el) {
-        let id = el.closest('tr').find('.prodId').data('id');
+        let id = el.closest('tr').find('.nom_Id').data('id');
         let count = el.val();
         if (count) {
             id_count[String(id).trim()] = parseInt(count.trim());
@@ -134,7 +134,6 @@ $(document).ready(function () {
                  let count = $(this).children('.ordersAddCount').find('.ordersCountInput').val();
                  let price = $(this).children('.ordersAddCount').find('.ordersPriceInput').val();
                  let cost = $(this).children('.ordersAddCount').find('.ordersCostInput').val();
-
                 $.ajax({
                     url:'/orders/get-discount',
                     method:'post',
@@ -165,8 +164,7 @@ $(document).ready(function () {
                         let  prod_clients = '';
 
                         let pars = JSON.parse(data);
-                        for (let k = 0; k < pars.length; k++){
-                            // console.log(pars[k]);
+                            for (let k = 0; k < pars.length; k++){
                             if (pars[k].discount_desc != undefined){
                                 discount_desc.push(pars[k].discount_desc);
                             }
@@ -202,7 +200,7 @@ $(document).ready(function () {
                         }
                         // console.log(stringPrice,stringBeforePrice)
                         sequenceNumber++;
-                        trss[pars.nomenclature_id] += `<tr class="tableNomenclature">
+                        trss[nomenclature] = `<tr class="tableNomenclature">
                                                      <td>
                                                         <span>`+sequenceNumber+`</span>
                                                         <input type="hidden" name="order_items[]" value="`+stringProductId+`">
@@ -274,14 +272,18 @@ $(document).ready(function () {
                                                  </tr>`
                             })
                             $('.discountDesc tbody').parent().append(discountBody);
-                            for (let i in trss) {
-                                if(trss[i] != ''){
-                                    newTbody.append(trss[i]);
+
+                            for (let key in trss) {
+                                if (trss.hasOwnProperty(key)) {
+                                    newTbody.append(trss[key]);
                                 }
                             }
+                                $('.ordersAddingTable tbody').empty();
                             $('.ordersAddingTable tbody').replaceWith(newTbody);
                             trCounter($('body').find('.ordersAddingTable'));
                             newTbody = $('<tbody></tbody>');
+
+
                             var result = product_count();
                             $('body').find('#orders-total_price').val(parseFloat(result.ordersTotalPriceSum).toFixed(2));
                             $('body').find('#orders-total_count').val(Math.round(result.ordersTotalCount));
@@ -294,136 +296,6 @@ $(document).ready(function () {
         })
     })
 
-    $('body').on('input', '.countProduct', function() {
-        // alert(111)
-        $(this).val(function(index, value) {
-            return value.replace(/-/g, '');
-        });
-        if ($(this).val() < 1 || $(this).val() === "") {
-            $(this).val('');
-            $(this).attr('required',true);
-        }else {
-            var this_ = $(this);
-            let warehouse_id = $('body').find('.warehouse_id').val();
-            let id = $(this).closest('tr').find('.nom_Id').val();
-            let id_product = $(this).closest('tr').find('.prodId').val();
-            var count = this_.val();
-            var csrfToken = $('meta[name="csrf-token"]').attr("content");
-            $.ajax({
-                url: '/products/get-products',
-                method: 'post',
-                datatype: 'json',
-                data: {
-                    itemId: id,
-                    warehouse_id: warehouse_id,
-                    count: count,
-                    _csrf: csrfToken
-                },
-                success: function (data) {
-                    let pars = JSON.parse(data)
-                    if (data) {
-                        if (pars.count === 'nullable') {
-                            this_.val('')
-
-                        } else if (pars.count === 'countMore') {
-                            this_.val('')
-                            this_.attr('required',true);
-                            alert('Պահեստում նման քանակի ապրանք չկա');
-                            var result = product_count();
-                            count = this_.val();
-                            let num = 0;
-                            id_count[String(id_product).trim()] = parseInt(count.trim());
-                            this_.closest('.tableNomenclature').find('.totalPrice').children('span').text(num.toFixed(2));
-                            this_.closest('.tableNomenclature').find('.totalPrice').children('input').val(num.toFixed(2));
-                            this_.closest('.tableNomenclature').find('.totalBeforePrice').children('span').text(num.toFixed(2));
-                            this_.closest('.tableNomenclature').find('.totalBeforePrice').children('input').val(num.toFixed(2));
-                            $('body').find('#orders-total_price').val(parseFloat(result.ordersTotalPriceSum).toFixed(2));
-                            $('body').find('#orders-total_count').val(Math.round(result.ordersTotalCount));
-                            $('body').find('#orders-total_price_before_discount').val(parseFloat(result.ordersBeforTotalPriceSum).toFixed(2));
-                            $('body').find('#orders-total_discount').val(parseFloat(result.totalDiscount).toFixed(2));
-                        }else if (pars.count === 'exists'){
-                            var result = product_count();
-                            count = this_.val();
-                            id_count[String(id_product).trim()] = parseInt(count.trim());
-                            this_.closest('.tableNomenclature').find('.totalPrice').children('span').text(parseFloat(this_.closest('.tableNomenclature').find('.price').children('input').val() * this_.val()).toFixed(2));
-                            this_.closest('.tableNomenclature').find('.totalPrice').children('input').val(parseFloat(this_.closest('.tableNomenclature').find('.price').children('input').val() * this_.val()).toFixed(2));
-                            this_.closest('.tableNomenclature').find('.totalBeforePrice').children('span').text(parseFloat(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val()).toFixed(2));
-                            this_.closest('.tableNomenclature').find('.totalBeforePrice').children('input').val(parseFloat(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val()).toFixed(2));
-                            $('body').find('#orders-total_price').val(parseFloat(result.ordersTotalPriceSum).toFixed(2));
-                            $('body').find('#orders-total_count').val(Math.round(result.ordersTotalCount));
-                            $('body').find('#orders-total_price_before_discount').val(parseFloat(result.ordersBeforTotalPriceSum).toFixed(2));
-                            $('body').find('#orders-total_discount').val(parseFloat(result.totalDiscount).toFixed(2));
-                        }
-                    }
-                }
-            })
-        }
-
-    });
-
-    $('body').on('click','.countProduct', function (){
-        $(this).val(function(index, value) {
-            return value.replace(/-/g, '');
-        });
-        if ($(this).val() < 1 || $(this).val() === "") {
-            $(this).val('');
-            $(this).attr('required',true);
-        }else {
-            var this_ = $(this);
-            let warehouse_id = $('body').find('.warehouse_id').val();
-            let id = $(this).closest('tr').find('.nom_Id').val();
-            let id_product = $(this).closest('tr').find('.prodId').val();
-            var count = this_.val();
-            var csrfToken = $('meta[name="csrf-token"]').attr("content");
-            $.ajax({
-                url: '/products/get-products',
-                method: 'post',
-                datatype: 'json',
-                data: {
-                    itemId: id,
-                    warehouse_id: warehouse_id,
-                    count: count,
-                    _csrf: csrfToken
-                },
-                success: function (data) {
-                    let pars = JSON.parse(data)
-                    if (data) {
-                        if (pars.count === 'nullable') {
-                            this_.val('')
-                        } else if (pars.count === 'countMore') {
-                            this_.val('')
-                            this_.attr('required',true);
-                            alert('Պահեստում նման քանակի ապրանք չկա');
-                            var result = product_count();
-                            count = this_.val();
-                            let num = 0;
-                            id_count[String(id_product).trim()] = parseInt(count.trim());
-                            this_.closest('.tableNomenclature').find('.totalPrice').children('span').text(num.toFixed(2));
-                            this_.closest('.tableNomenclature').find('.totalPrice').children('input').val(num.toFixed(2));
-                            this_.closest('.tableNomenclature').find('.totalBeforePrice').children('span').text(num.toFixed(2));
-                            this_.closest('.tableNomenclature').find('.totalBeforePrice').children('input').val(num.toFixed(2));
-                            $('body').find('#orders-total_price').val(parseFloat(result.ordersTotalPriceSum).toFixed(2));
-                            $('body').find('#orders-total_count').val(Math.round(result.ordersTotalCount));
-                            $('body').find('#orders-total_price_before_discount').val(parseFloat(result.ordersBeforTotalPriceSum).toFixed(2));
-                            $('body').find('#orders-total_discount').val(parseFloat(result.totalDiscount).toFixed(2));
-                        }else if (pars.count === 'exists'){
-                            var result = product_count();
-                            count = this_.val();
-                            id_count[String(id_product).trim()] = parseInt(count.trim());
-                            this_.closest('.tableNomenclature').find('.totalPrice').children('span').text(parseFloat(this_.closest('.tableNomenclature').find('.price').children('input').val() * this_.val()).toFixed(2));
-                            this_.closest('.tableNomenclature').find('.totalPrice').children('input').val(parseFloat(this_.closest('.tableNomenclature').find('.price').children('input').val() * this_.val()).toFixed(2));
-                            this_.closest('.tableNomenclature').find('.totalBeforePrice').children('span').text(parseFloat(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val()).toFixed(2));
-                            this_.closest('.tableNomenclature').find('.totalBeforePrice').children('input').val(parseFloat(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val()).toFixed(2));
-                            $('body').find('#orders-total_price').val(parseFloat(result.ordersTotalPriceSum).toFixed(2));
-                            $('body').find('#orders-total_count').val(Math.round(result.ordersTotalCount));
-                            $('body').find('#orders-total_price_before_discount').val(parseFloat(result.ordersBeforTotalPriceSum).toFixed(2));
-                            $('body').find('#orders-total_discount').val(parseFloat(result.totalDiscount).toFixed(2));
-                        }
-                    }
-                }
-            })
-        }
-    })
 
     $('body').on('click', '.deleteItems',function (){
         let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
@@ -513,8 +385,7 @@ $(document).ready(function () {
                         let  prod_clients = '';
                         let addOrdersTableBody = '';
                         let pars = JSON.parse(data);
-                        // console.log(pars);
-                        for (let k = 0; k < pars.length; k++) {
+                            for (let k = 0; k < pars.length; k++) {
                             if (pars[k].discount_name != undefined){
                                 discount_name.push(pars[k].discount_name);
                             }
@@ -550,7 +421,7 @@ $(document).ready(function () {
                             }
                         }
                         acordingNumber++
-                        trss[pars.nomenclature_id] = `<tr class="tableNomenclature">
+                        trss[nomenclature] = `<tr class="tableNomenclature">
                                      <td>
                                         <span>`+acordingNumber+`</span>
                                         <input type="hidden" name="order_items[]" value="null">
@@ -594,8 +465,7 @@ $(document).ready(function () {
 
                         ordersTableLength--;
                         if(ordersTableLength == 0) {
-                            // console.log(trss)
-                            $('.discountDesc tbody').html('');
+                                $('.discountDesc tbody').html('');
                             for (let i in trss) {
                                 if(trss[i] != ''){
                                     fromModal += trss[i];
@@ -795,7 +665,7 @@ $(document).ready(function () {
                         }
 
                         sequenceNumber++
-                        trss[pars.nomenclature_id] = `<tr class="tableNomenclature">
+                        trss[nomenclature] = `<tr class="tableNomenclature">
                                      <td>
                                         <span>`+sequenceNumber+`</span>
                                         <input type="hidden" name="order_items[]" value="null">
@@ -872,198 +742,6 @@ $(document).ready(function () {
             }
         })
     })
-
-    $('body').on('keyup','.countProductForUpdate', function (){
-        let count_balance = $(this).closest('tr').find('.count_balance').val()
-        // console.log(parseInt($(this).val()))
-        // console.log(parseInt(count_balance))
-        if (parseInt($(this).val()) >= parseInt(count_balance)){
-            $(this).attr('readonly', true)
-            // let balance = parseInt($(this).val()) - parseInt(count_balance);
-            // console.log(balance)
-        }
-        else {
-            let balance = parseInt(count_balance) - parseInt($(this).val());
-            console.log(balance)
-        }
-        // let ordersTotalCount = 0;
-        // let ordersTotalPriceSum = 0;
-        // let ordersBeforTotalPriceSum = 0;
-        // let totalDiscount = 0;
-        // let num = 0;
-        // let warehouse_id = $('.warehouse_id ').val();
-        // if ($(this).val() === "" || $(this).val() < 1){
-        //     $(this).val('');
-        //     $(this).attr('required', true);
-        //     $(this).closest('.tableNomenclature').find('.totalPrice').children('span').text(num.toFixed(2));
-        //     $(this).closest('.tableNomenclature').find('.totalPrice').children('input').val(num.toFixed(2));
-        //     $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('span').text(num.toFixed(2))
-        //     $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('input').val(num.toFixed(2))
-        //     $('.tableNomenclature').each(function () {
-        //         ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
-        //         ordersTotalCount += parseInt($(this).find('.count').children('input').val());
-        //         ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
-        //         totalDiscount += parseFloat($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
-        //     })
-        //     $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
-        //     $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-        //     $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
-        //     $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
-        // }else {
-            // var this_ = $(this);
-            // var id = this_.closest('.tableNomenclature').find(".nomId").val();
-            // var count = this_.val();
-            // var csrfToken = $('meta[name="csrf-token"]').attr("content");
-            // $.ajax({
-            //     url: '/products/get-products',
-            //     method: 'post',
-            //     datatype: 'json',
-            //     data: {
-            //         warehouse_id:warehouse_id,
-            //         itemId: id,
-            //         count:count,
-            //         _csrf: csrfToken
-            //     },
-            //     success: function (data) {
-            //         let param = JSON.parse(data)
-            //         if (data){
-            //             if (param.count === 'nullable'){
-            //                 this_.val('')
-            //             }else if (param.count === 'countMore'){
-            //                 this_.val('')
-            //                 this_.attr('required', true);
-            //                 alert('Պահեստում նման քանակի ապրանք չկա');
-            //                 this_.closest('.tableNomenclature').find('.totalPrice').children('span').text(num.toFixed(2))
-            //                 this_.closest('.tableNomenclature').find('.totalPrice').children('input').val(num.toFixed(2))
-            //                 this_.closest('.tableNomenclature').find('.totalBeforePrice').children('span').text(num.toFixed(2))
-            //                 this_.closest('.tableNomenclature').find('.totalBeforePrice').children('input').val(num.toFixed(2))
-            //                 $('body').find('.tableNomenclature').each(function () {
-            //                     ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
-            //                     ordersTotalCount += parseInt($(this).find('.count').children('input').val());
-            //                     ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
-            //                     totalDiscount += parseFloat($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
-            //                 })
-            //                 $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
-            //                 $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-            //                 $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
-            //                 $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
-            //
-            //             }else if (param.count === 'dontExists'){
-            //                 alert('Նման ապրանք պահեստում գոյություն չունի')
-            //                 this_.val('')
-            //             }
-            //             else if(param.count === 'exists'){
-            //                 this_.closest('.tableNomenclature').find('.totalPrice').children('span').text(parseFloat(this_.closest('.tableNomenclature').find('.price').children('input').val() * this_.val()).toFixed(2))
-            //                 this_.closest('.tableNomenclature').find('.totalPrice').children('input').val(parseFloat(this_.closest('.tableNomenclature').find('.price').children('input').val() * this_.val()).toFixed(2))
-            //                 this_.closest('.tableNomenclature').find('.totalBeforePrice').children('span').text(parseFloat(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val()).toFixed(2))
-            //                 this_.closest('.tableNomenclature').find('.totalBeforePrice').children('input').val(parseFloat(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val()).toFixed(2))
-            //                 $('body').find('.tableNomenclature').each(function () {
-            //                     ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
-            //                     ordersTotalCount += parseInt($(this).find('.count').children('input').val());
-            //                     ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
-            //                     totalDiscount += parseFloat($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
-            //                 })
-            //                 $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
-            //                 $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-            //                 $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
-            //                 $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
-            //             }
-            //         }
-            //     }
-            // })
-        // }
-    })
-    $('body').on('click','.countProductForUpdate', function (){
-        let ordersTotalCount = 0;
-        let ordersTotalPriceSum = 0;
-        let ordersBeforTotalPriceSum = 0;
-        let totalDiscount = 0;
-        var this_ = $(this);
-        let num = 0;
-        let warehouse_id = $('body').find('.warehouse_id').val();
-        if ($(this).val() === "" || $(this).val() < 1){
-            $(this).val('')
-            $(this).attr('required', true);
-            // $(this).closest('.tableNomenclature').find('.totalPrice').children('span').text(num.toFixed(2))
-            // $(this).closest('.tableNomenclature').find('.totalPrice').children('input').val(num.toFixed(2))
-            // $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('span').text(num.toFixed(2))
-            // $(this).closest('.tableNomenclature').find('.totalBeforePrice').children('input').val(num.toFixed(2))
-            // $('.tableNomenclature').each(function () {
-            //     ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
-            //     ordersTotalCount += parseInt($(this).find('.count').children('input').val());
-            //     ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
-            //     totalDiscount += parseFloat($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
-            // })
-            // $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
-            // $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-            // $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
-            // $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
-        }else {
-            // var id = this_.closest('.tableNomenclature').find(".nomId").val();
-            // var count = this_.val();
-            // var csrfToken = $('meta[name="csrf-token"]').attr("content");
-            //     $.ajax({
-            //         url: '/products/get-products',
-            //         method: 'post',
-            //         datatype: 'json',
-            //         data: {
-            //             warehouse_id:warehouse_id,
-            //             itemId: id,
-            //             count:count,
-            //             _csrf: csrfToken
-            //         },
-            //         success: function (data) {
-            //             let param = JSON.parse(data)
-            //             if (data){
-            //                 if (param.count === 'nullable'){
-            //                     this_.val('')
-            //                 }else if (param.count === 'countMore'){
-            //                     this_.val('')
-            //                     this_.attr('required', true);
-            //                     alert('Պահեստում նման քանակի ապրանք չկա');
-            //                     this_.closest('.tableNomenclature').find('.totalPrice').children('span').text(num.toFixed(2))
-            //                     this_.closest('.tableNomenclature').find('.totalPrice').children('input').val(num.toFixed(2))
-            //                     this_.closest('.tableNomenclature').find('.totalBeforePrice').children('span').text(num.toFixed(2))
-            //                     this_.closest('.tableNomenclature').find('.totalBeforePrice').children('input').val(num.toFixed(2))
-            //                     $('body').find('.tableNomenclature').each(function () {
-            //                         ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
-            //                         ordersTotalCount += parseInt($(this).find('.count').children('input').val());
-            //                         ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
-            //                         totalDiscount += parseFloat($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
-            //                     })
-            //                     $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
-            //                     $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-            //                     $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
-            //                     $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
-            //
-            //                 }else if (param.count === 'dontExists'){
-            //                     alert('Նման ապրանք պահեստում գոյություն չունի')
-            //                     this_.val('')
-            //                 }
-            //                 else if(param.count === 'exists'){
-            //                     this_.closest('.tableNomenclature').find('.totalPrice').children('span').text(parseFloat(this_.closest('.tableNomenclature').find('.price').children('input').val() * this_.val()).toFixed(2))
-            //                     this_.closest('.tableNomenclature').find('.totalPrice').children('input').val(parseFloat(this_.closest('.tableNomenclature').find('.price').children('input').val() * this_.val()).toFixed(2))
-            //                     this_.closest('.tableNomenclature').find('.totalBeforePrice').children('span').text(parseFloat(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val()).toFixed(2))
-            //                     this_.closest('.tableNomenclature').find('.totalBeforePrice').children('input').val(parseFloat(this_.closest('.tableNomenclature').find('.beforePrice').children('input').val() * this_.val()).toFixed(2))
-            //                     $('body').find('.tableNomenclature').each(function () {
-            //                         ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
-            //                         ordersTotalCount += parseInt($(this).find('.count').children('input').val());
-            //                         ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
-            //                         totalDiscount += parseFloat($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
-            //                     })
-            //                     $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
-            //                     $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-            //                     $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
-            //                     $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
-            //                 }
-            //             }
-            //         }
-            //     })
-        }
-    })
-
-
-
     $('body').on('click', '.deleteItemsFromDB',function (){
         let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
         if (confirmed){
@@ -1089,8 +767,7 @@ $(document).ready(function () {
                     _csrf:csrfToken
                 },
                 success:function (data){
-                    // console.log(data)
-                    if (data == 'true'){
+                        if (data == 'true'){
                         this_.closest('.tableNomenclature').remove();
                         alert('Հաջողությամբ ջնջված է:');
                         let ordersTotalCount = 0;
@@ -1117,7 +794,6 @@ $(document).ready(function () {
             })
 
         }
-
     })
     $('body').on('keyup','.ordersCountInput',function (){
         if ($(this).val() < 1){
@@ -1155,13 +831,11 @@ $(document).ready(function () {
                             this_.val('')
                         }
                         // else if (pars.count === 'exists'){
-                        //     // console.log(222)
-                        // }
+                            // }
                     }
                 }
             })
         }
-
     })
     $('body').on('click','.ordersCountInput',function (){
         if ($(this).val() < 1){
@@ -1173,7 +847,6 @@ $(document).ready(function () {
             let id_product = $(this).closest('tr').find('.prodId').data('id');
             var count = this_.val();
             var csrfToken = $('meta[name="csrf-token"]').attr("content");
-            // console.log(warehouse_id,id,count,id_product)
             $.ajax({
                 url: '/products/get-products',
                 method: 'post',
@@ -1314,7 +987,7 @@ $(document).ready(function () {
 
                         }
                         sequenceNumber++;
-                        trss[pars.nomenclature_id] = `<tr class="tableNomenclature">
+                        trss[nomenclature] = `<tr class="tableNomenclature">
                                      <td>
                                         <span>`+sequenceNumber+`</span>
                                         <input type="hidden" name="order_items[]" value="null">
@@ -1501,7 +1174,7 @@ $(document).ready(function () {
                         }
 
                         sequenceNumber++;
-                        trss[pars.nomenclature_id] += `<tr class="tableNomenclature">
+                        trss[nomenclature] = `<tr class="tableNomenclature">
                                                      <td>
                                                         <span>`+sequenceNumber+`</span>
                                                         <input type="hidden" name="order_items[]" value="`+stringProductId+`">
@@ -1546,14 +1219,14 @@ $(document).ready(function () {
                         ordersTableLength--;
                         if(ordersTableLength == 0){
                             // $('.discountDesc tbody').parent().append(discountBody);
-                            for (let i in trss) {
-                                if(trss[i] != ''){
-                                    newTbody.append(trss[i]);
-                                }
-                            }
-                            $('.ordersAddingTable tbody').replaceWith(newTbody);
-                            trCounter($('body').find('.ordersAddingTable'));
-                            newTbody = $('<tbody></tbody>');
+                            // for (let i in trss) {
+                            //     if(trss[i] != ''){
+                            //         newTbody.append(trss[i]);
+                            //     }
+                            // }
+                            // $('.ordersAddingTable tbody').replaceWith(newTbody);
+                            // trCounter($('body').find('.ordersAddingTable'));
+                            // newTbody = $('<tbody></tbody>');
                             // $('body').find('.ordersAddingTable').removeClass('d-none');
                             // $('body').find('.loader').toggleClass('d-none');
                             $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
@@ -1667,7 +1340,7 @@ $(document).ready(function () {
                             totalDiscount += parseFloat(pars[k].discount * pars[k].count).toFixed(2);
                         }
                         sequenceNumber++;
-                        trss[pars.nomenclature_id] += `<tr class="tableNomenclature">
+                        trss[nomenclature] = `<tr class="tableNomenclature">
                                                      <td>
                                                         <span>`+sequenceNumber+`</span>
                                                         <input type="hidden" name="order_items[]" value="`+stringProductId+`">
@@ -1710,20 +1383,16 @@ $(document).ready(function () {
                                                  </tr>`;
 
 
-
                         ordersTableLength--;
                         if(ordersTableLength == 0){
-                            // $('.discountDesc tbody').parent().append(discountBody);
-                            for (let i in trss) {
-                                if(trss[i] != ''){
-                                    newTbody.append(trss[i]);
-                                }
-                            }
-                            $('.ordersAddingTable tbody').replaceWith(newTbody);
-                            trCounter($('body').find('.ordersAddingTable'));
-                            newTbody = $('<tbody></tbody>');
-                            // $('body').find('.ordersAddingTable').removeClass('d-none');
-                            // $('body').find('.loader').toggleClass('d-none');
+                            // for (let i in trss) {
+                            //     if(trss[i] != ''){
+                            //         newTbody.append(trss[i]);
+                            //     }
+                            // }
+                            // $('.ordersAddingTable tbody').replaceWith(newTbody);
+                            // trCounter($('body').find('.ordersAddingTable'));
+                            // newTbody = $('<tbody></tbody>');
                             $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
                             $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
                             $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
