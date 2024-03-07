@@ -16,6 +16,7 @@ use \app\models\OrderItems;
         <input type="hidden" class="stringBeforePriceModal" value="<?=$order_items['string_before_price']?>">
         <input type="hidden" class="newStringBeforePriceModal" value="<?=$order_items['string_before_price']?>">
         <input type="hidden" class="countBalanceModal" value="<?=$order_items['count_balance']?>">
+        <input type="hidden" class="newCountBalanceModal" value="<?=$order_items['count_balance']?>">
 
         <input type="hidden" class="productIdModal" value="<?=$order_items['product_id']?>">
         <input type="hidden" class="newProductIdModal" value="<?=$order_items['product_id']?>">
@@ -26,7 +27,7 @@ use \app\models\OrderItems;
 <div class="row">
     <div class="col mb-3">
         <label for="countModal" class="form-label">Քանակ</label>
-        <input type="number" id="countByModal" value="<?=$order_items['count_by']?>" max="<?=$order_items['count']?>" min="1" class="form-control">
+        <input type="number" id="countByModal" value="<?=$order_items['count_by']?>" max="<?=$order_items['count_by']?>" min="1" class="form-control">
         <input type="hidden" id="countModal" value="<?=$order_items['count']?>" class="form-control">
     </div>
 </div>

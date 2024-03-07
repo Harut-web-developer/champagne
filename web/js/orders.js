@@ -1449,32 +1449,34 @@ $(document).ready(function () {
         let discountBy = $('body').find('#discountByModal').val() * countBy;
         let priceBy = $('body').find('#totalPriceModal').val();
         let priceBeforeDiscountBy = $('body').find('#totalBeforePriceModal').val();
-        let newStringCount = $('body').find('.newStringCountModal').val()
-        let newStringPrice = $('body').find('.newStringPriceModal').val()
-        let newStringBeforePrice = $('body').find('.newStringBeforePriceModal').val()
-        let newStringProductId = $('body').find('.newProductIdModal').val()
+        let newStringCount = $('body').find('.newStringCountModal').val();
+        let newStringPrice = $('body').find('.newStringPriceModal').val();
+        let newStringBeforePrice = $('body').find('.newStringBeforePriceModal').val();
+        let newStringProductId = $('body').find('.newProductIdModal').val();
+        let newCountStringBal = $('body').find('.newCountBalanceModal').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:'/orders/changing-items',
             method:'post',
             datatype:'json',
             data:{
-                itemsId:itemsId,
-                countBy:countBy,
-                costBy:costBy,
-                discountBy:discountBy,
-                priceBy:priceBy,
-                priceBeforeDiscountBy:priceBeforeDiscountBy,
+                itemsId:itemsId,//
+                countBy:countBy,//
+                costBy:costBy,//
+                discountBy:discountBy,//
+                priceBy:priceBy,//
+                priceBeforeDiscountBy:priceBeforeDiscountBy,//
                 newStringCount:newStringCount,
-                newStringPrice:newStringPrice,
-                newStringBeforePrice:newStringBeforePrice,
+                newStringPrice:newStringPrice,//
+                newStringBeforePrice:newStringBeforePrice,//
                 newStringProductId:newStringProductId,
+                newCountStringBal:newCountStringBal,//
                 _csrf:csrfToken
             },
             success:function (data){
                 if (data){
-                    // alert('Փոփոխությունը կատարվել է հաջողությամբ։');
-                    // location.reload();
+                    alert('Փոփոխությունը կատարվել է հաջողությամբ։');
+                    location.reload();
                 }
             }
         })
@@ -1514,18 +1516,21 @@ $(document).ready(function () {
                     newPrice = parseInt(stringCount[i]) * parseFloat(priceArr[i]);
                     newBeforePrice = parseInt(stringCount[i]) * parseFloat(beforePriceArr[i]);
                     bal -= parseInt(stringCount[i]);
+                    countBalance[i] = parseInt(countBalance[i]) + parseInt(stringCount[i]);
                     newPriceArr.pop();
                     newBeforePriceArr.pop();
                     newStringCount.pop();
                     newProductId.pop();
                 }
             }
+            let newCountBalance = countBalance.join(',');
             let newPriceArrStr = newPriceArr.join(',');
             let newBeforePriceArrStr = newBeforePriceArr.join(',');
             let newStringCountStr = newStringCount.join(',');
             let newProductIdStr = newProductId.join(',');
             $('#totalBeforePriceModal').val(parseFloat($('#totalBeforePriceModal').attr('max') - newBeforePrice).toFixed(2))
             $('#totalPriceModal').val(parseFloat($('#totalPriceModal').attr('max') - newPrice).toFixed(2))
+            $('.newCountBalanceModal').val(newCountBalance)
             $('.newStringCountModal').val(newStringCountStr)
             $('.newStringPriceModal').val(newPriceArrStr)
             $('.newStringBeforePriceModal').val(newBeforePriceArrStr)

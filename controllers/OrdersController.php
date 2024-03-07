@@ -1150,10 +1150,11 @@ class OrdersController extends Controller
         if ($this->request->isGet){
             $items = $this->request->get('orderItemsId');
             $order_items = OrderItems::find()
-                ->select('order_items.string_price,order_items.string_before_price,order_items.product_id,order_items.string_count,order_items.count_balance,
+                ->select('order_items.string_price,order_items.string_before_price,products.parent_id as product_id,order_items.string_count,order_items.count_balance,
                 order_items.discount,order_items.id,order_items.count,order_items.count_by,
                 order_items.price_by,order_items.price,order_items.price_before_discount,
                 order_items.price_before_discount_by,order_items.discount_by,order_items.cost,order_items.cost_by,nomenclature.name,')
+                ->leftJoin('products', 'products.id = order_items.product_id')
                 ->leftJoin('nomenclature', 'nomenclature.id = order_items.nom_id_for_name')
                 ->where(['order_items.id' => intval($items)])
                 ->asArray()
@@ -1166,28 +1167,44 @@ class OrdersController extends Controller
 
     public function actionChangingItems(){
         if ($this->request->isPost){
+            echo "<pre>";
             $post = $this->request->post();
             $string_count = explode(',',$this->request->post('newStringCount'));
+            $string_count_bal = explode(',',$post['newCountStringBal']);
             $string_price = explode(',',$this->request->post('newStringPrice'));
             $string_before_price = explode(',',$this->request->post('newStringBeforePrice'));
             $string_product_id = explode(',',$this->request->post('newStringProductId'));
-            echo "<pre>";
+
             $order_items = OrderItems::findOne($post['itemsId']);
-//            $product = Products::findOne([
-//                'parent_id' => $post['newStringProductId'],
-//                'document_id' => $order_items->order_id,
-//                'type' => 2
-//            ]);
-
-//            var_dump($product);
-
+            $order_items->string_count = $post['newStringCount'];
+            $order_items->string_price = $post['newStringPrice'];
+            $order_items->string_before_price = $post['newStringBeforePrice'];
+            $order_items->count_balance = $post['newCountStringBal'];
             $order_items->count_by = $post['countBy'];
             $order_items->cost_by = $post['costBy'];
             $order_items->discount_by = $post['discountBy'];
             $order_items->price_by = $post['priceBy'];
             $order_items->price_before_discount_by = $post['priceBeforeDiscountBy'];
-            exit();
-//            $order_items->save(false);
+            $order_items->save(false);
+            $product = Products::findOne($order_items->product_id);
+            $product_array = explode(',',$product->parent_id);
+            for ($k = count($product_array) - 1; $k >= 0; $k--){
+                $change_count = Products::findOne(intval($product_array[$k]));
+                if ($change_count->count - intval($string_count_bal[$k]) == 0){
+                    $change_count->count_balance = $change_count->count;
+                    array_pop($string_product_id);
+                    $product->parent_id = implode(',',$string_product_id);
+                    $change_count->save(false);
+                }elseif ($change_count->count - intval($string_count_bal[$k]) > 0){
+                    $change_count->count_balance = intval($string_count_bal[$k]);
+                    $product->parent_id = implode(',',$string_product_id);
+                    $change_count->save(false);
+                    break;
+                }
+            }
+
+            $product->count = array_sum($string_count);
+            $product->save(false);
             $for_orders = OrderItems::find()->select('SUM(count_by) as count,SUM(price_by) as total_price,
             SUM(discount_by) as discount,SUM(price_before_discount_by) as total_price_before_discount')
                 ->where(['status' => '1'])
@@ -1195,21 +1212,11 @@ class OrdersController extends Controller
                 ->asArray()
                 ->all();
             $orders = Orders::findOne($order_items->order_id);
-//            var_dump($orders);
-//            var_dump($for_orders);
-//            exit();
             $orders->total_price = $for_orders[0]['total_price'];
             $orders->total_price_before_discount = $for_orders[0]['total_price_before_discount'];
             $orders->total_discount = $for_orders[0]['discount'];
             $orders->total_count = $for_orders[0]['count'];
             $orders->save(false);
-
-            $products = Products::findOne($order_items->product_id);
-//            $products_batch = Products::findOne($products->parent_id);
-//            $products_batch->count_balance += $products->count - $order_items->count_by;
-//            $products_batch->save(false);
-            $products->count = $order_items->count_by;
-            $products->save(false);
             return json_encode('change');
         }
     }
