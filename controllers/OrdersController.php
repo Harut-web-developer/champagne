@@ -1224,7 +1224,7 @@ class OrdersController extends Controller
         ]);
     }
     public function actionDeleteItems(){
-//        echo "<pre>";
+        echo "<pre>";
         if ($this->request->isPost){
             $total_count = $this->request->post('totalCount');
             $total_price = $this->request->post('totalPrice');
@@ -1233,10 +1233,19 @@ class OrdersController extends Controller
             $item_id = intval($this->request->post('itemId'));
             $nom_id = intval($this->request->post('nomId'));
 
-            $orders_id = OrderItems::find()->select('order_id,count,count_by,warehouse_id, nom_id_for_name,product_id')->where(['id' => $item_id])->one();
+            $orders_id = OrderItems::find()->select('order_id,count,count_by,warehouse_id,
+             nom_id_for_name,product_id')->where(['id' => $item_id])->one();
             $keeper = Users::findOne(['warehouse_id' => $orders_id->warehouse_id]);
             $is_exit = Orders::findOne($orders_id->order_id);
             $exist_orders_items = OrderItems::find()->where(['status' => '1'])->andWhere(['order_id' => $orders_id->order_id])->count();
+            var_dump($this->request->post());
+            var_dump($orders_id);
+            var_dump($exist_orders_items);
+            $delete_items = OrderItems::findOne($item_id);
+            $delete_products = Products::findOne($delete_items->product_id);
+            var_dump($delete_items);
+            var_dump($delete_products);
+            die;
             if ($exist_orders_items == 1){
                 return json_encode(false);
             }else{
@@ -1264,7 +1273,6 @@ class OrdersController extends Controller
                 }else{
                     $product_id = Products::findOne($orders_id->product_id);
                     if ($orders_id->count - $orders_id->count_by == 0){
-//                    var_dump(1111);
                         $delete_items = OrderItems::findOne($item_id);
                         $delete_items->status = '0';
                         $delete_items->save(false);
