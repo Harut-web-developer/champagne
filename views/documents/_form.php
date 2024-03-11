@@ -192,9 +192,9 @@ $session = Yii::$app->session;
                                         <input class="itemsId" type="hidden" name="items[]" value="<?=$document_item['nom_id']?>">
                                     </td>
                                     <td class="name"><?=$document_item['name']?></td>
-                                    <?php if ($items && ($type == '8' || $type == '6' || $type == '7')){?>
+                                    <?php if ($items && ($type == '8' || $type == '6' || $type == '7' || $type == '10')){?>
                                         <td>
-                                            <input type="number" class="form-control" readonly value="<?= ($document_item['wastrel'] != null) ? $document_item['wastrel'] : 0 ?>">                                        </td>
+                                            <input type="number" class="form-control input_wastrel" readonly value="<?= ($document_item['wastrel'] != null) ? $document_item['wastrel'] : 0 ?>">                                        </td>
                                     <?php }?>
                                     <?php
                                     if ($model->document_type == '7'){?>

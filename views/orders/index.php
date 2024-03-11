@@ -58,7 +58,7 @@ $action_column[] = [
         ]);
     },
         'delivered'=>function ($url, $model, $key) {
-         if($model->status == 1) {
+         if($model->status == 1 && $model->is_exit != 1) {
              return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
                  'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
              ]);

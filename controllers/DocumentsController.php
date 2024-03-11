@@ -871,6 +871,7 @@ class DocumentsController extends Controller
             'id_count' => $id_count ,
             'total' => $total,
             'search_name' => $search_name,
+            'document_type' => $document_type,
         ]);
     }
 
@@ -910,7 +911,7 @@ class DocumentsController extends Controller
             ->all();
         if ($document_type != "Մուտք"){
             $query = Products::find();
-            $nomenclatures = $query->select('products.id,nomenclature.id as nomenclature_id,
+            $nomenclatures = $query->select('SUM(count_balance) as count_balance, products.id,nomenclature.id as nomenclature_id,
                 nomenclature.image,nomenclature.name,nomenclature.cost,products.count,products.price')
                 ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
                 ->where(['and',['products.status' => 1,'nomenclature.status' => 1,'products.type' => 1]])
@@ -937,6 +938,8 @@ class DocumentsController extends Controller
             'total' => $total,
             'search_name' => $search_name,
             'urlId' => $urlId,
+            'document_type' => $document_type,
+            'update' => 'update',
         ]);
     }
     public function actionUpdate($id)

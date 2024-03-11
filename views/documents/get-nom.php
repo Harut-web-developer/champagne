@@ -11,10 +11,7 @@
             </thead>
             <tbody class="table-border-bottom-0 tbody_">
             <?php
-            foreach ($nomenclatures as $keys => $nomenclature){
-//                if ($nomenclature['count_balance'] != 0){?>
-
-
+            foreach ($nomenclatures as $keys => $nomenclature){?>
                 <tr class="documentsTableTr">
                     <td>
                         <span><?=$keys + 1?></span>
@@ -24,6 +21,12 @@
                     <td class="documentsName"><?=$nomenclature['name']?></td>
                     <td class="documentsCount">
                         <input type="number" class="form-control documentsCountInput" value="<?= $id_count[$nomenclature['nomenclature_id']] ?? '' ?>">
+                        <?php if($document_type != 1 && !isset($update)){ ?>
+                            <span>Մնացորդը՝ <?=$nomenclature['count_balance']?> </span>
+                        <?php } ?>
+                        <?php if($document_type != "Մուտք" && isset($update)){ ?>
+                            <span>Մնացորդը՝ <?=$nomenclature['count_balance']?> </span>
+                        <?php } ?>
                         <input class="documentsPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
                     </td>
                 </tr>
