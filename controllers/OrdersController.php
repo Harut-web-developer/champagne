@@ -1163,9 +1163,6 @@ class OrdersController extends Controller
             $string_before_price = explode(',',$this->request->post('newStringBeforePrice'));
             $string_product_id = explode(',',$this->request->post('newStringProductId'));
             $string_discount = explode(',',$this->request->post('discountBy'));
-//            var_dump($string_count_bal);
-//            var_dump($string_product_id);
-//            exit();
             $order_items = OrderItems::findOne($post['itemsId']);
             $order_items->string_count = $post['newStringCount'];
             $order_items->string_discount = $post['discountBy'];
@@ -1184,21 +1181,6 @@ class OrdersController extends Controller
             $order_items->save(false);
             $product = Products::findOne($order_items->product_id);
             $product->price = $post['lastBeforePrice'];
-            $product->str_count_balance = $post['newCountStringBal'];
-//            $product_array = explode(',',$product->parent_id);
-//            for ($k = count($product_array) - 1; $k >= 0; $k--){
-//                $change_count = Products::findOne(intval($product_array[$k]));
-//                if ($change_count->count - intval($string_count_bal[$k]) == 0){
-//                    $change_count->count_balance = $change_count->count;
-//                    $product->parent_id = implode(',',$string_product_id);
-//                    $change_count->save(false);
-//                }elseif ($change_count->count - intval($string_count_bal[$k]) > 0){
-//                    $change_count->count_balance = intval($string_count_bal[$k]);
-//                    $product->parent_id = implode(',',$string_product_id);
-//                    $change_count->save(false);
-//                    break;
-//                }
-//            }
             $product->count = array_sum($string_count);
             $product->save(false);
             $for_orders = OrderItems::find()->select('SUM(count_by) as count,SUM(price_by) as total_price,
@@ -1235,13 +1217,11 @@ class OrdersController extends Controller
             $total_discount = $this->request->post('totalDiscount');
             $item_id = intval($this->request->post('itemId'));
             $nom_id = intval($this->request->post('nomId'));
-
             $orders_id = OrderItems::find()->select('order_id,count,count_by,warehouse_id, nom_id_for_name,product_id')->where(['id' => $item_id])->one();
             $keeper = Users::findOne(['warehouse_id' => $orders_id->warehouse_id]);
             $is_exit = Orders::findOne($orders_id->order_id);
             $exist_orders_items = OrderItems::find()->where(['status' => '1'])->andWhere(['order_id' => $orders_id->order_id])->count();
             $deliver_id_ = Documents::find()->select('*')->where(['orders_id' => $orders_id->order_id])->asArray()->one();
-
             if ($exist_orders_items == 1){
                 return json_encode(false);
             }else{

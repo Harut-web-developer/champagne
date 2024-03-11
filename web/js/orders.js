@@ -181,6 +181,7 @@ $(document).ready(function () {
                             countProd += pars[k].count;
                             priceProd += parseFloat(pars[k].price).toFixed(2) * pars[k].count;
                             beforePriceProd += parseFloat(pars[k].format_before_price).toFixed(2) * pars[k].count;
+
                             if(k == pars.length - 1){
                                 discountProd = pars[k].discount;
                                 countDiscountId = pars[k].count_discount_id;
@@ -772,7 +773,7 @@ $(document).ready(function () {
             var itemId = this_.closest('.tableNomenclature').find('.orderItemsId').val();
             var nomId = this_.closest('.tableNomenclature').find('.nomId').val();
             var totalPriceBeforeDiscount = $('#orders-total_price_before_discount').val() - (parseFloat(this_.closest('tr').find('.totalBeforePrice').find('input').val()).toFixed(2));
-            var totalDiscount = $('#orders-total_discount').val() - (parseFloat(discount).toFixed(2));
+            var totalDiscount = ($('#orders-total_discount').val() - parseFloat(discount)).toFixed(2);
             var totalPrice = $('#orders-total_price').val() - (parseFloat(this_.closest('tr').find('.totalPrice').find('input').val()).toFixed(2));
             var totalCount = $('#orders-total_count').val() - (this_.closest('tr').find('.countProductForUpdate').val());
             var csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -1519,10 +1520,14 @@ $(document).ready(function () {
         if (parseInt($(this).val()) > parseInt($('#countModal').val())){
             alert("Պատվերի քանակից ավել հնարավոր չէ փոխել։")
             $(this).val($('#countModal').val());
+            $('.addChange').prop('disabled', false);
         }else if (parseInt($(this).val()) < 1 || $(this).val() == ''){
-            alert("Նշված դաշտը չի կարող լինել դատարկ կամ 1-ից պակաս։")
-            $(this).val($('#countModal').val());
+            // alert("Նշված դաշտը չի կարող լինել դատարկ կամ 1-ից պակաս։")
+            // $(this).val($('#countModal').val());
+            $('.addChange').prop('disabled', true);
+
         }else {
+            $('.addChange').prop('disabled', false);
             let bal = parseInt($(this).attr('max')) - $(this).val()
             let priceArr = $('.stringPriceModal').val().split(',');
             let beforePriceArr = $('.stringBeforePriceModal').val().split(',');
@@ -1588,7 +1593,7 @@ $(document).ready(function () {
             $('.addChange').prop('disabled', false);
         }
         else if ($(this).val() < 1) {
-            alert("Նշված դաշտը չի կարող լինել դատարկ կամ 1-ից պակաս։")
+            // alert("Նշված դաշտը չի կարող լինել դատարկ կամ 1-ից պակաս։")
             $('.addChange').prop('disabled', true);
         }
         else {
