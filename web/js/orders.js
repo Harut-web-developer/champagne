@@ -4,7 +4,7 @@ $(document).ready(function () {
         count_id($(this));
     });
     function count_id(el) {
-        let id = el.closest('tr').find('.nomId').data('product');
+        let id = el.closest('tr').find('.prodId').data('id');
         let count = el.val();
         if (count) {
             id_count[String(id).trim()] = parseInt(count.trim());

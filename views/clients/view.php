@@ -32,7 +32,6 @@ $this->params['date_tab'] = $date_tab;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
             [
                 'attribute' => 'route_id',
                 'value' => function ($model) {
@@ -44,6 +43,16 @@ $this->params['date_tab'] = $date_tab;
                 }
             ],
             'sort_',
+            [
+                'attribute' => 'client_warehouse_id',
+                'value' => function ($model) {
+                    if ($model->warehouseName) {
+                        return $model->warehouseName->name;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
             'name',
             'location',
             'phone',
