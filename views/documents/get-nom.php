@@ -24,6 +24,9 @@
                     <td class="documentsName"><?=$nomenclature['name']?></td>
                     <td class="documentsCount">
                         <input type="number" class="form-control documentsCountInput" value="<?= $id_count[$nomenclature['nomenclature_id']] ?? '' ?>">
+                        <?php if($document_type != 1){ ?>
+                            <span>Մնացորդը՝ <?=$nomenclature['count_balance']?> </span>
+                        <?php } ?>
                         <input class="documentsPriceInput" type="hidden" value="<?=$nomenclature['price']?>">
                     </td>
                 </tr>

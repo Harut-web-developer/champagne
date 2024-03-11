@@ -107,7 +107,10 @@ class SiteController extends Controller
             $password = Yii::$app->request->post('password');
             $remember = Yii::$app->request->post('remember');
             $identity = Users::findOne(['username' => $username]);
-            $valid = password_verify($password, $identity->password);
+            $valid = '';
+            if ($identity && $identity->username === $username){
+                $valid = password_verify($password, $identity->password);
+            }
             if ($identity && $valid && $identity->username === $username) {
                 if (isset($remember)){
                     $session->set('remember',true);

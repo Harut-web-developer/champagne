@@ -871,6 +871,7 @@ class DocumentsController extends Controller
             'id_count' => $id_count ,
             'total' => $total,
             'search_name' => $search_name,
+            'document_type' => $document_type,
         ]);
     }
 

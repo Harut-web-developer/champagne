@@ -366,6 +366,9 @@
 .countDocuments{
     min-width: 100px;
 }
+.input_wastrel{
+    min-width: 100px;
+}
 .PriceDocuments{
     min-width: 100px;
 }

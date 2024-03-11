@@ -35,8 +35,6 @@ $(document).ready(function () {
         }else{
             delete id_count[String(id).trim()];
         }
-        console.log(id_count)
-
     });
     function count_id(el) {
         let id = el.closest('tr').find('.nom_id').data('id');
@@ -46,17 +44,13 @@ $(document).ready(function () {
         }else{
             delete id_count[String(id).trim()];
         }
-        // console.log(id_count)
-
     }
 
     function check_delete(el){
         let id = el.closest('tr').find(".itemsId").val();
-        // console.log(id)
         $('.documentsTableTr').find('.nom_id[data-id="id"]').siblings('.documentsCount').find('.documentsCountInput').val('');
         delete id_count[String(id).trim()]
         delete trs[id.trim()];
-        // console.log(trs)
     }
 
     var newTbody = $('<tbody></tbody>');
@@ -260,11 +254,8 @@ $(document).ready(function () {
                                          <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                       </tr>`.trim();
                 }
-
             }
         })
-        // console.log('by_ajax_update')
-
     })
 
     $('body').on('change','#documents-warehouse_id, #documents-to_warehouse',function(){
@@ -427,10 +418,8 @@ $(document).ready(function () {
                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                   </tr>`.trim();
                 }
-
             }
         })
-        // console.log('searchForDocument')
     })
 
     var arr_carent_page_update = [];
@@ -490,10 +479,8 @@ $(document).ready(function () {
                                          <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                       </tr>`.trim();
                 }
-
             }
         })
-        // console.log('searchForDocumentUpdate')
     })
 
     $('body').on('click', '.by_ajax', function () {
@@ -673,7 +660,6 @@ $(document).ready(function () {
             success:function (data) {
                 let param = JSON.parse(data);
                 $('body').find('.documentsAddingTable tbody').html('')
-                // console.log(param)
                 let td_string = '';
                 for (let m = 0; m < param.length; m++){
                     if (param[m].AAH == 1){

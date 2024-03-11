@@ -20,6 +20,7 @@ use app\models\Products;
 use app\models\Users;
 use app\models\Warehouse;
 use Couchbase\Document;
+use PHPUnit\Util\Xml\ValidationResult;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
@@ -792,17 +793,18 @@ class OrdersController extends Controller
                 $product->save(false);
             }
         }else{
-//            var_dump($order_items);
-//            exit();
                 $orders->status = '0';
                 $orders->save(false);
 
                 $document = new Documents();
                 $document->user_id = $keeper->id;
+                $deliver_id_ = Documents::find()->select('*')->where(['orders_id' => $id])->asArray()->one();
                 $session = Yii::$app->session;
-                if ($session['role_id'] == 3)
-                {
+                if ($session['role_id'] == 3){
                     $document->deliver_id = $session['user_id'];
+                }
+                if ($session['role_id'] == 1 && !is_null($deliver_id_['deliver_id'])) {
+                    $document->deliver_id = $deliver_id_['deliver_id'];
                 }
                 $document->orders_id = $orders_items_refuse->order_id;
                 $document->warehouse_id = $orders_items_refuse->warehouse_id;
@@ -884,7 +886,6 @@ class OrdersController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-//        echo "<pre>";
         $session = Yii::$app->session;
         date_default_timezone_set('Asia/Yerevan');
         $changed_items = [];
@@ -924,7 +925,7 @@ class OrdersController extends Controller
                 $num++;
             }
         }
-//        var_dump($order_items);
+        $deliver_id_ = Documents::find()->select('*')->where(['orders_id' => $id])->asArray()->one();
         if(!empty($changed_items)){
             $keeper = Users::findOne(['warehouse_id' => $changed_items[0][1]]);
             $document = new Documents();
@@ -932,6 +933,9 @@ class OrdersController extends Controller
             $session = Yii::$app->session;
             if ($session['role_id'] == 3) {
                 $document->deliver_id = $session['user_id'];
+            }
+            if ($session['role_id'] == 1 && !is_null($deliver_id_['deliver_id'])) {
+                $document->deliver_id = $deliver_id_['deliver_id'];
             }
             $document->orders_id = $changed_items[0][0];
             $document->warehouse_id = $changed_items[0][1];
@@ -1227,6 +1231,7 @@ class OrdersController extends Controller
             $keeper = Users::findOne(['warehouse_id' => $orders_id->warehouse_id]);
             $is_exit = Orders::findOne($orders_id->order_id);
             $exist_orders_items = OrderItems::find()->where(['status' => '1'])->andWhere(['order_id' => $orders_id->order_id])->count();
+            $deliver_id_ = Documents::find()->select('*')->where(['orders_id' => $orders_id->order_id])->asArray()->one();
 
             if ($exist_orders_items == 1){
                 return json_encode(false);
@@ -1267,9 +1272,11 @@ class OrdersController extends Controller
                         $document = new Documents();
                         $document->user_id = $keeper->id;
                         $session = Yii::$app->session;
-                        if ($session['role_id'] == 3)
-                        {
+                        if ($session['role_id'] == 3){
                             $document->deliver_id = $session['user_id'];
+                        }
+                        if ($session['role_id'] == 1 && !is_null($deliver_id_['deliver_id'])) {
+                            $document->deliver_id = $deliver_id_['deliver_id'];
                         }
                         $document->orders_id = $orders_id->order_id;
                         $document->warehouse_id = $orders_id->warehouse_id;
@@ -1320,9 +1327,11 @@ class OrdersController extends Controller
                         $document = new Documents();
                         $document->user_id = $keeper->id;
                         $session = Yii::$app->session;
-                        if ($session['role_id'] == 3)
-                        {
+                        if ($session['role_id'] == 3){
                             $document->deliver_id = $session['user_id'];
+                        }
+                        if ($session['role_id'] == 1 && !is_null($deliver_id_['deliver_id'])) {
+                            $document->deliver_id = $deliver_id_['deliver_id'];
                         }
                         $document->orders_id = $orders_id->order_id;
                         $document->warehouse_id = $orders_id->warehouse_id;

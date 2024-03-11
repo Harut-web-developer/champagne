@@ -4,7 +4,7 @@ $(document).ready(function () {
         count_id($(this));
     });
     function count_id(el) {
-        let id = el.closest('tr').find('.nom_Id').data('id');
+        let id = el.closest('tr').find('.nomId').data('product');
         let count = el.val();
         if (count) {
             id_count[String(id).trim()] = parseInt(count.trim());
@@ -853,10 +853,8 @@ $(document).ready(function () {
                             alert('Պահեստում նման քանակի ապրանք չկա');
                         }else if (p.count === 'dontExists'){
                             alert('Նման ապրանք պահեստում գոյություն չունի')
-                            this_.val('')
+                            // this_.val('')
                         }
-                        // else if (pars.count === 'exists'){
-                            // }
                     }
                 }
             })
