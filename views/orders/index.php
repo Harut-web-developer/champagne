@@ -235,6 +235,8 @@ $action_column[] = [
                         }
                     ],
                     'total_price',
+                    'total_price_before_discount',
+                    'total_discount',
                     'total_count',
                     'orders_date',
                 ],

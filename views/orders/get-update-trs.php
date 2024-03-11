@@ -11,7 +11,8 @@
     <?php
     $itemsArray = [];
     foreach($order_items as $keys => $item){
-
+        $str_price = explode(',',$item['string_price']);
+        $str_before_price = explode(',',$item['string_before_price']);
         $itemsArray[] = $item['product_id'];
         ?>
         <tr class="tableNomenclature fromDB">
@@ -28,28 +29,17 @@
             </td>
             <td class="name"><?=$item['name']?></td>
             <td class="count" style="justify-content: center; text-align: center;">
-                <span name="count_[]" class="form-control countProductForUpdate"><?=$item['count']?></span>
+                <span name="count_[]" class="form-control countProductForUpdate"><?=$item['count_by']?></span>
             </td>
             <td class="discount">
-                <?php
-                if ($item['discount'] == 0){
-                    ?>
-                    <span>0</span>
-                    <input type="hidden" name="discount[]" value="0">
-                    <?php
-                }else{
-                    ?>
-                    <span><?=$item['discount'] / $item['count']?></span>
-                    <input type="hidden" name="discount[]" value="<?=$item['discount'] / $item['count']?>">
-                    <?php
-                }
-                ?>
+                <span><?=$item['string_discount']?></span>
+                <input type="hidden" name="discount[]" value="<?=$item['string_discount']?>">
             </td>
-            <td class="beforePrice"><span><?=$item['beforePrice']?></span>
-                <input type="hidden" name="beforePrice[]" value="<?=$item['beforePrice']?>">
+            <td class="beforePrice"><span><?=$str_before_price[count($str_before_price) - 1]?></span>
+                <input type="hidden" name="beforePrice[]" value="<?=$str_before_price[count($str_before_price) - 1]?>">
             </td>
-            <td class="price"><span><?=$item['price']?></span>
-                <input type="hidden" name="price[]" value="<?=$item['price']?>">
+            <td class="price"><span><?=$str_price[count($str_price) - 1]?></span>
+                <input type="hidden" name="price[]" value="<?=$str_price[count($str_price) - 1]?>">
             </td>
             <td class="totalBeforePrice">
                 <span><?=$item['totalBeforePrice']?></span>

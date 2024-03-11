@@ -120,14 +120,24 @@ class OrdersController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionPrintDoc($id){
-        $order_items = OrderItems::find()->select('products.AAH,products.count_balance,order_items.id,order_items.product_id,order_items.count,(order_items.price_before_discount / order_items.count) as beforePrice,
-        order_items.price_before_discount as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
-        order_items.price as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
+        $order_items = OrderItems::find()->select('products.AAH,products.count_balance,order_items.id,order_items.product_id,
+        order_items.count_by,order_items.string_price,order_items.string_discount,order_items.string_before_price,order_items.price_before_discount_by as totalBeforePrice,
+        (order_items.cost / order_items.count) as cost,order_items.discount_by,
+        order_items.price as total_price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
             ->leftJoin('products','products.id = order_items.product_id')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['order_id' => $id])
             ->asArray()
             ->all();
+//        $order_items = OrderItems::find()->select('products.AAH,products.count_balance,order_items.id,order_items.product_id,
+//        order_items.count_by,(order_items.price_before_discount / order_items.count) as beforePrice,
+//        order_items.price_before_discount as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
+//        order_items.price as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
+//            ->leftJoin('products','products.id = order_items.product_id')
+//            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
+//            ->where(['order_id' => $id])
+//            ->asArray()
+//            ->all();
         return $this->renderAjax('get-update-trs', [
             'order_items' => $order_items,
         ]);
@@ -1403,16 +1413,19 @@ class OrdersController extends Controller
             ->limit(10)
             ->asArray()
             ->all();
-
+//        echo "<pre>";
         $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,
-        order_items.count,(order_items.price / order_items.count) as price,
-        (order_items.cost / order_items.count) as cost,order_items.discount,order_items.price_before_discount,
+        order_items.count_by,order_items.price_by,order_items.string_discount,order_items.string_price,order_items.string_before_price,
+        order_items.cost_by,order_items.discount_by,order_items.price_before_discount_by,
         nomenclature.name, (nomenclature.id) as nom_id')
             ->leftJoin('products','products.id = order_items.product_id')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
-            ->where(['order_id' => $id])
+            ->where(['order_items.order_id' => $id])
+            ->andWhere(['order_items.status' => '1'])
             ->asArray()
             ->all();
+//        var_dump($order_items);
+//        exit();
         $clients = Clients::find()->select('id, name')->asArray()->all();
         $clients = ArrayHelper::map($clients,'id','name');
         $users = Users::find()->select('id, name')->asArray()->all();

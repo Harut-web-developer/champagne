@@ -50,6 +50,7 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                     <th>ԶԵՂՉ</th>
                     <th>ԳԻՆԸ ՄԻՆՉԵՒ ԶԵՂՉԵԼԸ</th>
                     <th>ԶԵՂՉՎԱԾ ԳԻՆ</th>
+                    <th>Ընդհանուր զեղչ</th>
                     <th>ԸՆԴՀԱՆՈՒՐ ԳՈՒՄԱՐ</th>
                     <th>ԸՆԴՀԱՆՈՒՐ ԶԵՂՉՎԱԾ ԳՈՒՄԱՐ</th>
                 </tr>
@@ -57,16 +58,20 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                 <tbody>
                 <?php
                 $j = 1;
-                for ($i=0; $i<count($order_items); $i++){ ?>
+                for ($i=0; $i<count($order_items); $i++){
+                    $str_price = explode(',',$order_items[$i]['string_price']);
+                    $str_before_price = explode(',',$order_items[$i]['string_before_price']);
+                    ?>
                     <tr>
                         <td><?=$j++; ?></td>
                         <td><?=$order_items[$i]['name']; ?></td>
-                        <td><?=$order_items[$i]['count'] . " հատ"; ?></td>
-                        <td><?=number_format($order_items[$i]['discount']/$order_items[$i]['count'],2) . " դր" ?></td>
-                        <td><?=number_format($order_items[$i]['price'] + ($order_items[$i]['discount']/$order_items[$i]['count']),2) . " դր" ?></td>
-                        <td><?=number_format($order_items[$i]['price'],2) . " դր" ?></td>
-                        <td><?=number_format($order_items[$i]['price_before_discount'],2) . " դր" ?></td>
-                        <td><?=number_format($order_items[$i]['count']*$order_items[$i]['price'],2) . " դր" ?></td>
+                        <td><?=$order_items[$i]['count_by'] . " հատ"; ?></td>
+                        <td><?=$order_items[$i]['string_discount']?></td>
+                        <td><?=number_format($str_before_price[count($str_before_price) - 1],2) . " դր" ?></td>
+                        <td><?=number_format($str_price[count($str_price) - 1],2) . " դր" ?></td>
+                        <td><?=$order_items[$i]['discount_by']?></td>
+                        <td><?=number_format($order_items[$i]['price_before_discount_by'],2) . " դր" ?></td>
+                        <td><?=number_format($order_items[$i]['price_by'],2) . " դր" ?></td>
                     </tr>
                 <?php } ?>
                 </tbody>

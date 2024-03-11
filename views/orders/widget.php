@@ -167,6 +167,8 @@ $action_column[] = [
                         }
                     ],
                     'total_price',
+                    'total_price_before_discount',
+                    'total_discount',
                     'total_count',
                     'orders_date',
                 ],
@@ -241,6 +243,8 @@ $action_column[] = [
                         }
                     ],
                     'total_price',
+                    'total_price_before_discount',
+                    'total_discount',
                     'total_count',
                     'orders_date',
                     ...$action_column,
@@ -380,6 +384,8 @@ else { ?>
                         }
                     ],
                     'total_price',
+                    'total_price_before_discount',
+                    'total_discount',
                     'total_count',
                     'orders_date',
                 ],
@@ -455,6 +461,8 @@ else { ?>
                         }
                     ],
                     'total_price',
+                    'total_price_before_discount',
+                    'total_discount',
                     'total_count',
                     'orders_date',
                     ...$action_column,
