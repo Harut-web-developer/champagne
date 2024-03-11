@@ -1,10 +1,6 @@
 <?php
-use \app\models\OrderItems;
-//var_dump($items);
-//echo "<pre>";
-
-//var_dump($order_items);
-//exit();
+$price = explode(',',$order_items['string_price']);
+$before_price = explode(',',$order_items['string_before_price']);
 ?>
 <div class="row">
     <div class="col mb-3">
@@ -35,19 +31,19 @@ use \app\models\OrderItems;
     <div class="col mb-3">
         <label for="discountByModal" class="form-label">Զեղչի չափը</label>
 <!--        <input type="hidden" readonly id="discountModal" value="--><?//=number_format($order_items['discount'] / $order_items['count'],2,'.','')?><!--" class="form-control">-->
-        <input type="number" readonly id="discountByModal" value="<?=number_format($order_items['discount'] / $order_items['count'],2,'.','')?>" class="form-control">
+        <input type="text" readonly id="discountByModal" value="<?=$order_items['string_discount']?>" data-discount="<?=$order_items['string_discount']?>" class="form-control">
     </div>
 </div>
 <div class="row">
     <div class="col mb-3">
         <label for="beforePriceModal" class="form-label">Գինը մինչև զեղչելը</label>
-        <input type="number" readonly id="beforePriceModal" value="<?=number_format($order_items['price_before_discount_by'] / $order_items['count_by'],2,'.','')?>" class="form-control">
+        <input type="number" readonly id="beforePriceModal" value="<?=number_format($before_price[count($before_price) - 1],2,'.','')?>" class="form-control">
     </div>
 </div>
 <div class="row">
     <div class="col mb-3">
         <label for="priceModal" class="form-label">Զեղչված գինը</label>
-        <input type="number" readonly id="priceModal" value="<?=number_format($order_items['price_by'] /  $order_items['count_by'],2,'.','')?>" class="form-control">
+        <input type="number" readonly id="priceModal" value="<?=number_format($price[count($price) - 1],2,'.','')?>" class="form-control">
     </div>
 </div>
 <div class="row">

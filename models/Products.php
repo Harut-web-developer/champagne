@@ -120,6 +120,7 @@ class Products extends \yii\db\ActiveRecord
                 ->all();
             $end_result = [];
             $bal = $orders_count;
+            $string_discount = '';
             $string_product = '';
             $string_count = '';
             $string_count_balance = '';
@@ -966,6 +967,7 @@ class Products extends \yii\db\ActiveRecord
                             }
                         }
                         $discount_name = Discount::find()->select('id,name,discount,type')->asArray()->all();
+                        $string_discount .= number_format($item->price - $price,2, '.', '') . ',';
                         $string_product .= $item->id . ',';
                         $string_count .= $bal . ',';
                         $string_count_balance .= $count_balance . ',';
@@ -993,7 +995,7 @@ class Products extends \yii\db\ActiveRecord
                         $res['string_count_balance'] = substr($string_count_balance,0,-1);
                         $res['string_price'] = substr($string_price,0,-1);
                         $res['string_before_price'] = substr($string_before_price,0,-1);
-
+                        $res['string_discount'] = substr($string_discount,0,-1);
 //                        $res['count_balance'] = $count_balance;
                         array_push($end_result,$res);
 
@@ -1001,6 +1003,7 @@ class Products extends \yii\db\ActiveRecord
                     }
                     else{
                         $desc = 'empty';
+                        $string_discount .= number_format($item->price - $item->price,2, '.', '') . ',';
                         $string_product .= $item->id . ',';
                         $string_count .= $bal . ',';
                         $string_count_balance .= $count_balance . ',';
@@ -1027,6 +1030,7 @@ class Products extends \yii\db\ActiveRecord
                         $res['string_count_balance'] = substr($string_count_balance,0,-1);
                         $res['string_price'] = substr($string_price,0,-1);
                         $res['string_before_price'] = substr($string_before_price,0,-1);
+                        $res['string_discount'] = substr($string_discount,0,-1);
 //                        $res['count_balance'] = $count_balance;
                         array_push($end_result,$res);
                         return json_encode($end_result);
@@ -1871,6 +1875,7 @@ class Products extends \yii\db\ActiveRecord
                             }
                         }
                         $discount_name = Discount::find()->select('id,name,discount,type')->asArray()->all();
+                        $string_discount .= number_format($item->price - $price,2, '.', '') . ',';
                         $string_product .= $item->id . ',';
                         $string_count .= $item->count_balance . ',';
                         $string_price .= number_format($price,2, '.', '') . ',';
@@ -1900,11 +1905,13 @@ class Products extends \yii\db\ActiveRecord
                         $res['string_count_balance'] = substr($string_count_balance,0,-1);
                         $res['string_price'] = substr($string_price,0,-1);
                         $res['string_before_price'] = substr($string_before_price,0,-1);
+                        $res['string_discount'] = substr($string_discount,0,-1);
 //                        $res['count_balance'] = $count_balance;
                         array_push($end_result,$res);
                     }
                     else{
                         $desc = 'empty';
+                        $string_discount .= number_format($item->price - $item->price,2, '.', '') . ',';
                         $string_product .= $item->id . ',';
                         $string_count .= $item->count_balance . ',';
                         $string_price .= number_format($item->price,2, '.', '') . ',';
@@ -1933,6 +1940,7 @@ class Products extends \yii\db\ActiveRecord
                         $res['string_count_balance'] = substr($string_count_balance,0,-1);
                         $res['string_price'] = substr($string_price,0,-1);
                         $res['string_before_price'] = substr($string_before_price,0,-1);
+                        $res['string_discount'] = substr($string_discount,0,-1);
 //                        $res['count_balance'] = $count_balance;
                         array_push($end_result,$res);
                     }

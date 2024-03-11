@@ -15,37 +15,48 @@ $(document).ready(function () {
     var count_product = {};
     function product_count() {
         $('.ordersAddingTable .tableNomenclature .nom_Id').each(function() {
-            let id = $(this).closest('tr').find('.prodId').val();
+            // let id = $(this).closest('tr').find('.prodId').val();
+            let id = $(this).closest('tr').find('.nom_Id').val();
             let nomIdValue = $(this).val();
+            let stringCount = $(this).closest('tr').find('.stringCount').val();
             let countProductValue = $(this).closest('tr').find('.countProduct').val();
             let discountProductValue = $(this).closest('tr').find('input[name="discount[]"]').val();
-            let beforePriceProductValue = $(this).closest('tr').find('input[name="beforePrice[]"]').val();
-            let priceProductValue = $(this).closest('tr').find('input[name="price[]"]').val();
+            let beforePriceProductValue = $(this).closest('tr').find('input[name="total_before_price[]"]').val();
+            let priceProductValue = $(this).closest('tr').find('input[name="total_price[]"]').val();
             if (!count_product[id]) {
                 count_product[id] = {};
             }
-            count_product[id]['prodId'] = id;
+            count_product[id]['nomId'] = id;
             count_product[id]['count'] = countProductValue;
             count_product[id]['discount'] = discountProductValue;
             count_product[id]['beforePrice'] = beforePriceProductValue;
             count_product[id]['price'] = priceProductValue;
+            count_product[id]['stringCount'] = stringCount;
+
         });
+        // console.log(count_product)
         var ordersTotalPriceSum = 0;
         var ordersTotalCount = 0;
         var ordersBeforTotalPriceSum = 0;
         var totalDiscount = 0;
         for(let i in count_product){
-            if (count_product[i].count == '' || count_product[i].count.startsWith('.') || count_product[i].count.startsWith('-')) {
-                ordersTotalCount += parseFloat(1);
-                ordersTotalPriceSum += parseFloat(count_product[i].price * 1);     //yndhanur zexchvac gumar
-                ordersBeforTotalPriceSum += parseFloat(count_product[i].beforePrice * 1);  //yndhanur gumar
-                totalDiscount += parseFloat(count_product[i].discount * 1);
-            }else {
+            let strCount = count_product[i].stringCount.split(',');
+            let discountArray = count_product[i].discount.split(',');
+            // if (count_product[i].count == '' || count_product[i].count.startsWith('.') || count_product[i].count.startsWith('-')) {
+            //     ordersTotalCount += parseFloat(1);
+            //     ordersTotalPriceSum += parseFloat(count_product[i].price * 1);     //yndhanur zexchvac gumar
+            //     ordersBeforTotalPriceSum += parseFloat(count_product[i].beforePrice * 1);  //yndhanur gumar
+            //     totalDiscount += parseFloat(count_product[i].discount * 1);
+            // }else {
                 ordersTotalCount += parseFloat(count_product[i].count);
-                ordersTotalPriceSum += parseFloat(count_product[i].price * count_product[i].count);     //yndhanur zexchvac gumar
-                ordersBeforTotalPriceSum += parseFloat(count_product[i].beforePrice * count_product[i].count);  //yndhanur gumar
-                totalDiscount += parseFloat(count_product[i].discount * count_product[i].count);
+                ordersTotalPriceSum += parseFloat(count_product[i].price);     //yndhanur zexchvac gumar
+                ordersBeforTotalPriceSum += parseFloat(count_product[i].beforePrice);  //yndhanur gumar
+            for (let k = 0; k < discountArray.length;k++){
+                // console.log(discountArray[i])
+                totalDiscount += parseFloat(discountArray[k]) * parseInt(strCount[k]);
+
             }
+            // }
         }
         return {
             count_product: count_product,
@@ -160,7 +171,7 @@ $(document).ready(function () {
                         let lastPrice = 0;
                         let lastBeforePrice = 0;
                         let countDiscountId = '';
-                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature;
+                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature,stringDiscount;
                         let  prod_clients = '';
 
                         let pars = JSON.parse(data);
@@ -180,6 +191,7 @@ $(document).ready(function () {
                                 lastPrice = pars[k].price;
                                 lastBeforePrice = pars[k].format_before_price;
                                 name = pars[k].name;
+                                stringDiscount = pars[k].string_discount;
                                 stringProductId = pars[k].product_id;
                                 stringCount = pars[k].string_count;
                                 stringCountBalance = pars[k].string_count_balance;
@@ -198,6 +210,7 @@ $(document).ready(function () {
                             }
 
                         }
+                        // console.log(stringDiscount)
                         // console.log(stringPrice,stringBeforePrice)
                         sequenceNumber++;
                         trss[nomenclature] = `<tr class="tableNomenclature">
@@ -206,7 +219,7 @@ $(document).ready(function () {
                                                         <input type="hidden" name="order_items[]" value="`+stringProductId+`">
                                                         <input type="hidden" name="string_price[]" value="`+stringPrice+`">
                                                         <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
-                                                        <input type="hidden" name="string_count[]" value="`+stringCount+`">
+                                                        <input class="stringCount" type="hidden" name="string_count[]" value="`+stringCount+`">
                                                         <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
                                                         <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
                                                         <input class="nom_Id" type="hidden" name="nom_id[]" value="`+nomenclature+`">
@@ -220,8 +233,8 @@ $(document).ready(function () {
                                                         <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProduct">
                                                      </td>
                                                      <td class="discount">
-                                                        <span>`+parseFloat(discountProd).toFixed(2)+`</span>
-                                                        <input type="hidden" name="discount[]" value="`+parseFloat(discountProd).toFixed(2)+`">
+                                                        <span>`+stringDiscount+`</span>
+                                                        <input type="hidden" name="discount[]" value="`+stringDiscount+`">
                                                      </td>
                                                      <td class="beforePrice">
                                                         <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
@@ -381,7 +394,7 @@ $(document).ready(function () {
                         let lastPrice = 0;
                         let lastBeforePrice = 0;
                         let countDiscountId = '';
-                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature;
+                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature,stringDiscount;
                         let  prod_clients = '';
                         let addOrdersTableBody = '';
                         let pars = JSON.parse(data);
@@ -403,6 +416,7 @@ $(document).ready(function () {
                                 lastPrice = pars[k].price;
                                 lastBeforePrice = pars[k].format_before_price;
                                 name = pars[k].name;
+                                stringDiscount = pars[k].string_discount;
                                 stringProductId = pars[k].product_id;
                                 stringCount = pars[k].string_count;
                                 stringCountBalance = pars[k].string_count_balance;
@@ -427,7 +441,7 @@ $(document).ready(function () {
                                         <input type="hidden" name="order_items[]" value="null">
                                         <input type="hidden" name="string_price[]" value="`+stringPrice+`">
                                         <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
-                                        <input type="hidden" name="string_count[]" value="`+stringCount+`">
+                                        <input class="stringCount" type="hidden" name="string_count[]" value="`+stringCount+`">
                                         <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
                                         <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
                                         <input class="nomId"  type="hidden" name="nom_id[]" value="`+nomenclature+`">
@@ -441,8 +455,8 @@ $(document).ready(function () {
                                         <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProductForUpdate">
                                      </td>
                                      <td class="discount">
-                                        <span>`+parseFloat(discountProd).toFixed(2)+`</span>
-                                        <input type="hidden" name="discount[]" value="`+parseFloat(discountProd).toFixed(2)+`">
+                                        <span>`+stringDiscount+`</span>
+                                        <input type="hidden" name="discount[]" value="`+stringDiscount+`">
                                      </td>
                                      <td class="beforePrice">
                                         <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
@@ -619,7 +633,7 @@ $(document).ready(function () {
                         let lastPrice = 0;
                         let lastBeforePrice = 0;
                         let countDiscountId = '';
-                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature;
+                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature,stringDiscount;
                         let  prod_clients = '';
                         let pars = JSON.parse(data);
                         for (let k = 0; k < pars.length; k++) {
@@ -640,6 +654,7 @@ $(document).ready(function () {
                                 lastPrice = pars[k].price;
                                 lastBeforePrice = pars[k].format_before_price;
                                 name = pars[k].name;
+                                stringDiscount = pars[k].string_discount;
                                 stringProductId = pars[k].product_id;
                                 stringCount = pars[k].string_count;
                                 stringCountBalance = pars[k].string_count_balance;
@@ -671,7 +686,7 @@ $(document).ready(function () {
                                         <input type="hidden" name="order_items[]" value="null">
                                         <input type="hidden" name="string_price[]" value="`+stringPrice+`">
                                         <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
-                                        <input type="hidden" name="string_count[]" value="`+stringCount+`">
+                                        <input class="stringCount" type="hidden" name="string_count[]" value="`+stringCount+`">
                                         <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
                                         <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
                                         <input class="nomId"  type="hidden" name="nom_id[]" value="`+nomenclature+`">
@@ -685,8 +700,8 @@ $(document).ready(function () {
                                         <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProductForUpdate">
                                      </td>
                                      <td class="discount">
-                                        <span>`+parseFloat(discountProd).toFixed(2)+`</span>
-                                        <input type="hidden" name="discount[]" value="`+parseFloat(discountProd).toFixed(2)+`">
+                                        <span>`+stringDiscount+`</span>
+                                        <input type="hidden" name="discount[]" value="`+stringDiscount+`">
                                      </td>
                                      <td class="beforePrice">
                                         <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
@@ -746,11 +761,17 @@ $(document).ready(function () {
         let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
         if (confirmed){
             var this_ = $(this);
+            let str_count = $(this).closest('tr').find('.stringCount').val().split(',');
+            let str_discount = $(this).closest('tr').find('.discount').children('input').val().split(',');
+            let discount = 0;
+            for (let s = 0; s < str_count.length; s++){
+                discount += parseInt(str_count[s]) * parseFloat(str_discount[s]);
+            }
             var itemId = this_.closest('.tableNomenclature').find('.orderItemsId').val();
             var nomId = this_.closest('.tableNomenclature').find('.nomId').val();
-            var totalPriceBeforeDiscount = $('#orders-total_price_before_discount').val() - (parseFloat(this_.closest('tr').find('.beforePrice').find('input').val() * this_.closest('tr').find('.countProductForUpdate').val()).toFixed(2));
-            var totalDiscount = $('#orders-total_discount').val() - (parseFloat(this_.closest('tr').find('.discount').find('input').val() * this_.closest('tr').find('.countProductForUpdate').val()).toFixed(2));
-            var totalPrice = $('#orders-total_price').val() - (parseFloat(this_.closest('tr').find('.price').find('input').val() * this_.closest('tr').find('.countProductForUpdate').val()).toFixed(2));
+            var totalPriceBeforeDiscount = $('#orders-total_price_before_discount').val() - (parseFloat(this_.closest('tr').find('.totalBeforePrice').find('input').val()).toFixed(2));
+            var totalDiscount = $('#orders-total_discount').val() - (parseFloat(discount).toFixed(2));
+            var totalPrice = $('#orders-total_price').val() - (parseFloat(this_.closest('tr').find('.totalPrice').find('input').val()).toFixed(2));
             var totalCount = $('#orders-total_count').val() - (this_.closest('tr').find('.countProductForUpdate').val());
             var csrfToken = $('meta[name="csrf-token"]').attr("content");
             $.ajax({
@@ -775,10 +796,14 @@ $(document).ready(function () {
                         let ordersBeforTotalPriceSum = 0;
                         let totalDiscount = 0;
                         $('.tableNomenclature').each(function () {
+                            let count_str = $(this).find('.stringCount').val().split(',');
+                            let discount = $(this).find('.discount').children('input').val().split(',');
+                            for (let k = 0; k < count_str.length; k++){
+                                totalDiscount += parseInt(count_str[k]) * parseFloat(discount[k])
+                            }
                             ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
                             ordersTotalCount += parseInt($(this).find('.count').children('input').val());
                             ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
-                            totalDiscount += parseFloat($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
                         })
                         $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
                         $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
@@ -787,9 +812,9 @@ $(document).ready(function () {
                     }else if (data == 'false'){
                         alert('Մեկ անուն ապրանքի դեպքում պետք է ջնջել ամբողջ պատվերը:');
                     }
-                    // else{
-                    //     alert('Գոյություն չունի կամ հաջողությամբ չի կատարվել ջնջումը:');
-                    // }
+                    else{
+                        alert('Գոյություն չունի կամ հաջողությամբ չի կատարվել ջնջումը:');
+                    }
                 }
             })
 
@@ -946,7 +971,7 @@ $(document).ready(function () {
                         let lastPrice = 0;
                         let lastBeforePrice = 0;
                         let countDiscountId = '';
-                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature;
+                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature,stringDiscount;
                         let  prod_clients = '';
                         let pars = JSON.parse(data);
                         for (let k = 0; k < pars.length; k++) {
@@ -964,6 +989,7 @@ $(document).ready(function () {
                                 lastPrice = pars[k].price;
                                 lastBeforePrice = pars[k].format_before_price;
                                 name = pars[k].name;
+                                stringDiscount = pars[k].string_discount;
                                 stringProductId = pars[k].product_id;
                                 stringCount = pars[k].string_count;
                                 stringCountBalance = pars[k].string_count_balance;
@@ -993,7 +1019,7 @@ $(document).ready(function () {
                                         <input type="hidden" name="order_items[]" value="null">
                                         <input type="hidden" name="string_price[]" value="`+stringPrice+`">
                                         <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
-                                        <input type="hidden" name="string_count[]" value="`+stringCount+`">
+                                        <input class="stringCount" type="hidden" name="string_count[]" value="`+stringCount+`">
                                         <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
                                         <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
                                         <input class="nomId"  type="hidden" name="nom_id[]" value="`+nomenclature+`">
@@ -1007,8 +1033,8 @@ $(document).ready(function () {
                                         <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProductForUpdate">
                                      </td>
                                      <td class="discount">
-                                        <span>`+parseFloat(discountProd).toFixed(2)+`</span>
-                                        <input type="hidden" name="discount[]" value="`+parseFloat(discountProd).toFixed(2)+`">
+                                        <span>`+stringDiscount+`</span>
+                                        <input type="hidden" name="discount[]" value="`+stringDiscount+`">
                                      </td>
                                      <td class="beforePrice">
                                         <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
@@ -1127,7 +1153,7 @@ $(document).ready(function () {
                         let lastPrice = 0;
                         let lastBeforePrice = 0;
                         let countDiscountId = '';
-                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature;
+                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature,stringDiscount;
                         let  prod_clients = '';
                         let pars = JSON.parse(data);
                         for (let k = 0; k < pars.length; k++) {
@@ -1146,6 +1172,7 @@ $(document).ready(function () {
                                 lastPrice = pars[k].price;
                                 lastBeforePrice = pars[k].format_before_price;
                                 name = pars[k].name;
+                                stringDiscount = pars[k].string_discount;
                                 stringProductId = pars[k].product_id;
                                 stringCount = pars[k].string_count;
                                 stringCountBalance = pars[k].string_count_balance;
@@ -1180,7 +1207,7 @@ $(document).ready(function () {
                                                         <input type="hidden" name="order_items[]" value="`+stringProductId+`">
                                                         <input type="hidden" name="string_price[]" value="`+stringPrice+`">
                                                         <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
-                                                        <input type="hidden" name="string_count[]" value="`+stringCount+`">
+                                                        <input class="stringCount" type="hidden" name="string_count[]" value="`+stringCount+`">
                                                         <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
                                                         <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
                                                         <input class="nom_Id" type="hidden" name="nom_id[]" value="`+nomenclature+`">
@@ -1194,8 +1221,8 @@ $(document).ready(function () {
                                                         <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProduct">
                                                      </td>
                                                      <td class="discount">
-                                                        <span>`+parseFloat(discountProd).toFixed(2)+`</span>
-                                                        <input type="hidden" name="discount[]" value="`+parseFloat(discountProd).toFixed(2)+`">
+                                                        <span>`+stringDiscount+`</span>
+                                                        <input type="hidden" name="discount[]" value="`+stringDiscount+`">
                                                      </td>
                                                      <td class="beforePrice">
                                                         <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
@@ -1298,7 +1325,7 @@ $(document).ready(function () {
                         let lastPrice = 0;
                         let lastBeforePrice = 0;
                         let countDiscountId = '';
-                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature;
+                        let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature,stringDiscount;
                         let  prod_clients = '';
                         let pars = JSON.parse(data);
                         for (let k = 0; k < pars.length; k++) {
@@ -1316,6 +1343,7 @@ $(document).ready(function () {
                                 lastPrice = pars[k].price;
                                 lastBeforePrice = pars[k].format_before_price;
                                 name = pars[k].name;
+                                stringDiscount = pars[k].string_discount;
                                 stringProductId = pars[k].product_id;
                                 stringCount = pars[k].string_count;
                                 stringCountBalance = pars[k].string_count_balance;
@@ -1346,7 +1374,7 @@ $(document).ready(function () {
                                                         <input type="hidden" name="order_items[]" value="`+stringProductId+`">
                                                         <input type="hidden" name="string_price[]" value="`+stringPrice+`">
                                                         <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
-                                                        <input type="hidden" name="string_count[]" value="`+stringCount+`">
+                                                        <input class="stringCount" type="hidden" name="string_count[]" value="`+stringCount+`">
                                                         <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
                                                         <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
                                                         <input class="nom_Id" type="hidden" name="nom_id[]" value="`+nomenclature+`">
@@ -1360,8 +1388,8 @@ $(document).ready(function () {
                                                         <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProduct">
                                                      </td>
                                                      <td class="discount">
-                                                        <span>`+parseFloat(discountProd).toFixed(2)+`</span>
-                                                        <input type="hidden" name="discount[]" value="`+parseFloat(discountProd).toFixed(2)+`">
+                                                        <span>`+stringDiscount+`</span>
+                                                        <input type="hidden" name="discount[]" value="`+stringDiscount+`">
                                                      </td>
                                                      <td class="beforePrice">
                                                         <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
@@ -1446,7 +1474,7 @@ $(document).ready(function () {
         let itemsId = $('body').find('.itemsId').val();
         let countBy = $('body').find('#countByModal').val();
         let costBy = $('body').find('#costModal').val() * countBy;
-        let discountBy = $('body').find('#discountByModal').val() * countBy;
+        let discountBy = $('body').find('#discountByModal').val();
         let priceBy = $('body').find('#totalPriceModal').val();
         let priceBeforeDiscountBy = $('body').find('#totalBeforePriceModal').val();
         let newStringCount = $('body').find('.newStringCountModal').val();
@@ -1454,6 +1482,7 @@ $(document).ready(function () {
         let newStringBeforePrice = $('body').find('.newStringBeforePriceModal').val();
         let newStringProductId = $('body').find('.newProductIdModal').val();
         let newCountStringBal = $('body').find('.newCountBalanceModal').val();
+        let lastBeforePrice = $('body').find('#beforePriceModal').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:'/orders/changing-items',
@@ -1465,6 +1494,7 @@ $(document).ready(function () {
                 costBy:costBy,//
                 discountBy:discountBy,//
                 priceBy:priceBy,//
+                lastBeforePrice:lastBeforePrice,//
                 priceBeforeDiscountBy:priceBeforeDiscountBy,//
                 newStringCount:newStringCount,
                 newStringPrice:newStringPrice,//
@@ -1498,6 +1528,7 @@ $(document).ready(function () {
             let stringCount = $('.stringCountModal').val().split(',');
             let productId = $('.productIdModal').val().split(',');
             let countBalance = $('.countBalanceModal').val().split(',');
+            let strDiscount = $('#discountByModal').data('discount').split(',');
             let newPriceArr = priceArr;
             let newBeforePriceArr = beforePriceArr;
             let newStringCount = stringCount;
@@ -1517,17 +1548,24 @@ $(document).ready(function () {
                     newBeforePrice = parseInt(stringCount[i]) * parseFloat(beforePriceArr[i]);
                     bal -= parseInt(stringCount[i]);
                     countBalance[i] = parseInt(countBalance[i]) + parseInt(stringCount[i]);
+                    strDiscount.pop();
                     newPriceArr.pop();
                     newBeforePriceArr.pop();
                     newStringCount.pop();
-                    newProductId.pop();
+                    // newProductId.pop();
                 }
             }
+            // console.log(countBalance)
+            // console.log(newProductId)
+            let newstrDiscount = strDiscount.join(',');
             let newCountBalance = countBalance.join(',');
             let newPriceArrStr = newPriceArr.join(',');
             let newBeforePriceArrStr = newBeforePriceArr.join(',');
             let newStringCountStr = newStringCount.join(',');
             let newProductIdStr = newProductId.join(',');
+            $('#discountByModal').val(newstrDiscount);
+            $('#beforePriceModal').val(parseFloat(newBeforePriceArr[newBeforePriceArr.length - 1]).toFixed(2))
+            $('#priceModal').val(parseFloat(newPriceArr[newPriceArr.length - 1]).toFixed(2))
             $('#totalBeforePriceModal').val(parseFloat($('#totalBeforePriceModal').attr('max') - newBeforePrice).toFixed(2))
             $('#totalPriceModal').val(parseFloat($('#totalPriceModal').attr('max') - newPrice).toFixed(2))
             $('.newCountBalanceModal').val(newCountBalance)
@@ -1535,6 +1573,7 @@ $(document).ready(function () {
             $('.newStringPriceModal').val(newPriceArrStr)
             $('.newStringBeforePriceModal').val(newBeforePriceArrStr)
             $('.newProductIdModal').val(newProductIdStr)
+
         }
     })
 
@@ -1546,16 +1585,20 @@ $(document).ready(function () {
             alert("Պատվերի քանակից ավել հնարավոր չէ փոխել։")
             $(this).val($('#countByModal').attr('max'));
             $('.addChange').prop('disabled', false);
-        } else if ($(this).val() < 1) {
+        }
+        else if ($(this).val() < 1) {
             alert("Նշված դաշտը չի կարող լինել դատարկ կամ 1-ից պակաս։")
             $('.addChange').prop('disabled', true);
-        } else {
+        }
+        else {
             $('.addChange').prop('disabled', false);
             let bal = parseInt($(this).attr('max')) - $(this).val()
             let priceArr = $('.stringPriceModal').val().split(',');
             let beforePriceArr = $('.stringBeforePriceModal').val().split(',');
             let stringCount = $('.stringCountModal').val().split(',');
             let productId = $('.productIdModal').val().split(',');
+            let countBalance = $('.countBalanceModal').val().split(',');
+            let strDiscount = $('#discountByModal').data('discount').split(',');
             let newPriceArr = priceArr;
             let newBeforePriceArr = beforePriceArr;
             let newStringCount = stringCount;
@@ -1565,6 +1608,7 @@ $(document).ready(function () {
             for (let i = productId.length - 1; i >= 0; i--){
                 if (parseInt(stringCount[i]) - bal >= 0){
                     stringCount[i] = parseInt(stringCount[i]) - bal;
+                    countBalance[i] = parseInt(countBalance[i]) + bal;
                     newPrice += bal * parseFloat(priceArr[i]);
                     newBeforePrice += bal * parseFloat(beforePriceArr[i]);
                     break;
@@ -1573,18 +1617,26 @@ $(document).ready(function () {
                     newPrice = parseInt(stringCount[i]) * parseFloat(priceArr[i]);
                     newBeforePrice = parseInt(stringCount[i]) * parseFloat(beforePriceArr[i]);
                     bal -= parseInt(stringCount[i]);
+                    countBalance[i] = parseInt(countBalance[i]) + parseInt(stringCount[i]);
+                    strDiscount.pop();
                     newPriceArr.pop();
                     newBeforePriceArr.pop();
                     newStringCount.pop();
-                    newProductId.pop();
+                    // newProductId.pop();
                 }
             }
+            let newstrDiscount = strDiscount.join(',');
+            let newCountBalance = countBalance.join(',');
             let newPriceArrStr = newPriceArr.join(',');
             let newBeforePriceArrStr = newBeforePriceArr.join(',');
             let newStringCountStr = newStringCount.join(',');
             let newProductIdStr = newProductId.join(',');
+            $('#discountByModal').val(newstrDiscount);
+            $('#beforePriceModal').val(parseFloat(newBeforePriceArr[newBeforePriceArr.length - 1]).toFixed(2))
+            $('#priceModal').val(parseFloat(newPriceArr[newPriceArr.length - 1]).toFixed(2))
             $('#totalBeforePriceModal').val(parseFloat($('#totalBeforePriceModal').attr('max') - newBeforePrice).toFixed(2))
             $('#totalPriceModal').val(parseFloat($('#totalPriceModal').attr('max') - newPrice).toFixed(2))
+            $('.newCountBalanceModal').val(newCountBalance)
             $('.newStringCountModal').val(newStringCountStr)
             $('.newStringPriceModal').val(newPriceArrStr)
             $('.newStringBeforePriceModal').val(newBeforePriceArrStr)

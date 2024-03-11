@@ -111,7 +111,7 @@ $session = Yii::$app->session;
                                         <td>
                                             <span class="acordingNumber"><?=$keys + 1?></span>
                                             <input class="orderItemsId" type="hidden" name="order_items[]" value="<?=$item['id']?>">
-                                            <input type="hidden" name="string_count[]" value="<?=$item['string_count']?>">
+                                            <input class="stringCount" type="hidden" name="string_count[]" value="<?=$item['string_count']?>">
                                             <input type="hidden" name="string_price[]" value="<?=$item['string_price']?>">
                                             <input type="hidden" name="string_before_price[]" value="<?=$item['string_before_price']?>">
                                             <input class="count_balance" type="hidden" name="count_balance[]" value="<?=$item['count_balance']?>">
@@ -126,33 +126,33 @@ $session = Yii::$app->session;
                                             <input type="number" readonly name="count_[]" value="<?=$item['count_by']?>" class="form-control countProductForUpdate">
                                         </td>
                                         <td class="discount">
-                                            <?php
-                                            if ($item['discount'] == 0){
-                                            ?>
-                                                <span>0.00</span>
-                                                <input type="hidden" name="discount[]" value="0.00">
-                                            <?php
-                                            }else{
-                                            ?>
-                                                <span><?= number_format($item['discount'] / $item['count'],2,'.','')?></span>
-                                                <input type="hidden" name="discount[]" value="<?=number_format($item['discount'] / $item['count'],2,'.','')?>">
-                                            <?php
-                                            }
-                                            ?>
+                                            <span><?= $item['string_discount']?></span>
+                                            <input type="hidden" name="discount[]" value="<?=$item['string_discount']?>">
                                         </td>
-                                        <td class="beforePrice"><span><?=number_format($item['beforePrice'],2,'.','')?></span>
-                                            <input type="hidden" name="beforePrice[]" value="<?=number_format($item['beforePrice'],2,'.','')?>">
+                                        <?php
+                                        $count = explode(',',$item['string_count']);
+                                        $price = explode(',',$item['string_price']);
+                                        $before_price = explode(',',$item['string_before_price']);
+                                        $sum_price = 0;
+                                        $sum_before_price = 0;
+                                        for ($k = 0; $k < count($count); $k++){
+                                            $sum_price += intval($count[$k]) * floatval($price[$k]);
+                                            $sum_before_price += intval($count[$k]) * floatval($before_price[$k]);
+                                        }
+                                        ?>
+                                        <td class="beforePrice"><span><?=number_format($before_price[count($before_price) - 1],2,'.','')?></span>
+                                            <input type="hidden" name="beforePrice[]" value="<?=number_format($before_price[count($before_price) - 1],2,'.','')?>">
                                         </td>
-                                        <td class="price"><span><?=number_format($item['price'],2,'.','')?></span>
-                                            <input type="hidden" name="price[]" value="<?=number_format($item['price'],2,'.','')?>">
+                                        <td class="price"><span><?=number_format($price[count($price) - 1],2,'.','')?></span>
+                                            <input type="hidden" name="price[]" value="<?=number_format($price[count($price) - 1],2,'.','')?>">
                                         </td>
                                         <td class="totalBeforePrice">
-                                            <span><?=number_format($item['totalBeforePrice'],2,'.','')?></span>
-                                            <input type="hidden" name="total_before_price[]" value="<?=number_format($item['totalBeforePrice'],2,'.','')?>">
+                                            <span><?=number_format($sum_before_price,2,'.','')?></span>
+                                            <input type="hidden" name="total_before_price[]" value="<?=number_format($sum_before_price,2,'.','')?>">
                                         </td>
                                         <td class="totalPrice">
-                                            <span><?=number_format($item['total_price'],2,'.','')?></span>
-                                            <input type="hidden" name="total_price[]" value="<?=number_format($item['total_price'],2,'.','')?>">
+                                            <span><?=number_format($sum_price,2,'.','')?></span>
+                                            <input type="hidden" name="total_price[]" value="<?=number_format($sum_price,2,'.','')?>">
                                         </td>
                                         <td>
                                         <?php if ($oldattributes['is_exit'] == 0){?>
@@ -166,7 +166,7 @@ $session = Yii::$app->session;
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="modalCenterTitle">Modal title</h5>
+<!--                                                            <h5 class="modal-title" id="modalCenterTitle">Modal title</h5>-->
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
 <!--                                                        <form action="/orders/refuse" method="post">-->

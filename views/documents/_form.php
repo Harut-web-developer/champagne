@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 use app\models\CustomfieldsBlocksTitle;
 use app\models\CustomfieldsBlocksInputs;
 use app\models\Users;
+use app\models\DocumentItems;
 
 /** @var yii\web\View $this */
 /** @var app\models\Documents $model */
@@ -164,6 +165,11 @@ $session = Yii::$app->session;
                             <tr>
                                 <th>#</th>
                                 <th>Անուն</th>
+                                <?php
+                                $items = DocumentItems::find()->where(['and',['document_id' => $model->id],['not', ['wastrel' => null]]])->exists();
+                                if ($items){?>
+                                    <th>Խոտան</th>
+                                <?php }?>
                                 <th>Քանակ</th>
                                 <th>Գինը առանց ԱԱՀ-ի</th>
                                 <th>Գինը ներառյալ ԱԱՀ-ն</th>
@@ -186,6 +192,10 @@ $session = Yii::$app->session;
                                         <input class="itemsId" type="hidden" name="items[]" value="<?=$document_item['nom_id']?>">
                                     </td>
                                     <td class="name"><?=$document_item['name']?></td>
+                                    <?php if ($items && ($type == '8' || $type == '6' || $type == '7')){?>
+                                        <td>
+                                            <input type="number" class="form-control" readonly value="<?= ($document_item['wastrel'] != null) ? $document_item['wastrel'] : 0 ?>">                                        </td>
+                                    <?php }?>
                                     <?php
                                     if ($model->document_type == '7'){?>
                                         <td class="count"><input type="number" name="count_[]" disabled value="<?=$document_item['count']?>" class="form-control countDocuments" min="1" step="any"></td>

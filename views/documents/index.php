@@ -3,6 +3,7 @@
 use app\models\CustomfieldsBlocksInputValues;
 use app\models\Documents;
 use app\models\Users;
+use app\models\Warehouse;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -114,7 +115,10 @@ if(!empty($new_fields)){
             if($session['role_id'] == '1'){?>
                 <select class="form-select documentWarehouseStatus" aria-label="Default select example" style="width: 150px; margin: 0px 10px 15px 5px;">
                     <option selected value="0">Ընդհանուր</option>
-                    <?php foreach ($warehouse as $warehouse_value) { ?>
+                    <?php
+                    $warehouse = Warehouse::find()->select('id,name')->asArray()->all();
+
+                    foreach ($warehouse as $warehouse_value) { ?>
                     <option value="<?=$warehouse_value['id']?>"><?=$warehouse_value['name']?></option>
                     <?php }?>
                 </select>
