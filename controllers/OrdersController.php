@@ -679,9 +679,6 @@ class OrdersController extends Controller
             ->andWhere(['order_items.status' => '1'])
             ->asArray()
             ->all();
-//        echo "<pre>";
-//        var_dump($order_items);
-//        exit();
         $order_items_discount = OrderItems::find()->select('count_discount_id')->where(['=','order_id', $id])->asArray()->all();
 
         $uniqueValues = [];
@@ -927,8 +924,6 @@ class OrdersController extends Controller
                 $num++;
             }
         }
-//        var_dump($changed_items);
-//        exit();
 //        var_dump($order_items);
         if(!empty($changed_items)){
             $keeper = Users::findOne(['warehouse_id' => $changed_items[0][1]]);
@@ -1140,8 +1135,6 @@ class OrdersController extends Controller
                 ->where(['order_items.id' => intval($items)])
                 ->asArray()
                 ->one();
-//            echo "<pre>";
-//            var_dump($order_items);
             return $this->renderAjax('change-count',[
                 'order_items' => $order_items,
             ]);
@@ -1150,7 +1143,6 @@ class OrdersController extends Controller
 
     public function actionChangingItems(){
         if ($this->request->isPost){
-            echo "<pre>";
             $post = $this->request->post();
             $string_count = explode(',',$this->request->post('newStringCount'));
             $string_count_bal = explode(',',$post['newCountStringBal']);
@@ -1264,7 +1256,6 @@ class OrdersController extends Controller
                 }else{
                     $product_id = Products::findOne($orders_id->product_id);
                     if ($orders_id->count - $orders_id->count_by == 0){
-//                    var_dump(1111);
                         $delete_items = OrderItems::findOne($item_id);
                         $delete_items->status = '0';
                         $delete_items->save(false);
