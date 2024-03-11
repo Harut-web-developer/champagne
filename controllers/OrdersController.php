@@ -216,17 +216,19 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
-            $model->total_price = $post['Orders']['total_price'];
-            $model->total_price_before_discount = $post['Orders']['total_price_before_discount'];
-            $model->total_discount = $post['Orders']['total_discount'];
-            $model->total_count = $post['Orders']['total_count'];
+            $model->total_price = floatval($post['Orders']['total_price']);
+            $model->total_price_before_discount = floatval($post['Orders']['total_price_before_discount']);
+            $model->total_discount = floatval($post['Orders']['total_discount']);
+            $model->total_count = intval($post['Orders']['total_count']);
             $model->comment = $post['Orders']['comment'];
             $model->orders_date = $post['Orders']['orders_date'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
+
             for ($i = 0; $i < count($post['order_items']); $i++) {
                 $str_count = explode(',',$post['string_count'][$i]);
                 $str_discount = explode(',',$post['discount'][$i]);
@@ -256,8 +258,8 @@ class OrdersController extends Controller
                 $order_items_create->nom_id_for_name = intval($post['nom_id'][$i]);
                 $order_items_create->price = floatval($post['total_price'][$i]);
                 $order_items_create->price_by = floatval($post['total_price'][$i]);
-                $order_items_create->count = $post['count_'][$i];
-                $order_items_create->count_by = $post['count_'][$i];
+                $order_items_create->count = intval($post['count_'][$i]);
+                $order_items_create->count_by = intval($post['count_'][$i]);
                 $order_items_create->cost = floatval($post['cost'][$i]) * intval($post['count_'][$i]);
                 $order_items_create->cost_by = floatval($post['cost'][$i]) * intval($post['count_'][$i]);
                 $discount = 0;
@@ -282,7 +284,7 @@ class OrdersController extends Controller
                 $count_bal = explode(',',$post['count_balance'][$s]);
                 for ($k = 0; $k < count($arr); $k++){
                     $count_balance = Products::findOne($arr[$k]);
-                    $count_balance->count_balance = $count_bal[$k];
+                    $count_balance->count_balance = intval($count_bal[$k]);
                     $count_balance->save(false);
                 }
             }
@@ -555,10 +557,10 @@ class OrdersController extends Controller
 //            exit();
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
-            $model->total_price_before_discount = $post['Orders']['total_price_before_discount'];
-            $model->total_price = $post['Orders']['total_price'];
-            $model->total_discount = $post['Orders']['total_discount'];
-            $model->total_count = $post['Orders']['total_count'];
+            $model->total_price_before_discount = floatval($post['Orders']['total_price_before_discount']);
+            $model->total_price = floatval($post['Orders']['total_price']);
+            $model->total_discount = floatval($post['Orders']['total_discount']);
+            $model->total_count = intval($post['Orders']['total_count']);
             $model->comment = $post['Orders']['comment'];
             $model->orders_date = $post['Orders']['orders_date'];
             $model->updated_at = date('Y-m-d H:i:s');
@@ -790,6 +792,13 @@ class OrdersController extends Controller
                 $product = Products::findOne($item->product_id);
                 $product->status = '0';
                 $product->save(false);
+                $str_product_id = explode(',',$product->parent_id);
+                $str_count = explode(',',$item->string_count);
+                for ($k = 0; $k < count($str_product_id);$k++){
+                    $enter_count = Products::findOne(intval($str_product_id[$k]));
+                    $enter_count->count_balance += intval($str_count[$k]);
+                    $enter_count->save(false);
+                }
             }
         }else{
 //            var_dump($order_items);

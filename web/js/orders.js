@@ -15,7 +15,6 @@ $(document).ready(function () {
     var count_product = {};
     function product_count() {
         $('.ordersAddingTable .tableNomenclature .nom_Id').each(function() {
-            // let id = $(this).closest('tr').find('.prodId').val();
             let id = $(this).closest('tr').find('.nom_Id').val();
             let nomIdValue = $(this).val();
             let stringCount = $(this).closest('tr').find('.stringCount').val();
@@ -173,7 +172,6 @@ $(document).ready(function () {
                         let countDiscountId = '';
                         let aah,cost,name,stringCount,stringCountBalance,stringPrice,stringBeforePrice,stringProductId,nomenclature,stringDiscount;
                         let  prod_clients = '';
-
                         let pars = JSON.parse(data);
                             for (let k = 0; k < pars.length; k++){
                             if (pars[k].discount_desc != undefined){
@@ -181,8 +179,8 @@ $(document).ready(function () {
                             }
 
                             countProd += pars[k].count;
-                            priceProd += pars[k].price * pars[k].count;
-                            beforePriceProd += pars[k].format_before_price * pars[k].count;
+                            priceProd += parseFloat(pars[k].price).toFixed(2) * pars[k].count;
+                            beforePriceProd += parseFloat(pars[k].format_before_price).toFixed(2) * pars[k].count;
                             if(k == pars.length - 1){
                                 discountProd = pars[k].discount;
                                 countDiscountId = pars[k].count_discount_id;
@@ -210,8 +208,6 @@ $(document).ready(function () {
                             }
 
                         }
-                        // console.log(stringDiscount)
-                        // console.log(stringPrice,stringBeforePrice)
                         sequenceNumber++;
                         trss[nomenclature] = `<tr class="tableNomenclature">
                                                      <td>
@@ -315,7 +311,8 @@ $(document).ready(function () {
         if (confirmed){
             $(this).closest('.tableNomenclature').remove();
             alert('Հաջողությամբ ջնջված է:');
-            let id_delete = $(this).closest('.tableNomenclature').find('.prodId').val();
+
+            let id_delete = $(this).closest('.tableNomenclature').find('.nom_Id').val();
             if (id_delete) {
                 delete count_product[id_delete];
             }
@@ -406,8 +403,8 @@ $(document).ready(function () {
                                 discount_desc.push(pars[k].discount_desc);
                             }
                             countProd += pars[k].count;
-                            priceProd += pars[k].price * pars[k].count;
-                            beforePriceProd += pars[k].format_before_price * pars[k].count;
+                            priceProd += parseFloat(pars[k].price).toFixed(2) * pars[k].count;
+                            beforePriceProd += parseFloat(pars[k].format_before_price).toFixed(2) * pars[k].count;
                             if(k == pars.length - 1){
                                 discountProd = pars[k].discount;
                                 countDiscountId = pars[k].count_discount_id;
@@ -495,10 +492,14 @@ $(document).ready(function () {
                             let ordersBeforTotalPriceSum = 0;
                             let totalDiscount = 0;
                             $('.tableNomenclature').each(function () {
+                                let count_str = $(this).find('.stringCount').val().split(',');
+                                let discount = $(this).find('.discount').children('input').val().split(',');
+                                for (let k = 0; k < count_str.length; k++){
+                                    totalDiscount += parseInt(count_str[k]) * parseFloat(discount[k]);
+                                }
                                     ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
                                     ordersTotalCount += parseInt($(this).find('.count').children('input').val());
                                     ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
-                                    totalDiscount += parseFloat($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
                             })
                             $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
                             $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
@@ -644,8 +645,8 @@ $(document).ready(function () {
                                 discount_desc.push(pars[k].discount_desc);
                             }
                             countProd += pars[k].count;
-                            priceProd += pars[k].price * pars[k].count;
-                            beforePriceProd += pars[k].format_before_price * pars[k].count;
+                            priceProd += parseFloat(pars[k].price).toFixed(2) * pars[k].count;
+                            beforePriceProd += parseFloat(pars[k].format_before_price).toFixed(2) * pars[k].count;
                             if(k == pars.length - 1){
                                 discountProd = pars[k].discount;
                                 countDiscountId = pars[k].count_discount_id;
@@ -757,6 +758,7 @@ $(document).ready(function () {
             }
         })
     })
+
     $('body').on('click', '.deleteItemsFromDB',function (){
         let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
         if (confirmed){
@@ -979,8 +981,8 @@ $(document).ready(function () {
                                 discount_desc.push(pars[k].discount_desc);
                             }
                             countProd += pars[k].count;
-                            priceProd += pars[k].price * pars[k].count;
-                            beforePriceProd += pars[k].format_before_price * pars[k].count;
+                            priceProd += parseFloat(pars[k].price).toFixed(2) * pars[k].count;
+                            beforePriceProd += parseFloat(pars[k].format_before_price).toFixed(2) * pars[k].count;
                             if(k == pars.length - 1){
                                 discountProd = pars[k].discount;
                                 countDiscountId = pars[k].count_discount_id;
@@ -1146,6 +1148,7 @@ $(document).ready(function () {
                         _csrf:csrfToken
                     },
                     success:function (data) {
+
                         let countProd = 0;
                         let discountProd = 0;
                         let priceProd = 0;
@@ -1162,8 +1165,8 @@ $(document).ready(function () {
                             }
 
                             countProd += pars[k].count;
-                            priceProd += pars[k].price * pars[k].count;
-                            beforePriceProd += pars[k].format_before_price * pars[k].count;
+                            priceProd += parseFloat(pars[k].price).toFixed(2) * pars[k].count;
+                            beforePriceProd += parseFloat(pars[k].format_before_price).toFixed(2) * pars[k].count;
                             if(k == pars.length - 1){
                                 discountProd = pars[k].discount;
                                 countDiscountId = pars[k].count_discount_id;
@@ -1333,8 +1336,8 @@ $(document).ready(function () {
                                 discount_desc.push(pars[k].discount_desc);
                             }
                             countProd += pars[k].count;
-                            priceProd += pars[k].price * pars[k].count;
-                            beforePriceProd += pars[k].format_before_price * pars[k].count;
+                            priceProd += parseFloat(pars[k].price).toFixed(2) * pars[k].count;
+                            beforePriceProd += parseFloat(pars[k].format_before_price).toFixed(2) * pars[k].count;
                             if(k == pars.length - 1){
                                 discountProd = pars[k].discount;
                                 countDiscountId = pars[k].count_discount_id;
@@ -1431,27 +1434,27 @@ $(document).ready(function () {
             }
         })
     })
-    $('body').on('click', '.deleteUpdateItems',function (){
-        let  ordersTotalPriceSum = 0;
-        let  ordersTotalCount = 0;
-        let  ordersBeforTotalPriceSum = 0;
-        let  totalDiscount = 0;
-        let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
-        if (confirmed){
-            $(this).closest('.tableNomenclature').remove();
-            $('body').find('.tableNomenclature').each(function () {
-                ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
-                ordersTotalCount += parseInt($(this).find('.count').children('input').val());
-                ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
-                totalDiscount += parseFloat($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
-            })
-            $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
-            $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-            $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
-            $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
-            alert('Հաջողությամբ ջնջված է:');
-        }
-    })
+    // $('body').on('click', '.deleteUpdateItems',function (){
+    //     let  ordersTotalPriceSum = 0;
+    //     let  ordersTotalCount = 0;
+    //     let  ordersBeforTotalPriceSum = 0;
+    //     let  totalDiscount = 0;
+    //     let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
+    //     if (confirmed){
+    //         $(this).closest('.tableNomenclature').remove();
+    //         $('body').find('.tableNomenclature').each(function () {
+    //             ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
+    //             ordersTotalCount += parseInt($(this).find('.count').children('input').val());
+    //             ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
+    //             totalDiscount += parseFloat($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
+    //         })
+    //         $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
+    //         $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
+    //         $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
+    //         $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
+    //         alert('Հաջողությամբ ջնջված է:');
+    //     }
+    // })
     $('body').on('click', '.changeCount',function () {
         let orderItemsId = $(this).data('orders');
         let csrfToken = $('meta[name="csrf-token"]').attr("content");

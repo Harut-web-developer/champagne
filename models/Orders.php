@@ -37,7 +37,7 @@ class Orders extends \yii\db\ActiveRecord
             [['user_id','clients_id', 'total_price', 'total_count','orders_date'], 'required'],
             [['user_id','clients_id', 'total_count'], 'integer'],
             [['status','comment'], 'string'],
-            [['total_price','total_price_before_discount','total_discount'], 'number'],
+            [['total_price'], 'number'],
             [['created_at', 'updated_at','orders_date'], 'safe'],
         ];
     }
