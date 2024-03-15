@@ -13,6 +13,7 @@ use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
 use yii\helpers\Url;
 use app\models\Roles;
+use app\models\Users;
 $session = Yii::$app->session;
 AppAsset::register($this);
 
@@ -88,7 +89,7 @@ $date_tab = $this->params['date_tab'];
                 </li>
                 <li class="menu-item open">
                     <ul class="menu-sub main_menu">
-                        <?php if ($session['role_id'] == 1 || $session['role_id'] == 2) { ?>
+                        <?php if (Users::checkPremission(57)) { ?>
                             <li class="menu-item ">
                                 <a href="/dashboard" class="menu-link">
                                     <i class='bx bx-bar-chart-alt-2'></i>
