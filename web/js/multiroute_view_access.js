@@ -3,9 +3,15 @@ function init () {
         var location_value = $('#routeSelect').val();
         var date = $("#myLocalDate").val();
         var manager = $(".mapManagerId").val();
+        var managerId;
+        var deliverId;
+        if (manager != undefined) {
+            var ids = manager.split("|");
+            managerId = ids[0];
+            deliverId = ids[1];
+        }
         var araqich = $(".araqichId").val();
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
-        // console.log(location_value,date,manager,araqich)
         $.ajax({
             url:"/map/location-value",
             method: 'get',
@@ -13,7 +19,8 @@ function init () {
             data:{
                 locationvalue: location_value,
                 date:date,
-                manager:manager,
+                manager:managerId,
+                deliver:deliverId,
                 araqich:araqich,
                 _csrf:csrfToken,
             },
@@ -55,41 +62,43 @@ function init () {
                         myMap.geoObjects.add(multiRoute);
                     }
                     myMap.setZoom(8, {duration: 300});
-                    setInterval(function () {
-                        var myLatitude = 40;
-                        var myLongitude = 44;
-                        geolocation.get({
-                            provider: 'yandex',
-                            mapStateAutoApply: true
-                        }).then(function (result) {
-                            result.geoObjects.options.set('preset', 'islands#redCircleIcon');
-                            result.geoObjects.get(0).properties.set({
-                                balloonContentBody: 'Мое местоположение'
+                    if (data['role_id'] == 2 || data['role_id'] == 3) {
+                        setInterval(function () {
+                            var myLatitude = 40;
+                            var myLongitude = 44;
+                            geolocation.get({
+                                provider: 'yandex',
+                                mapStateAutoApply: true
+                            }).then(function (result) {
+                                result.geoObjects.options.set('preset', 'islands#redCircleIcon');
+                                result.geoObjects.get(0).properties.set({
+                                    balloonContentBody: 'Мое местоположение'
+                                });
+                                myMap.geoObjects.add(result.geoObjects);
                             });
-                            myMap.geoObjects.add(result.geoObjects);
-                        });
-                        geolocation.get({
-                            provider: 'browser',
-                            mapStateAutoApply: true
-                        }).then(function (result) {
-                            myLatitude = result.geoObjects.get(0).geometry.getCoordinates()[0];
-                            myLongitude = result.geoObjects.get(0).geometry.getCoordinates()[1];
-                            result.geoObjects.options.set('preset', 'islands#blueCircleIcon');
-                            myMap.geoObjects.add(result.geoObjects);
-                            var csrfToken = $('meta[name="csrf-token"]').attr("content");
-                            $.ajax({
-                                url: "/map/coordinates-user",
-                                method: 'post',
-                                dataType: 'json',
-                                data: {
-                                    myLatitude: myLatitude,
-                                    myLongitude: myLongitude,
-                                    route_id: location_value,
-                                    _csrf: csrfToken,
-                                },
+                            geolocation.get({
+                                provider: 'browser',
+                                mapStateAutoApply: true
+                            }).then(function (result) {
+                                myLatitude = result.geoObjects.get(0).geometry.getCoordinates()[0];
+                                myLongitude = result.geoObjects.get(0).geometry.getCoordinates()[1];
+                                result.geoObjects.options.set('preset', 'islands#blueCircleIcon');
+                                myMap.geoObjects.add(result.geoObjects);
+                                var csrfToken = $('meta[name="csrf-token"]').attr("content");
+                                $.ajax({
+                                    url: "/map/coordinates-user",
+                                    method: 'post',
+                                    dataType: 'json',
+                                    data: {
+                                        myLatitude: myLatitude,
+                                        myLongitude: myLongitude,
+                                        route_id: location_value,
+                                        _csrf: csrfToken,
+                                    },
+                                });
                             });
-                        });
-                    }, 60 * 1000);
+                        }, 60 * 1000);
+                    }
 
                 }
             }
