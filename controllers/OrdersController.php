@@ -1212,9 +1212,17 @@ class OrdersController extends Controller
         }
     }
     public function actionExitModal(){
+        $orders = Orders::findOne($_GET['ordersId']);
         if($this->request->isGet){
             $get = $this->request->get('ordersId');
-            $users = Users::find()->where(['role_id' => 3])->andWhere(['status' => '1'])->asArray()->all();
+            $users = ManagerDeliverCondition::find()
+                ->select('users.*')
+                ->leftJoin('users', 'users.id = manager_deliver_condition.deliver_id')
+                ->where(['users.role_id' => 3])
+                ->andWhere(['manager_deliver_condition.manager_id' => $orders['user_id']])
+                ->andWhere(['users.status' => '1'])
+                ->asArray()
+                ->all();
         }
         return $this->renderAjax('exit-modal',[
             'id' => $get,

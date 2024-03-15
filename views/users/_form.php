@@ -36,14 +36,20 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                     <?= $form->field($model, 'warehouse_id')->dropDownList($warehouse) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 usersPassword">
-                    <?= $form->field($model, 'password')->passwordInput(['required' => true]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 usersPassword">
                     <?= $form->field($model, 'email')->input( 'email',['required' => true]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 usersPassword">
                     <?= $form->field($model, 'phone')->input('text',['required' => true]) ?>
                 </div>
+                <?php if (isset($model->id)) { ?>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 usersPassword">
+                        <?= $form->field($model, 'password')->passwordInput(['placeholder' => 'Ձեր գաղտնաբան']) ?>
+                    </div>
+                <?php } else { ?>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 usersPassword">
+                    <?= $form->field($model, 'password')->passwordInput(['required' => true, 'placeholder' => 'Մուտքագրեք ձեր գաղտնաբան']) ?>
+                </div>
+                <?php } ?>
                 <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>18])->all(); ?>
                 <?php if(!empty($fields)){ ?>
                     <?php foreach ($fields as $fild => $fild_simple){ ?>

@@ -294,6 +294,7 @@ class UsersController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
+        unset($model->password);
         $sub_page = [];
         $date_tab = [];
         if ($this->findModel($id)->status == 0) {
@@ -318,8 +319,6 @@ class UsersController extends Controller
             }else{
                 $model->warehouse_id = null;
             }
-            $password = $post['Users']['password'];
-            $hash = password_hash($password, PASSWORD_DEFAULT);
             $model->name = $post['Users']['name'];
             $model->username = $post['Users']['username'];
             $model->role_id = $post['Users']['role_id'];
@@ -327,7 +326,11 @@ class UsersController extends Controller
                 $model->warehouse_id = $post['Users']['warehouse_id'];
             }
             $model->auth_key = $this->generateRandomString();
-            $model->password = $hash;
+            if ($post['Users']['password'] != ''){
+                $password = $post['Users']['password'];
+                $hash = password_hash($password, PASSWORD_DEFAULT);
+                $model->password = $hash;
+            }
             $model->email = $post['Users']['email'];
             $model->phone = $post['Users']['phone'];
             $model->updated_at = date('Y-m-d H:i:s');
@@ -355,7 +358,6 @@ class UsersController extends Controller
         $warehouse = Warehouse::find()->select('id,name')->where(['status' => 1])->asArray()->all();
         $warehouse = ArrayHelper::map($warehouse,'id','name');
         $user_premission_select = UserPremissions::find()->select('id,premission_id')->where(['user_id' => $id])->asArray()->all();
-//        $user_premission_select = array_column($user_premission_select,'premission_id');
         return $this->render('update', [
             'model' => $model,
             'roles' => $roles,

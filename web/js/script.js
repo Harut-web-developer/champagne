@@ -1047,7 +1047,81 @@ $(document).ready(function() {
         var sanitizedValue = inputValue.replace(/[^0-9]/g, '');
         $(this).val(sanitizedValue);
     })
-
+    $(window).on('load', function (){
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:"/map/window-load-data",
+            method: 'get',
+            dataType:'json',
+            data:{
+                _csrf:csrfToken,
+            },
+            success:function(data){
+                var currentDateStr = data['today'];
+                var currentDate = new Date(currentDateStr);
+                var startTime = new Date();
+                startTime.setHours(8, 0, 0);
+                var endTime = new Date();
+                endTime.setHours(20, 0, 0);
+                if (currentDate >= startTime && currentDate <= endTime) {
+                    function init () {
+                        var location_value = data['route'];
+                        var date = data['today'];
+                        var managerId, deliverId = '';
+                        if (data['role_id'] == 2) {
+                            managerId = data['manager_id'];
+                        }
+                        if (data['role_id'] == 3) {
+                            deliverId = data['deliver_id'];
+                        }
+                        if (data['role_id'] == 2 || data['role_id'] == 3) {
+                            setInterval(function () {
+                                var myLatitude = 40;
+                                var myLongitude = 44;
+                                var geolocation = ymaps.geolocation;
+                                geolocation.get({
+                                    provider: 'yandex',
+                                    mapStateAutoApply: true
+                                }).then(function (result) {
+                                    result.geoObjects.options.set('preset', 'islands#redCircleIcon');
+                                    result.geoObjects.get(0).properties.set({
+                                        balloonContentBody: 'Мое местоположение'
+                                    });
+                                    myMap.geoObjects.add(result.geoObjects);
+                                });
+                                geolocation.get({
+                                    provider: 'browser',
+                                    mapStateAutoApply: true
+                                }).then(function (result) {
+                                    myLatitude = result.geoObjects.get(0).geometry.getCoordinates()[0];
+                                    myLongitude = result.geoObjects.get(0).geometry.getCoordinates()[1];
+                                    console.log(myLatitude,myLongitude)
+                                    result.geoObjects.options.set('preset', 'islands#blueCircleIcon');
+                                    myMap.geoObjects.add(result.geoObjects);
+                                    var csrfToken = $('meta[name="csrf-token"]').attr("content");
+                                    $.ajax({
+                                        url: "/map/coordinates-user",
+                                        method: 'post',
+                                        dataType: 'json',
+                                        data: {
+                                            myLatitude: myLatitude,
+                                            myLongitude: myLongitude,
+                                            route_id: location_value,
+                                            date:date,
+                                            manager:managerId,
+                                            deliver:deliverId,
+                                            _csrf: csrfToken,
+                                        },
+                                    });
+                                });
+                            }, 60 * 1000);
+                        }
+                    }
+                    ymaps.ready(init);
+                }
+            }
+        })
+    })
 });
 
 

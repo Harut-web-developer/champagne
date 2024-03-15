@@ -48,6 +48,9 @@ $date_tab = $this->params['date_tab'];
     <link rel="stylesheet" href="/css/main.css">
     <script src="/js/helpers.js""></script>
     <script src="/js/config.js""></script>
+    <?php if ($session['role_id'] == 2 || $session['role_id'] == 3) { ?>
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=e243c296-f6a7-46b7-950a-bd42eb4b2684" type="text/javascript"></script>
+    <?php } ?>
     <?= Html::csrfMetaTags() ?>
 </head>
 <body>

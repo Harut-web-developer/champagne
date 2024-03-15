@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Clients;
 use app\models\CoordinatesUser;
 use app\models\Log;
+use app\models\ManagerDeliverCondition;
 use app\models\Orders;
 use app\models\Premissions;
 use app\models\Route;
@@ -308,18 +309,39 @@ class RouteController extends Controller
             ->where(['id' => $id])
             ->asArray()
             ->one();
-        $users = Users::find()->select('users.id, users.name')
-            ->leftJoin('orders', 'orders.user_id = users.id')
-            ->leftJoin('clients', 'clients.id = orders.clients_id')
-            ->where(['clients.route_id' => $id])
+        $users = Users::find()
+            ->where(['status' => 1])
+            ->andWhere(['in', 'role_id', [2,3]])
+            ->asArray()->all();
+//        $users = Users::find()->select('users.id, users.name')
+//            ->leftJoin('orders', 'orders.user_id = users.id')
+//            ->leftJoin('clients', 'clients.id = orders.clients_id')
+//            ->where(['clients.route_id' => $id])
+//            ->asArray()
+//            ->all();
+        $all_managers = Users::find()
+            ->select('id')
+            ->where(['and', ['role_id' => '2'], ['status' => 1]])
             ->asArray()
             ->all();
+        $managers_senders = [];
+        foreach ($all_managers as $manager) {
+            $managerId = $manager['id'];
+            $senders = ManagerDeliverCondition::find()
+                ->select('deliver_id')
+                ->where(['manager_id' => $managerId, 'status' => 1])
+                ->asArray()
+                ->all();
+            $senderIds = array_column($senders, 'deliver_id');
+            $managers_senders[$managerId] = $senderIds;
+        }
         return $this->render('shipping-route', [
             'id' => $id,
             'route' => $route,
             'users' => $users,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'managers_senders' => $managers_senders,
 
         ]);
     }
@@ -346,50 +368,56 @@ class RouteController extends Controller
     {
         if (isset($_GET)) {
             $get = $this->request->get();
-            $valueurlId = intval($get['urlId']);
+            $route_id = intval($get['urlId']);
             $valuedate = $get['date'];
             $formattedSelectedDate = Yii::$app->formatter->asDatetime($valuedate, 'yyyy-MM-dd');
             $userId =  intval($get['user']);
             $coordinatesUser = CoordinatesUser::find()
                 ->select('id, latitude, longitude')
-                ->where(['=', 'user_id', $userId])
-                ->andWhere(['route_id' => $valueurlId])
+                ->where(['or',['user_id' => $userId]])
+                ->andWhere(['route_id' => $route_id])
                 ->andWhere(['and',['>=','created_at', $valuedate.' 00:00:00'],
                     ['<','created_at', $valuedate.' 23:59:59']])
-                 ->orderBy(['created_at'=>SORT_ASC])
+                ->orderBy(['created_at'=>SORT_ASC])
                 ->groupBy('latitude')
                 ->asArray()
                 ->all();
             $coordinatesUserCopy = $coordinatesUser;
-            date_default_timezone_set('UTC');
-            $warehouse = Warehouse::find()->select('location')->where(['id' => 1])->asArray()->one();
-            $locations = Orders::find()
-                ->select(["clients.location", 'clients.name', 'DATE_FORMAT(orders.orders_date, "%Y-%m-%d") as orders_date'])
-                ->leftJoin('clients','clients.id = orders.clients_id')
-                ->where(['route_id' => $valueurlId])
-                ->andWhere(['and',['>=','orders.orders_date', $formattedSelectedDate.' 00:00:00'],
-                    ['<','orders.orders_date', $formattedSelectedDate.' 23:59:59']])
-                ->andWhere(['orders.status' => '1'])
+            if (count($coordinatesUser) != 0) {
+                $warhouse_id_clients = Clients::find()
+                    ->select('clients.client_warehouse_id, warehouse.location')
+                    ->leftJoin('warehouse', 'warehouse.id = clients.client_warehouse_id')
+                    ->where(['clients.route_id' => $route_id])
+                    ->asArray()
+                    ->one();
+                $locations = Orders::find()
+                    ->select(["clients.location", 'clients.name', 'DATE_FORMAT(orders.orders_date, "%Y-%m-%d") as orders_date'])
+                    ->leftJoin('clients', 'clients.id = orders.clients_id')
+                    ->where(['route_id' => $route_id])
+                    ->andWhere(['and', ['>=', 'orders.orders_date', $formattedSelectedDate . ' 00:00:00'],
+                        ['<', 'orders.orders_date', $formattedSelectedDate . ' 23:59:59']])
+                    ->andWhere(['!=', 'orders.status', '0'])
 //                ->andwhere(['=', 'orders.user_id', $userId])
-                ->asArray()
-                ->orderBy('clients.sort_',SORT_DESC)
-                ->all();
-            $clients_locations = $locations;
-            $visit = CoordinatesUser::find()
-                ->select('visit, id')
-                ->where(['=', 'user_id', $userId])
-                ->asArray()
-                ->all();
-            $locations = array_chunk($locations,20);
-            $coordinatesUserCopy = array_chunk($coordinatesUserCopy,20);
-               return json_encode([
-                'location' => $locations,
-                'clients_locations' => $clients_locations,
-                'warehouse' => $warehouse,
-                'coordinatesUser' => $coordinatesUser,
-                'coordinatesUserCopy' => $coordinatesUserCopy,
-                'visit' => $visit,
-            ]);
+                    ->asArray()
+                    ->orderBy('clients.sort_', SORT_DESC)
+                    ->all();
+                $clients_locations = $locations;
+                $visit = CoordinatesUser::find()
+                    ->select('visit, id')
+                    ->where(['or', ['user_id' => $userId]])
+                    ->asArray()
+                    ->all();
+                $locations = array_chunk($locations, 20);
+                $coordinatesUserCopy = array_chunk($coordinatesUserCopy, 20);
+                return json_encode([
+                    'location' => $locations,
+                    'clients_locations' => $clients_locations,
+                    'warehouse' => $warhouse_id_clients,
+                    'coordinatesUser' => $coordinatesUser,
+                    'coordinatesUserCopy' => $coordinatesUserCopy,
+                    'visit' => $visit,
+                ]);
+            }
         }
     }
 }
