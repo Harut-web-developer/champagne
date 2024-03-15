@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Clients;
+use app\models\CompaniesWithCash;
 use app\models\Discount;
 use app\models\DiscountClients;
 use app\models\DiscountProducts;
@@ -129,15 +130,6 @@ class OrdersController extends Controller
             ->where(['order_id' => $id])
             ->asArray()
             ->all();
-//        $order_items = OrderItems::find()->select('products.AAH,products.count_balance,order_items.id,order_items.product_id,
-//        order_items.count_by,(order_items.price_before_discount / order_items.count) as beforePrice,
-//        order_items.price_before_discount as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.discount,
-//        order_items.price as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
-//            ->leftJoin('products','products.id = order_items.product_id')
-//            ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
-//            ->where(['order_id' => $id])
-//            ->asArray()
-//            ->all();
         return $this->renderAjax('get-update-trs', [
             'order_items' => $order_items,
         ]);
@@ -227,7 +219,6 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price = floatval($post['Orders']['total_price']);
@@ -235,6 +226,10 @@ class OrdersController extends Controller
             $model->total_discount = floatval($post['Orders']['total_discount']);
             $model->total_count = intval($post['Orders']['total_count']);
             $model->comment = $post['Orders']['comment'];
+            $model->is_exist_company = $post['Orders']['is_exist_company'];
+                if ($post['Orders']['is_exist_company'] == '1'){
+                    $model->company_id = $post['Orders']['company_id'];
+                }
             $model->orders_date = $post['Orders']['orders_date'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
@@ -356,18 +351,19 @@ class OrdersController extends Controller
         }
         $clients =  $clients->asArray()->all();
 
-//        $warehouse = Warehouse::find()
-//            ->select('id, name')
-//            ->where(['status' => '1'])
-//            ->asArray()
-//            ->all();
+        $companies = CompaniesWithCash::find()
+            ->select('id, name')
+            ->where(['status' => '1'])
+            ->asArray()
+            ->all();
+        $companies = ArrayHelper::map($companies,'id','name');
         return $this->render('create', [
             'model' => $model,
             'users' => $users,
             'clients' => $clients,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-//            'warehouse' => $warehouse,
+            'companies' => $companies,
         ]);
     }
 
@@ -749,6 +745,12 @@ class OrdersController extends Controller
             ->select('id, name')
             ->asArray()
             ->all();
+        $companies = CompaniesWithCash::find()
+            ->select('id, name')
+            ->where(['status' => '1'])
+            ->asArray()
+            ->all();
+        $companies = ArrayHelper::map($companies,'id','name');
         return $this->render('update', [
             'model' => $model,
             'users' => $users,
@@ -761,6 +763,7 @@ class OrdersController extends Controller
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'warehouse' => $warehouse,
+            'companies' => $companies,
             'warehouse_value_update' => $warehouse_value_update,
         ]);
     }

@@ -1047,6 +1047,7 @@ $(document).ready(function() {
         var sanitizedValue = inputValue.replace(/[^0-9]/g, '');
         $(this).val(sanitizedValue);
     })
+
 });
 
 

@@ -1713,5 +1713,26 @@ $(document).ready(function () {
             })
         }
     })
+    $('body').on('click','#orders-is_exist_company', function () {
+        if ($(this).is(":checked")){
+            $('body').find('.companies').css('display', 'block');
+            $('body').find('#orders-company_id').attr('required', true);
+        }else {
+            $('body').find('.companies').css('display', 'none');
+            $('body').find('#orders-company_id').attr('required', false);
+
+        }
+    })
+    let currentUrl = window.location.href;
+    let hasUpdate = currentUrl.includes('update');
+    if (hasUpdate) {
+        if ($('#orders-is_exist_company').is(":checked")) {
+            $('body').find('.companies').addClass('activeForInput');
+            $('body').find('#orders-company_id').attr('required', true);
+        } else {
+            $('body').find('.companies').removeClass('activeForInput');
+            $('body').find('#orders-company_id').attr('required', false);
+        }
+    }
 
 })

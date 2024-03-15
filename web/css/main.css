@@ -82,6 +82,15 @@
 }
 .clientLocation{
     padding: 0px 10px;
+    position:relative
+}
+.clientAbsolute{
+    position:absolute;
+    top:2px;
+    left:0px;
+    height:60px;
+    width:100%;
+    z-index:10
 }
 .clientPhone{
     padding: 0px 10px;
@@ -682,6 +691,9 @@
 .warehouseCheck{
     display:none;
 }
+.companies{
+    display:none;
+}
 .deliverOrdersId{
     display:none;
 }
@@ -727,4 +739,10 @@
 }
 .exitOrders:hover{
     cursor:pointer;
+}
+.branchClients:hover{
+    cursor:pointer;
+}
+.betweenCards{
+    margin-top:30px;
 }

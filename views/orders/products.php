@@ -26,7 +26,7 @@
                        <td><?=$value['user_name']?></td>
                        <td><?=$value['name']?></td>
                        <td><?=round($value['count'])?></td>
-                       <td><?=$value['price']?></td>
+                       <td><?=number_format($value['price'],2,',','')?></td>
                        <td><?=$value['orders_date']?></td>
                    </tr>
 

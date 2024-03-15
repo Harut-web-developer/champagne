@@ -69,7 +69,7 @@ $action_column[] = [
                 }
             },
             'delete' => function ($url, $model, $key) {
-                $del_icon = '<svg aria-hidden="true" style="display:inline-block;font-size:inherit;height:1em;overflow:visible;vertical-align:-.125em;width:.875em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M32 464a48 48 0 0048 48h288a48 48 0 0048-48V128H32zm272-256a16 16 0 0132 0v224a16 16 0 01-32 0zm-96 0a16 16 0 0132 0v224a16 16 0 01-32 0zm-96 0a16 16 0 0132 0v224a16 16 0 01-32 0zM432 32H312l-9-19a24 24 0 00-22-13H167a24 24 0 00-22 13l-9 19H16A16 16 0 000 48v32a16 16 0 0016 16h416a16 16 0 0016-16V48a16 16 0 00-16-16z"></path></svg>';
+                $del_icon = '<svg aria-hidden="true" style="display:inline-block;font-size:inherit;height:1em;overflow:visible;vertical-align:-.125em;width:.875em;color:red" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M32 464a48 48 0 0048 48h288a48 48 0 0048-48V128H32zm272-256a16 16 0 0132 0v224a16 16 0 01-32 0zm-96 0a16 16 0 0132 0v224a16 16 0 01-32 0zm-96 0a16 16 0 0132 0v224a16 16 0 01-32 0zM432 32H312l-9-19a24 24 0 00-22-13H167a24 24 0 00-22 13l-9 19H16A16 16 0 000 48v32a16 16 0 0016 16h416a16 16 0 0016-16V48a16 16 0 00-16-16z"></path></svg>';
                 if ($model->status == 1){
                     return Html::a($del_icon, $url, [
                         'title' => Yii::t('yii', 'Ջնջել'),
@@ -91,7 +91,7 @@ $action_column[] = [
             },
             'exit'=>function ($url, $model, $key) {
                 if($model->is_exit == 1 && $model->status == 1){
-                    return '<i class="bx bx-receipt exitOrders" data-id="'. $key . '" title="Ելքագրել" style="color:red; padding:0px 2px"></i>';
+                    return '<i class="bx bx-receipt exitOrders" data-id="'. $key . '" title="Ելքագրել" style="color:#0f5132; padding:0px 2px"></i>';
                 }else{
                     return '';
                 }
@@ -188,6 +188,8 @@ $action_column[] = [
                 'dataProvider' => $dataProvider,
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
+                    ...$action_column,
+
                     [
                         'attribute' => 'Օգտատեր',
                         'value' => function ($model) {
@@ -247,7 +249,6 @@ $action_column[] = [
                     'total_discount',
                     'total_count',
                     'orders_date',
-                    ...$action_column,
                 ],
             ]); ?>
         <?php }
@@ -406,6 +407,7 @@ else { ?>
                 'dataProvider' => $dataProvider,
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
+                    ...$action_column,
                     [
                         'attribute' => 'Օգտատեր',
                         'value' => function ($model) {
@@ -465,7 +467,7 @@ else { ?>
                     'total_discount',
                     'total_count',
                     'orders_date',
-                    ...$action_column,
+
                 ],
             ]); ?>
         <?php } ?>

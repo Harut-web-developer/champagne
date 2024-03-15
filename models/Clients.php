@@ -33,7 +33,7 @@ class Clients extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'location', 'phone', 'route_id'], 'required'],
+            [['name','location', 'phone', ], 'required'],
             [['route_id'], 'integer'],
             [['status', 'phone'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
@@ -48,6 +48,7 @@ class Clients extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'branch_groups_id' => 'Հիմնական անուն',
             'route_id' => 'Երթուղի',
             'client_warehouse_id' => 'Պահեստ',
             'sort_' => 'Երթուղու համար',
@@ -80,6 +81,10 @@ class Clients extends \yii\db\ActiveRecord
     public function getOrders()
     {
         return $this->hasMany(Orders::class, ['clients_id' => 'id'])->onCondition(['orders.status' => '2']);
+    }
+    public function getOrdersSum()
+    {
+        return $this->hasMany(Orders::class, ['clients_id' => 'id'])->onCondition(['orders.status' => '2'])->orOnCondition(['orders.status' => '4']);
     }
     public function getPayments()
     {

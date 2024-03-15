@@ -9,10 +9,10 @@ use app\models\CustomfieldsBlocksInputs;
 /** @var app\models\Clients $model */
 /** @var yii\widgets\ActiveForm $form */
 $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'clients','block_type'=>1])->orderBy(['order_number'=>SORT_ASC])->all();
-$req = true;
-if(isset($action__)){
-    $req = false;
-}
+//$req = true;
+//if(isset($action__)){
+//    $req = false;
+//}
 ?>
 <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=e243c296-f6a7-46b7-950a-bd42eb4b2684" type="text/javascript"></script>
 <script src="/js/event_reverse_geocode.js" type="text/javascript"></script>
@@ -30,25 +30,30 @@ if(isset($action__)){
                     <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 clientName">
-                    <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => $req]) ?>
+                    <?= $form->field($model, 'branch_groups_id')->dropDownList(['' => 'Ընտրել'] + $branch_groups) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 clientName">
+                    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 clientLocation">
-                    <?= $form->field($model, 'location')->textInput(['maxlength' => true,'readonly' => true,'required' => $req]) ?>
+                    <?= $form->field($model, 'location')->textInput(['maxlength' => true]) ?>
+                    <div class="clientAbsolute"> </div>
                     <div id="map">
                     </div>
                 </div>
                 <?php if (empty($model->id)){ ?>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 route">
                         <label for="multipleClients">Երթուղիներ</label>
-                        <select class="form-select form-control" aria-label="Default select example" name="Clients[route]">
+                        <select class="form-select form-control routeRequire" aria-label="Default select example" name="Clients[route]" required>
+                            <option value="">Ընտրել Երթուղի</option>
                             <?php foreach ($route as $index => $rout) { ?>
-                                <option value="<?= $rout['id'] ?>" <?= $rout['id'] ? 'selected' : '' ?> ><?= $rout['route'] ?></option>
+                                <option value="<?= $rout['id'] ?>"><?= $rout['route'] ?></option>
                             <?php } ?>
                         </select>
                     </div>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouse">
                         <label for="warehouseSelect">Պահեստներ</label>
-                        <select id="warehouse Select" class="form-select form-control" aria-label="Default select example" name="Clients[warehouse_id]" required>
+                        <select id="warehouse Select" class="form-select form-control warehouseRequire" aria-label="Default select example" name="Clients[warehouse_id]" required>
                             <option value="">Ընտրել պահեստ</option>
                             <?php foreach ($warehouse as $index => $warehous ){ ?>
                                 <option value="<?= $warehous['id'] ?>"><?= $warehous['name'] ?></option>
@@ -58,7 +63,8 @@ if(isset($action__)){
                 <?php } else { ?>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 route">
                         <label for="multipleClients">Երթուղիներ</label>
-                        <select class="form-select form-control" aria-label="Default select example" name="Clients[route]">
+                        <select class="form-select form-control routeRequire" aria-label="Default select example" name="Clients[route]" required>
+                            <option value="">Ընտրել Երթուղի</option>
                             <?php foreach ($route as $index => $rout) { ?>
                                 <option value="<?= $rout['id'] ?>" <?= ($rout['id'] == $route_value_update['route_id']) ? 'selected' : '' ?> ><?= $rout['route']?></option>
                             <?php } ?>
@@ -66,7 +72,7 @@ if(isset($action__)){
                     </div>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouse">
                         <label for="warehouseSelect">Պահեստներ</label>
-                        <select id="warehouse Select" class="form-select form-control" aria-label="Default select example" name="Clients[warehouse_id]" required>
+                        <select id="warehouse Select" class="form-select form-control warehouseRequire" aria-label="Default select example" name="Clients[warehouse_id]" required>
                             <option value="">Ընտրել պահեստ</option>
                             <?php foreach ($warehouse as $index => $warehous ){ ?>
                                 <option value="<?= $warehous['id'] ?>" <?= ($warehous['id'] == $warehouse_value_update['client_warehouse_id']) ? 'selected' : '' ?> ><?= $warehous['name']?></option>
@@ -75,7 +81,7 @@ if(isset($action__)){
                     </div>
                 <?php } ?>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 clientPhone">
-                    <?= $form->field($model, 'phone')->input('text',['required' => $req]) ?>
+                    <?= $form->field($model, 'phone')->input('text') ?>
                 </div>
                 <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>17])->all(); ?>
                 <?php if(!empty($fields)){ ?>
@@ -105,7 +111,7 @@ if(isset($action__)){
             <?php } ?>
         </div>
         <div class="card-footer">
-            <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
+            <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary addClients']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

@@ -52,6 +52,8 @@ class Orders extends \yii\db\ActiveRecord
             'user_id' => 'Օգտատեր',
             'clients_id' => 'Հաճախորդ',
             'status' => 'Կարգավիճակ',
+            'is_exist_company' => 'Կարգավիճակ',
+            'company_id' => 'Ընկերություն',
             'comment' => 'Մեկնաբանություն',
             'total_price_before_discount' => 'Ընդհանուր գումար',
             'total_price' => 'Ընդհանուր զեղչված գումար',

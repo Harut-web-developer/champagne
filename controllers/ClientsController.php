@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\BranchGroups;
 use app\models\Log;
 use app\models\Nomenclature;
 use app\models\Notifications;
@@ -11,6 +12,7 @@ use app\models\Premissions;
 use app\models\Warehouse;
 use Psy\Command\EditCommand;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use app\models\Clients;
 use app\models\Route;
@@ -138,7 +140,7 @@ class ClientsController extends Controller
             ->asArray()
             ->all();
 
-        $payments = Payments::find()->select('SUM(payment_sum) as payments_total')->where(['client_id'=> $id])->asArray()->one();
+        $payments = Payments::find()->select('SUM(payment_sum) as payments_total')->where(['client_id'=> $id])->andWhere(['status' => '1'])->asArray()->one();
 
         return $this->render('clients_debt', [
             'model' => $this->findModel($id),
@@ -176,6 +178,9 @@ class ClientsController extends Controller
             date_default_timezone_set('Asia/Yerevan');
             $session = Yii::$app->session;
             $post = $this->request->post();
+            if (!empty($post['Clients']['branch_groups_id'])){
+                $model->branch_groups_id = $post['Clients']['branch_groups_id'];
+            }
             $model->name = $post['Clients']['name'];
             $model->location = $post['Clients']['location'];
             $model->route_id = $post['Clients']['route'];
@@ -201,6 +206,8 @@ class ClientsController extends Controller
         }
         $route = Route::find()->select('id, route')->where(['status' => 1])->asArray()->all();
         $warehouse = Warehouse::find()->select('id, name')->where(['status' => 1])->asArray()->all();
+        $branch_groups = BranchGroups::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
+        $branch_groups = ArrayHelper::map($branch_groups,'id','name');
 
         return $this->render('create', [
             'model' => $model,
@@ -208,6 +215,7 @@ class ClientsController extends Controller
             'route' => $route,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'branch_groups' => $branch_groups,
         ]);
     }
 
@@ -297,6 +305,9 @@ class ClientsController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            if (!empty($post['Clients']['branch_groups_id'])){
+                $model->branch_groups_id = $post['Clients']['branch_groups_id'];
+            }
             $model->name = $post['Clients']['name'];
             $model->location = $post['Clients']['location'];
             $model->route_id = $post['Clients']['route'];
@@ -319,6 +330,8 @@ class ClientsController extends Controller
         }
         $route = Route::find()->select('id, route')->where(['status' => 1])->asArray()->all();
         $warehouse = Warehouse::find()->select('id, name')->where(['status' => 1])->asArray()->all();
+        $branch_groups = BranchGroups::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
+        $branch_groups = ArrayHelper::map($branch_groups,'id','name');
         return $this->render('update', [
             'model' => $model,
             'route' => $route,
@@ -327,7 +340,7 @@ class ClientsController extends Controller
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'warehouse' => $warehouse,
-
+            'branch_groups' => $branch_groups,
         ]);
     }
 
@@ -364,6 +377,14 @@ class ClientsController extends Controller
         return $this->redirect(['index']);
     }
 
+    public  function actionBranchModal(){
+        if($this->request->isGet){
+            $get = $this->request->get('clientId');
+        }
+        return $this->renderAjax('branches',[
+            'id' => $get,
+        ]);
+    }
     public function actionGetOrderId(){
         if ($this->request->isPost){
             $post = intval($this->request->post('id'));

@@ -19,6 +19,7 @@ $this->params['date_tab'] = $date_tab;
         'model' => $model,
         'route' => $route,
         'warehouse' => $warehouse,
+        'branch_groups' => $branch_groups,
 
     ]) ?>
 

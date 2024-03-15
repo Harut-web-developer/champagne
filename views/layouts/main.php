@@ -160,7 +160,17 @@ $date_tab = $this->params['date_tab'];
                                     <?php if ($session['role_id'] == 1) { ?>
                                         <li class="menu-item">
                                             <a href="/groups-name" class="menu-link">
-                                                <div data-i18n="groups-name">Խմբեր</div>
+                                                <div data-i18n="groups-name">Զեղչի Խմբեր</div>
+                                            </a>
+                                        </li>
+                                        <li class="menu-item">
+                                            <a href="/branch-groups" class="menu-link">
+                                                <div data-i18n="branch-groups">Մասնաճուղի Խմբեր</div>
+                                            </a>
+                                        </li>
+                                        <li class="menu-item">
+                                            <a href="/companies-with-cash" class="menu-link">
+                                                <div data-i18n="companies-with-cash">Ընկերություններ</div>
                                             </a>
                                         </li>
                                     <? } ?>

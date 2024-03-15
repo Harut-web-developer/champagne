@@ -20,6 +20,7 @@ $this->params['date_tab'] = $date_tab;
         'model' => $model,
         'users' => $users,
         'clients' => $clients,
+        'companies' => $companies,
     ]) ?>
 
 </div>

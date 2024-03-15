@@ -77,6 +77,12 @@ $session = Yii::$app->session;
                         <?= $form->field($model, 'orders_date')->input('datetime-local') ?>
                     <?php } ?>
                 </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                    <?= $form->field($model, 'is_exist_company')->checkbox(['label' => 'Տպել'],false) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName companies">
+                    <?= $form->field($model, 'company_id')->dropDownList(['' => 'Ընտրել Ընկերությունը'] + $companies) ?>
+                </div>
             </div>
             <div class="default-panel">
                 <div class="panel-title premission">
@@ -342,6 +348,12 @@ $session = Yii::$app->session;
                 </div>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                     <?= $form->field($model, 'orders_date')->input('datetime-local') ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
+                    <?= $form->field($model, 'is_exist_company')->checkbox(['label' => 'Տպել'],false) ?>
+                </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName companies">
+                    <?= $form->field($model, 'company_id')->dropDownList(['' => 'Ընտրել Ընկերությունը'] + $companies) ?>
                 </div>
             </div>
             <div class="default-panel">
