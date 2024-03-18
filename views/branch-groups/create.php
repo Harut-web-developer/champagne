@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\BranchGroups $model */
 
-$this->title = 'Ստեղծել մասնաճուղի խումբ';
+$this->title = 'Ստեղծել մասնաճյուղի խումբ';
 $this->params['breadcrumbs'][] = ['label' => 'Branch Groups', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;

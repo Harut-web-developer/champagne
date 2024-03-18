@@ -96,7 +96,7 @@ $session = Yii::$app->session;
                                 <li class="d-flex mb-4 pb-1">Վճարված ապրանք չկա</li>
                                 <?php
                             }
-                            }elseif ($session['role_id'] == 2){?>
+                            }else{?>
                                 <li class="d-flex mb-4 pb-1">Սահմանափակված տվյալներ</li>
                             <?php } ?>
                         </ul>
@@ -140,7 +140,7 @@ $session = Yii::$app->session;
                             <span class="fw-medium d-block mb-1">Վճարումներ</span>
                             <?php if ($session['role_id'] == 1){ ?>
                                 <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_pay"><?=number_format($payment) . ' դր.'?></h4>
-                            <?php }elseif ($session['role_id'] == 2){?>
+                            <?php }else{?>
                                 <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_pay">Սահմանափակված</h4>
                             <?php } ?>
 

@@ -167,6 +167,15 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                             ['id' => 79, 'name' => 'Ջնջել մենեջեր-առաքիչ', 'label_id' => 'premission79'],
                             ['id' => 80, 'name' => 'Տեսնել մենեջեր-առաքիչ', 'label_id' => 'premission80'],
                             ['id' => 81, 'name' => 'Մերժել վերադարցրածը', 'label_id' => 'premission81'],
+                            ['id' => 82, 'name' => 'Ստեղծել մասնաճյուղերի խմբեր', 'label_id' => 'premission82'],
+                            ['id' => 83, 'name' => 'Փոփոխել մասնաճյուղերի խմբեր', 'label_id' => 'premission83'],
+                            ['id' => 84, 'name' => 'Ջնջել մասնաճյուղերի խմբեր', 'label_id' => 'premission84'],
+                            ['id' => 85, 'name' => 'Տեսնել մասնաճյուղերի խմբեր', 'label_id' => 'premission85'],
+                            ['id' => 86, 'name' => 'Ստեղծել կանխիկով ընկերություններ', 'label_id' => 'premission86'],
+                            ['id' => 87, 'name' => 'Փոփոխել կանխիկով ընկերություններ', 'label_id' => 'premission87'],
+                            ['id' => 88, 'name' => 'Ջնջել կանխիկով ընկերություններ', 'label_id' => 'premission88'],
+                            ['id' => 89, 'name' => 'Տեսնել կանխիկով ընկերություններ', 'label_id' => 'premission89'],
+                            ['id' => 90, 'name' => 'Տեսնել մասնաճյուղեր', 'label_id' => 'premission90'],
 
                         ];
 
@@ -520,6 +529,42 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                         <div class="premission-content-items">
                             <label for="premission81" class="items-title">Մերժել վերադարցրածը</label>
                             <input id="premission81" type="checkbox" value="81" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission82" class="items-title">Ստեղծել մասնաճյուղերի խմբեր</label>
+                            <input id="premission82" type="checkbox" value="82" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission83" class="items-title">Փոփոխել մասնաճյուղերի խմբեր</label>
+                            <input id="premission83" type="checkbox" value="83" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission84" class="items-title">Ջնջել մասնաճյուղերի խմբեր</label>
+                            <input id="premission84" type="checkbox" value="84" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission85" class="items-title">Տեսնել մասնաճյուղերի խմբեր</label>
+                            <input id="premission85" type="checkbox" value="85" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission86" class="items-title">Ստեղծել կանխիկով ընկերություններ</label>
+                            <input id="premission86" type="checkbox" value="86" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission87" class="items-title">Փոփոխել կանխիկով ընկերություններ</label>
+                            <input id="premission87" type="checkbox" value="87" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission88" class="items-title">Ջնջել կանխիկով ընկերություններ</label>
+                            <input id="premission88" type="checkbox" value="88" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission89" class="items-title">Տեսնել կանխիկով ընկերություններ</label>
+                            <input id="premission89" type="checkbox" value="89" name="premission[]">
+                        </div>
+                        <div class="premission-content-items">
+                            <label for="premission90" class="items-title">Տեսնել մասնաճյուղեր</label>
+                            <input id="premission90" type="checkbox" value="90" name="premission[]">
                         </div>
                     </div>
                 </div>

@@ -25,7 +25,10 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
 $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii::getAlias('@web/favicon.ico')]);
 $sub_page = $this->params['sub_page'];
 $date_tab = $this->params['date_tab'];
-
+$view_groups_name = Users::checkPremission(61);
+$view_branch_groups = Users::checkPremission(85);
+$view_company = Users::checkPremission(89);
+$view_clients = Users::checkPremission(8);
 
 ?>
 <?php $this->beginPage() ?>
@@ -97,7 +100,7 @@ $date_tab = $this->params['date_tab'];
                                 </a>
                             </li>
                         <?php } ?>
-                        <?php if ($session['role_id'] == 1 || $session['role_id'] == 2 || $session['role_id'] == 3) { ?>
+                        <?php if (Users::checkPremission(53)) { ?>
                             <li class="menu-item ">
                                 <a href="/map" class="menu-link">
                                     <i class='bx bx-map-alt'></i>
@@ -105,12 +108,14 @@ $date_tab = $this->params['date_tab'];
                                 </a>
                             </li>
                         <?php } ?>
+                        <?php if (Users::checkPremission(24)) { ?>
                         <li class="menu-item ">
                             <a href="/orders" class="menu-link">
                                 <i class='bx bx-cart-add' ></i>
                                 <div data-i18n="Analytics">Վաճառքներ</div>
                             </a>
                         </li>
+                        <?php } ?>
                         <li class="menu-item" style="">
                             <?php if ($session['role_id'] == 1 || $session['role_id'] == 2 || $session['role_id'] == 4) { ?>
                                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -154,35 +159,41 @@ $date_tab = $this->params['date_tab'];
                                 <?php } ?>
                             </ul>
                         </li>
-                        <?php if ($session['role_id'] == 1 || $session['role_id'] == 2) { ?>
+                        <?php if ($view_groups_name || $view_branch_groups || $view_company || $view_clients) { ?>
                             <li class="menu-item">
                                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                                     <i class="menu-icon tf-icons bx bx-male-female"></i>
                                     <div data-i18n="users">Հաճախորդներ</div>
                                 </a>
                                 <ul class="menu-sub sub_menu_sub">
-                                    <?php if ($session['role_id'] == 1) { ?>
+                                    <?php if ($view_groups_name) { ?>
                                         <li class="menu-item">
                                             <a href="/groups-name" class="menu-link">
                                                 <div data-i18n="groups-name">Զեղչի Խմբեր</div>
                                             </a>
                                         </li>
+                                    <?php } ?>
+                                    <?php if ($view_branch_groups) { ?>
                                         <li class="menu-item">
                                             <a href="/branch-groups" class="menu-link">
-                                                <div data-i18n="branch-groups">Մասնաճուղի Խմբեր</div>
+                                                <div data-i18n="branch-groups">Մասնաճյուղի Խմբեր</div>
                                             </a>
                                         </li>
+                                    <?php } ?>
+                                    <?php if ($view_company) { ?>
                                         <li class="menu-item">
                                             <a href="/companies-with-cash" class="menu-link">
                                                 <div data-i18n="companies-with-cash">Ընկերություններ</div>
                                             </a>
                                         </li>
                                     <? } ?>
+                                    <?php if ($view_clients) { ?>
                                     <li class="menu-item">
                                         <a href="/clients" class="menu-link">
                                             <div data-i18n="clients">Հաճախորդներ</div>
                                         </a>
                                     </li>
+                                    <?php } ?>
                                 </ul>
                             </li>
                         <? } ?>

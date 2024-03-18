@@ -160,10 +160,10 @@ class DashboardController extends Controller
         $deal = 0;
         $chart_round_total = 0;
         $session = Yii::$app->session;
-        if ($session['role_id'] == 1){
-            $role = [];
-        }elseif ($session['role_id'] == 2){
+        if ($session['role_id'] == 2){
             $role = ['orders.user_id' => $session['user_id']];
+        }else{
+            $role = [];
         }
         if (empty($_GET) || isset($_GET['date']) && !isset($_GET['start_date']) && !isset($_GET['end_date'])){
             if (empty($_GET) || $_GET['date'] === 'day'){
@@ -200,6 +200,7 @@ class DashboardController extends Controller
                     ->select('(SUM(order_items.price_by) - SUM(order_items.cost_by)) as profit')
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->where(['or',['orders.status' => '3'],['orders.status' => '5']])
+                    ->andWhere(['order_items.status' => '1'])
                     ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
                     ->andWhere($role)
                     ->groupBy('order_items.order_id')
@@ -223,6 +224,7 @@ class DashboardController extends Controller
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
                     ->where(['or',['orders.status' => '2'],['orders.status' => '3'],['orders.status' => '4'],['orders.status' => '5']])
+                    ->andWhere(['order_items.status' => '1'])
                     ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
                     ->andWhere($role)
                     ->groupBy('order_items.nom_id_for_name')
@@ -335,6 +337,7 @@ class DashboardController extends Controller
                     ->select('(SUM(order_items.price_by) - SUM(order_items.cost_by)) as profit')
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->where(['or',['orders.status' => '3'],['orders.status' => '5']])
+                    ->andWhere(['order_items.status' => '1'])
                     ->andWhere(['=', 'MONTH(orders_date)', date('m')])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
                     ->andWhere($role)
@@ -357,6 +360,7 @@ class DashboardController extends Controller
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
                     ->where(['or',['orders.status' => '2'],['orders.status' => '3'],['orders.status' => '4'],['orders.status' => '5']])
+                    ->andWhere(['order_items.status' => '1'])
                     ->andWhere(['=', 'MONTH(orders_date)', date('m')])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
                     ->andWhere($role)
@@ -523,6 +527,7 @@ class DashboardController extends Controller
                     ->select('(SUM(order_items.price_by) - SUM(order_items.cost_by)) as profit')
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->where(['or',['orders.status' => '3'],['orders.status' => '5']])
+                    ->andWhere(['order_items.status' => '1'])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y-m-d')])
                     ->andWhere($role)
                     ->groupBy('order_items.order_id')
@@ -543,7 +548,9 @@ class DashboardController extends Controller
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
                     ->where(['or',['orders.status' => '2'],['orders.status' => '3'],['orders.status' => '4'],['orders.status' => '5']])
+                    ->andWhere(['order_items.status' => '1'])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                    ->andWhere(['order_items.status' => '1'])
                     ->andWhere($role)
                     ->groupBy('order_items.nom_id_for_name')
                     ->asArray()
@@ -707,6 +714,7 @@ class DashboardController extends Controller
                 ->select('(SUM(order_items.price_by) - SUM(order_items.cost_by)) as profit')
                 ->leftJoin('orders','orders.id = order_items.order_id')
                 ->where(['or',['orders.status' => '3'],['orders.status' => '5']])
+                ->andWhere(['order_items.status' => '1'])
                 ->andWhere(['>=', 'DATE(orders_date)', $start])
                 ->andWhere(['<=', 'DATE(orders_date)', $end])
                 ->andWhere($role)
@@ -730,6 +738,7 @@ class DashboardController extends Controller
                 ->leftJoin('orders','orders.id = order_items.order_id')
                 ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
                 ->where(['or',['orders.status' => '2'],['orders.status' => '3'],['orders.status' => '4'],['orders.status' => '5']])
+                ->andWhere(['order_items.status' => '1'])
                 ->andWhere(['>=', 'DATE(orders_date)', $start])
                 ->andWhere(['<=', 'DATE(orders_date)', $end])
                 ->andWhere($role)

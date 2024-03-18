@@ -462,11 +462,40 @@ $(document).ready(function() {
         });
     });
 
+    $('body').on('change','.byPrint',function () {
+        let ordersDate = $('.ordersDate').val();
+        let managerId = $('.changeManager').val();
+        let numberVal = $('.orderStatus').val();
+        let clientsVal = $('.changeClients').val();
+        let printType = $(this).val();
+        let type = $('.byType').val()
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/orders/filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                type:type,
+                ordersDate:ordersDate,
+                numberVal:numberVal,
+                managerId:managerId,
+                clientsVal:clientsVal,
+                printType:printType,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+                clearWidget();
+            }
+        })
+    })
+
     $('body').on('change','.byType',function () {
         let ordersDate = $('.ordersDate').val();
         let managerId = $('.changeManager').val();
         let numberVal = $('.orderStatus').val();
         let clientsVal = $('.changeClients').val();
+        let printType = $('.byPrint').val();
         let type = $(this).val()
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
@@ -479,6 +508,7 @@ $(document).ready(function() {
                 numberVal:numberVal,
                 managerId:managerId,
                 clientsVal:clientsVal,
+                printType:printType,
                 _csrf: csrfToken,
             },
             success:function (data){
@@ -493,6 +523,7 @@ $(document).ready(function() {
         let numberVal = $(this).val();
         let type = $('.byType').val();
         let clientsVal = $('.changeClients').val();
+        let printType = $('.byPrint').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:'/orders/filter-status',
@@ -504,6 +535,7 @@ $(document).ready(function() {
                 numberVal:numberVal,
                 managerId:managerId,
                 clientsVal:clientsVal,
+                printType:printType,
                 _csrf: csrfToken,
             },
             success:function (data){
@@ -518,6 +550,7 @@ $(document).ready(function() {
         let type = $('.byType').val();
         let numberVal = $('.orderStatus').val();
         let clientsVal = $('.changeClients').val();
+        let printType = $('.byPrint').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:'/orders/filter-status',
@@ -529,6 +562,7 @@ $(document).ready(function() {
                 numberVal:numberVal,
                 managerId:managerId,
                 clientsVal:clientsVal,
+                printType:printType,
                 _csrf: csrfToken,
             },
             success:function (data){
@@ -544,6 +578,7 @@ $(document).ready(function() {
         let numberVal = $('.orderStatus').val();
         let clientsVal = $(this).val();
         let type = $('.byType').val();
+        let printType = $('.byPrint').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:'/orders/filter-status',
@@ -555,6 +590,7 @@ $(document).ready(function() {
                 numberVal:numberVal,
                 managerId:managerId,
                 clientsVal:clientsVal,
+                printType:printType,
                 _csrf: csrfToken,
             },
             success:function (data){
@@ -569,6 +605,7 @@ $(document).ready(function() {
         let managerId = $('.changeManager').val();
         let numberVal = $('.orderStatus').val();
         let clientsVal = $('.changeClients').val();
+        let printType = $('.byPrint').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:'/orders/filter-status',
@@ -580,6 +617,7 @@ $(document).ready(function() {
                 numberVal:numberVal,
                 managerId:managerId,
                 clientsVal:clientsVal,
+                printType:printType,
                 _csrf: csrfToken,
             },
             success:function (data){

@@ -121,6 +121,10 @@ class OrdersController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionPrintDoc($id){
+        $have_access = Users::checkPremission(56);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $order_items = OrderItems::find()->select('products.AAH,products.count_balance,order_items.id,order_items.product_id,
         order_items.count_by,order_items.string_price,order_items.string_discount,order_items.string_before_price,order_items.price_before_discount_by as totalBeforePrice,
         (order_items.cost / order_items.count) as cost,order_items.discount_by,
@@ -1093,7 +1097,7 @@ class OrdersController extends Controller
             $sub_page = [];
             $date_tab = [];
             $is_filter = false;
-            if ($_GET['numberVal'] || $_GET['managerId'] || $_GET['clientsVal'] || $_GET['ordersDate'] || $_GET['type']){
+            if ($_GET['numberVal'] || $_GET['managerId'] || $_GET['clientsVal'] || $_GET['ordersDate'] || $_GET['type'] || $_GET['printType']){
                 $is_filter = true;
             }
             $session = Yii::$app->session;
@@ -1405,7 +1409,7 @@ class OrdersController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
     public function actionReports($id){
-        $have_access = Users::checkPremission(22);
+        $have_access = Users::checkPremission(56);
         if(!$have_access){
             $this->redirect('/site/403');
         }

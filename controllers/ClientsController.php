@@ -82,7 +82,7 @@ class ClientsController extends Controller
             $sub_page = [
                 ['name' => 'Խմբեր','address' => '/groups-name'],
             ];
-        }elseif ($session['role_id'] == 2){
+        }else{
             $sub_page = [];
         }
 

@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Users;
 use  Yii;
 use app\models\CompaniesWithCash;
 use app\models\CompaniesWithCashSearch;
@@ -57,6 +58,10 @@ class CompaniesWithCashController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(89);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $searchModel = new CompaniesWithCashSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
         $sub_page = [
@@ -91,6 +96,10 @@ class CompaniesWithCashController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(86);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new CompaniesWithCash();
 
         if ($this->request->isPost) {
@@ -124,6 +133,10 @@ class CompaniesWithCashController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(87);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost) {
@@ -154,6 +167,10 @@ class CompaniesWithCashController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(88);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $companies = CompaniesWithCash::findOne($id);
         $companies->status = '0';
         $companies->save(false);

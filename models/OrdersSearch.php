@@ -120,6 +120,13 @@ class OrdersSearch extends Orders
                 $query->andWhere(['clients_id' => $params['clientsVal']]);
             }
         }
+        if (isset($params['printType']) && $params['printType'] != 'null') {
+            if (isset($params['type']) && $params['type'] == 'product'){
+                $query->andWhere(['orders.is_exist_company' => $params['printType']]);
+            }elseif (isset($params['type']) && $params['type'] == 'order' || !isset($params['type'])){
+                $query->andWhere(['orders.is_exist_company' => $params['printType']]);
+            }
+        }
         if (!empty($params['ordersDate'])) {
             if (isset($params['type']) && $params['type'] == 'product'){
                 $query->andWhere(['DATE_FORMAT(orders.orders_date, "%Y-%m-%d")' => $params['ordersDate']]);

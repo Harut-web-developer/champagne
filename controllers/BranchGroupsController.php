@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Clients;
 use app\models\Orders;
 use app\models\Payments;
+use app\models\Users;
 use Yii;
 use app\models\BranchGroups;
 use app\models\BranchGroupsSearch;
@@ -60,6 +61,10 @@ class BranchGroupsController extends Controller
      */
     public function actionIndex()
     {
+        $have_access = Users::checkPremission(85);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $sub_page = [
             ['name' => 'Խմբեր','address' => '/groups-name'],
         ];
@@ -77,6 +82,10 @@ class BranchGroupsController extends Controller
     }
 
     public function actionBranches($id){
+        $have_access = Users::checkPremission(90);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $sub_page = [
             ['name' => 'Խմբեր','address' => '/groups-name'],
         ];
@@ -116,6 +125,10 @@ class BranchGroupsController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(82);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $sub_page = [
             ['name' => 'Խմբեր','address' => '/groups-name'],
         ];
@@ -150,6 +163,10 @@ class BranchGroupsController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(83);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $sub_page = [
             ['name' => 'Խմբեր','address' => '/groups-name'],
         ];
@@ -181,6 +198,10 @@ class BranchGroupsController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(84);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $branch_group = BranchGroups::findOne($id);
         $branch_group->status = '0';
         $branch_group->save(false);
