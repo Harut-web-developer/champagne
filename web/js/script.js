@@ -331,7 +331,7 @@ $(document).ready(function() {
                     var headRow = table.querySelector("thead tr");
                     if (headRow) {
                         var headerData = [];
-                        var headerCells = headRow.querySelectorAll("th:not(:last-child)");
+                        var headerCells = headRow.querySelectorAll("th:not(:nth-child(2))");
                         headerCells.forEach(function (headerCell) {
                             headerData.push(headerCell.textContent);
                         });
@@ -340,7 +340,7 @@ $(document).ready(function() {
                     var rows = table.querySelectorAll("tbody tr");
                     rows.forEach(function (row) {
                         var rowData = [];
-                        var cells = row.querySelectorAll("td:not(:last-child)");
+                        var cells = row.querySelectorAll("td:not(:nth-child(2))");
                         cells.forEach(function (cell) {
                             rowData.push(cell.textContent);
                         });
@@ -795,6 +795,8 @@ $(document).ready(function() {
                                         <th>Կարգավիճակ</th>
                                         <th>Փաստաթուղթ</th>
                                         <th>Ընդհ. զեղչված գումար</th>
+                                        <th>Ընդհ. գումար</th>
+                                        <th>Ընդհ. զեղչի չափ</th>                                        
                                         <th>Ընդհ. քանակ</th>
                                         <th>Պատվերի ամսաթիվ</th>
                                     </tr>
@@ -1116,7 +1118,14 @@ $(document).ready(function() {
                             setInterval(function () {
                                 var myLatitude = 40;
                                 var myLongitude = 44;
-                                var geolocation = ymaps.geolocation;
+                                var geolocation = ymaps.geolocation, myMap = new ymaps.Map('map', {
+                                    center: [40.2100725, 44.4987508],
+                                    zoom: 8
+                                }, {
+                                    searchControlProvider: 'yandex#search'
+                                }, {
+                                    buttonMaxWidth: 300
+                                });
                                 geolocation.get({
                                     provider: 'yandex',
                                     mapStateAutoApply: true

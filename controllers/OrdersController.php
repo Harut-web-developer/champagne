@@ -187,24 +187,9 @@ class OrdersController extends Controller
                 'orders_total_count' => $orders_total_count
             ]);
             return $discount;
-//            var_dump($discount);
-
         }
     }
-//    public function actionChangeManager(){
-//        if ($this->request->isGet){
-//            $searchModel = new OrdersSearch();
-//            $dataProvider = $searchModel->search($this->request->queryParams);
-////            var_dump($dataProvider);
-////            if ($this->request->get('managerId') == 'null'){
-////                $manager_id = $this->request->get('managerId');
-////            }else{
-////                $manager_id = intval($this->request->get('managerId'));
-////            }
-////            var_dump($manager_id);
-////            OrdersSearch::getManagerForOrders($manager_id);
-//        }
-//    }
+
     public function actionCreate()
     {
         $have_access = Users::checkPremission(21);
@@ -527,8 +512,6 @@ class OrdersController extends Controller
             ->limit($pageSize)
             ->asArray()
             ->all();
-//        var_dump($nomenclatures);
-//        exit();
         $id_count = $_POST['id_count'] ?? [];
         return $this->renderAjax('get-nom', [
             'nomenclatures' => $nomenclatures,
@@ -563,9 +546,6 @@ class OrdersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-//            echo "<pre>";
-//            var_dump($post);
-//            exit();
             $model->user_id = $post['Orders']['user_id'];
             $model->clients_id = $post['clients_id'];
             $model->total_price_before_discount = floatval($post['Orders']['total_price_before_discount']);
@@ -922,7 +902,14 @@ class OrdersController extends Controller
             ->where(['order_items.order_id' => $id])
             ->andWhere(['order_items.status' => '1'])
             ->asArray()->all();
-
+        $url = Url::to('', 'http');
+        $url = str_replace('delivered', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 55])
+            ->asArray()
+            ->one();
+        $model = array();
         $size = 1;
         $num = 0;
         for ($i = 0; $i < count($order_items); $i++){
@@ -974,28 +961,33 @@ class OrdersController extends Controller
             $document->created_at = date('Y-m-d H:i:s');
             $document->updated_at = date('Y-m-d H:i:s');
             $document->save(false);
+            foreach ($document as $index => $item) {
+                $model[$index] = $item;
+            }
             for ($k = 0; $k < count($changed_items); $k++){
-                    $new_document_items = new DocumentItems();
-                    $new_document_items->document_id = $document->id;
-                    $new_document_items->nomenclature_id = $changed_items[$k][3];
-                    $new_document_items->refuse_product_id = $changed_items[$k][2];
-                    $new_document_items->count = $changed_items[$k][5];
-                    if ($changed_items[$k][6] == 1){
-                        $new_document_items->AAH = 'true';
-                        $new_document_items->price_with_aah = $changed_items[$k][4];
-                        $new_document_items->price = number_format((($changed_items[$k][4] * 5)/6),2,'.','');
-                    }else{
-                        $new_document_items->AAH = 'false';
-                        $new_document_items->price = $changed_items[$k][4];
-                        $new_document_items->price_with_aah = $changed_items[$k][4] + ($changed_items[$k][4] * 20) / 100;
-                    }
-                    $new_document_items->status = '1';
-                    $new_document_items->created_at = date('Y-m-d H:i:s');
-                    $new_document_items->updated_at = date('Y-m-d H:i:s');
-                    $new_document_items->save(false);
+                $new_document_items = new DocumentItems();
+                $new_document_items->document_id = $document->id;
+                $new_document_items->nomenclature_id = $changed_items[$k][3];
+                $new_document_items->refuse_product_id = $changed_items[$k][2];
+                $new_document_items->count = $changed_items[$k][5];
+                if ($changed_items[$k][6] == 1){
+                    $new_document_items->AAH = 'true';
+                    $new_document_items->price_with_aah = $changed_items[$k][4];
+                    $new_document_items->price = number_format((($changed_items[$k][4] * 5)/6),2,'.','');
+                }else{
+                    $new_document_items->AAH = 'false';
+                    $new_document_items->price = $changed_items[$k][4];
+                    $new_document_items->price_with_aah = $changed_items[$k][4] + ($changed_items[$k][4] * 20) / 100;
+                }
+                $new_document_items->status = '1';
+                $new_document_items->created_at = date('Y-m-d H:i:s');
+                $new_document_items->updated_at = date('Y-m-d H:i:s');
+                $new_document_items->save(false);
+                foreach ($new_document_items as $index => $item) {
+                    $model[$index.$k] = $item;
+                }
             }
         }
-//        exit();
         $orders = Orders::findOne($id);
         $orders->status = '2';
         $orders->save();
@@ -1008,6 +1000,7 @@ class OrdersController extends Controller
             ->one();
         $text = $user_name['name'] . '(ն/ը) հաստատել է ' . $client_name['name'] . '(ի) պատվեի առաքումը։';
         Notifications::createNotifications('Հաստատել պատվեր', $text,'ordersdelivered');
+        Log::afterSaves('delivered', $model, '', $url, $premission);
         return $this->redirect(['index']);
     }
     public function actionExit(){
@@ -1016,6 +1009,14 @@ class OrdersController extends Controller
             $this->redirect('/site/403');
         }
         if ($this->request->isPost){
+            $url = Url::to('', 'http');
+            $url = str_replace('exit', 'view', $url);
+            $premission = Premissions::find()
+                ->select('name')
+                ->where(['id' => 76])
+                ->asArray()
+                ->one();
+            $model = array();
             $id = $this->request->post('orders_id');
             $deliver_id = $this->request->post('deliver_id');
             $session = Yii::$app->session;
@@ -1055,6 +1056,9 @@ class OrdersController extends Controller
                 $new_exit_document->created_at = date('Y-m-d H:i:s');
                 $new_exit_document->updated_at = date('Y-m-d H:i:s');
                 $new_exit_document->save(false);
+                foreach ($new_exit_document as $index => $item) {
+                    $model[$index] = $item;
+                }
                 for ($j = 0; $j< count($exit_documents); $j++){
                     $new_exit_document_items = new DocumentItems();
                     $new_exit_document_items->document_id = $new_exit_document->id;
@@ -1074,6 +1078,9 @@ class OrdersController extends Controller
                     $new_exit_document_items->created_at = date('Y-m-d H:i:s');
                     $new_exit_document_items->updated_at = date('Y-m-d H:i:s');
                     $new_exit_document_items->save(false);
+                    foreach ($new_exit_document_items as $index => $item) {
+                        $model[$index.$j] = $item;
+                    }
                 }
                 if ($session['role_id'] == 4){
                     $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
@@ -1084,6 +1091,7 @@ class OrdersController extends Controller
             $is_exit_orders = Orders::findOne($id);
             $is_exit_orders->is_exit = '0';
             $is_exit_orders->save(false);
+            Log::afterSaves('delivered', $model, '', $url.'?'.'id'.'='.$id, $premission);
             return $this->redirect(['index']);
         }
     }
@@ -1439,8 +1447,6 @@ class OrdersController extends Controller
             ->andWhere(['order_items.status' => '1'])
             ->asArray()
             ->all();
-//        var_dump($order_items);
-//        exit();
         $clients = Clients::find()->select('id, name')->asArray()->all();
         $clients = ArrayHelper::map($clients,'id','name');
         $users = Users::find()->select('id, name')->asArray()->all();

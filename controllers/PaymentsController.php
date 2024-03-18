@@ -3,13 +3,16 @@
 namespace app\controllers;
 
 use app\models\Clients;
+use app\models\Log;
 use app\models\Orders;
 use app\models\Payments;
 use app\models\PaymentsSearch;
+use app\models\Premissions;
 use app\models\Rates;
 use app\models\Users;
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -143,6 +146,14 @@ class PaymentsController extends Controller
         $model = new Payments();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
+            $url = Url::to('', 'http');
+            $url = str_replace('create', 'view', $url);
+            $premission = Premissions::find()
+                ->select('name')
+                ->where(['id' => 62])
+                ->asArray()
+                ->one();
+            $model_l = array();
             $post = $this->request->post();
             $model->client_id = $post['client_id'];
             $model->payment_sum = $post['Payments']['payment_sum'];
@@ -153,6 +164,9 @@ class PaymentsController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             if ($model->save()) {
+                foreach ($model as $index => $item) {
+                    $model_l[$index] = $item;
+                }
                 $client_orders = Orders::find()
                     ->select(['orders.id', 'orders.total_price as debt'])
                     ->leftJoin('clients', 'orders.clients_id = clients.id')
@@ -176,6 +190,9 @@ class PaymentsController extends Controller
                             $orders = Orders::findOne($client_order['id']);
                             $orders->status = '3';
                             $orders->save(false);
+                            foreach ($orders as $index => $item) {
+                                $model_l[$index.$keys] = $item;
+                            }
                         } else {
                             $debt_total += intval($client_order['debt']) - $payments;
                             $payments = 0;
@@ -184,6 +201,7 @@ class PaymentsController extends Controller
                         $debt_total += intval($client_order['debt']) - $payments;
                     }
                 }
+                Log::afterSaves('Create', $model_l, '', $url.'?'.'id'.'='.$model->id, $premission);
                 return $this->redirect(['index', 'id' => $model->id]);
             }
         } else {
@@ -193,9 +211,7 @@ class PaymentsController extends Controller
             ['name' => 'Վիճակագրություն','address' => '/payments/statistics']
         ];
         $date_tab = [];
-
         $client = Clients::find()->select('id,name')->asArray()->all();
-//        $client = ArrayHelper::map($client,'id','name');
         $rates = Rates::find()->select('id,name')->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
         return $this->render('create', [
@@ -222,7 +238,14 @@ class PaymentsController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
-
+        $url = Url::to('', 'http');
+        $url = str_replace('update', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 63])
+            ->asArray()
+            ->one();
+        $model_l = array();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -234,6 +257,8 @@ class PaymentsController extends Controller
             $model->comment = $post['Payments']['comment'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
+            $model_l = $model;
+            Log::afterSaves('Update', $model_l, '', $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $sub_page = [
@@ -271,9 +296,21 @@ class PaymentsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 64])
+            ->asArray()
+            ->one();
+        $oldattributes = Payments::find()
+            ->select(['clients.name'])
+            ->leftJoin('clients', 'clients.id = payments.client_id')
+            ->where(['payments.id' => $id])
+            ->asArray()
+            ->one();
         $payments = Payments::findOne($id);
         $payments->status = '0';
         $payments->save();
+        Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }
 

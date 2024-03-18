@@ -53,17 +53,15 @@ class Log extends ActiveRecord
     public static function afterSaves($isset_model, $newattributes, $oldattributes, $url, $premission){
         $old = 0;
         $changes = "";
+        date_default_timezone_set('Asia/Yerevan');
         if ($isset_model == 'Update') {
             foreach ($newattributes as $name => $value) {
                 if (!empty($oldattributes)) {
                     $old = $oldattributes[$name];
-
                 } else {
                     $old = '';
-
                 }
                 if ($value != $old) {
-
                     $changes = $changes . $name . ' ('.$old.') => ('.$value.'), ' . "\n";
                 }
             }
@@ -77,7 +75,6 @@ class Log extends ActiveRecord
         }
         else if ($isset_model == 'Create'){
             foreach ($newattributes as $name => $value) {
-
                 $changes .=  ' ('.$name.') => ('.$value.'), ' . "\n";
             }
             $changes = $premission['name'] . "\n" . $changes;
@@ -92,6 +89,39 @@ class Log extends ActiveRecord
             $log->user_id = $_SESSION['user_id'];
             $log->action = $url;
             $log->description = $premission['name']  . "\n" . '('.'Անուն'.') => '  . $oldattributes;
+            $log->create_date= date('Y-m-d H:i:s');
+            $log->save(false);
+        }else if ($isset_model == 'delivered'){
+            foreach ($newattributes as $name => $value) {
+                $changes .=  ' ('.$name.') => ('.$value.'), ' . "\n";
+            }
+            $changes = $premission['name'] . "\n" . $changes;
+            $log=new Log();
+            $log->user_id = $_SESSION['user_id'];
+            $log->action = $url;
+            $log->description = $changes;
+            $log->create_date= date('Y-m-d H:i:s');
+            $log->save(false);
+        }else if ($isset_model == 'exit'){
+            foreach ($newattributes as $name => $value) {
+                $changes .=  ' ('.$name.') => ('.$value.'), ' . "\n";
+            }
+            $changes = $premission['name'] . "\n" . $changes;
+            $log=new Log();
+            $log->user_id = $_SESSION['user_id'];
+            $log->action = $url;
+            $log->description = $changes;
+            $log->create_date= date('Y-m-d H:i:s');
+            $log->save(false);
+        }else if ($isset_model == 'refuse'){
+            foreach ($newattributes as $name => $value) {
+                $changes .=  ' ('.$name.') => ('.$value.'), ' . "\n";
+            }
+            $changes = $premission['name'] . "\n" . $changes;
+            $log=new Log();
+            $log->user_id = $_SESSION['user_id'];
+            $log->action = $url;
+            $log->description = $changes;
             $log->create_date= date('Y-m-d H:i:s');
             $log->save(false);
         }

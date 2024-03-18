@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var app\models\ManagerDeliverCondition $model */
 
-$this->title = $model->id;
+$this->title = $model->managerName->name;
 $this->params['breadcrumbs'][] = ['label' => 'Manager Deliver Conditions', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
@@ -17,24 +17,33 @@ $this->params['date_tab'] = $date_tab;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'manager_id',
-            'deliver_id',
-            'status',
+            [
+                'attribute' => 'manager_id',
+                'value' => function ($model) {
+                    if ($model->managerName) {
+                        return $model->managerName->name;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
+            [
+                'attribute' => 'deliver_id',
+                'value' => function ($model) {
+                    if ($model->deliverName_) {
+                        $res = '';
+                        for ($i = 0; $i < count($model->deliverName_); $i++) {
+                            $res .= $model->deliverName_[$i]['name'] . ', ';
+                        }
+                        return $res;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
             'created_at',
             'updated_at',
         ],

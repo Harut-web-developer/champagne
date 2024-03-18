@@ -1455,11 +1455,16 @@ class DocumentsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        echo "<pre>";
+        $url = Url::to('', 'http');
+        $url = str_replace('delivered', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 75])
+            ->asArray()
+            ->one();
+        $model = array();
         date_default_timezone_set('Asia/Yerevan');
         $document = Documents::findOne($id);
-
-
         $new_document = new Documents();
         $new_document->user_id = $document->user_id;
         $new_document->deliver_id = $document->deliver_id;
@@ -1473,6 +1478,9 @@ class DocumentsController extends Controller
         $new_document->created_at = date('Y-m-d H:i:s');
         $new_document->updated_at = date('Y-m-d H:i:s');
         $new_document->save(false);
+        foreach ($new_document as $index => $item) {
+            $model[$index] = $item;
+        }
         $document_items = DocumentItems::find()->where(['document_id' => $id])->asArray()->all();
 
         if (!empty($document_items)){
@@ -1495,7 +1503,9 @@ class DocumentsController extends Controller
                 $new_product->created_at = date('Y-m-d H:i:s');
                 $new_product->updated_at = date('Y-m-d H:i:s');
                 $new_product->save(false);
-
+                foreach ($new_product as $index => $item) {
+                    $model[$index.$k] = $item;
+                }
                 $new_document_items = new DocumentItems();
                 $new_document_items->document_id = $new_document->id;
                 $new_document_items->nomenclature_id = $document_items[$k]['nomenclature_id'];
@@ -1511,14 +1521,16 @@ class DocumentsController extends Controller
                 $new_document_items->created_at = date('Y-m-d H:i:s');
                 $new_document_items->updated_at = date('Y-m-d H:i:s');
                 $new_document_items->save(false);
-
-
+                foreach ($new_document_items as $index => $item) {
+                    $model[$index.$k.'-'] = $item;
+                }
             }
         }
 
         $document_status = Documents::findOne($id);
         $document_status->status = '0';
         $document_status->save(false);
+        Log::afterSaves('delivered', $model, '', $url, $premission);
         $document_items_status = DocumentItems::find()->where(['document_id' => $id])->all();
         if (!empty($document_items_status)){
             foreach ($document_items_status as $value){
@@ -1533,6 +1545,15 @@ class DocumentsController extends Controller
         if($this->request->isGet){
             $get = $this->request->get('documentId');
         }
+        $url = Url::to('', 'http');
+        $url = str_replace('refuse-modal?documentId', 'view?id', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 81])
+            ->asArray()
+            ->one();
+        $model = array();
+        Log::afterSaves('refuse', $model, '', $url, $premission);
         return $this->renderAjax('refuse',[
             'id' => $get,
         ]);

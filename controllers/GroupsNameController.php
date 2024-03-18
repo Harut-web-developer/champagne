@@ -7,8 +7,11 @@ use app\models\ClientsGroups;
 use app\models\DiscountClients;
 use app\models\GroupsName;
 use app\models\GroupsNameSearch;
+use app\models\Log;
+use app\models\Premissions;
 use app\models\Users;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -125,11 +128,22 @@ class GroupsNameController extends Controller
 
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
+            $url = Url::to('', 'http');
+            $url = str_replace('create', 'view', $url);
+            $premission = Premissions::find()
+                ->select('name')
+                ->where(['id' => 58])
+                ->asArray()
+                ->one();
+            $model_l = array();
             $post = $this->request->post();
             $model->groups_name = $post['GroupsName']['groups_name'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
+            foreach ($model as $index => $item) {
+                $model_l[$index] = $item;
+            }
             $client_id = GroupsName::find()
                 ->select('id')
                 ->where(['groups_name' => $post['GroupsName']['groups_name']])
@@ -141,8 +155,12 @@ class GroupsNameController extends Controller
                     $model_clients_groups->groups_id = $client_id['id'];
                     $model_clients_groups->clients_id = intval($post['clients'][$i]);
                     $model_clients_groups->save(false);
+                    foreach ($model_clients_groups as $index => $item) {
+                        $model_l[$index.$i] = $item;
+                    }
                 }
             }
+            Log::afterSaves('Create', $model_l, '', $url.'?'.'id'.'='.$model->id, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
@@ -177,6 +195,14 @@ class GroupsNameController extends Controller
 
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
+            $url = Url::to('', 'http');
+            $url = str_replace('update', 'view', $url);
+            $premission = Premissions::find()
+                ->select('name')
+                ->where(['id' => 59])
+                ->asArray()
+                ->one();
+            $model_l = array();
             $post = $this->request->post();
             $clients_groups = ClientsGroups::find()
                 ->where(['groups_id' => $id])
@@ -187,6 +213,9 @@ class GroupsNameController extends Controller
             $model->groups_name = $post['GroupsName']['groups_name'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
+            foreach ($model as $index => $item) {
+                $model_l[$index] = $item;
+            }
             $client_id = GroupsName::find()
                 ->select('id')
                 ->where(['groups_name' => $post['GroupsName']['groups_name']])
@@ -200,6 +229,9 @@ class GroupsNameController extends Controller
                     $model_clients_groups->groups_id = $client_id['id'];
                     $model_clients_groups->clients_id = intval($post['clients'][$i]);
                     $model_clients_groups->save(false);
+                    foreach ($model_clients_groups as $index => $item) {
+                        $model_l[$index.$i] = $item;
+                    }
                 }
             }
             else{
@@ -231,6 +263,7 @@ class GroupsNameController extends Controller
                     }
                 }
             }
+            Log::afterSaves('Update', $model_l, '', $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $clients_groups = ClientsGroups::find()
@@ -266,9 +299,20 @@ class GroupsNameController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 60])
+            ->asArray()
+            ->one();
+        $oldattributes = GroupsName::find()
+            ->select(['groups_name as name'])
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
         $groups_name = GroupsName::findOne($id);
         $groups_name->status = '0';
         $groups_name->save(false);
+        Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         $discount_clients = DiscountClients::find()
             ->select('id')
             ->where(['group_id' => $id])
