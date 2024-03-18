@@ -1080,7 +1080,14 @@ $(document).ready(function() {
                             setInterval(function () {
                                 var myLatitude = 40;
                                 var myLongitude = 44;
-                                var geolocation = ymaps.geolocation;
+                                var geolocation = ymaps.geolocation, myMap = new ymaps.Map('map', {
+                                    center: [40.2100725, 44.4987508],
+                                    zoom: 8
+                                }, {
+                                    searchControlProvider: 'yandex#search'
+                                }, {
+                                    buttonMaxWidth: 300
+                                });
                                 geolocation.get({
                                     provider: 'yandex',
                                     mapStateAutoApply: true

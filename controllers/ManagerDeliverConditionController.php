@@ -2,11 +2,14 @@
 
 namespace app\controllers;
 
+use app\models\Log;
 use app\models\ManagerDeliverCondition;
 use app\models\ManagerDeliverConditionSearch;
+use app\models\Premissions;
 use app\models\Route;
 use app\models\Users;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -72,13 +75,21 @@ class ManagerDeliverConditionController extends Controller
      */
     public function actionView($id)
     {
+        $have_access = Users::checkPremission(80);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $sub_page = [];
         $date_tab = [];
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-            'sub_page' => $sub_page,
-            'date_tab' => $date_tab,
-        ]);
+        $model = ManagerDeliverCondition::find()->where(['id' => $id, 'status' => 1])->one();
+        if ($model != '')
+        {
+            return $this->render('view', [
+                'model' => $model,
+                'sub_page' => $sub_page,
+                'date_tab' => $date_tab,
+            ]);
+        }
     }
 
     /**
@@ -88,11 +99,23 @@ class ManagerDeliverConditionController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(77);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $sub_page = [];
         $date_tab = [];
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            $url = Url::to('', 'http');
+            $url = str_replace('create', 'view', $url);
+            $premission = Premissions::find()
+                ->select('name')
+                ->where(['id' => 77])
+                ->asArray()
+                ->one();
+            $model_l = array();
             for ($i = 0; $i < count($post['deliver_id']); $i++){
                 $model = new ManagerDeliverCondition();
                 $model->manager_id = $post['manager_id'];
@@ -101,7 +124,11 @@ class ManagerDeliverConditionController extends Controller
                 $model->created_at = date('Y-m-d H:i:s');
                 $model->updated_at = date('Y-m-d H:i:s');
                 $model->save();
+                foreach ($model as $index => $item) {
+                    $model_l[$index.$i] = $item;
+                }
             }
+            Log::afterSaves('Create', $model_l, '', $url.'?'.'id'.'='.$model->id, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $route = Route::find()->select('id, route')->asArray()->all();
@@ -125,6 +152,10 @@ class ManagerDeliverConditionController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(78);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
         $sub_page = [];
         $date_tab = [];
@@ -143,6 +174,13 @@ class ManagerDeliverConditionController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            $url = 'http://champagne/manager-deliver-condition/view?id=';
+            $premission = Premissions::find()
+                ->select('name')
+                ->where(['id' => 78])
+                ->asArray()
+                ->one();
+            $model_l = array();
             if(!empty($post['deliver_id'])) {
                 $manager_id_check = ManagerDeliverCondition::find()->where(['manager_id' => intval($update_manager_id['manager_id'])])->exists();
                 if ($manager_id_check) {
@@ -156,6 +194,9 @@ class ManagerDeliverConditionController extends Controller
                     $modal->created_at = date('Y-m-d H:i:s');
                     $modal->updated_at = date('Y-m-d H:i:s');
                     $modal->save();
+                    foreach ($model as $index => $item) {
+                        $model_l[$index.$i] = $item;
+                    }
                 }
             }
             else{
@@ -164,6 +205,7 @@ class ManagerDeliverConditionController extends Controller
                     ManagerDeliverCondition::deleteAll(['manager_id' => intval($update_manager_id['manager_id'])]);
                 }
             }
+            Log::afterSaves('Update', $model_l, '', $url.$modal->id, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $route = Route::find()->select('id, route')->asArray()->all();
@@ -189,25 +231,35 @@ class ManagerDeliverConditionController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(79);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 79])
+            ->asArray()
+            ->one();
         $update_manager_id = ManagerDeliverCondition::find()
             ->select('manager_id')
             ->where(['id' => $id])
             ->andWhere(['status' => '1'])
             ->asArray()
             ->one();
-        $update_value = ManagerDeliverCondition::find()
-            ->select('manager_id')
-            ->where(['manager_id' => $update_manager_id['manager_id']])
-            ->andWhere(['status' => '1'])
+        $man_del = ManagerDeliverCondition::find()
+            ->select('users.id, users.name')
+            ->leftJoin('users', 'users.id = manager_deliver_condition.deliver_id')
+            ->where(['manager_deliver_condition.manager_id' => $update_manager_id['manager_id']])
             ->asArray()
-            ->all();
+            ->one();
         $manager_deliver = ManagerDeliverCondition::find()
-            ->where(['manager_id' => intval($update_value['manager_id'])])
+            ->where(['manager_id' => intval($update_manager_id['manager_id'])])
             ->all();
         for ($i = 0; $i < count($manager_deliver); $i++){
             $manager_deliver[$i]->status = '0';
             $manager_deliver[$i]->save();
         }
+        Log::afterSaves('Delete', '', $man_del['name'], '#', $premission);
         return $this->redirect(['index']);
     }
 
