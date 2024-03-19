@@ -2,10 +2,13 @@
 
 namespace app\controllers;
 
+use app\models\Log;
+use app\models\Premissions;
 use app\models\Users;
 use  Yii;
 use app\models\CompaniesWithCash;
 use app\models\CompaniesWithCashSearch;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -84,8 +87,15 @@ class CompaniesWithCashController extends Controller
      */
     public function actionView($id)
     {
+        $sub_page = [];
+        $date_tab = [];
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
         ]);
     }
 
@@ -101,7 +111,14 @@ class CompaniesWithCashController extends Controller
             $this->redirect('/site/403');
         }
         $model = new CompaniesWithCash();
-
+        $url = Url::to('', 'http');
+        $url = str_replace('create', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 86])
+            ->andWhere(['status' => 1])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -109,7 +126,8 @@ class CompaniesWithCashController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
-                return $this->redirect(['index', 'id' => $model->id]);
+            Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
+            return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -138,13 +156,29 @@ class CompaniesWithCashController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
-
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
+        $url = Url::to('', 'http');
+        $oldattributes = CompaniesWithCash::find()
+            ->select('*')
+            ->where(['id' => $id])
+            ->andWhere(['status' => 1])
+            ->asArray()
+            ->one();
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 87])
+            ->andWhere(['status' => 1])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
             $model->name = $post['CompaniesWithCash']['name'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
+            Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $sub_page = [
@@ -171,9 +205,23 @@ class CompaniesWithCashController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $oldattributes = CompaniesWithCash::find()
+            ->select('name')
+            ->where(['id' => $id])
+            ->andWhere(['status' => 1])
+            ->asArray()
+            ->one();
+
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 88])
+            ->andWhere(['status' => 1])
+            ->asArray()
+            ->one();
         $companies = CompaniesWithCash::findOne($id);
         $companies->status = '0';
         $companies->save(false);
+        Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }
 

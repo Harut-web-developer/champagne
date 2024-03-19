@@ -81,15 +81,15 @@ class ManagerDeliverConditionController extends Controller
         }
         $sub_page = [];
         $date_tab = [];
-        $model = ManagerDeliverCondition::find()->where(['id' => $id, 'status' => 1])->one();
-        if ($model != '')
-        {
-            return $this->render('view', [
-                'model' => $model,
-                'sub_page' => $sub_page,
-                'date_tab' => $date_tab,
-            ]);
+        $model = $this->findModel($id);
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
         }
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+        ]);
     }
 
     /**
@@ -157,6 +157,9 @@ class ManagerDeliverConditionController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         $sub_page = [];
         $date_tab = [];
         $update_manager_id = ManagerDeliverCondition::find()
