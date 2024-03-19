@@ -43,9 +43,7 @@ class SearchController extends Controller{
             $have_clients = Users::checkPremission(8);
 
             $searchval = $_GET['searchQuery'];
-            if(!$have_nomenclature){
-                $this->redirect('/site/403');
-            }else{
+            if($have_nomenclature){
                 $query_nomenclature = Nomenclature::find()
                     ->select('id, name')
                     ->where(['like', 'name', $searchval])
@@ -54,9 +52,7 @@ class SearchController extends Controller{
                     ->all();
                 $res['query_nomenclature'] = $query_nomenclature;
             }
-            if(!$have_users){
-                $this->redirect('/site/403');
-            }else{
+            if($have_users){
                 $query_users = Users::find()
                     ->select('id, name')
                     ->where(['like', 'name', $searchval])
@@ -64,9 +60,7 @@ class SearchController extends Controller{
                     ->asArray()->all();
                 $res['query_users'] = $query_users;
             }
-            if(!$have_clients){
-                $this->redirect('/site/403');
-            }else{
+            if($have_clients){
                 $query_clients = Clients::find()
                     ->select('id, name')
                     ->where(['like', 'name', $searchval])
@@ -74,9 +68,6 @@ class SearchController extends Controller{
                     ->asArray()->all();
                 $res['query_clients'] = $query_clients;
             }
-//echo "<pre>";
-//            var_dump($res);
-//            exit();
             return $this->render('index',[
                 'res'=> $res,
                 'sub_page' => $sub_page,

@@ -21,7 +21,6 @@ $this->params['date_tab'] = $date_tab;
                     <th>Զեղչի սկիզբ</th>
                     <th>Զեղչի ավարտ</th>
                     <th>Ստուգում</th>
-                    <th>Զեղչի տեսակավորում</th>
                     <th>Զեղչի ձև</th>
                     <th>Զեղչի տեսակ</th>
                     <th>Նվազագույն</th>
@@ -76,7 +75,6 @@ $this->params['date_tab'] = $date_tab;
                             }
                             ?>
                         </td>
-                        <td><?=$items['discount_sortable']?></td>
                         <td>
                             <?php
                             if ($items['discount_option'] == '1'){

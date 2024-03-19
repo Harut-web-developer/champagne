@@ -43,14 +43,15 @@ $have_access_delete = Users::checkPremission(43);
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>Գործողուրյուն</th>
+                    <?php if ($have_access_update || $have_access_delete){?>
+                        <th>Գործողուրյուն</th>
+                    <?php }?>
                     <th>Անուն</th>
                     <th>Տեսակ</th>
                     <th>Տոկոս</th>
                     <th>Զեղչի սկիզբ</th>
                     <th>Զեղչի ավարտ</th>
                     <th>Ստուգում</th>
-                    <th>Զեղչի տեսակավորում</th>
                     <th>Զեղչի ձև</th>
                     <th>Զեղչի տեսակ</th>
                     <th>Նվազագույն</th>
@@ -128,7 +129,6 @@ $have_access_delete = Users::checkPremission(43);
                             }
                             ?>
                         </td>
-                        <td><?=$item['discount_sortable']?></td>
                         <td>
                             <?php
                             if ($item['discount_option'] == '1'){
