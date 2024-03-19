@@ -1,5 +1,5 @@
 <?php
-$itemsPerPage = 10;
+$itemsPerPage = 20;
 $totalPages = ceil(count($statistics) / $itemsPerPage);
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $startIndex = ($page - 1) * $itemsPerPage;
