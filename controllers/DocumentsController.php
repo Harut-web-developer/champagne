@@ -1739,6 +1739,10 @@ class DocumentsController extends Controller
     }
 
     public function actionDeleteDocumentItems(){
+        $have_access = Users::checkPremission(39);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         if ($this->request->isPost){
             $items_id = $this->request->post('docItemsId');
             $doc_type = $this->request->post('docType');

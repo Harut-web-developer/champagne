@@ -52,8 +52,6 @@ $session = Yii::$app->session;
                 <div class="card h-100" style="max-height: 610px;">
                     <div class="card-header">
                         <h5 class="card-title m-0 me-2">Վճարումներ</h5>
-                        <?php if ($session['role_id'] == 1){ ?>
-
                             <select id="singleClients" class="js-example-basic-single form-control mt-2 filterClientsChart" name="client_id">
                                 <option value="null">Ընտրել հաճախորդին</option>
                                 <?php
@@ -64,13 +62,10 @@ $session = Yii::$app->session;
                                 }
                                 ?>
                             </select>
-                        <?php } ?>
-
                     </div>
                     <div class="card-body  paymentsPart" style="overflow-y: scroll;">
                         <ul class="p-0 m-0">
                             <?php
-                            if ($session['role_id'] == 1){
                             if (!empty($clients_payment)){
                                 foreach ($clients_payment as $item){
                                     ?>
@@ -95,10 +90,7 @@ $session = Yii::$app->session;
                                 ?>
                                 <li class="d-flex mb-4 pb-1">Վճարված ապրանք չկա</li>
                                 <?php
-                            }
-                            }else{?>
-                                <li class="d-flex mb-4 pb-1">Սահմանափակված տվյալներ</li>
-                            <?php } ?>
+                            } ?>
                         </ul>
                     </div>
                 </div>
@@ -138,12 +130,7 @@ $session = Yii::$app->session;
                                 </div>
                             </div>
                             <span class="fw-medium d-block mb-1">Վճարումներ</span>
-                            <?php if ($session['role_id'] == 1){ ?>
                                 <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_pay"><?=number_format($payment) . ' դր.'?></h4>
-                            <?php }else{?>
-                                <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_pay">Սահմանափակված</h4>
-                            <?php } ?>
-
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-12 col-6 mb-4">

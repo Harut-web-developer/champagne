@@ -49,7 +49,7 @@ class Orders extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'Պատվերի համար',
-            'user_id' => 'Օգտատեր',
+            'user_id' => 'Մենեջեր',
             'clients_id' => 'Հաճախորդ',
             'status' => 'Կարգավիճակ',
             'is_exist_company' => 'Կարգավիճակ',

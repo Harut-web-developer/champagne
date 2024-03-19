@@ -44,7 +44,7 @@ class ProductsSearch extends Products
     {
         $session = Yii::$app->session;
         $query = Products::find()->select('id,warehouse_id,nomenclature_id,SUM(count_balance) as count,AVG(price) as price');
-        if ($session['role_id'] == '1' || $session['role_id'] == '2'){
+        if ($session['role_id'] == '1' || $session['role_id'] == '2' || $session['role_id'] == '3'){
             if (isset($params['numberVal']) && $params['numberVal'] != 0){
                 $query->andWhere(['status' => '1'])->andWhere(['or',['type' => 1],['type' => 3],['type' => 8]])->andWhere(['warehouse_id' => $params['numberVal']]);
             }else{

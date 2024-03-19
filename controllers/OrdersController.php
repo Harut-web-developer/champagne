@@ -309,11 +309,20 @@ class OrdersController extends Controller
         $sub_page = [];
         $date_tab = [];
 
-        if($session['role_id'] == 1){
+        if($session['role_id'] == 1 || $session['role_id'] == 4){
             $users = Users::find()->select('id, name')->where(['=','role_id',2])->andWhere(['=','status',1])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
         }elseif ($session['role_id'] == 2){
             $users = Users::find()->select('id, name')->where(['=','id',$session['user_id']])->andWhere(['=','status',1])->asArray()->all();
+            $users = ArrayHelper::map($users,'id','name');
+        }elseif ($session['role_id'] == 3){
+            $users = ManagerDeliverCondition::find()->select('users.id, users.name')
+                ->leftJoin('users','users.id = manager_deliver_condition.manager_id')
+                ->where(['manager_deliver_condition.status' => '1'])
+                ->andWhere(['users.status' => '1'])
+                ->andWhere(['deliver_id' => $session['user_id']])
+                ->asArray()
+                ->all();
             $users = ArrayHelper::map($users,'id','name');
         }
 
@@ -322,7 +331,7 @@ class OrdersController extends Controller
             ->select('route_id, deliver_id');
             if ($session['role_id'] == 2) {
                 $manager_route_id->where(['manager_id' => $user_id]);
-            }elseif ($session['role_id'] == 1){
+            }elseif ($session['role_id'] == 1 || $session['role_id'] == 3 || $session['role_id'] == 4){
                 $user_id = key($users); // arajin tarri keyn
                 $manager_route_id->where(['manager_id' => $user_id]);
             }
@@ -335,7 +344,7 @@ class OrdersController extends Controller
             ->where(['=','status',1]);
         if ($session['role_id'] == 2) {
             $clients->andWhere(['in', 'route_id', $manager_route_id]);
-        }elseif ($session['role_id'] == 1){
+        }elseif ($session['role_id'] == 1 || $session['role_id'] == 3 || $session['role_id'] == 4){
             $clients->andWhere(['in', 'route_id', $manager_route_id]);
         }
         $clients =  $clients->asArray()->all();
@@ -1243,6 +1252,10 @@ class OrdersController extends Controller
     }
     public function actionDeleteItems(){
 //        echo "<pre>";
+        $have_access = Users::checkPremission(23);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         if ($this->request->isPost){
             $total_count = $this->request->post('totalCount');
             $total_price = $this->request->post('totalPrice');

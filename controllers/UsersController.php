@@ -81,7 +81,7 @@ class UsersController extends Controller
                 ['name' => 'Մենեջեր-առաքիչ','address' => '/manager-deliver-condition'],
 //            ['name' => 'Թույլտվություն','address' => '/premissions'], փակ մնա
             ];
-        }elseif ($session['role_id'] == 2){
+        }else{
             $sub_page = [];
         }
         $date_tab = [];
@@ -215,12 +215,14 @@ class UsersController extends Controller
         $roles = ArrayHelper::map($roles,'id','name');
         $warehouse = Warehouse::find()->select('id,name')->where(['status' => 1])->asArray()->all();
         $warehouse = ArrayHelper::map($warehouse,'id','name');
+        $premissions_check = Premissions::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
         return $this->render('create', [
             'model' => $model,
             'roles' => $roles,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'warehouse' => $warehouse,
+            'premissions_check' => $premissions_check
 
         ]);
     }
@@ -358,6 +360,8 @@ class UsersController extends Controller
         $warehouse = Warehouse::find()->select('id,name')->where(['status' => 1])->asArray()->all();
         $warehouse = ArrayHelper::map($warehouse,'id','name');
         $user_premission_select = UserPremissions::find()->select('id,premission_id')->where(['user_id' => $id])->asArray()->all();
+        $premissions_check = Premissions::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
+
         return $this->render('update', [
             'model' => $model,
             'roles' => $roles,
@@ -365,7 +369,7 @@ class UsersController extends Controller
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'warehouse' => $warehouse,
-
+            'premissions_check' => $premissions_check
         ]);
     }
 

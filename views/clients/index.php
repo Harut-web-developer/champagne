@@ -34,7 +34,7 @@ if($have_access_update){
 if($have_access_debt_statistic){
     $access_buttons .='{view}';
 }
-
+if (!empty($access_buttons)) {
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
@@ -63,7 +63,7 @@ if($have_access_debt_statistic){
             },
         ],
     ];
-
+}
 $fields_arr = [];
 
 if(!empty($new_fields)){

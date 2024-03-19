@@ -39,7 +39,6 @@ class AppAsset extends AssetBundle
         'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js',
         '/js/select2.min.js',
 //        '/js/charts.js',
-
     ];
     public $depends = [
         'yii\web\YiiAsset',

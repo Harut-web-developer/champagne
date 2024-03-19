@@ -331,7 +331,7 @@ $session = Yii::$app->session;
 
                     </div>
                         <?php
-                        if($session['role_id'] == 1){?>
+                        if($session['role_id'] == 1 || $session['role_id'] == 2 || $session['role_id'] == 3){?>
                             <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName changeKeeper">
 
                             </div>

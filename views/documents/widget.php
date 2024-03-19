@@ -42,24 +42,25 @@ if($have_access_update){
 if($have_access_available){
     $access_buttons .='{reports}';
 }
+if (!empty($access_buttons)) {
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
         'template' => $access_buttons,
-        'buttons' =>[
-            'reports'=>function ($url, $model, $key) {
+        'buttons' => [
+            'reports' => function ($url, $model, $key) {
                 return Html::a('<img width="22" height="21" src="https://img.icons8.com/material-rounded/24/export-excel.png" alt="export-excel"/>', $url, [
                     'title' => Yii::t('yii', 'Հաշվետվություն'),
                     'class' => 'reportsOrders',
                     'target' => '_blank',
                 ]);
             },
-            'delivered'=>function ($url, $model, $key) {
-                if ($model->document_type == 6){
+            'delivered' => function ($url, $model, $key) {
+                if ($model->document_type == 6) {
                     return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132; padding:0px 2px" ></i>', $url, [
                         'title' => Yii::t('yii', 'Հաստատել'),
                     ]);
-                }else{
+                } else {
                     return '';
                 }
             },
@@ -73,18 +74,19 @@ if($have_access_available){
                     ],
                 ]);
             },
-            'refuse'=>function ($url, $model, $key) {
-                if ($model->document_type == 6){
-                    return '<i class="bx bx-block refuseDocument" data-id="'. $key . '" title="Մերժել" style="color:red; padding:0px 2px"></i>';
-                }else{
+            'refuse' => function ($url, $model, $key) {
+                if ($model->document_type == 6) {
+                    return '<i class="bx bx-block refuseDocument" data-id="' . $key . '" title="Մերժել" style="color:red; padding:0px 2px"></i>';
+                } else {
                     return '';
                 }
             },
-],
+        ],
         'urlCreator' => function ($action, Documents $model, $key, $index, $column) {
             return Url::toRoute([$action, 'id' => $model->id]);
         }
     ];
+}
 $fields_arr = [];
 
 if(!empty($new_fields)){

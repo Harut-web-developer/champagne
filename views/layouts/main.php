@@ -29,7 +29,17 @@ $view_groups_name = Users::checkPremission(61);
 $view_branch_groups = Users::checkPremission(85);
 $view_company = Users::checkPremission(89);
 $view_clients = Users::checkPremission(8);
-
+$view_role = Users::checkPremission(32);
+$view_users = Users::checkPremission(16);
+$view_deliver_manager = Users::checkPremission(80);
+$view_payments = Users::checkPremission(65);
+$view_statistic = Users::checkPremission(66);
+$view_rate = Users::checkPremission(48);
+$view_warehouse = Users::checkPremission(4);
+$view_documents = Users::checkPremission(40);
+$view_nomenclature = Users::checkPremission(12);
+$view_products = Users::checkPremission(20);
+$view_log = Users::checkPremission(28);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -116,49 +126,49 @@ $view_clients = Users::checkPremission(8);
                             </a>
                         </li>
                         <?php } ?>
-                        <li class="menu-item" style="">
-                            <?php if ($session['role_id'] == 1 || $session['role_id'] == 2 || $session['role_id'] == 4) { ?>
+                            <?php if ($view_warehouse || $view_documents || $view_nomenclature || $view_products || $view_log) { ?>
+                            <li class="menu-item" style="">
                                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                                     <i class="menu-icon tf-icons bx bx-building"></i>
                                     <div data-i18n="warehouse">Պահեստներ</div>
                                 </a>
+                                <ul class="menu-sub sub_menu_sub">
+                                    <?php if ($view_documents) { ?>
+                                        <li class="menu-item">
+                                            <a href="/documents" class="menu-link">
+                                                <div data-i18n="documents">Փաստաթուղթ</div>
+                                            </a>
+                                        </li>
+                                        <li class="menu-item">
+                                            <a href="/nomenclature" class="menu-link">
+                                                <div data-i18n="nomenclature">Անվանակարգ</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if ($view_products) { ?>
+                                        <li class="menu-item">
+                                            <a href="/products" class="menu-link">
+                                                <div data-i18n="products">Ապրանքներ</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if ($view_log){ ?>
+                                        <li class="menu-item">
+                                            <a href="/log" class="menu-link">
+                                                <div data-i18n="log">Տեղեկամատյան</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if ($view_warehouse) { ?>
+                                        <li class="menu-item">
+                                            <a href="/warehouse" class="menu-link">
+                                                <div data-i18n="Blank">Պահեստներ</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                            </li>
                             <?php } ?>
-                            <ul class="menu-sub sub_menu_sub">
-                                <?php if ($session['role_id'] == 1 || $session['role_id'] == 4) { ?>
-                                    <li class="menu-item">
-                                        <a href="/documents" class="menu-link">
-                                            <div data-i18n="documents">Փաստաթուղթ</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/nomenclature" class="menu-link">
-                                            <div data-i18n="nomenclature">Անվանակարգ</div>
-                                        </a>
-                                    </li>
-                                <?php } ?>
-                                <?php if ($session['role_id'] == 1 || $session['role_id'] == 2 || $session['role_id'] == 4) { ?>
-                                    <li class="menu-item">
-                                        <a href="/products" class="menu-link">
-                                            <div data-i18n="products">Ապրանքներ</div>
-                                        </a>
-                                    </li>
-                                <?php } ?>
-                                <?php if ($session['role_id'] == 1){ ?>
-                                    <li class="menu-item">
-                                        <a href="/log" class="menu-link">
-                                            <div data-i18n="log">Տեղեկամատյան</div>
-                                        </a>
-                                    </li>
-                                <?php } ?>
-                                <?php if ($session['role_id'] == 1 || $session['role_id'] == 2 || $session['role_id'] == 4) { ?>
-                                    <li class="menu-item">
-                                        <a href="/warehouse" class="menu-link">
-                                            <div data-i18n="Blank">Պահեստներ</div>
-                                        </a>
-                                    </li>
-                                <?php } ?>
-                            </ul>
-                        </li>
                         <?php if ($view_groups_name || $view_branch_groups || $view_company || $view_clients) { ?>
                             <li class="menu-item">
                                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -197,28 +207,28 @@ $view_clients = Users::checkPremission(8);
                                 </ul>
                             </li>
                         <? } ?>
-                        <?php if ($session['role_id'] == 1 || $session['role_id'] == 2) { ?>
+                        <?php if ($view_role || $view_users || $view_deliver_manager) { ?>
                             <li class="menu-item" style="">
                                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                                     <i class="menu-icon tf-icons bx bx-male-female"></i>
                                     <div data-i18n="users">Օգտատեր</div>
                                 </a>
                                 <ul class="menu-sub sub_menu_sub">
-                                    <?php if ($session['role_id'] == 1) { ?>
+                                    <?php if ($view_role) { ?>
                                         <li class="menu-item">
                                             <a href="/roles" class="menu-link">
                                                 <div data-i18n="roles">Կարգավիճակ</div>
                                             </a>
                                         </li>
                                     <?php } ?>
-                                    <?php if ($session['role_id'] == 1 || $session['role_id'] == 2) { ?>
+                                    <?php if ($view_users) { ?>
                                         <li class="menu-item">
                                             <a href="/users" class="menu-link">
                                                 <div data-i18n="users">Օգտատեր</div>
                                             </a>
                                         </li>
                                     <?php } ?>
-                                    <?php if ($session['role_id'] == 1 ) { ?>
+                                    <?php if ($view_deliver_manager) { ?>
                                         <li class="menu-item">
                                             <a href="/manager-deliver-condition" class="menu-link">
                                                 <div data-i18n="users">Մենեջեր-առաքիչ</div>
@@ -228,7 +238,7 @@ $view_clients = Users::checkPremission(8);
                                 </ul>
                             </li>
                         <?php } ?>
-                        <?php if ($session['role_id'] == 1) { ?>
+                        <?php if ($view_payments || $view_statistic || $view_rate) { ?>
                             <li class="menu-item" style="">
                                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                                     <i class="menu-icon tf-icons bx bx-money-withdraw"></i>
@@ -236,23 +246,31 @@ $view_clients = Users::checkPremission(8);
                                 </a>
 
                                 <ul class="menu-sub sub_menu_sub">
+                                    <?php if ($view_payments) { ?>
                                     <li class="menu-item">
                                         <a href="/payments" class="menu-link">
                                             <div data-i18n="roles">Վճարումներ</div>
                                         </a>
                                     </li>
+                                    <?php } ?>
+                                    <?php if ($view_statistic) { ?>
                                     <li class="menu-item">
                                         <a href="/payments/statistics" class="menu-link">
                                             <div data-i18n="premissions">Վիճակագրություն</div>
                                         </a>
                                     </li>
+                                    <?php } ?>
+                                    <?php if ($view_rate) { ?>
                                     <li class="menu-item">
                                         <a href="/rates" class="menu-link">
                                             <div data-i18n="users">Փոխարժեք</div>
                                         </a>
                                     </li>
+                                    <?php } ?>
                                 </ul>
                             </li>
+                        <?php } ?>
+                        <?php if (Users::checkPremission(44)) { ?>
                             <li class="menu-item" style="">
                                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                                     <i class="menu-icon tf-icons bx bxs-bank"></i>
@@ -271,6 +289,8 @@ $view_clients = Users::checkPremission(8);
                                     </li>
                                 </ul>
                             </li>
+                        <?php } ?>
+                        <?php if (Users::checkPremission(52)) { ?>
                             <li class="menu-item ">
                                 <a href="/route" class="menu-link">
                                     <i class='bx bxs-direction-left'></i>

@@ -15,6 +15,11 @@ use yii\grid\GridView;
 
 $this->title = 'Զեղչեր';
 $this->params['breadcrumbs'][] = $this->title;
+$itemsPerPage = 20;
+$totalPages = ceil(count($discount_sortable) / $itemsPerPage);
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$startIndex = ($page - 1) * $itemsPerPage;
+$discountPerPage = array_slice($discount_sortable, $startIndex, $itemsPerPage);
 $this->params['sub_page'] = $sub_page;
 $this->params['date_tab'] = $date_tab;
 $have_access_create = Users::checkPremission(41);
@@ -32,10 +37,8 @@ $have_access_delete = Users::checkPremission(43);
                 <?= Html::a('Ստեղծել զեղչ', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
             <?php } ?>
         </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     <div class="card">
-        <div class="table-responsive text-nowrap">
+        <div class="table-responsive text-nowrap renderWidget">
             <table class="table">
                 <thead>
                 <tr>
@@ -54,13 +57,13 @@ $have_access_delete = Users::checkPremission(43);
                     <th>Առավելագույն</th>
                 </tr>
                 </thead>
-                <tbody class="table-border-bottom-0 sortable-ul">
+                <tbody class="table-border-bottom-0 sortableDiscount">
                 <?php
-                foreach ($discount_sortable as $keys => $item) {?>
+                foreach ($discountPerPage as $keys => $item) {?>
                     <tr>
                         <td>
                             <input type="hidden" name="sort[]" value="<?=$item['id']?>">
-                            <span class="fw-medium"><?=$keys + 1?></span>
+                            <span class="fw-medium"><?=($startIndex + $keys + 1)?></span>
                         </td>
                         <td>
                             <?php
@@ -164,50 +167,42 @@ $have_access_delete = Users::checkPremission(43);
                             }
                             ?>
                         </td>
-
                     </tr>
                <?php }?>
-
                 </tbody>
             </table>
         </div>
-<!--    --><?php //= GridView::widget([
-//        'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
-//        'summaryOptions' => ['class' => 'summary'],
-//        'dataProvider' => new ActiveDataProvider([
-//            'query' => $dataProvider->query->andWhere(['status' => '1']),
-////                'pagination' => [
-////                    'pageSize' => 20,
-////                ],
-//        ]),
-//        'columns' => [
-//            ['class' => 'yii\grid\SerialColumn'],
-//
-//            'type',
-//            'discount',
-//            [
-//                'attribute' => 'Զեղչի սկիզբ',
-//                'value' => function ($model) {
-//                    if ($model->start_date) {
-//                        return $model->start_date;
-//                    } else {
-//                        return 'Դատարկ';
-//                    }
-//                }
-//            ],
-//            [
-//                'attribute' => 'Զեղչի ավարտ',
-//                'value' => function ($model) {
-//                    if ($model->end_date) {
-//                        return $model->end_date;
-//                    } else {
-//                        return 'Դատարկ';
-//                    }
-//                }
-//            ],
-//            ...$action_column,
-//        ],
-//    ]); ?>
+        <?php
+        if (count($discount_sortable) > $itemsPerPage){ ?>
+            <nav aria-label="Page navigation">
+                <ul class="pagination pagination-sm customPages">
+                    <li class="page-item <?= $page == 1 ? 'prev disabled' : 'prev' ?>">
+                        <?php if ($page > 1) : ?>
+                            <a class="page-link" href="?page=<?= $page - 1 ?>" aria-label="Previous">
+                                <i class="tf-icon bx bx-chevrons-left"></i>
+                            </a>
+                        <?php else : ?>
+                            <span>«</span>
+                        <?php endif; ?>
+                    </li>
+                    <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+                        <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
+                    <li class="page-item <?= $page == $totalPages ? 'next disabled' : 'next' ?>">
+                        <?php if ($page < $totalPages) : ?>
+                            <a class="page-link" href="?page=<?= $page + 1 ?>" aria-label="Next">
+                                <i class="tf-icon bx bx-chevrons-right"></i>
+                            </a>
+                        <?php else : ?>
+                            <span>»</span>
+                        <?php endif; ?>
+                    </li>
+                </ul>
+            </nav>
+        <?php } ?>
+
     </div>
 </div>
 
@@ -215,12 +210,12 @@ $have_access_delete = Users::checkPremission(43);
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
 <script>
-    $('.sortable-ul').sortable({
+    $('.sortableDiscount').sortable({
         stop: function() {
             $.ajax({
                 url: '/discount/save',
                 method: 'post',
-                data: $('.sortable-ul input').serialize(),
+                data: $('.sortableDiscount input').serialize(),
                 success: function(response) {
                 },
             });

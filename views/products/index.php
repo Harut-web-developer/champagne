@@ -59,7 +59,7 @@ if($have_access_update){
             <h3><?= Html::encode($this->title) ?></h3>
         </div>
         <div class="filtersField" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
-            <?php if($session['role_id'] == '1' || $session['role_id'] == '2'){ ?>
+            <?php if($session['role_id'] == '1' || $session['role_id'] == '2' || $session['role_id'] == '3'){ ?>
             <select class="form-select productStatus" aria-label="Default select example" style="width: auto; margin: 0px 10px 15px 5px;">
                     <option selected value="0">Ընդհանուր</option>
                     <?php foreach ($warehouse as $item => $value){ ?>

@@ -22,6 +22,8 @@ $this->params['date_tab'] = $date_tab;
         'roles' => $roles,
         'user_premission_select' => $user_premission_select,
         'warehouse' => $warehouse,
+        'premissions_check' => $premissions_check
+
     ]) ?>
 
 </div>

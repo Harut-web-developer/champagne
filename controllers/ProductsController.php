@@ -72,17 +72,20 @@ class ProductsController extends Controller
                 ['name' => 'Անվանակարգ','address' => '/nomenclature'],
                 ['name' => 'Տեղեկամատյան','address' => '/log'],
             ];
-        }elseif ($session['role_id'] == 2){
-            $sub_page = [
-                ['name' => 'Պահեստ','address' => '/warehouse'],
-            ];
-        }elseif ($session['role_id'] == 4){
-            $sub_page = [
-                ['name' => 'Պահեստ','address' => '/warehouse'],
-                ['name' => 'Փաստաթղթեր','address' => '/documents'],
-                ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-            ];
+        }else{
+            $sub_page = [];
         }
+//        elseif ($session['role_id'] == 2){
+//            $sub_page = [
+//                ['name' => 'Պահեստ','address' => '/warehouse'],
+//            ];
+//        }elseif ($session['role_id'] == 4){
+//            $sub_page = [
+//                ['name' => 'Պահեստ','address' => '/warehouse'],
+//                ['name' => 'Փաստաթղթեր','address' => '/documents'],
+//                ['name' => 'Անվանակարգ','address' => '/nomenclature'],
+//            ];
+//        }
 
         $date_tab = [];
 

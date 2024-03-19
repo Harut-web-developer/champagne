@@ -11,7 +11,7 @@ $session = Yii::$app->session;
 </div>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <?php if ($session['role_id'] == 1) { ?>
+    <?php if ($session['role_id'] == 1 || $session['role_id'] == 4) { ?>
         <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=e243c296-f6a7-46b7-950a-bd42eb4b2684" type="text/javascript"></script>
     <?php } ?>
     <script src="/js/colorizer.js" type="text/javascript"></script>
@@ -31,7 +31,7 @@ $session = Yii::$app->session;
                     <?php } ?>
                 </select>
             </div>
-        <?php } elseif($session['role_id'] == 1) {?>
+        <?php } elseif($session['role_id'] == 1 || $session['role_id'] == 4) {?>
             <div class="form-group col-md-4 col-lg-4 col-sm-4 loguser">
                 <label for="routeSelect">Երթուղի</label>
                 <select id="routeSelect" class="form-select form-control valuemap" aria-label="Default select example">
@@ -54,7 +54,7 @@ $session = Yii::$app->session;
             </div>
         <?php } ?>
 
-        <?php if($session['role_id'] == 1): ?>
+        <?php if($session['role_id'] == 1 || $session['role_id'] == 4): ?>
             <div class="form-group col-md-4 col-lg-4 col-sm-4 logAction">
                 <label for="myLocalDate">Ընտրել ամսաթիվը</label>
                 <input id="myLocalDate" class="fil-input form-control valuemap" type="date" name="date">
@@ -69,7 +69,7 @@ $session = Yii::$app->session;
             </script>
         <?php endif; ?>
 
-        <?php if($session['role_id'] == 1){ ?>
+        <?php if($session['role_id'] == 1 || $session['role_id'] == 4){ ?>
             <div class="form-group col-md-4 col-lg-4 col-sm-4 loguser">
                 <label for="menegerSelect">Ընտրել մենեջերին</label>
                 <select id="menegerSelect" class="form-select form-control mapManagerId" aria-label="Default select example">
