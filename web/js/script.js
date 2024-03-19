@@ -1089,6 +1089,7 @@ $(document).ready(function() {
     })
 });
 window.addEventListener('load', function() {
+    var global = '';
     var csrfToken = $('meta[name="csrf-token"]').attr("content");
     $.ajax({
         url:"/map/window-load-data",
@@ -1109,6 +1110,7 @@ window.addEventListener('load', function() {
                     var location_value = data['route'];
                     var date = data['today'];
                     var managerId, deliverId = '';
+                    global = data['role_id'];
                     if (data['role_id'] == 2) {
                         managerId = data['manager_id'];
                     }
@@ -1166,12 +1168,17 @@ window.addEventListener('load', function() {
                             }).catch(function (error) {
                                 console.log(error);
                             });
-                        }, 1000);
+                        }, 60 * 1000);
                     }
                 }
                 ymaps.ready(init);
             }
         }
     })
-    ymaps.ready(init);
+    if (global == 2) {
+        ymaps.ready(init);
+    }
+    if (global == 3) {
+        ymaps.ready(init);
+    }
 })
