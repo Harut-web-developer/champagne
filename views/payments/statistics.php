@@ -36,6 +36,7 @@ $this->params['date_tab'] = $date_tab;
             </tbody>
         </table>
     </div>
+    <?php if (count($statistics) > $itemsPerPage){ ?>
     <nav aria-label="Page navigation">
         <ul class="pagination pagination-sm customPages">
             <li class="<?= $page == 1 ? 'prev disabled' : 'prev' ?> page-item">
@@ -65,6 +66,6 @@ $this->params['date_tab'] = $date_tab;
             </li>
         </ul>
     </nav>
-
+    <?php } ?>
 </div>
 

@@ -243,6 +243,16 @@ $action_column[] = [
                     ],
                     'total_price',
                     'total_price_before_discount',
+                    [
+                        'attribute' => 'is_exist_company',
+                        'value' => function ($model) {
+                            if ($model->companiName) {
+                                return $model->companiName->name;
+                            } else {
+                                return 'Դատարկ';
+                            }
+                        }
+                    ],
                     'total_discount',
                     'total_count',
                     'orders_date',

@@ -11,6 +11,7 @@ use Yii;
  * @property int $user_id
  * @property int $clients_id
  * @property string $status
+ * @property string $is_exist_company
  * @property float $total_price
  * @property float $total_price_before_discount
  * @property float $total_discount
@@ -52,7 +53,7 @@ class Orders extends \yii\db\ActiveRecord
             'user_id' => 'Օգտատեր',
             'clients_id' => 'Հաճախորդ',
             'status' => 'Կարգավիճակ',
-            'is_exist_company' => 'Կարգավիճակ',
+            'is_exist_company' => 'Կանխիկ վճորող ընկերություն',
             'company_id' => 'Ընկերություն',
             'comment' => 'Մեկնաբանություն',
             'total_price_before_discount' => 'Ընդհանուր գումար',
@@ -70,11 +71,13 @@ class Orders extends \yii\db\ActiveRecord
     public function getClientsName(){
         return $this->hasOne(Clients::className(),['id' => 'clients_id']);
     }
+    public function getCompaniName(){
+        return $this->hasOne(CompaniesWithCash::className(),['id' => 'company_id']);
+    }
     public static function getDefVals($model){
         if(is_null($model->status)){
             $model->status = '1';
         }
         return $model;
     }
-//    public static  function getMeneger(x)
 }
