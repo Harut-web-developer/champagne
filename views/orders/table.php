@@ -1,5 +1,6 @@
 <?php
 
+use app\models\CompaniesWithCash;
 use app\widgets\CustomLinkPager;
 
 /** @var yii\web\View $this */
@@ -7,6 +8,12 @@ use app\widgets\CustomLinkPager;
 /** @var yii\widgets\ActiveForm $form */
 
 $this->registerCssFile('@web/css/bootstrap.min.css');
+$CompaniesWithCash = CompaniesWithCash::find()
+    ->select('companies_with_cash.name')
+    ->leftJoin('orders', 'orders.company_id = companies_with_cash.id')
+    ->where(['orders.is_exist_company' => '1'])
+    ->andWhere(['orders.id' => $model['id']])
+    ->asArray()->one();
 ?>
 <!-- Basic Bootstrap Table -->
 <div id="print">
@@ -21,6 +28,7 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                     <th>Մեկնաբանություն</th>
                     <th>Ընդհանուր գումար</th>
                     <th>Ընդհանուր զեղչված գումար</th>
+                    <th>Կանխիկ վճորող ընկերություն</th>
                     <th>Ընդհանուր զեղչի չափ</th>
                     <th>Ընդհանուր քանակ</th>
                     <th>Պատվերի ամսաթիվ</th>
@@ -33,6 +41,9 @@ $this->registerCssFile('@web/css/bootstrap.min.css');
                     <td><?=$model['comment']?></td>
                     <td><?=number_format($model['total_price_before_discount'],2) . " դր"?></td>
                     <td><?=number_format($model['total_price'],2) . " դր"?></td>
+                    <td>
+                        <?= $CompaniesWithCash ?$CompaniesWithCash['name'] : 'Դատարկ'; ?>
+                    </td>
                     <td><?=number_format($model['total_discount'],2) . " դր"?></td>
                     <td><?=$model['total_count'] . " հատ"?></td>
                     <td><?=$model['orders_date']?></td>

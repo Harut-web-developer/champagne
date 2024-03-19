@@ -3,12 +3,15 @@
 namespace app\controllers;
 
 use app\models\Clients;
+use app\models\Log;
 use app\models\Orders;
 use app\models\Payments;
+use app\models\Premissions;
 use app\models\Users;
 use Yii;
 use app\models\BranchGroups;
 use app\models\BranchGroupsSearch;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -113,8 +116,15 @@ class BranchGroupsController extends Controller
      */
     public function actionView($id)
     {
+        $sub_page = [];
+        $date_tab = [];
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
         ]);
     }
 
@@ -134,7 +144,14 @@ class BranchGroupsController extends Controller
         ];
         $date_tab = [];
         $model = new BranchGroups();
-
+        $url = Url::to('', 'http');
+        $url = str_replace('create', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 82])
+            ->andWhere(['status' => 1])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
@@ -142,7 +159,8 @@ class BranchGroupsController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
-                return $this->redirect(['index', 'id' => $model->id]);
+            Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
+            return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
@@ -172,13 +190,29 @@ class BranchGroupsController extends Controller
         ];
         $date_tab = [];
         $model = $this->findModel($id);
-
+        if ($this->findModel($id)->status == 0) {
+            return $this->redirect(Yii::$app->request->referrer);
+        }
+        $url = Url::to('', 'http');
+        $oldattributes = BranchGroups::find()
+            ->select('*')
+            ->where(['id' => $id])
+            ->andWhere(['status' => 1])
+            ->asArray()
+            ->one();
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 83])
+            ->andWhere(['status' => 1])
+            ->asArray()
+            ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
             $model->name = $post['BranchGroups']['name'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
+            Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
 
@@ -202,9 +236,23 @@ class BranchGroupsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $oldattributes = BranchGroups::find()
+            ->select('name')
+            ->where(['id' => $id])
+            ->andWhere(['status' => 1])
+            ->asArray()
+            ->one();
+
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 84])
+            ->andWhere(['status' => 1])
+            ->asArray()
+            ->one();
         $branch_group = BranchGroups::findOne($id);
         $branch_group->status = '0';
         $branch_group->save(false);
+        Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }
 
