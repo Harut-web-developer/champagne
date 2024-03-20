@@ -1005,13 +1005,31 @@ $(document).ready(function() {
         refuseDocument($(this));
     })
 
+    $('body').on('keyup','#payments-payment_sum', function () {
+        let inputValue = $(this).val();
+        let sanitizedValue = inputValue.replace(/[^0-9.]/g, '');
+        let parts = sanitizedValue.split('.');
+        if (parts[0] == ''){
+                 sanitizedValue = inputValue.replace(/./, '');
+        }else {
+            if (parts.length > 1) {
+                parts[1] = parts[1].replace(/\./g, '');
+                sanitizedValue = parts[0] + '.' + parts[1];
+            }
+        }
+        $(this).val(sanitizedValue);
+    })
     $('body').on('keyup','#nomenclature-cost', function () {
         let inputValue = $(this).val();
         let sanitizedValue = inputValue.replace(/[^0-9.]/g, '');
         let parts = sanitizedValue.split('.');
-        if (parts.length > 1) {
-            parts[1] = parts[1].replace(/\./g, '');
-            sanitizedValue = parts[0] + '.' + parts[1];
+        if (parts[0] == ''){
+            sanitizedValue = inputValue.replace(/./, '');
+        }else {
+            if (parts.length > 1) {
+                parts[1] = parts[1].replace(/\./g, '');
+                sanitizedValue = parts[0] + '.' + parts[1];
+            }
         }
         $(this).val(sanitizedValue);
     })
@@ -1019,9 +1037,13 @@ $(document).ready(function() {
         let inputValue = $(this).val();
         let sanitizedValue = inputValue.replace(/[^0-9.]/g, '');
         let parts = sanitizedValue.split('.');
-        if (parts.length > 1) {
-            parts[1] = parts[1].replace(/\./g, '');
-            sanitizedValue = parts[0] + '.' + parts[1];
+        if (parts[0] == ''){
+            sanitizedValue = inputValue.replace(/./, '');
+        }else {
+            if (parts.length > 1) {
+                parts[1] = parts[1].replace(/\./g, '');
+                sanitizedValue = parts[0] + '.' + parts[1];
+            }
         }
         $(this).val(sanitizedValue);
     })

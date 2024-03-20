@@ -580,26 +580,6 @@ class DashboardController extends Controller
                     ->all();
                 $line_chart_label = [];
                 $line_chart_number = [];
-                if (!empty($line_chart_debt)){
-                    for ($k = 0; $k < count($line_chart_debt);$k++){
-                        array_push($line_chart_number,$line_chart_debt[$k]['debt']);
-                        array_push($line_chart_label,substr($line_chart_debt[$k]['orders_date'],0,7));
-                    }
-                }else{
-                    array_push($line_chart_number,0);
-                    array_push($line_chart_label,date('Y'). ' թ.');
-                }
-                $line_chart_orders = Orders::find()->select('SUM(total_price) as orders,DATE(orders_date) as orders_date')
-                    ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
-                    ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
-                    ->andWhere($role)
-                    ->groupBy('MONTH(orders_date)')
-                    ->asArray()
-                    ->all();
-//                var_dump($line_chart_orders);
-                $line_chart_orders_label = [];
-                $line_chart_orders_this_year = [];
-
                 $months = [];
                 for ($n = 1; $n <= date('m');$n++){
                     if ($n < 10) {
@@ -610,6 +590,39 @@ class DashboardController extends Controller
                         array_push($months, $monthData);
                     }
                 }
+                if (!empty($line_chart_debt)){
+                    foreach ($months as $month) {
+                        $found = false;
+                        foreach ($line_chart_debt as $row) {
+                            if (substr($row["orders_date"],5,2) == $month) {
+                                $line_chart_number[] = $row["debt"];
+                                $found = true;
+                                break;
+                            }
+                        }
+                        if (!$found) {
+                            $line_chart_number[] = 0;
+                        }
+                    }
+                }else{
+                    foreach ($months as $month){
+                        $line_chart_number[] = 0;
+
+                    }
+                }
+                foreach ($months as $month){
+                    $line_chart_label[] = date($month . '-Y' ) . ' թ.';
+                }
+                $line_chart_orders = Orders::find()->select('SUM(total_price) as orders,DATE(orders_date) as orders_date')
+                    ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
+                    ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                    ->andWhere($role)
+                    ->groupBy('MONTH(orders_date)')
+                    ->asArray()
+                    ->all();
+                $line_chart_orders_label = [];
+                $line_chart_orders_this_year = [];
+
                 if (!empty($line_chart_orders)){
                     foreach ($months as $month) {
                         $found = false;
@@ -670,7 +683,7 @@ class DashboardController extends Controller
                     }
                 }
                 foreach ($lastYearMonths as $month){
-                    $line_chart_orders_label[] = date('Y-' . $month);;
+                    $line_chart_orders_label[] = date($month . '-Y' ) . ' թ.';
                 }
 
             }

@@ -156,7 +156,7 @@ class PaymentsController extends Controller
             $model_l = array();
             $post = $this->request->post();
             $model->client_id = $post['client_id'];
-            $model->payment_sum = $post['Payments']['payment_sum'];
+            $model->payment_sum = floatval($post['Payments']['payment_sum']);
             $model->pay_date = $post['Payments']['pay_date'];
             $model->rate_id = $post['Payments']['rate_id'];
             $model->rate_value = $post['Payments']['rate_value'];
@@ -250,7 +250,7 @@ class PaymentsController extends Controller
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
             $model->client_id = $post['client_id'];
-            $model->payment_sum = $post['Payments']['payment_sum'];
+            $model->payment_sum = floatval($post['Payments']['payment_sum']);
             $model->pay_date = $post['Payments']['pay_date'];
             $model->rate_id = $post['Payments']['rate_id'];
             $model->rate_value = $post['Payments']['rate_value'];

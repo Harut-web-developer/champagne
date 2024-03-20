@@ -144,8 +144,8 @@ class NomenclatureController extends Controller
             $model->image = UploadedFile::getInstance($model, 'image');
             $model->image->saveAs('upload/'.$imageName );
             $model->name = $post['Nomenclature']['name'];
-            $model->cost = intval($post['Nomenclature']['cost']);
-            $model->price = intval($post['Nomenclature']['price']);
+            $model->cost = floatval($post['Nomenclature']['cost']);
+            $model->price = floatval($post['Nomenclature']['price']);
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model = Nomenclature::getDefVals($model);
@@ -252,8 +252,8 @@ class NomenclatureController extends Controller
                 $model->image->saveAs('upload/'.$imageName );
             }
             $model->name = $post['Nomenclature']['name'];
-            $model->cost = intval($post['Nomenclature']['cost']);
-            $model->price = $post['Nomenclature']['price'];
+            $model->cost = floatval($post['Nomenclature']['cost']);
+            $model->price = floatval($post['Nomenclature']['price']);
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);

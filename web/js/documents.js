@@ -309,9 +309,14 @@ $(document).ready(function () {
             $(this).closest('.oldTr').find('.pricewithaah').children('span').text(num.toFixed(2))
             $(this).closest('.oldTr').find('.pricewithaah').children('input').val(num.toFixed(2))
         } else {
-            let dotCount = cleanedValue.split('.').length - 1;
-            if (dotCount > 1) {
-                cleanedValue = cleanedValue.slice(0, cleanedValue.lastIndexOf('.'));
+            let parts = cleanedValue.split('.');
+            if (parts[0] == ''){
+                cleanedValue = input.replace(/./, '');
+            }else {
+                if (parts.length > 1) {
+                    parts[1] = parts[1].replace(/\./g, '');
+                    cleanedValue = parts[0] + '.' + parts[1];
+                }
             }
             $(this).val(cleanedValue);
             let num = parseFloat(cleanedValue) + (parseFloat(cleanedValue) * 20) / 100;
@@ -339,9 +344,14 @@ $(document).ready(function () {
             $(this).closest('.oldTr').find('.pricewithaah').children('span').text(num.toFixed(2))
             $(this).closest('.oldTr').find('.pricewithaah').children('input').val(num.toFixed(2))
         } else {
-            let dotCount = cleanedValue.split('.').length - 1;
-            if (dotCount > 1) {
-                cleanedValue = cleanedValue.slice(0, cleanedValue.lastIndexOf('.'));
+            let parts = cleanedValue.split('.');
+            if (parts[0] == ''){
+                cleanedValue = input.replace(/./, '');
+            }else {
+                if (parts.length > 1) {
+                    parts[1] = parts[1].replace(/\./g, '');
+                    cleanedValue = parts[0] + '.' + parts[1];
+                }
             }
             $(this).val(cleanedValue);
             let num = parseFloat(cleanedValue) + (parseFloat(cleanedValue) * 20) / 100;

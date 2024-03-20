@@ -39,7 +39,7 @@ use yii\widgets\ActiveForm;
                 </div>
                 <?php } ?>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 discountType">
-                    <?= $form->field($model, 'payment_sum')->input('number') ?>
+                    <?= $form->field($model, 'payment_sum')->textInput() ?>
                 </div>
                 <label class="rateLabel" for="rate">Փոխարժեք</label>
                 <div id="rate" class="form-group col-md-12 col-lg-12 col-sm-12 rateDocument">

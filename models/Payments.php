@@ -32,7 +32,7 @@ class Payments extends \yii\db\ActiveRecord
     {
         return [
             [['client_id', 'payment_sum', 'pay_date','rate_id','rate_value'], 'required'],
-            [['client_id','payment_sum','rate_id','rate_value'], 'integer'],
+            [['client_id','rate_id','rate_value'], 'integer'],
             [['pay_date', 'created_at', 'updated_at'], 'safe'],
             [['status','comment'], 'string'],
         ];
