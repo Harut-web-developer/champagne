@@ -281,7 +281,7 @@ $session = Yii::$app->session;
             <div class="card-footer">
                 <?php
                 if ($type == '1' || $type == '2' || $type == '3' || $type == '4'){?>
-                    <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary']) ?>
+                    <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary submit_save']) ?>
                 <?php }?>
             </div>
             <?php ActiveForm::end(); ?>
@@ -441,7 +441,7 @@ $session = Yii::$app->session;
                 </div>
             </div>
             <div class="card-footer">
-                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary saveAll']) ?>
+                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary saveAll submit_save']) ?>
             </div>
             <?php ActiveForm::end(); ?>
         </div>

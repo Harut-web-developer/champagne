@@ -105,7 +105,7 @@ class MapController extends Controller
             $get = $this->request->get();
             $manager_id = 0;
             $warehouse = '';
-;            $find_manager = null;
+            $find_manager = null;
             $value = $get['locationvalue'];
             $valuedate =$get['date'];
             date_default_timezone_set('UTC');

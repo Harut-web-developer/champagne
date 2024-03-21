@@ -40,7 +40,7 @@ use yii\widgets\ActiveForm;
             <?php } ?>
         </div>
         <div class="card-footer">
-            <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
+            <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary submit_save']) ?>
         </div>
         <?php ActiveForm::end(); ?>
     </div>

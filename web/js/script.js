@@ -1110,6 +1110,9 @@ $(document).ready(function() {
         var sanitizedValue = inputValue.replace(/[^0-9]/g, '');
         $(this).val(sanitizedValue);
     })
+    $('.submit_save').on('click', function () {
+        $(this).css('display', 'none');
+    })
 });
 window.addEventListener('load', function() {
     var global = '';
