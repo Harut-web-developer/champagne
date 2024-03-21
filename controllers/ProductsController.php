@@ -65,28 +65,23 @@ class ProductsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        if ($session['role_id'] == 1){
-            $sub_page = [
-                ['name' => 'Պահեստ','address' => '/warehouse'],
-                ['name' => 'Փաստաթղթեր','address' => '/documents'],
-                ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-                ['name' => 'Տեղեկամատյան','address' => '/log'],
-            ];
-        }else{
-            $sub_page = [];
+        $sub_page = [];
+        if (Users::checkPremission(4)){
+            $warehouse = ['name' => 'Պահեստ','address' => '/warehouse'];
+            array_push($sub_page,$warehouse);
         }
-//        elseif ($session['role_id'] == 2){
-//            $sub_page = [
-//                ['name' => 'Պահեստ','address' => '/warehouse'],
-//            ];
-//        }elseif ($session['role_id'] == 4){
-//            $sub_page = [
-//                ['name' => 'Պահեստ','address' => '/warehouse'],
-//                ['name' => 'Փաստաթղթեր','address' => '/documents'],
-//                ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-//            ];
-//        }
-
+        if (Users::checkPremission(40)){
+            $documents = ['name' => 'Փաստաթղթեր','address' => '/documents'];
+            array_push($sub_page,$documents);
+        }
+        if (Users::checkPremission(12)){
+            $nom = ['name' => 'Անվանակարգ','address' => '/nomenclature'];
+            array_push($sub_page,$nom);
+        }
+        if (Users::checkPremission(28)){
+            $log = ['name' => 'Տեղեկամատյան','address' => '/log'];
+            array_push($sub_page,$log);
+        }
         $date_tab = [];
 
         $searchModel = new ProductsSearch();
@@ -172,13 +167,7 @@ class ProductsController extends Controller
 
     public function actionCreateFields()
     {
-        $sub_page = [
-            ['name' => 'Պահեստ','address' => '/warehouse'],
-            ['name' => 'Փաստաթղթեր','address' => '/documents'],
-            ['name' => 'Ապրանք','address' => '/products'],
-            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-            ['name' => 'Տեղեկամատյան','address' => '/log'],
-        ];
+        $sub_page = [];
         $date_tab = [];
 
         $model = new Products();

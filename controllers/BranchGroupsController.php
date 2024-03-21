@@ -68,9 +68,19 @@ class BranchGroupsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [
-            ['name' => 'Խմբեր','address' => '/groups-name'],
-        ];
+        $sub_page = [];
+        if (Users::checkPremission(61)){
+            $groups_discount = ['name' => 'Զեղչի խմբեր','address' => '/groups-name'];
+            array_push($sub_page,$groups_discount);
+        }
+        if (Users::checkPremission(89)){
+            $company = ['name' => 'Ընկերություններ','address' => '/companies-with-cash'];
+            array_push($sub_page,$company);
+        }
+        if (Users::checkPremission(8)){
+            $clients = ['name' => 'Հաճախորդներ','address' => '/clients'];
+            array_push($sub_page,$clients);
+        }
         $date_tab = [];
 
         $searchModel = new BranchGroupsSearch();
@@ -89,9 +99,19 @@ class BranchGroupsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [
-            ['name' => 'Խմբեր','address' => '/groups-name'],
-        ];
+        $sub_page = [];
+        if (Users::checkPremission(61)){
+            $groups_discount = ['name' => 'Զեղչի խմբեր','address' => '/groups-name'];
+            array_push($sub_page,$groups_discount);
+        }
+        if (Users::checkPremission(89)){
+            $company = ['name' => 'Ընկերություններ','address' => '/companies-with-cash'];
+            array_push($sub_page,$company);
+        }
+        if (Users::checkPremission(8)){
+            $clients = ['name' => 'Հաճախորդներ','address' => '/clients'];
+            array_push($sub_page,$clients);
+        }
         $date_tab = [];
         $branches = Clients::find()
             ->select(['clients.name'])

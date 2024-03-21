@@ -72,12 +72,23 @@ class NomenclatureController extends Controller
             $this->redirect('/site/403');
         }
         $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'nomenclature']);
-        $sub_page = [
-            ['name' => 'Պահեստ','address' => '/warehouse'],
-            ['name' => 'Փաստաթղթեր','address' => '/documents'],
-            ['name' => 'Ապրանք','address' => '/products'],
-            ['name' => 'Տեղեկամատյան','address' => '/log'],
-        ];
+        $sub_page = [];
+        if (Users::checkPremission(4)){
+            $warehouse = ['name' => 'Պահեստ','address' => '/warehouse'];
+            array_push($sub_page,$warehouse);
+        }
+        if (Users::checkPremission(40)){
+            $documents = ['name' => 'Փաստաթղթեր','address' => '/documents'];
+            array_push($sub_page,$documents);
+        }
+        if (Users::checkPremission(20)){
+            $prod = ['name' => 'Ապրանք','address' => '/products'];
+            array_push($sub_page,$prod);
+        }
+        if (Users::checkPremission(28)){
+            $log = ['name' => 'Տեղեկամատյան','address' => '/log'];
+            array_push($sub_page,$log);
+        }
         $date_tab = [];
 
         $searchModel = new NomenclatureSearch();
@@ -184,13 +195,27 @@ class NomenclatureController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [
-            ['name' => 'Պահեստ','address' => '/warehouse'],
-            ['name' => 'Փաստաթղթեր','address' => '/documents'],
-            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-            ['name' => 'Ապրանք','address' => '/products'],
-            ['name' => 'Տեղեկամատյան','address' => '/log'],
-        ];
+        $sub_page = [];
+        if (Users::checkPremission(4)){
+            $warehouse = ['name' => 'Պահեստ','address' => '/warehouse'];
+            array_push($sub_page,$warehouse);
+        }
+        if (Users::checkPremission(40)){
+            $documents = ['name' => 'Փաստաթղթեր','address' => '/documents'];
+            array_push($sub_page,$documents);
+        }
+        if (Users::checkPremission(12)){
+            $nom = ['name' => 'Անվանակարգ','address' => '/nomenclature'];
+            array_push($sub_page,$nom);
+        }
+        if (Users::checkPremission(20)){
+            $prod = ['name' => 'Ապրանք','address' => '/products'];
+            array_push($sub_page,$prod);
+        }
+        if (Users::checkPremission(28)){
+            $log = ['name' => 'Տեղեկամատյան','address' => '/log'];
+            array_push($sub_page,$log);
+        }
         $date_tab = [];
 
         $model = new Nomenclature();

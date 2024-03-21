@@ -67,9 +67,19 @@ class CompaniesWithCashController extends Controller
         }
         $searchModel = new CompaniesWithCashSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $sub_page = [
-            ['name' => 'Խմբեր','address' => '/groups-name'],
-        ];
+        $sub_page = [];
+        if (Users::checkPremission(61)){
+            $groups_discount = ['name' => 'Զեղչի խմբեր','address' => '/groups-name'];
+            array_push($sub_page,$groups_discount);
+        }
+        if (Users::checkPremission(85)){
+            $branches = ['name' => 'Մասնաճյուղի Խմբեր','address' => '/branch-groups'];
+            array_push($sub_page,$branches);
+        }
+        if (Users::checkPremission(8)){
+            $clients = ['name' => 'Հաճախորդներ','address' => '/clients'];
+            array_push($sub_page,$clients);
+        }
         $date_tab = [];
         return $this->render('index', [
             'searchModel' => $searchModel,

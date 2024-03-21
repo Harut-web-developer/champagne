@@ -212,7 +212,7 @@ class PaymentsController extends Controller
         ];
         $date_tab = [];
         $client = Clients::find()->select('id,name')->asArray()->all();
-        $rates = Rates::find()->select('id,name')->asArray()->all();
+        $rates = Rates::find()->select('id,name')->where(['status' => ['1','2']])->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
         return $this->render('create', [
             'model' => $model,
@@ -268,7 +268,7 @@ class PaymentsController extends Controller
         $payment_clients = Payments::find()->select('client_id')->where(['=','id',$id])->asArray()->all();
         $payment_clients = array_column($payment_clients,'client_id');
         $clients = Clients::find()->select('id, name')->Where(['=','status',1])->asArray()->all();
-        $rates = Rates::find()->select('id,name')->asArray()->all();
+        $rates = Rates::find()->select('id,name')->where(['status' => ['1','2']])->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
         $client = Clients::find()->select('id,name')->asArray()->all();
         $client = ArrayHelper::map($client,'id','name');

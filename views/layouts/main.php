@@ -40,6 +40,7 @@ $view_documents = Users::checkPremission(40);
 $view_nomenclature = Users::checkPremission(12);
 $view_products = Users::checkPremission(20);
 $view_log = Users::checkPremission(28);
+$view_nom = Users::checkPremission(12)
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -126,7 +127,7 @@ $view_log = Users::checkPremission(28);
                             </a>
                         </li>
                         <?php } ?>
-                            <?php if ($view_warehouse || $view_documents || $view_nomenclature || $view_products || $view_log) { ?>
+                            <?php if ($view_warehouse || $view_documents || $view_nomenclature || $view_products || $view_log || $view_nom) { ?>
                             <li class="menu-item" style="">
                                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                                     <i class="menu-icon tf-icons bx bx-building"></i>
@@ -139,6 +140,8 @@ $view_log = Users::checkPremission(28);
                                                 <div data-i18n="documents">Փաստաթուղթ</div>
                                             </a>
                                         </li>
+                                    <?php } ?>
+                                    <?php if ($view_nom) { ?>
                                         <li class="menu-item">
                                             <a href="/nomenclature" class="menu-link">
                                                 <div data-i18n="nomenclature">Անվանակարգ</div>
@@ -214,13 +217,13 @@ $view_log = Users::checkPremission(28);
                                     <div data-i18n="users">Օգտատեր</div>
                                 </a>
                                 <ul class="menu-sub sub_menu_sub">
-                                    <?php if ($view_role) { ?>
-                                        <li class="menu-item">
-                                            <a href="/roles" class="menu-link">
-                                                <div data-i18n="roles">Կարգավիճակ</div>
-                                            </a>
-                                        </li>
-                                    <?php } ?>
+<!--                                    --><?php //if ($view_role) { ?>
+<!--                                        <li class="menu-item">-->
+<!--                                            <a href="/roles" class="menu-link">-->
+<!--                                                <div data-i18n="roles">Կարգավիճակ</div>-->
+<!--                                            </a>-->
+<!--                                        </li>-->
+<!--                                    --><?php //} ?>
                                     <?php if ($view_users) { ?>
                                         <li class="menu-item">
                                             <a href="/users" class="menu-link">

@@ -80,13 +80,24 @@ class DocumentsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $sub_page = [];
+        if (Users::checkPremission(4)){
+            $warehouse = ['name' => 'Պահեստ','address' => '/warehouse'];
+            array_push($sub_page,$warehouse);
+        }
+        if (Users::checkPremission(12)){
+            $nom = ['name' => 'Անվանակարգ','address' => '/nomenclature'];
+            array_push($sub_page,$nom);
+        }
+        if (Users::checkPremission(20)){
+            $prod = ['name' => 'Ապրանք','address' => '/products'];
+            array_push($sub_page,$prod);
+        }
+        if (Users::checkPremission(28)){
+            $log = ['name' => 'Տեղեկամատյան','address' => '/log'];
+            array_push($sub_page,$log);
+        }
         $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'documents']);
-        $sub_page = [
-            ['name' => 'Պահեստ','address' => '/warehouse'],
-            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-            ['name' => 'Ապրանք','address' => '/products'],
-            ['name' => 'Տեղեկամատյան','address' => '/log'],
-        ];
         $date_tab = [];
 
         $searchModel = new DocumentsSearch();
@@ -207,16 +218,6 @@ class DocumentsController extends Controller
                 }
             if ($post['Documents']['document_type'] === '10'){
                 for ($i = 0; $i < count($post['document_items']); $i++) {
-
-//                    $items = OrderItems::find()->where(['id' => $post['items'][$i]])->asArray()->one();
-////                    var_dump($items);
-//                    $order_items = OrderItems::find()->select('order_items.id,order_items.product_id,order_items.count_by,
-//                    order_items.nom_id_for_name,products.price,products.AAH')
-//                        ->leftJoin('products','products.id = order_items.product_id')
-//                        ->where(['order_items.id' => $post['items'][$i]])
-//                        ->andWhere(['order_items.nom_id_for_name' => $post['document_items'][$i]])
-//                        ->andWhere(['order_items.status' => '1'])->all();
-
                             $products = new Products();
                             $products->warehouse_id = $post['Documents']['warehouse_id'];
                             $products->nomenclature_id = $post['document_items'][$i];
@@ -676,7 +677,7 @@ class DocumentsController extends Controller
 //        }
         $warehouse = Warehouse::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
         $warehouse =  ArrayHelper::map($warehouse,'id','name');
-        $rates = Rates::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
+        $rates = Rates::find()->select('id,name')->where(['status' => ['1','2']])->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
         $query = Nomenclature::find();
         $countQuery = clone $query;
@@ -699,13 +700,6 @@ class DocumentsController extends Controller
             $to_warehouse = ArrayHelper::map($to_warehouse,'id','name');
         }
         $clietns = Clients::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
-//        $delivered_documents = Orders::find()
-//            ->select('orders.id, orders.orders_date, documents.comment, clients.name')
-//            ->leftJoin('documents', 'documents.orders_id = orders.id')
-//            ->leftJoin('clients', 'clients.id = orders.clients_id')
-//            ->where(['orders.status'=> ['2','3']])
-//            ->andWhere(['documents.document_type' => '9'])
-//            ->asArray()->all();
         return $this->render('create', [
             'model' => $model,
             'clietns' => $clietns,
@@ -716,7 +710,6 @@ class DocumentsController extends Controller
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'to_warehouse' => $to_warehouse,
-//            'delivered_documents' => $delivered_documents
         ]);
     }
 
@@ -729,12 +722,6 @@ class DocumentsController extends Controller
                 ->andWhere(['clients_id' => $client_id])
                 ->asArray()
                 ->all();
-//            $deliver = Users::find()
-//                ->select('id, name')
-//                ->where(['status' => '1'])
-//                ->andWhere(['role_id' => '3'])
-//                ->asArray()
-//                ->all();
             return $this->renderAjax('delivered-orders',[
                'delivered_documents' => $delivered_documents,
 //                'deliver' => $deliver,
@@ -780,13 +767,27 @@ class DocumentsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [
-            ['name' => 'Պահեստ','address' => '/warehouse'],
-            ['name' => 'Փաստաթղթեր','address' => '/documents'],
-            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-            ['name' => 'Ապրանք','address' => '/products'],
-            ['name' => 'Տեղեկամատյան','address' => '/log'],
-        ];
+        $sub_page = [];
+        if (Users::checkPremission(4)){
+            $warehouse = ['name' => 'Պահեստ','address' => '/warehouse'];
+            array_push($sub_page,$warehouse);
+        }
+        if (Users::checkPremission(40)){
+            $documents = ['name' => 'Փաստաթղթեր','address' => '/documents'];
+            array_push($sub_page,$documents);
+        }
+        if (Users::checkPremission(12)){
+            $nom = ['name' => 'Անվանակարգ','address' => '/nomenclature'];
+            array_push($sub_page,$nom);
+        }
+        if (Users::checkPremission(20)){
+            $prod = ['name' => 'Ապրանք','address' => '/products'];
+            array_push($sub_page,$prod);
+        }
+        if (Users::checkPremission(28)){
+            $log = ['name' => 'Տեղեկամատյան','address' => '/log'];
+            array_push($sub_page,$log);
+        }
         $date_tab = [];
 
         $model = new Documents();
@@ -1399,7 +1400,7 @@ class DocumentsController extends Controller
         }
         $to_warehouse =  Warehouse::find()->select('id,name')->where(['id' => $get_documents_id->to_warehouse])->andWhere(['status' => '1'])->asArray()->all();
         $to_warehouse = ArrayHelper::map($to_warehouse,'id','name');
-        $rates = Rates::find()->select('id,name')->asArray()->all();
+        $rates = Rates::find()->select('id,name')->where(['status' => ['1','2']])->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
 
         $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')

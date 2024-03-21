@@ -70,9 +70,19 @@ class GroupsNameController extends Controller
         }
         $searchModel = new GroupsNameSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $sub_page = [
-            ['name' => 'Հաճախորդներ','address' => '/clients'],
-        ];
+        $sub_page = [];
+        if (Users::checkPremission(85)){
+            $branches = ['name' => 'Մասնաճյուղի Խմբեր','address' => '/branch-groups'];
+            array_push($sub_page,$branches);
+        }
+        if (Users::checkPremission(89)){
+            $company = ['name' => 'Ընկերություններ','address' => '/companies-with-cash'];
+            array_push($sub_page,$company);
+        }
+        if (Users::checkPremission(8)){
+            $clients = ['name' => 'Հաճախորդներ','address' => '/clients'];
+            array_push($sub_page,$clients);
+        }
         $date_tab = [];
 
         return $this->render('index', [

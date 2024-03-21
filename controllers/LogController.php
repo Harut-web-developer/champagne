@@ -64,12 +64,23 @@ class LogController extends Controller
             if(!$have_access){
                 $this->redirect('/site/403');
             }
-            $sub_page = [
-                ['name' => 'Պահեստ','address' => '/warehouse'],
-                ['name' => 'Փաստաթղթեր','address' => '/documents'],
-                ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-                ['name' => 'Ապրանք','address' => '/products'],
-            ];
+        $sub_page = [];
+        if (Users::checkPremission(4)){
+            $warehouse = ['name' => 'Պահեստ','address' => '/warehouse'];
+            array_push($sub_page,$warehouse);
+        }
+        if (Users::checkPremission(40)){
+            $documents = ['name' => 'Փաստաթղթեր','address' => '/documents'];
+            array_push($sub_page,$documents);
+        }
+        if (Users::checkPremission(12)){
+            $nom = ['name' => 'Անվանակարգ','address' => '/nomenclature'];
+            array_push($sub_page,$nom);
+        }
+        if (Users::checkPremission(20)){
+            $prod = ['name' => 'Ապրանք','address' => '/products'];
+            array_push($sub_page,$prod);
+        }
             $date_tab = [];
 
             $searchModel = new LogSearch();

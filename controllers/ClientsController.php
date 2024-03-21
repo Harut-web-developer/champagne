@@ -78,12 +78,18 @@ class ClientsController extends Controller
         }
         $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'clients']);
 
-        if ($session['role_id'] == 1) {
-            $sub_page = [
-                ['name' => 'Խմբեր','address' => '/groups-name'],
-            ];
-        }else{
-            $sub_page = [];
+        $sub_page = [];
+        if (Users::checkPremission(61)){
+            $groups_discount = ['name' => 'Զեղչի խմբեր','address' => '/groups-name'];
+            array_push($sub_page,$groups_discount);
+        }
+        if (Users::checkPremission(85)){
+            $branches = ['name' => 'Մասնաճյուղի Խմբեր','address' => '/branch-groups'];
+            array_push($sub_page,$branches);
+        }
+        if (Users::checkPremission(89)){
+            $company = ['name' => 'Ընկերություններ','address' => '/companies-with-cash'];
+            array_push($sub_page,$company);
         }
 
         $date_tab = [];
@@ -244,6 +250,22 @@ class ClientsController extends Controller
             $this->redirect('/site/403');
         }
         $sub_page = [];
+        if (Users::checkPremission(61)){
+            $groups_discount = ['name' => 'Զեղչի խմբեր','address' => '/groups-name'];
+            array_push($sub_page,$groups_discount);
+        }
+        if (Users::checkPremission(85)){
+            $branches = ['name' => 'Մասնաճյուղի Խմբեր','address' => '/branch-groups'];
+            array_push($sub_page,$branches);
+        }
+        if (Users::checkPremission(89)){
+            $company = ['name' => 'Ընկերություններ','address' => '/companies-with-cash'];
+            array_push($sub_page,$company);
+        }
+        if (Users::checkPremission(8)){
+            $clients = ['name' => 'Հաճախորդներ','address' => '/clients'];
+            array_push($sub_page,$clients);
+        }
         $date_tab = [];
 
         $model = new Clients();
