@@ -40,7 +40,7 @@ $view_documents = Users::checkPremission(40);
 $view_nomenclature = Users::checkPremission(12);
 $view_products = Users::checkPremission(20);
 $view_log = Users::checkPremission(28);
-$view_nom = Users::checkPremission(12)
+$view_nom = Users::checkPremission(12);
 $view_notificationBell = Users::checkPremission(91);
 ?>
 <?php $this->beginPage() ?>
