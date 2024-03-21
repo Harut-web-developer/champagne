@@ -163,10 +163,10 @@ class NomenclatureController extends Controller
             $model->save(false);
             Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
             $session = Yii::$app->session;
-            if ($session->has('role_id') && $session['role_id'] == 4) {
+            if ($session->has('role_id') && ($session['role_id'] == 4 || $session['role_id'] == 2 || $session['role_id'] == 3)) {
                 $user_name = Users::find()->select('name')->where(['id' => $session['user_id']])->asArray()->one();
                 $photoUrl = Yii::$app->urlManager->createAbsoluteUrl(['/upload/' . $model->image]);
-                $text = 'Պահեստապետ՝ ' . $user_name['name'] . '(ն/ը) ' . 'ստեղծել է անվանակարգ։ Անվանակարգը ստեղծվել է՝
+                $text = $user_name['name'] . '(ն/ը) ' . 'ստեղծել է անվանակարգ։ Անվանակարգը ստեղծվել է՝
             «' . $model->name . '» անունով։ <img style="width:50px" src="' . $photoUrl . '" alt="photo">';
                 Notifications::createNotifications('Ստեղծել անվանակարգ', $text, 'createNomenclature');
             }
@@ -283,10 +283,10 @@ class NomenclatureController extends Controller
             $model->save(false);
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             $session = Yii::$app->session;
-            if ($session->has('role_id') && $session['role_id'] == 4) {
+            if ($session->has('role_id') && ($session['role_id'] == 4 || $session['role_id'] == 2 || $session['role_id'] == 3)) {
                 $user_name = Users::find()->select('name')->where(['id' => $session['user_id']])->asArray()->one();
                 $photoUrl = Yii::$app->urlManager->createAbsoluteUrl(['/upload/' . $model->image]);
-                $text = 'Պահեստապետ՝ ' . $user_name['name'] . '(ն/ը) ' . 'փոփոխել է անվանակարգը։ Փոփոխված անվանակարգն է՝
+                $text = $user_name['name'] . '(ն/ը) ' . 'փոփոխել է անվանակարգը։ Փոփոխված անվանակարգն է՝
             «' . $model->name . '»։ <img style="width:50px" src="' . $photoUrl . '" alt="photo">';
                 Notifications::createNotifications('Փոփոխել անվանակարգ', $text, 'updateNomenclature');
             }

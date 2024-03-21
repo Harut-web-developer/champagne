@@ -37,35 +37,35 @@ $this->params['date_tab'] = $date_tab;
         </table>
     </div>
     <?php if (count($statistics) > $itemsPerPage){ ?>
-    <nav aria-label="Page navigation">
-        <ul class="pagination pagination-sm customPages">
-            <li class="<?= $page == 1 ? 'prev disabled' : 'prev' ?> page-item">
-                <?php if ($page > 1) : ?>
-                    <a class="page-link" href="?page=<?= $page - 1 ?>" aria-label="Previous">
-                        <i class="tf-icon bx bx-chevrons-left"></i>
-                    </a>
-                <?php else : ?>
-                    <span>«</span>
-                <?php endif; ?>
-            </li>
-
-            <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
-                <li class="<?= $i == $page ? 'active' : '' ?> page-item">
-                    <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+        <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm customPages">
+                <li class="<?= $page == 1 ? 'prev disabled' : 'prev' ?> page-item">
+                    <?php if ($page > 1) : ?>
+                        <a class="page-link" href="?&page=<?= $page - 1 ?>" aria-label="Previous">
+                            <i class="tf-icon bx bx-chevrons-left"></i>
+                        </a>
+                    <?php else : ?>
+                        <span>«</span>
+                    <?php endif; ?>
                 </li>
-            <?php endfor; ?>
 
-            <li class="<?= $page == $totalPages ? 'next disabled' : 'next' ?> page-item">
-                <?php if ($page < $totalPages) : ?>
-                    <a class="page-link" href="?page=<?= $page + 1 ?>" aria-label="Next">
-                        <i class="tf-icon bx bx-chevrons-right"></i>
-                    </a>
-                <?php else : ?>
-                    <span>»</span>
-                <?php endif; ?>
-            </li>
-        </ul>
-    </nav>
+                <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+                    <li class="<?= $i == $page ? 'active' : '' ?> page-item">
+                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                    </li>
+                <?php endfor; ?>
+
+                <li class="<?= $page == $totalPages ? 'next disabled' : 'next' ?> page-item">
+                    <?php if ($page < $totalPages) : ?>
+                        <a class="page-link" href="?page=<?= $page + 1 ?>" aria-label="Next">
+                            <i class="tf-icon bx bx-chevrons-right"></i>
+                        </a>
+                    <?php else : ?>
+                        <span>»</span>
+                    <?php endif; ?>
+                </li>
+            </ul>
+        </nav>
     <?php } ?>
 </div>
 

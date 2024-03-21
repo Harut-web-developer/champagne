@@ -294,13 +294,17 @@ class OrdersController extends Controller
                 }
             }
             $model = Orders::getDefVals($model);
-            $user_name = Users::find()->select('*')->where(['id' => $post['Orders']['user_id']])->asArray()->one();
+            $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
             $client_name = Clients::find()->select('name')->where(['id' => $post['clients_id']])->one();
             $text = $user_name['name'] . '(ն/ը) ' . 'ստեղծել է ' . $client_name['name'] . 'ի համար պատվեր։'
                 . '<a href="http://champagne/orders/update?id=' . $model->id . '">
                     <img width="15" height="15" src="/upload/view.png" alt="view">
                    </a>';
-            Notifications::createNotifications($premission['name'], $text,'orderscreate');
+            if ($session['role_id'] == '4'){
+                Notifications::createNotifications($premission['name'], $text,'orderscreatekeeper');
+            }else{
+                Notifications::createNotifications($premission['name'], $text,'orderscreate');
+            }
             Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         } else {
@@ -942,7 +946,11 @@ class OrdersController extends Controller
                         ->asArray()
                         ->one();
                     $text = $user_name['name'] . '(ի) առաքումից ' . $client_name['name'] . '(ն\ը) ապրանք է հետ վերադարձ արել։';
-                    Notifications::createNotifications('Ապրանքի վերադարձ', $text,'changeorderscount');
+                    if ($session['role_id'] == '4'){
+                        Notifications::createNotifications('Ապրանքի վերադարձ', $text,'changeorderscountkeeper');
+                    }else{
+                        Notifications::createNotifications('Ապրանքի վերադարձ', $text,'changeorderscount');
+                    }
                 }
                 $num++;
             }
@@ -1008,7 +1016,11 @@ class OrdersController extends Controller
             ->asArray()
             ->one();
         $text = $user_name['name'] . '(ն/ը) հաստատել է ' . $client_name['name'] . '(ի) պատվեի առաքումը։';
-        Notifications::createNotifications('Հաստատել պատվեր', $text,'ordersdelivered');
+        if ($session['role_id'] == '4'){
+            Notifications::createNotifications('Հաստատել պատվեր', $text,'ordersdeliveredkeeper');
+        }else{
+            Notifications::createNotifications('Հաստատել պատվեր', $text,'ordersdelivered');
+        }
         Log::afterSaves('delivered', $model, '', $url, $premission);
         return $this->redirect(['index']);
     }
@@ -1091,7 +1103,7 @@ class OrdersController extends Controller
                         $model[$index.$j] = $item;
                     }
                 }
-                if ($session['role_id'] == 4){
+                if ($session['role_id'] == 4 || $session['role_id'] == 3 || $session['role_id'] == 2){
                     $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
                     $text = $user_name['name'] . '(ն\ը) ելքագրել է ապրանք։';
                     Notifications::createNotifications('Ելքագրել փաստաթուղթ', $text,'exitdocument');

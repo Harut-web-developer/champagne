@@ -135,26 +135,34 @@ class ClientsController extends Controller
         $id = intval(Yii::$app->request->get('id'));
         $sub_page = [];
         $date_tab = [];
-
+        $itemsPerPage = 2;
         $client_orders = Orders::find()
             ->select(['orders.id', 'orders.total_price as debt'])
             ->leftJoin('clients', 'orders.clients_id = clients.id')
             ->where(['orders.clients_id' => $id])
             ->andwhere(['or',['orders.status' => '2'],['orders.status' => '3'],['orders.status' => '4'],['orders.status' => '5']])
             ->andWhere(['clients.status' => 1])
-            ->groupBy('orders.id')
+            ->groupBy('orders.id');
+        $totalPages = ceil($client_orders->count() / $itemsPerPage);
+        $page = Yii::$app->request->get('page', 1);
+        $offset = ($page - 1) * $itemsPerPage;
+        $client_orders = $client_orders
+            ->offset($offset)
+            ->limit($itemsPerPage)
             ->asArray()
             ->all();
-
         $payments = Payments::find()->select('SUM(payment_sum) as payments_total')->where(['client_id'=> $id])->andWhere(['status' => '1'])->asArray()->one();
 
         return $this->render('clients_debt', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
             'client_orders' => $client_orders,
             'payments' => $payments['payments_total'],
+            'itemsPerPage' => $itemsPerPage,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'id' => $id,
         ]);
     }
     /**
@@ -197,10 +205,14 @@ class ClientsController extends Controller
             $model = Clients::getDefVals($model);
             $model->save();
             Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
-            if ($session['role_id'] == '2') {
+            if ($session['role_id'] == '2' || $session['role_id'] == '3'  || $session['role_id'] == '4') {
                 $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
-                $text = 'Մենեջեր՝ ' . $user_name['name'] . '(ն/ը) ' . 'ստեղծել է նոր հաճախորդ։ Հաճախորդը ստեղծվել է՝ «' . $model->name . '» անունով։';
-                Notifications::createNotifications('Ստեղծել հաճախորդ', $text, 'createclients');
+                $text = $user_name['name'] . '(ն/ը) ' . 'ստեղծել է նոր հաճախորդ։ Հաճախորդը ստեղծվել է՝ «' . $model->name . '» անունով։';
+                if ($session['role_id'] == '4'){
+                    Notifications::createNotifications('Ստեղծել հաճախորդ', $text, 'createclientskeeper');
+                }else{
+                    Notifications::createNotifications('Ստեղծել հաճախորդ', $text, 'createclients');
+                }
             }
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
@@ -339,10 +351,14 @@ class ClientsController extends Controller
             $model->save();
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             $session = Yii::$app->session;
-            if ($session['role_id'] == '2') {
+            if ($session['role_id'] == '2' || $session['role_id'] == '3' || $session['role_id'] == '4') {
                 $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
-                $text = 'Մենեջեր՝ ' . $user_name['name'] . '(ն/ը) ' . 'փոփոխել է հաճախորդի ինֆորմացիան։ Փոփոխված հաճախորդն է՝ «' . $model->name . '»։';
-                Notifications::createNotifications('Փոփոխել հաճախորդ', $text, 'updateclients');
+                $text = $user_name['name'] . '(ն/ը) ' . 'փոփոխել է հաճախորդի ինֆորմացիան։ Փոփոխված հաճախորդն է՝ «' . $model->name . '»։';
+                if ($session['role_id'] == '4'){
+                    Notifications::createNotifications('Փոփոխել հաճախորդ', $text, 'updateclientskeeper');
+                }else{
+                    Notifications::createNotifications('Փոփոխել հաճախորդ', $text, 'updateclients');
+                }
             }
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
