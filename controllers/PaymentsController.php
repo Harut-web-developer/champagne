@@ -71,10 +71,16 @@ class PaymentsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [
-            ['name' => 'Վիճակագրություն','address' => '/payments/statistics'],
-            ['name' => 'Փոխարժեք','address' => '/rates']
-        ];
+        $sub_page = [];
+        if (Users::checkPremission(66)){
+            $statistics = ['name' => 'Վիճակագրություն','address' => '/payments/statistics'];
+            array_push($sub_page,$statistics);
+        }
+        if (Users::checkPremission(48)){
+            $rates = ['name' => 'Փոխարժեք','address' => '/rates'];
+            array_push($sub_page,$rates);
+        }
+
         $date_tab = [];
 
         $searchModel = new PaymentsSearch();
@@ -118,10 +124,15 @@ class PaymentsController extends Controller
             ->where(['in','route_id', $route_id])
             ->asArray()
             ->all();
-        $sub_page = [
-            ['name' => 'Վճարումներ','address' => '/payments'],
-            ['name' => 'Փոխարժեք','address' => '/rates']
-        ];
+        $sub_page = [];
+        if (Users::checkPremission(65)){
+            $rates = ['name' => 'Վճարումներ','address' => '/payments'];
+            array_push($sub_page,$rates);
+        }
+        if (Users::checkPremission(48)){
+            $rates = ['name' => 'Փոխարժեք','address' => '/rates'];
+            array_push($sub_page,$rates);
+        }
         $date_tab = [];
 
         return $this->render('statistics',[

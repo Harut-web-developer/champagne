@@ -23,7 +23,7 @@ $CompaniesWithCash = CompaniesWithCash::find()
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Օգտատեր</th>
+                    <th>Մենեջեր</th>
                     <th>Հաճախորդ</th>
                     <th>Մեկնաբանություն</th>
                     <th>Ընդհանուր գումար</th>

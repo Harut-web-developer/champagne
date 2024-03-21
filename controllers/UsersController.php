@@ -74,15 +74,10 @@ class UsersController extends Controller
             $this->redirect('/site/403');
         }
         $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'users']);
-
-        if ($session['role_id'] == 1) {
-            $sub_page = [
-                ['name' => 'Կարգավիճակ','address' => '/roles'],
-                ['name' => 'Մենեջեր-առաքիչ','address' => '/manager-deliver-condition'],
-//            ['name' => 'Թույլտվություն','address' => '/premissions'], փակ մնա
-            ];
-        }else{
-            $sub_page = [];
+        $sub_page = [];
+        if (Users::checkPremission(80)){
+            $manager = ['name' => 'Մենեջեր-առաքիչ','address' => '/manager-deliver-condition'];
+            array_push($sub_page,$manager);
         }
         $date_tab = [];
 
@@ -253,11 +248,15 @@ class UsersController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [
-            ['name' => 'Կարգավիճակ','address' => '/roles'],
-            ['name' => 'Թույլտվություն','address' => '/premissions'],
-            ['name' => 'Օգտատեր','address' => '/users'],
-        ];
+        $sub_page = [];
+        if (Users::checkPremission(80)){
+            $manager = ['name' => 'Մենեջեր-առաքիչ','address' => '/manager-deliver-condition'];
+            array_push($sub_page,$manager);
+        }
+        if (Users::checkPremission(16)){
+            $users = ['name' => 'Օգտատեր','address' => '/users'];
+            array_push($sub_page,$users);
+        }
         $date_tab = [];
 
         $model = new Users();

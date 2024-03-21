@@ -190,7 +190,7 @@ if (!empty($access_buttons)) {
                     ['class' => 'yii\grid\SerialColumn'],
                     ...$action_column,
                     [
-                        'attribute' => 'Օգտատեր',
+                        'attribute' => 'user_id',
                         'value' => function ($model) {
                             if ($model->usersName) {
                                 return $model->usersName->name;

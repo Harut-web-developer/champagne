@@ -53,10 +53,11 @@ class ManagerDeliverConditionController extends Controller
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         $managers = Users::find()->select('*')->where(['and',['status' => '1'],['role_id' => '2']])->all();
-        $sub_page = [
-            ['name' => 'Կարգավիճակ','address' => '/roles'],
-            ['name' => 'Օգտատեր','address' => '/users'],
-        ];
+        $sub_page = [];
+        if (Users::checkPremission(16)){
+            $users = ['name' => 'Օգտատեր','address' => '/users'];
+            array_push($sub_page,$users);
+        }
         $date_tab = [];
         return $this->render('index', [
             'searchModel' => $searchModel,

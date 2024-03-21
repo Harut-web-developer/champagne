@@ -114,7 +114,7 @@ if (!empty($access_buttons)) {
                     ['class' => 'yii\grid\SerialColumn'],
                     ...$action_column,
                     [
-                        'attribute' => 'Օգտատեր',
+                        'attribute' => 'user_id',
                         'value' => function ($model) {
                             if ($model->usersName) {
                                 return $model->usersName->name;
@@ -202,7 +202,7 @@ if (!empty($access_buttons)) {
                     ...$action_column,
 
                     [
-                        'attribute' => 'Օգտատեր',
+                        'attribute' => 'user_id',
                         'value' => function ($model) {
                             if ($model->usersName) {
                                 return $model->usersName->name;
@@ -359,7 +359,7 @@ else { ?>
                     ...$action_column,
 
                     [
-                        'attribute' => 'Օգտատեր',
+                        'attribute' => 'user_id',
                         'value' => function ($model) {
                             if ($model->usersName) {
                                 return $model->usersName->name;
@@ -447,7 +447,7 @@ else { ?>
                     ['class' => 'yii\grid\SerialColumn'],
                     ...$action_column,
                     [
-                        'attribute' => 'Օգտատեր',
+                        'attribute' => 'user_id',
                         'value' => function ($model) {
                             if ($model->usersName) {
                                 return $model->usersName->name;
