@@ -131,7 +131,7 @@ $this->params['date_tab'] = $date_tab;
                                 var latitude = data['coordinatesUser'][d]['latitude'];
                                 var longitude = data['coordinatesUser'][d]['longitude'];
                                 distance = getDistanceFromLatLonInKm(latitude, longitude, latitude1, longitude2).toFixed(1);
-                                if (distance < 300) {
+                                if (distance < 100) {
                                     var csrfToken = $('meta[name="csrf-token"]').attr("content");
                                     var coord_id = data['coordinatesUser'][d]['id'];
                                     visit++;

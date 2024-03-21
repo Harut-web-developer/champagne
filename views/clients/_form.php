@@ -9,10 +9,6 @@ use app\models\CustomfieldsBlocksInputs;
 /** @var app\models\Clients $model */
 /** @var yii\widgets\ActiveForm $form */
 $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'clients','block_type'=>1])->orderBy(['order_number'=>SORT_ASC])->all();
-//$req = true;
-//if(isset($action__)){
-//    $req = false;
-//}
 ?>
 <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=e243c296-f6a7-46b7-950a-bd42eb4b2684" type="text/javascript"></script>
 <script src="/js/event_reverse_geocode.js" type="text/javascript"></script>
@@ -111,7 +107,7 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'clients','block_type'
             <?php } ?>
         </div>
         <div class="card-footer">
-            <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary addClients']) ?>
+            <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary addClients submit_save']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

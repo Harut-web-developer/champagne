@@ -301,7 +301,7 @@ $session = Yii::$app->session;
             <div class="card-footer">
                 <?php if ($model->is_exit == 1){?>
                 <?php if ($session['role_id'] == 1 || $session['role_id'] == 2){ ?>
-                    <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
+                    <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary submit_save']) ?>
                 <?php }}?>
             </div>
             <?php ActiveForm::end(); ?>
@@ -446,7 +446,7 @@ $session = Yii::$app->session;
                 </div>
             </div>
             <div class="card-footer">
-                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
+                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary submit_save']) ?>
             </div>
             <?php ActiveForm::end(); ?>
         </div>

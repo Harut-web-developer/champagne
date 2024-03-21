@@ -6,13 +6,6 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var app\models\Discount $model */
 /** @var yii\widgets\ActiveForm $form */
-//echo "<pre>";
-//var_dump($clients);
-//var_dump($discount_client_groups);
-//var_dump($discount_clients_id);
-//var_dump($discount_client_groups_name);
-//var_dump($discount_client_groups_id);
-//die;
 ?>
 
 <div class="discount-form">
@@ -128,7 +121,7 @@ use yii\widgets\ActiveForm;
 
             </div>
             <div class="card-footer">
-                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
+                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary submit_save']) ?>
             </div>
         <?php ActiveForm::end(); ?>
     </div>
