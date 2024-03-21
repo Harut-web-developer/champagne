@@ -40,6 +40,7 @@ $view_documents = Users::checkPremission(40);
 $view_nomenclature = Users::checkPremission(12);
 $view_products = Users::checkPremission(20);
 $view_log = Users::checkPremission(28);
+$view_notificationBell = Users::checkPremission(91);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -346,7 +347,7 @@ $view_log = Users::checkPremission(28);
 
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
                         <!-- Place this tag where you want the button to render. -->
-                        <?php if ($session['role_id'] == 1 || $session['role_id'] == 4) { ?>
+                        <?php if ($view_notificationBell) { ?>
                             <li class="nav-item lh-1 me-3">
                                 <div class="notifications-container">
                                     <div class="bell-icon"><i id="notificationBell" class="bx bx-bell notificationIcon"></i>

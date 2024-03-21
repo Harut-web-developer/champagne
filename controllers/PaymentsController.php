@@ -4,11 +4,13 @@ namespace app\controllers;
 
 use app\models\Clients;
 use app\models\Log;
+use app\models\ManagerDeliverCondition;
 use app\models\Orders;
 use app\models\Payments;
 use app\models\PaymentsSearch;
 use app\models\Premissions;
 use app\models\Rates;
+use app\models\Route;
 use app\models\Users;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -98,12 +100,24 @@ class PaymentsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-
+        $session = Yii::$app->session;
+        if ($session['role_id'] == '1' || $session['role_id'] == '4'){
+            $routeIds = Route::find()->select('id')->asArray()->all();
+            $route_id = ArrayHelper::getColumn($routeIds, 'id');
+        }else{
+            if ($session['role_id'] == '2'){
+                $routeIds = ManagerDeliverCondition::find()->select('route_id')->where(['manager_id' => $session['user_id']])->asArray()->all();
+                $route_id = ArrayHelper::getColumn($routeIds, 'route_id');
+            } elseif ($session['role_id'] == '3'){
+                $routeIds = ManagerDeliverCondition::find()->select('route_id')->where(['deliver_id' => $session['user_id']])->asArray()->all();
+                $route_id = ArrayHelper::getColumn($routeIds, 'route_id');
+            }
+        }
         $statistics = Clients::find()
             ->innerJoinWith(['orders' , 'payments'])
+            ->where(['in','route_id', $route_id])
             ->asArray()
             ->all();
-
         $sub_page = [
             ['name' => 'Վճարումներ','address' => '/payments'],
             ['name' => 'Փոխարժեք','address' => '/rates']

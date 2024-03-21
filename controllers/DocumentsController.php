@@ -1582,7 +1582,7 @@ class DocumentsController extends Controller
                     $ch .= "\n";
                 }
             }
-            if($session['role_id'] == 4){
+            if($session['role_id'] == 4 || $session['role_id'] == 2 || $session['role_id'] == 3){
                 $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
                 $text = $user_name['name'] . '(ն/ը) ' . 'մերժել է ապրանքի հետ վերդարձը, նշելով մերժման պատճառը ՝ «'
                     . $ch . '»: '
