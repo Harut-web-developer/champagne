@@ -1456,6 +1456,7 @@ class DocumentsController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
+        $session = Yii::$app->session;
         $url = Url::to('', 'http');
         $url = str_replace('delivered', 'view', $url);
         $premission = Premissions::find()
@@ -1532,6 +1533,12 @@ class DocumentsController extends Controller
         $document_status->status = '0';
         $document_status->save(false);
         Log::afterSaves('delivered', $model, '', $url, $premission);
+        if($session['role_id'] == 4 || $session['role_id'] == 2 || $session['role_id'] == 3) {
+            $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
+            $text = $user_name['name'] . '(ն\ը) մուտք է արել պահեստ վերադարձված ապրանք(ներ)ը։';
+            Notifications::createNotifications('Վերադարձված ապրանք(ներ)ի մուտքագրված փաստաթուղթ', $text, 'documentsdelivered');
+        }
+
         $document_items_status = DocumentItems::find()->where(['document_id' => $id])->all();
         if (!empty($document_items_status)){
             foreach ($document_items_status as $value){

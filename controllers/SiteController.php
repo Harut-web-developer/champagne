@@ -193,7 +193,7 @@ class SiteController extends Controller
             if ($session['role_id'] == '1') {
                 $notification_badge_admin_index = Notifications::find()
                     ->select('id, status')
-                    ->Where(['or', ['sort_' => 'updateclientskeeper'], ['sort_' => 'createclientskeeper'], ['sort_' => 'ordersdeliveredkeeper'], ['sort_' => 'orderscreatekeeper'], ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn'], ['sort_' => 'createclients'], ['sort_' => 'updateclients'], ['sort_' => 'createNomenclature'], ['sort_' => 'updateNomenclature']])
+                    ->Where(['or', ['sort_' => 'documentsdelivered'], ['sort_' => 'updateclientskeeper'], ['sort_' => 'createclientskeeper'], ['sort_' => 'ordersdeliveredkeeper'], ['sort_' => 'orderscreatekeeper'], ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn'], ['sort_' => 'createclients'], ['sort_' => 'updateclients'], ['sort_' => 'createNomenclature'], ['sort_' => 'updateNomenclature']])
                     ->andWhere(['NOT LIKE', 'status', ',' . $session['role_id'] . ','])
                     ->andWhere(['>=', 'datetime', date('Y-m-d')])
                     ->asArray()
@@ -226,7 +226,7 @@ class SiteController extends Controller
             if ($session['role_id'] == '1') {
                 $notification_badge_admin = Notifications::find()
                     ->select('id')
-                    ->Where(['or', ['sort_' => 'updateclientskeeper'], ['sort_' => 'createclientskeeper'], ['sort_' => 'ordersdeliveredkeeper'], ['sort_' => 'orderscreatekeeper'], ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn'], ['sort_' => 'createclients'], ['sort_' => 'updateclients'], ['sort_' => 'createNomenclature'], ['sort_' => 'updateNomenclature']])
+                    ->Where(['or',  ['sort_' => 'documentsdelivered'], ['sort_' => 'updateclientskeeper'], ['sort_' => 'createclientskeeper'], ['sort_' => 'ordersdeliveredkeeper'], ['sort_' => 'orderscreatekeeper'], ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn'], ['sort_' => 'createclients'], ['sort_' => 'updateclients'], ['sort_' => 'createNomenclature'], ['sort_' => 'updateNomenclature']])
                     ->andWhere(['NOT LIKE', 'status', ',' . $session['role_id'] . ','])
                     ->andWhere(['>=', 'datetime', date('Y-m-d')])
                     ->count();
@@ -257,13 +257,13 @@ class SiteController extends Controller
             $notifications_today = Notifications::find()
                 ->select(['title', 'message', 'datetime'])
                 ->andWhere(['>=', 'datetime', date('Y-m-d')])
-                ->andWhere(['or', ['sort_' => 'updateclientskeeper'], ['sort_' => 'createclientskeeper'], ['sort_' => 'ordersdeliveredkeeper'], ['sort_' => 'orderscreatekeeper'], ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn'], ['sort_' => 'createclients'], ['sort_' => 'updateclients'], ['sort_' => 'createNomenclature'], ['sort_' => 'updateNomenclature']])
+                ->andWhere(['or',  ['sort_' => 'documentsdelivered'], ['sort_' => 'updateclientskeeper'], ['sort_' => 'createclientskeeper'], ['sort_' => 'ordersdeliveredkeeper'], ['sort_' => 'orderscreatekeeper'], ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn'], ['sort_' => 'createclients'], ['sort_' => 'updateclients'], ['sort_' => 'createNomenclature'], ['sort_' => 'updateNomenclature']])
                 ->orderBy(['datetime' => SORT_DESC])
                 ->asArray()
                 ->all();
             $notifications_all = Notifications::find()
                 ->select(['title', 'message', 'datetime'])
-                ->Where(['or', ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn'], ['sort_' => 'createclients'], ['sort_' => 'updateclients'], ['sort_' => 'createNomenclature'], ['sort_' => 'updateNomenclature']])
+                ->Where(['or',  ['sort_' => 'documentsdelivered'], ['sort_' => 'updateclientskeeper'], ['sort_' => 'createclientskeeper'], ['sort_' => 'ordersdeliveredkeeper'], ['sort_' => 'orderscreatekeeper'], ['sort_' => 'orderscreate'], ['sort_' => 'ordersupdate'], ['sort_' => 'ordersdelivered'], ['sort_' => 'documentscreate'], ['sort_' => 'exitdocument'], ['sort_' => 'changeorderscount'], ['sort_' => 'refusalreturn'], ['sort_' => 'createclients'], ['sort_' => 'updateclients'], ['sort_' => 'createNomenclature'], ['sort_' => 'updateNomenclature']])
                 ->orderBy(['datetime' => SORT_DESC])
                 ->asArray()
                 ->all();
@@ -297,7 +297,7 @@ class SiteController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
         $users_premissions = [];
         if ($session['role_id'] == '1') {
-            $users_premissions = ['updateclientskeeper','createclientskeeper','ordersdeliveredkeeper','orderscreatekeeper','orderscreate','ordersupdate','ordersdelivered','exitdocument','documentscreate','changeorderscount','refusalreturn','createclients','updateclients','createNomenclature','updateNomenclature'];
+            $users_premissions = ['documentsdelivered','updateclientskeeper','createclientskeeper','ordersdeliveredkeeper','orderscreatekeeper','orderscreate','ordersupdate','ordersdelivered','exitdocument','documentscreate','changeorderscount','refusalreturn','createclients','updateclients','createNomenclature','updateNomenclature'];
         }
         if ($session['role_id'] == '4') {
             $users_premissions = ['orderscreate','ordersdelivered','changeorderscount'];
@@ -411,7 +411,7 @@ class SiteController extends Controller
         if ($session['role_id'] == '1') {
             if (!empty($notification_doc)){
                 if (!is_null($notification_doc)){
-                    if (($notification_doc->watched != ',') && ($notification_doc->sort_ == 'updateclientskeeper' || $notification_doc->sort_ == 'createclientskeeper' || $notification_doc->sort_ == 'ordersdeliveredkeeper' || $notification_doc->sort_ == 'orderscreatekeeper' || $notification_doc->sort_ == 'exitdocument' || $notification_doc->sort_ == 'refusalreturn' || $notification_doc->sort_ == 'createNomenclature' || $notification_doc->sort_ == 'updateNomenclature' || $notification_doc->sort_ == 'documentscreate')) {
+                    if (($notification_doc->watched != ',') && ($notification_doc->sort_ == 'documentsdelivered' || $notification_doc->sort_ == 'updateclientskeeper' || $notification_doc->sort_ == 'createclientskeeper' || $notification_doc->sort_ == 'ordersdeliveredkeeper' || $notification_doc->sort_ == 'orderscreatekeeper' || $notification_doc->sort_ == 'exitdocument' || $notification_doc->sort_ == 'refusalreturn' || $notification_doc->sort_ == 'createNomenclature' || $notification_doc->sort_ == 'updateNomenclature' || $notification_doc->sort_ == 'documentscreate')) {
                         $watched_array = explode(',', $notification_doc->watched);
                         if (in_array('1', $watched_array)) {
                             $notification_doc->status = 0;
@@ -428,7 +428,7 @@ class SiteController extends Controller
                                 'notifications' => $notification_doc,
                             ];
                         }
-                    }elseif(($notification_doc->watched == ',') && ($notification_doc->sort_ == 'updateclientskeeper' || $notification_doc->sort_ == 'createclientskeeper' || $notification_doc->sort_ == 'ordersdeliveredkeeper' || $notification_doc->sort_ == 'orderscreatekeeper' || $notification_doc->sort_ == 'exitdocument' || $notification_doc->sort_ == 'refusalreturn' || $notification_doc->sort_ == 'createNomenclature' || $notification_doc->sort_ == 'updateNomenclature' || $notification_doc->sort_ == 'documentscreate')){
+                    }elseif(($notification_doc->watched == ',') && ($notification_doc->sort_ == 'documentsdelivered' || $notification_doc->sort_ == 'updateclientskeeper' || $notification_doc->sort_ == 'createclientskeeper' || $notification_doc->sort_ == 'ordersdeliveredkeeper' || $notification_doc->sort_ == 'orderscreatekeeper' || $notification_doc->sort_ == 'exitdocument' || $notification_doc->sort_ == 'refusalreturn' || $notification_doc->sort_ == 'createNomenclature' || $notification_doc->sort_ == 'updateNomenclature' || $notification_doc->sort_ == 'documentscreate')){
                         $watched_value = $notification_doc->watched . $session['role_id'] . ',';
                         $notification_doc->watched = $watched_value;
                         $notification_doc->save();
