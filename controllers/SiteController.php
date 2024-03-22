@@ -11,6 +11,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+$view_notificationBell = Users::checkPremission(91);
 
 class SiteController extends Controller
 {
@@ -89,8 +90,24 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        $sub_page = [];
+        $date_tab = [];
+        $this->redirect(['site/login']);
+        return $this->render('index', [
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+        ]);
 
-        return $this->render('index');
+    }
+    public function action403()
+    {
+        $sub_page = [];
+        $date_tab = [];
+        return $this->render('403', [
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+        ]);
+
     }
     /**
      * Login action.
@@ -186,6 +203,10 @@ class SiteController extends Controller
      *
      * @return string
      */
+    public function actionViewNotification(){
+        $view_notificationBell = Users::checkPremission(91);
+        return  $view_notificationBell;
+    }
     public function actionIndexNotificationsClick()
     {
         $session = Yii::$app->session;
@@ -290,7 +311,6 @@ class SiteController extends Controller
             'notifications_all' => $notifications_all,
         ]);
     }
-
     public function actionCheckNotifications()
     {
         $session = Yii::$app->session;
