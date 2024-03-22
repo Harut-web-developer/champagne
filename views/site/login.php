@@ -10,12 +10,10 @@ use yii\bootstrap5\Html;
 use yii\helpers\Url;
 //$this->params['sub_page'] = $sub_page;
 
-if(isset($_COOKIE['username']) && isset($_COOKIE['password'])){
+if(isset($_COOKIE['username'])){
     $username = $_COOKIE['username'];
-    $password = $_COOKIE['password'];
 }else{
     $username = '';
-    $password = '';
 }
 ?>
     <?php $form = ActiveForm::begin(['id' => 'formAuthentication']); ?>
@@ -28,7 +26,7 @@ if(isset($_COOKIE['username']) && isset($_COOKIE['password'])){
                 <label class="form-label" for="password">Գաղտնաբառ</label>
             </div>
             <div class="input-group input-group-merge">
-                <input type="password" id="password" value="<?=$password?>" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
+                <input type="password" id="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                 <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
             </div>
 <!--            <a href="--><?php //= Url::to(['site/forgot-password']) ?><!--">-->

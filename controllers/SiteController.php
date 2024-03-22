@@ -115,7 +115,7 @@ class SiteController extends Controller
                 if (isset($remember)){
                     $session->set('remember',true);
                     setcookie('username',$username, time()+60 * 60 * 24 * 30, '/');
-                    setcookie('password',$password, time()+60 * 60 * 24 * 30, '/');
+//                    setcookie('password',$password, time()+60 * 60 * 24 * 30, '/');
                 }
                 date_default_timezone_set('Asia/Yerevan');
                 $identity->updated_at = date('Y-m-d H:i:s');

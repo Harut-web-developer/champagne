@@ -277,15 +277,15 @@ class MapController extends Controller
         if ($this->request->get()) {
             $session = Yii::$app->session;
             date_default_timezone_set('Asia/Yerevan');
-            if ($session['role_id'] == 2 || $session['role_id'] == 3) {
-                if ($session['role_id'] == 2){
-                    $manager_id = $session['user_id'];
-                    $today = date('Y-m-d H:i:s');
-                    $route = ManagerDeliverCondition::find()
-                        ->select('route_id')
-                        ->where(['manager_id' => $manager_id])
-                        ->asArray()
-                        ->one();
+            if ($session['role_id'] == 2){
+                $manager_id = $session['user_id'];
+                $today = date('Y-m-d H:i:s');
+                $route = ManagerDeliverCondition::find()
+                    ->select('route_id')
+                    ->where(['manager_id' => $manager_id])
+                    ->asArray()
+                    ->one();
+                if (!empty($route)){
                     $route = $route['route_id'];
                     $response = Yii::$app->getResponse();
                     $response->format = yii\web\Response::FORMAT_JSON;
@@ -293,14 +293,16 @@ class MapController extends Controller
 
                     return $response;
                 }
-                if ($session['role_id'] == 3){
-                    $deliver_id = $session['user_id'];
-                    $today = date('Y-m-d H:i:s');
-                    $route = ManagerDeliverCondition::find()
-                        ->select('route_id')
-                        ->where(['deliver_id' => $deliver_id])
-                        ->asArray()
-                        ->one();
+            }
+            if ($session['role_id'] == 3){
+                $deliver_id = $session['user_id'];
+                $today = date('Y-m-d H:i:s');
+                $route = ManagerDeliverCondition::find()
+                    ->select('route_id')
+                    ->where(['deliver_id' => $deliver_id])
+                    ->asArray()
+                    ->one();
+                if (!empty($route)) {
                     $route = $route['route_id'];
                     $response = Yii::$app->getResponse();
                     $response->format = yii\web\Response::FORMAT_JSON;
