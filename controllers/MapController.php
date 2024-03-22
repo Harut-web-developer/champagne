@@ -146,6 +146,7 @@ class MapController extends Controller
                     'DATE_FORMAT(orders.orders_date, "%Y-%m-%d") AS orders_date'
                 ])
                 ->leftJoin('clients','clients.id = orders.clients_id');
+
             if (isset($_GET['deliver']) && $_GET['deliver'] != ''){
                 $locationsQuery->leftJoin('documents', 'documents.orders_id = orders.id');
             }
@@ -171,11 +172,12 @@ class MapController extends Controller
                 $locationsQuery->leftJoin('documents', 'documents.orders_id = orders.id')
                     ->andWhere(['documents.deliver_id' => $get['araqich']]);
             }
+
             $locations = $locationsQuery
                 ->asArray()
+                ->groupBy('orders.clients_id')
                 ->orderBy('clients.sort_', SORT_DESC)
                 ->all();
-
             $locationsQueryStatus_2 = Orders::find()
                 ->select([
                     'clients.id AS client_id',

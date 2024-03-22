@@ -45,4 +45,3 @@ if(isset($_COOKIE['username']) && isset($_COOKIE['password'])){
             <?= Html::submitButton('Մուտք գործել', ['class' => 'btn btn-primary d-grid w-100', 'name' => 'login-button']) ?>
         </div>
     <?php ActiveForm::end(); ?>
-

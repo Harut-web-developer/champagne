@@ -65,7 +65,7 @@ AppAsset::register($this);
         <script src="/js/helpers.js"></script>
         <script src="/js/config.js"></script>
         <script src="/js/jquery.js"></script>
-        <script src="/js/popper/popper.js"></script>
+        <script src="/js/popper.js"></script>
         <script src="/js/bootstrap.js"></script>
         <script src="/js/perfect-scrollbar.js"></script>
         <script src="/js/menu.js"></script>
