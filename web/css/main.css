@@ -458,6 +458,9 @@
     color: #fff;
     font-weight: 300;
     padding: 10px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .title-text {
     font-weight: bold;

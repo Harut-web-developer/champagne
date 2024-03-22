@@ -15,7 +15,13 @@ AppAsset::register($this);
         <title>Login page</title>
         <meta name="description" content="" />
         <!-- Favicon -->
-        <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
+        <?php
+        $this->registerLinkTag([
+            'rel' => 'icon',
+            'type' => 'image/x-icon',
+            'href' => Yii::getAlias('@web/favicon.ico')
+        ]);
+        ?>
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
