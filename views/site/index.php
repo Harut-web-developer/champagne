@@ -3,6 +3,8 @@
 /** @var yii\web\View $this */
 
 $this->title = 'My Yii Application';
+$this->params['sub_page'] = $sub_page;
+$this->params['date_tab'] = $date_tab;
 ?>
 <div class="site-index">
 

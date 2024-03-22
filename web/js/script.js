@@ -164,125 +164,139 @@ $(document).ready(function() {
     });
 
     //notifications
-    function fetchNotifications() {
-        var csrfToken = $('meta[name="csrf-token"]').attr("content");
-        $.ajax({
-            type: "GET",
-            url: "/site/get-notifications",
-            dataType: "json",
-            data: { _csrf: csrfToken },
-            success: function (data) {
-                if (data['notifications_today'] !== 0) {
-                    displayNotifications(data, data['notifications_today']);
-                    $('body').on('click','#viweall',function () {
-                        // displayNotifications(data['notifications_all']);
-                        var notifications = data['notifications_all'];
-                        var notificationsDropdown = $("#notifications-dropdown");
-                        notificationsDropdown.empty();
-                        notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
-                            '<h3 class="text-center">Ծանուցումներ</h3>\n' +
-                            '</div>' +
-                            '<hr>'
-                        );
-                        notifications.forEach(function (notification) {
-                            notificationsDropdown.append('<div class="notification-item">' +
-                                '<p class="notification-title">' +
-                                '<span class="title-text">' + notification.title + '</span>' +
-                                '</br>' +
-                                notification.message +
-                                '<br>' +
-                                '<small style="font-size: 60%">' +
-                                notification.datetime +
-                                '</small>' +
-                                '</p>' +
-                                '</div>');
-                        });
+    var csrfToken = $('meta[name="csrf-token"]').attr("content");
+    $.ajax({
+        url:"/site/view-notification",
+        method: 'post',
+        dataType:'json',
+        data:{
+            _csrf : csrfToken
+        },
+        success:function(data){
+            if (data == true){
+                function fetchNotifications() {
+                    var csrfToken = $('meta[name="csrf-token"]').attr("content");
+                    $.ajax({
+                        type: "GET",
+                        url: "/site/get-notifications",
+                        dataType: "json",
+                        data: { _csrf: csrfToken },
+                        success: function (data) {
+                            if (data['notifications_today'] !== 0) {
+                                displayNotifications(data, data['notifications_today']);
+                                $('body').on('click','#viweall',function () {
+                                    // displayNotifications(data['notifications_all']);
+                                    var notifications = data['notifications_all'];
+                                    var notificationsDropdown = $("#notifications-dropdown");
+                                    notificationsDropdown.empty();
+                                    notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
+                                        '<h3 class="text-center">Ծանուցումներ</h3>\n' +
+                                        '</div>' +
+                                        '<hr>'
+                                    );
+                                    notifications.forEach(function (notification) {
+                                        notificationsDropdown.append('<div class="notification-item">' +
+                                            '<p class="notification-title">' +
+                                            '<span class="title-text">' + notification.title + '</span>' +
+                                            '</br>' +
+                                            notification.message +
+                                            '<br>' +
+                                            '<small style="font-size: 60%">' +
+                                            notification.datetime +
+                                            '</small>' +
+                                            '</p>' +
+                                            '</div>');
+                                    });
+                                })
+                            }
+                        }
+                    });
+                }
+                function fetchNotificationstoast() {
+                    var csrfToken = $('meta[name="csrf-token"]').attr("content");
+                    $.ajax({
+                        url: '/site/check-notifications',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.success !== undefined) {
+                                displayNotificationtoast(data.notifications);
+                            }
+                        },
+                    });
+                    $.ajax({
+                        url:"/site/index-notifications",
+                        method: 'get',
+                        dataType:'json',
+                        data:{
+                            _csrf : csrfToken
+                        },
+                        success:function(data){
+                            if (data['notification_badge']>0){
+                                $('.index_not').text(data['notification_badge'])
+                            }
+                        }
                     })
                 }
-            }
-        });
-    }
-    function fetchNotificationstoast() {
-        var csrfToken = $('meta[name="csrf-token"]').attr("content");
-        $.ajax({
-            url: '/site/check-notifications',
-            type: 'GET',
-            dataType: 'json',
-            success: function (data) {
-                if (data.success !== undefined) {
-                    displayNotificationtoast(data.notifications);
+                function displayNotifications(data, notifications) {
+                    $('.index_not').text('')
+                    var notificationsDropdown = $("#notifications-dropdown");
+                    notificationsDropdown.empty();
+                    notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
+                        '<h3 class="text-center">Ծանուցումներ</h3>\n' +
+                        '</div>' +
+                        '<hr>'
+                    );
+                    notifications.forEach(function (notification) {
+                        notificationsDropdown.append('<div class="notification-item">' +
+                            '<p class="notification-title">' +
+                            '<span class="title-text">' + notification.title + '</span>' +
+                            '</br>' +
+                            notification.message +
+                            '<br>' +
+                            '<small style="font-size: 60%">' +
+                            notification.datetime +
+                            '</small>' +
+                            '</p>' +
+                            '</div>');
+                    });
+                    notificationsDropdown.append('<div id="viweall" class="notification-ui_dd-footer">\n' +
+                        '<a href="#!" class="btn bg-secondary text-white" style="display: block">Տեսնել բոլորը</a>\n' +
+                        '</div>'
+                    );
                 }
-            },
-        });
-        $.ajax({
-            url:"/site/index-notifications",
-            method: 'get',
-            dataType:'json',
-            data:{
-                _csrf : csrfToken
-            },
-            success:function(data){
-                if (data['notification_badge']>0){
-                    $('.index_not').text(data['notification_badge'])
+                function displayNotificationtoast(notification) {
+                    if (notification!=null) {
+                        $('.bs-toast .toast-header .me-auto').text(notification.title);
+                        $('.bs-toast .toast-body').html('');
+                        $('.bs-toast .toast-body').append(notification.message);
+                        $('.bs-toast').toast('show');
+                    }
                 }
+                $(".bell-icon").click(function () {
+                    $("#notifications-dropdown").toggle();
+                    fetchNotifications();
+                    $('.index_not').text('');
+                    var csrfToken = $('meta[name="csrf-token"]').attr("content");
+                    $.ajax({
+                        url:"/site/index-notifications-click",
+                        method: 'get',
+                        dataType:'json',
+                        data:{
+                            _csrf : csrfToken
+                        },
+                    })
+                });
+                $('#notificationBell').click(function () {
+                    fetchNotifications();
+                });
+                fetchNotifications();
+                fetchNotificationstoast();
+                setInterval(fetchNotificationstoast, 10000);
             }
-        })
-    }
-    function displayNotifications(data, notifications) {
-        $('.index_not').text('')
-        var notificationsDropdown = $("#notifications-dropdown");
-        notificationsDropdown.empty();
-        notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
-            '<h3 class="text-center">Ծանուցումներ</h3>\n' +
-            '</div>' +
-            '<hr>'
-        );
-        notifications.forEach(function (notification) {
-            notificationsDropdown.append('<div class="notification-item">' +
-                '<p class="notification-title">' +
-                '<span class="title-text">' + notification.title + '</span>' +
-                '</br>' +
-                notification.message +
-                '<br>' +
-                '<small style="font-size: 60%">' +
-                notification.datetime +
-                '</small>' +
-                '</p>' +
-                '</div>');
-        });
-        notificationsDropdown.append('<div id="viweall" class="notification-ui_dd-footer">\n' +
-            '<a href="#!" class="btn bg-secondary text-white" style="display: block">Տեսնել բոլորը</a>\n' +
-            '</div>'
-        );
-    }
-    function displayNotificationtoast(notification) {
-        if (notification!=null) {
-            $('.bs-toast .toast-header .me-auto').text(notification.title);
-            $('.bs-toast .toast-body').html('');
-            $('.bs-toast .toast-body').append(notification.message);
-            $('.bs-toast').toast('show');
         }
-    }
-    $(".bell-icon").click(function () {
-        $("#notifications-dropdown").toggle();
-        fetchNotifications();
-        $('.index_not').text('');
-        var csrfToken = $('meta[name="csrf-token"]').attr("content");
-        $.ajax({
-            url:"/site/index-notifications-click",
-            method: 'get',
-            dataType:'json',
-            data:{
-                _csrf : csrfToken
-            },
-        })
-    });
-    $('#notificationBell').click(function () {
-        fetchNotifications();
-    });
-    fetchNotifications();
-    fetchNotificationstoast();
-    setInterval(fetchNotificationstoast, 10000);
+    })
+
 
     $(document).mouseup(function(e)
     {
