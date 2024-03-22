@@ -85,6 +85,7 @@ class Products extends \yii\db\ActiveRecord
             $orders_count = $data['orders_count'];
             $orders_cost = $data['orders_cost'];
             $orders_total_count = $data['orders_total_count'];
+            $simple_total_sum = intval($orders_count) * floatval($data['orders_price']);
             $orders_total_sum = $data['orders_total_sum'];
             $discount_desc = [];
             $discount_client_id_check = [];
@@ -142,7 +143,7 @@ class Products extends \yii\db\ActiveRecord
                                     if (!empty($check_client_id['discount_option_check_client_id'])) {
                                         $arr = explode(',', $check_client_id['discount_option_check_client_id']);
                                         if (!in_array($client_id, $arr)) {
-                                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
+                                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_count && $discount[$j]['max'] >= $orders_count) {
                                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                     $count++;
                                                     if ($discount[$j]['type'] == 'percent') {
@@ -162,7 +163,7 @@ class Products extends \yii\db\ActiveRecord
                                                     }
                                                 }
                                                 $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                            } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
+                                            } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $simple_total_sum && $discount[$j]['max'] >= $simple_total_sum) {
                                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                     $count++;
                                                     if ($discount[$j]['type'] == 'percent') {
@@ -208,7 +209,7 @@ class Products extends \yii\db\ActiveRecord
                                             $desc = 'empty';
                                         }
                                     } else {
-                                        if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
+                                        if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_count && $discount[$j]['max'] >= $orders_count) {
                                             if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                 $count++;
                                                 if ($discount[$j]['type'] == 'percent') {
@@ -228,7 +229,7 @@ class Products extends \yii\db\ActiveRecord
                                                 }
                                             }
                                             $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                        } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
+                                        } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $simple_total_sum && $discount[$j]['max'] >= $simple_total_sum) {
                                             if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                 $count++;
                                                 if ($discount[$j]['type'] == 'percent') {
@@ -276,7 +277,7 @@ class Products extends \yii\db\ActiveRecord
                                     $discount_client_id = ['id' => $discount[$j]['id'], 'clients_id' => $string_row];
                                 }
                                 elseif ($discount[$j]['discount_option'] == 2) {//bazmaki
-                                    if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
+                                    if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_count && $discount[$j]['max'] >= $orders_count) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
                                             if ($discount[$j]['type'] == 'percent') {
@@ -296,7 +297,7 @@ class Products extends \yii\db\ActiveRecord
                                             }
                                         }
                                         $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                    }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
+                                    }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $simple_total_sum && $discount[$j]['max'] >= $simple_total_sum) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
                                             if ($discount[$j]['type'] == 'percent') {
@@ -349,7 +350,7 @@ class Products extends \yii\db\ActiveRecord
                                     if (!empty($check_client_id['discount_option_check_client_id'])) {
                                         $arr = explode(',', $check_client_id['discount_option_check_client_id']);
                                         if (!in_array($client_id, $arr)) {
-                                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
+                                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_count && $discount[$j]['max'] >= $orders_count) {
                                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                     $count++;
                                                     if ($discount[$j]['type'] == 'percent') {
@@ -369,7 +370,7 @@ class Products extends \yii\db\ActiveRecord
                                                     }
                                                 }
                                                 $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                            } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
+                                            } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $simple_total_sum && $discount[$j]['max'] >= $simple_total_sum) {
                                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                     $count++;
                                                     if ($discount[$j]['type'] == 'percent') {
@@ -415,7 +416,7 @@ class Products extends \yii\db\ActiveRecord
                                             $desc = 'empty';
                                         }
                                     } else {
-                                        if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
+                                        if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_count && $discount[$j]['max'] >= $orders_count) {
                                             if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                 $count++;
                                                 if ($discount[$j]['type'] == 'percent') {
@@ -435,7 +436,7 @@ class Products extends \yii\db\ActiveRecord
                                                 }
                                             }
                                             $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                        } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
+                                        } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $simple_total_sum && $discount[$j]['max'] >= $simple_total_sum) {
                                             if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                 $count++;
                                                 if ($discount[$j]['type'] == 'percent') {
@@ -482,7 +483,7 @@ class Products extends \yii\db\ActiveRecord
                                     $string_row = implode(',', $uniq);
                                     $discount_client_id = ['id' => $discount[$j]['id'], 'clients_id' => $string_row];
                                 } else {
-                                    if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
+                                    if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_count && $discount[$j]['max'] >= $orders_count) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
                                             if ($discount[$j]['type'] == 'percent') {
@@ -502,7 +503,7 @@ class Products extends \yii\db\ActiveRecord
                                             }
                                         }
                                         $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                    } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
+                                    } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $simple_total_sum && $discount[$j]['max'] >= $simple_total_sum) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
                                             if ($discount[$j]['type'] == 'percent') {
@@ -1051,7 +1052,7 @@ class Products extends \yii\db\ActiveRecord
                                     if (!empty($check_client_id['discount_option_check_client_id'])) {
                                         $arr = explode(',', $check_client_id['discount_option_check_client_id']);
                                         if (!in_array($client_id, $arr)) {
-                                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
+                                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_count && $discount[$j]['max'] >= $orders_count) {
                                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                     $count++;
                                                     if ($discount[$j]['type'] == 'percent') {
@@ -1071,7 +1072,7 @@ class Products extends \yii\db\ActiveRecord
                                                     }
                                                 }
                                                 $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                            } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
+                                            } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $simple_total_sum && $discount[$j]['max'] >= $simple_total_sum) {
                                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                     $count++;
                                                     if ($discount[$j]['type'] == 'percent') {
@@ -1117,7 +1118,7 @@ class Products extends \yii\db\ActiveRecord
                                             $desc = 'empty';
                                         }
                                     } else {
-                                        if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
+                                        if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_count && $discount[$j]['max'] >= $orders_count) {
                                             if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                 $count++;
                                                 if ($discount[$j]['type'] == 'percent') {
@@ -1137,7 +1138,7 @@ class Products extends \yii\db\ActiveRecord
                                                 }
                                             }
                                             $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                        } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
+                                        } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $simple_total_sum && $discount[$j]['max'] >= $simple_total_sum) {
                                             if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                 $count++;
                                                 if ($discount[$j]['type'] == 'percent') {
@@ -1185,7 +1186,7 @@ class Products extends \yii\db\ActiveRecord
                                     $discount_client_id = ['id' => $discount[$j]['id'], 'clients_id' => $string_row];
                                 }
                                 elseif ($discount[$j]['discount_option'] == 2) {//bazmaki
-                                    if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
+                                    if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_count && $discount[$j]['max'] >= $orders_count) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
                                             if ($discount[$j]['type'] == 'percent') {
@@ -1205,7 +1206,7 @@ class Products extends \yii\db\ActiveRecord
                                             }
                                         }
                                         $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                    }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
+                                    }elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $simple_total_sum && $discount[$j]['max'] >= $simple_total_sum) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
                                             if ($discount[$j]['type'] == 'percent') {
@@ -1258,7 +1259,7 @@ class Products extends \yii\db\ActiveRecord
                                     if (!empty($check_client_id['discount_option_check_client_id'])) {
                                         $arr = explode(',', $check_client_id['discount_option_check_client_id']);
                                         if (!in_array($client_id, $arr)) {
-                                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
+                                            if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_count && $discount[$j]['max'] >= $orders_count) {
                                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                     $count++;
                                                     if ($discount[$j]['type'] == 'percent') {
@@ -1278,7 +1279,7 @@ class Products extends \yii\db\ActiveRecord
                                                     }
                                                 }
                                                 $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                            } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
+                                            } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $simple_total_sum && $discount[$j]['max'] >= $simple_total_sum) {
                                                 if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                     $count++;
                                                     if ($discount[$j]['type'] == 'percent') {
@@ -1324,7 +1325,7 @@ class Products extends \yii\db\ActiveRecord
                                             $desc = 'empty';
                                         }
                                     } else {
-                                        if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
+                                        if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_count && $discount[$j]['max'] >= $orders_count) {
                                             if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                 $count++;
                                                 if ($discount[$j]['type'] == 'percent') {
@@ -1344,7 +1345,7 @@ class Products extends \yii\db\ActiveRecord
                                                 }
                                             }
                                             $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                        } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
+                                        } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $simple_total_sum && $discount[$j]['max'] >= $simple_total_sum) {
                                             if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                                 $count++;
                                                 if ($discount[$j]['type'] == 'percent') {
@@ -1391,7 +1392,7 @@ class Products extends \yii\db\ActiveRecord
                                     $string_row = implode(',', $uniq);
                                     $discount_client_id = ['id' => $discount[$j]['id'], 'clients_id' => $string_row];
                                 } else {
-                                    if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_total_count && $discount[$j]['max'] >= $orders_total_count) {
+                                    if ($discount[$j]['discount_filter_type'] === 'count' && $discount[$j]['min'] <= $orders_count && $discount[$j]['max'] >= $orders_count) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
                                             if ($discount[$j]['type'] == 'percent') {
@@ -1411,7 +1412,7 @@ class Products extends \yii\db\ActiveRecord
                                             }
                                         }
                                         $desc = ['id' => $discount[$j]['id'], 'name' => $discount[$j]['name'], 'discount' => $discount[$j]['discount'], 'type' => $discount[$j]['type']];
-                                    } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $orders_total_sum && $discount[$j]['max'] >= $orders_total_sum) {
+                                    } elseif ($discount[$j]['discount_filter_type'] === 'price' && $discount[$j]['min'] <= $simple_total_sum && $discount[$j]['max'] >= $simple_total_sum) {
                                         if ($discount[$j]['discount_check'] == 0 && $count == 0) {
                                             $count++;
                                             if ($discount[$j]['type'] == 'percent') {
