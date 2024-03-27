@@ -92,7 +92,7 @@ $session = Yii::$app->session;
                     </div>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
                         <?php
-                        if($session['role_id'] == 1){?>
+                        if($session['role_id'] == 1 || $session['role_id'] == 2 || $session['role_id'] == 3){?>
                            <?= $form->field($model, 'user_id')->dropDownList($users) ?>
                        <?php }elseif ($session['role_id'] == 4){?>
                             <?= $form->field($model, 'user_id')->hiddenInput(['value' => $session['user_id']])->label(false) ?>

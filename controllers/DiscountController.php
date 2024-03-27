@@ -358,6 +358,10 @@ class DiscountController extends Controller
                 $model->discount_filter_type = $post['Discount']['discount_filter_type'];
                 $model->min = $post['min'];
                 $model->max = $post['max'];
+            }else{
+                $model->discount_filter_type = null;
+                $model->min = null;
+                $model->max = null;
             }
             $model->comment = $post["Discount"]['comment'];
             $model->updated_at = date('Y-m-d H:i:s');

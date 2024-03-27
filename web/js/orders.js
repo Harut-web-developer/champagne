@@ -306,7 +306,6 @@ $(document).ready(function () {
         })
     })
 
-
     $('body').on('click', '.deleteItems',function (){
         let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
         if (confirmed){
@@ -1433,27 +1432,31 @@ $(document).ready(function () {
             }
         })
     })
-    // $('body').on('click', '.deleteUpdateItems',function (){
-    //     let  ordersTotalPriceSum = 0;
-    //     let  ordersTotalCount = 0;
-    //     let  ordersBeforTotalPriceSum = 0;
-    //     let  totalDiscount = 0;
-    //     let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
-    //     if (confirmed){
-    //         $(this).closest('.tableNomenclature').remove();
-    //         $('body').find('.tableNomenclature').each(function () {
-    //             ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
-    //             ordersTotalCount += parseInt($(this).find('.count').children('input').val());
-    //             ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
-    //             totalDiscount += parseFloat($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
-    //         })
-    //         $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
-    //         $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-    //         $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
-    //         $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
-    //         alert('Հաջողությամբ ջնջված է:');
-    //     }
-    // })
+    $('body').on('click', '.deleteUpdateItems',function (){
+        let  ordersTotalPriceSum = 0;
+        let  ordersTotalCount = 0;
+        let  ordersBeforTotalPriceSum = 0;
+        let  totalDiscount = 0;
+        let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
+        if (confirmed){
+            $(this).closest('.tableNomenclature').remove();
+            $('body').find('.tableNomenclature').each(function () {
+                let count_str = $(this).find('.stringCount').val().split(',');
+                let discount = $(this).find('.discount').children('input').val().split(',');
+                for (let k = 0; k < count_str.length; k++){
+                    totalDiscount += parseInt(count_str[k]) * parseFloat(discount[k])
+                }
+                ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
+                ordersTotalCount += parseInt($(this).find('.count').children('input').val());
+                ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
+            })
+            $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
+            $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
+            $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
+            $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
+            alert('Հաջողությամբ ջնջված է:');
+        }
+    })
     $('body').on('click', '.changeCount',function () {
         let orderItemsId = $(this).data('orders');
         let csrfToken = $('meta[name="csrf-token"]').attr("content");

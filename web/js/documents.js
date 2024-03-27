@@ -128,6 +128,10 @@ $(document).ready(function () {
             $(this).closest('tr').remove();
         }
         alert('Հաջողությամբ ջնջված է:');
+        console.log($(this).closest('tbody').length == 0)
+        if ($(this).closest('tbody').length == 0){
+            $('body').find('.saveAll').prop('disabled', true);
+        }
     })
 
     var old_table = $('.table.documentsAddingTable').find('.old_tbody').html();
@@ -716,24 +720,44 @@ $(document).ready(function () {
     })
 
     $('body').on('keyup','.refusePriceDocuments', function () {
-        let inputValue = $(this).val();
-        let sanitizedValue = inputValue.replace(/[^0-9.]/g, '');
-        let parts = sanitizedValue.split('.');
-        if (parts.length > 1) {
-            parts[1] = parts[1].replace(/\./g, '');
-            sanitizedValue = parts[0] + '.' + parts[1];
+        let input = $(this).val();
+        let cleanedValue = input.replace(/[^0-9.]/g, '');
+        let parts = cleanedValue.split('.');
+        if (parts[0] == ''){
+            cleanedValue = input.replace(/./, '');
+        }else {
+            if (parts.length > 1) {
+                parts[1] = parts[1].replace(/\./g, '');
+                cleanedValue = parts[0] + '.' + parts[1];
+            }
         }
-        // $(this).val(sanitizedValue);
-        if (sanitizedValue < 1 || $(this).val() == '') {
+        $(this).val(cleanedValue);
+        if (cleanedValue < 1 || $(this).val() == '') {
             $(this).attr('required', true);
         }else {
-            let num = parseFloat(sanitizedValue) + (parseFloat(sanitizedValue) * 20) / 100;
+            let num = parseFloat(cleanedValue) + (parseFloat(cleanedValue) * 20) / 100;
             $(this).closest('tr').find('.pricewithaah').children('span').text(num.toFixed(2))
             $(this).closest('tr').find('.pricewithaah').children('input').val(num.toFixed(2))
         }
     })
 
     $('body').on('keyup','.refuseCountDocuments',function (){
+        $(this).val(function(index, value) {
+            return value.replace(/-/g, '');
+        });
+        let inputValue = parseInt($(this).val());
+        let maxValue = parseInt($(this).attr('max'));
+        if (inputValue < 1 || inputValue === "") {
+            $(this).val('');
+            $(this).attr('required',true);
+        }else if (inputValue > maxValue){
+            $(this).val('');
+            $(this).attr('required',true);
+        }else {
+            $(this).closest('tr').find('.rawInput').attr('max',$(this).val());
+        }
+    })
+    $('body').on('click','.refuseCountDocuments',function (){
         $(this).val(function(index, value) {
             return value.replace(/-/g, '');
         });

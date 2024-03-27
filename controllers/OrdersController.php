@@ -313,20 +313,11 @@ class OrdersController extends Controller
         $sub_page = [];
         $date_tab = [];
 
-        if($session['role_id'] == 1 || $session['role_id'] == 4){
+        if($session['role_id'] == 1){
             $users = Users::find()->select('id, name')->where(['=','role_id',2])->andWhere(['=','status',1])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
         }elseif ($session['role_id'] == 2){
             $users = Users::find()->select('id, name')->where(['=','id',$session['user_id']])->andWhere(['=','status',1])->asArray()->all();
-            $users = ArrayHelper::map($users,'id','name');
-        }elseif ($session['role_id'] == 3){
-            $users = ManagerDeliverCondition::find()->select('users.id, users.name')
-                ->leftJoin('users','users.id = manager_deliver_condition.manager_id')
-                ->where(['manager_deliver_condition.status' => '1'])
-                ->andWhere(['users.status' => '1'])
-                ->andWhere(['deliver_id' => $session['user_id']])
-                ->asArray()
-                ->all();
             $users = ArrayHelper::map($users,'id','name');
         }
 
@@ -348,7 +339,7 @@ class OrdersController extends Controller
             ->where(['=','status',1]);
         if ($session['role_id'] == 2) {
             $clients->andWhere(['in', 'route_id', $manager_route_id]);
-        }elseif ($session['role_id'] == 1 || $session['role_id'] == 3 || $session['role_id'] == 4){
+        }elseif ($session['role_id'] == 1){
             $clients->andWhere(['in', 'route_id', $manager_route_id]);
         }
         $clients =  $clients->asArray()->all();
@@ -566,6 +557,10 @@ class OrdersController extends Controller
             $model->total_discount = floatval($post['Orders']['total_discount']);
             $model->total_count = intval($post['Orders']['total_count']);
             $model->comment = $post['Orders']['comment'];
+            $model->is_exist_company = $post['Orders']['is_exist_company'];
+            if ($post['Orders']['is_exist_company'] == '1'){
+                $model->company_id = $post['Orders']['company_id'];
+            }
             $model->orders_date = $post['Orders']['orders_date'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
@@ -679,7 +674,6 @@ class OrdersController extends Controller
         ((order_items.price_before_discount / order_items.count) * order_items.count_by) as totalBeforePrice,(order_items.cost / order_items.count) as cost,order_items.string_discount,
         ((order_items.price / order_items.count) * order_items.count_by)  as total_price,(order_items.price / order_items.count) as price,nomenclature.name, (nomenclature.id) as nom_id,count_discount_id')
             ->leftJoin('products','products.id = order_items.product_id')
-//            ->leftJoin('products as prod_parent','prod_parent.id = products.parent_id')
             ->leftJoin('nomenclature','nomenclature.id = products.nomenclature_id')
             ->where(['order_id' => $id])
             ->andWhere(['order_items.status' => '1'])
@@ -702,7 +696,7 @@ class OrdersController extends Controller
 
         $active_discount = Discount::find()->select('id,name,discount,type')->asArray()->all();
         $session = Yii::$app->session;
-        $user_id = $session['user_id'];
+//        $user_id = $session['user_id'];
 
         $clients = Clients::find()
             ->select('id, name')
@@ -710,7 +704,7 @@ class OrdersController extends Controller
         if ($session['role_id'] == 2) {
             $manager_route_id = ManagerDeliverCondition::find()
                 ->select('route_id, deliver_id')
-                ->where(['manager_id' => $user_id])
+                ->where(['manager_id' => $session['user_id']])
                 ->andWhere(['status' => '1'])
                 ->asArray()
                 ->all();
@@ -728,14 +722,18 @@ class OrdersController extends Controller
         $clients =  $clients->asArray()->all();
         $orders_clients = Orders::find()->select('clients_id')->where(['=','id',$id])->asArray()->all();
         $orders_clients = array_column($orders_clients,'clients_id');
-        if($session['role_id'] == 1){
-            $users = Users::find()->select('id, name')->where(['=','role_id',2])->asArray()->all();
+        if($session['role_id'] == 1 || $session['role_id'] == 4){
+            $users = Users::find()->select('id, name')->where(['=','role_id',2])->andWhere(['status' => '1'])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
         }elseif ($session['role_id'] == 2){
             $users = Users::find()->select('id, name')->where(['=','id',$session['user_id']])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
-        }elseif($session['role_id'] == 3 || $session['role_id'] == 4){
-            $users = Users::find()->select('id, name')->where(['id' => $session['user_id']])->asArray()->all();
+        }elseif($session['role_id'] == 3){
+            $users = Users::find()->select('users.id, users.name')
+                ->leftJoin('manager_deliver_condition', 'manager_deliver_condition.manager_id = users.id')
+                ->where(['manager_deliver_condition.deliver_id' => $session['user_id']])
+                ->asArray()
+                ->all();
             $users = ArrayHelper::map($users,'id','name');
         }
         $warehouse = Warehouse::find()

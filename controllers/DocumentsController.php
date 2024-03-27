@@ -1385,7 +1385,7 @@ class DocumentsController extends Controller
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $get_documents_id = Documents::findOne($id);
-        if ($session['role_id'] == 1){
+        if ($session['role_id'] == 1 || $session['role_id'] == 2 || $session['role_id'] == 3){
             $users = Users::find()->select('id,name')->where(['status' => '1'])->andWhere(['role_id' => '4'])->andWhere(['id' => $get_documents_id->user_id])->asArray()->all();
             $users = ArrayHelper::map($users,'id','name');
         }elseif($session['role_id'] == 4){
@@ -1568,10 +1568,10 @@ class DocumentsController extends Controller
     }
     public function actionMessage(){
         $sub_page = [
-            ['name' => 'Պահեստ','address' => '/warehouse'],
-            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-            ['name' => 'Ապրանք','address' => '/products'],
-            ['name' => 'Տեղեկամատյան','address' => '/log'],
+//            ['name' => 'Պահեստ','address' => '/warehouse'],
+//            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
+//            ['name' => 'Ապրանք','address' => '/products'],
+//            ['name' => 'Տեղեկամատյան','address' => '/log'],
         ];
         $date_tab = [];
         if ($this->request->isPost){

@@ -45,7 +45,6 @@ class OrdersSearch extends Orders
     {
         $session = Yii::$app->session;
 //echo "<pre>";
-//        var_dump($params);
         $query = Orders::find();
         $is_manager = false;
         switch ($session['role_id']){
@@ -72,6 +71,8 @@ class OrdersSearch extends Orders
                 $manager_array = [];
         }
         if (empty($params)){
+            $query->where(['status' => $statuses])->andWhere($manager_array);
+        }elseif(isset($params['id'])){
             $query->where(['status' => $statuses])->andWhere($manager_array);
         }
         if (isset($params['type']) && $params['type'] == 'product'){

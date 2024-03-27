@@ -34,26 +34,17 @@ $session = Yii::$app->session;
                     <?php } ?>
                 </div>
                 <div class="clientSelectSingle">
-                    <?php if ($session['role_id'] == 4){ ?>
+                    <?php if ($session['role_id'] == 2 || $session['role_id'] == 3 || $session['role_id'] == 4){ ?>
                         <label class="label_clients" for="singleClients">Հաճախորդ</label>
                         <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
+                            <option  value=""></option>
                             <?php foreach ($clients as $client){
                                 $isSelected = in_array($client['id'], $orders_clients);
                                 if ($isSelected){ ?>
                                     <option <?= $isSelected ? 'selected' : '' ?> value="<?= $client['id'] ?>"><?= $client['name'] ?></option>
                             <?php } }?>
                         </select>
-                    <?php } elseif ($session['role_id'] == 2){ ?>
-                        <label class="label_clients" for="singleClients">Հաճախորդ</label>
-                        <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
-                            <option  value=""></option>
-                            <?php foreach ($clients as $client){
-                                $isSelected = in_array($client['id'], $orders_clients);
-                                ?>
-                                <option <?= $isSelected ? 'selected' : '' ?> value="<?= $client['id'] ?>"><?= $client['name'] ?></option>
-                            <?php } ?>
-                        </select>
-                    <?php } elseif ($session['role_id'] == 1) {?>
+                    <?php }elseif ($session['role_id'] == 1 ) {?>
                         <div class="clients_ajax_content">
                             <label class="label_clients" for="singleClients">Հաճախորդ</label>
                             <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
@@ -164,13 +155,12 @@ $session = Yii::$app->session;
                                             <input type="hidden" name="total_price[]" value="<?=number_format($sum_price,2,'.','')?>">
                                         </td>
                                         <td>
-                                        <?php if ($oldattributes['is_exit'] == 0){?>
-                                            <?php if ($session['role_id'] != 4){ ?>
-                                            <button type="button" data-orders="<?=$item['id']?>" class="btn rounded-pill btn-outline-info changeCount" data-bs-toggle="modal" data-bs-target="#modalCenter">
-                                                Փոփոխել
-                                            </button>
-                                            <?php } ?>
-                                        <?php } ?>
+                                        <?php if ($oldattributes['is_exit'] == 0){
+                                            if ($session['role_id'] != 4){?>
+                                                <button type="button" data-orders="<?=$item['id']?>" class="btn rounded-pill btn-outline-info changeCount" data-bs-toggle="modal" data-bs-target="#modalCenter">
+                                                    Փոփոխել
+                                                </button>
+                                            <?php }} ?>
                                             <div class="modal fade" id="modalCenter" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
@@ -205,11 +195,10 @@ $session = Yii::$app->session;
                 </div>
                 <!-- Button trigger modal -->
                 <?php
-                if ($model->is_exit == 1){?>
-                    <?php if ($session['role_id'] == 1 || $session['role_id'] == 2){ ?>
+                if ($model->is_exit == 1){
+                    if ($session['role_id'] != 4){?>
                         <button type="button" class="btn rounded-pill btn-secondary addOrders addOrders_get_warh_id_update" data-bs-toggle="modal" data-bs-target="#largeModal">Ավելացնել ապրանք</button>
-                    <?php } ?>
-                <?php }?>
+                    <?php } }?>
                 <!-- Modal -->
                 <div class="modal fade" id="largeModal" tabindex="-1" style="display: none;" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">
@@ -250,7 +239,6 @@ $session = Yii::$app->session;
                             <tbody class="table-border-bottom-0">
                             <?php
                             $n = 0;
-//                            foreach ($numericValuesOnly as $key => $value){
                                 foreach ($active_discount as $k => $item){
                                     if (!in_array($item['id'],$numericValuesOnly)){
                                         continue;
@@ -274,7 +262,6 @@ $session = Yii::$app->session;
                                         <?php
                                     }
                                 }
-//                            }
                             ?>
                             </tbody>
                         </table>
@@ -299,10 +286,11 @@ $session = Yii::$app->session;
                 </div>
             </div>
             <div class="card-footer">
-                <?php if ($model->is_exit == 1){?>
-                <?php if ($session['role_id'] == 1 || $session['role_id'] == 2){ ?>
-                    <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary submit_save']) ?>
-                <?php }}?>
+                <?php
+                if ($model->is_exit == 1){
+                    if ($session['role_id'] != 4){?>
+                        <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary submit_save']) ?>
+                <?php } }?>
             </div>
             <?php ActiveForm::end(); ?>
         </div>
@@ -334,7 +322,7 @@ $session = Yii::$app->session;
                                     <option  value="<?= $client['id'] ?>"><?= $client['name'] ?></option>
                                 <?php } }?>
                         </select>
-                    <?php } elseif ($session['role_id'] == 1 || $session['role_id'] == 3 || $session['role_id'] == 4) {?>
+                    <?php } elseif ($session['role_id'] == 1) {?>
                         <div class="clients_ajax_content">
                             <label class="label_clients" for="singleClients">Հաճախորդ</label>
                             <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">

@@ -20,9 +20,9 @@ $this->params['date_tab'] = $date_tab;
     <?= $this->render('_form', [
         'model' => $model,
         'roles' => $roles,
-        'user_premission_select' => $user_premission_select,
+//        'user_premission_select' => $user_premission_select,
         'warehouse' => $warehouse,
-        'premissions_check' => $premissions_check
+//        'premissions_check' => $premissions_check
 
     ]) ?>
 

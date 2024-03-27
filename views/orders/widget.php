@@ -50,7 +50,7 @@ if (!empty($access_buttons)) {
         'template' => $access_buttons,
         'buttons' => [
             'delivered' => function ($url, $model, $key) {
-                if ($model->status == 1) {
+                if ($model->status == 1 && $model->is_exit != 1) {
                     return Html::a('<i class="bx bxs-check-circle" style="color:#0f5132" ></i>', $url, [
                         'title' => Yii::t('yii', 'Հաստատել'), // Add a title if needed
                     ]);
@@ -316,6 +316,7 @@ else { ?>
             <select class="form-control changeClients" style="width: 210px; margin: 0px 10px 15px 5px;">
                 <option value="null">Բոլոր հաճախորդները</option>
                 <?php
+                var_dump($clients);
                 foreach ($clients as $client){
                     ?>
                     <option value="<?=$client['id']?>"><?=$client['name']?></option>

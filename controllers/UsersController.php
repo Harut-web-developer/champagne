@@ -222,6 +222,48 @@ class UsersController extends Controller
         ]);
     }
 
+    public function actionPremissions(){
+        if ($this->request->isGet){
+            $premissions_check = [];
+            $get_role = $this->request->get('roleNum');
+            $href = $this->request->get('currentUrl');
+            if(isset($href)){
+                $urlParts = parse_url($href);
+                parse_str($urlParts['query'], $query);
+                $id = $query['id'];
+                $user_premission_select = UserPremissions::find()->select('id,premission_id')->where(['user_id' => intval($id)])->asArray()->all();
+                $exist_role = Premissions::find()->select('id,role_id,name')->where(['status' => '1'])->asArray()->all();
+                foreach ($exist_role as $item){
+                    $array_role = explode(',',$item['role_id']);
+                    if (in_array(intval($get_role),$array_role)){
+                        $array = [];
+                        $array['id'] = $item['id'];
+                        $array['name'] = $item['name'];
+                        $premissions_check[] = $array;
+                    }
+                }
+                return $this->renderAjax('update-premission',[
+                    'premissions_check' => $premissions_check,
+                    'user_premission_select' => $user_premission_select
+                ]);
+
+            }else{
+                $exist_role = Premissions::find()->select('id,role_id,name')->where(['status' => '1'])->asArray()->all();
+                foreach ($exist_role as $item){
+                    $array_role = explode(',',$item['role_id']);
+                    if (in_array(intval($get_role),$array_role)){
+                        $array = [];
+                        $array['id'] = $item['id'];
+                        $array['name'] = $item['name'];
+                        $premissions_check[] = $array;
+                    }
+                }
+                return $this->renderAjax('premission',[
+                    'premissions_check' => $premissions_check,
+                ]);
+            }
+        }
+    }
     public function actionCheckUsers(){
         if ($this->request->isPost){
             $users = Users::find()->where(['username' => $this->request->post('userText')])->andWhere(['status' => '1'])->exists();
@@ -315,6 +357,9 @@ class UsersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+//            echo "<pre>";
+//            var_dump($post);
+//            exit();
             if ($post['Users']['role_id'] == 4){
                 $model->warehouse_id = $post['Users']['warehouse_id'];
             }else{
@@ -354,21 +399,21 @@ class UsersController extends Controller
             }
             return $this->redirect(['index', 'id' => $model->id]);
         }
-        $roles = Roles::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
+        $role = Users::findOne($id);
+        $roles = Roles::find()->select('id,name')->where(['status' => '1'])->andWhere(['id' => $role->role_id])->asArray()->all();
         $roles = ArrayHelper::map($roles,'id','name');
         $warehouse = Warehouse::find()->select('id,name')->where(['status' => 1])->asArray()->all();
         $warehouse = ArrayHelper::map($warehouse,'id','name');
-        $user_premission_select = UserPremissions::find()->select('id,premission_id')->where(['user_id' => $id])->asArray()->all();
-        $premissions_check = Premissions::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
-
+//        $user_premission_select = UserPremissions::find()->select('id,premission_id')->where(['user_id' => $id])->asArray()->all();
+//        $premissions_check = Premissions::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
         return $this->render('update', [
             'model' => $model,
             'roles' => $roles,
-            'user_premission_select' => $user_premission_select,
+//            'user_premission_select' => $user_premission_select,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
             'warehouse' => $warehouse,
-            'premissions_check' => $premissions_check
+//            'premissions_check' => $premissions_check
         ]);
     }
 
@@ -398,7 +443,7 @@ class UsersController extends Controller
             ->one();
         $users = Users::findOne($id);
         $users->status = '0';
-        $users->save();
+        $users->save(false);
         Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }

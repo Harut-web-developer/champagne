@@ -970,21 +970,83 @@ $(document).ready(function() {
         })
     })
     $('body').on('change','#users-role_id', function () {
+        let roleNum = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
         if ($(this).val() == 4){
             $('body').find('.warehouseCheck').addClass('activeForInput');
+            $.ajax({
+                url:'/users/premissions',
+                method:'get',
+                datatype:'html',
+                data:{
+                    roleNum:roleNum,
+                    _csrf: csrfToken,
+                },
+                success:function (data){
+                    $('body').find('.premission-content').html(data);
+                }
+            })
             // $("#documents-to_warehouse").attr('required',true);
+        }else if($(this).val() == 'null') {
+            $('body').find('.warehouseCheck').removeClass('activeForInput');
+            $('body').find('.premission-content').html('');
+            // $("#documents-to_warehouse").removeAttr('required');
         }else {
             $('body').find('.warehouseCheck').removeClass('activeForInput');
-            // $("#documents-to_warehouse").removeAttr('required');
+            $.ajax({
+                url:'/users/premissions',
+                method:'get',
+                datatype:'html',
+                data:{
+                    roleNum:roleNum,
+                    _csrf: csrfToken,
+                },
+                success:function (data){
+                    $('body').find('.premission-content').html(data);
+                }
+            })
         }
     })
+
     let currentUrl = window.location.href;
     let hasUpdate = currentUrl.includes('users/update');
     if (hasUpdate){
         if ($('body').find('#users-role_id').val() == '4'){
             $('body').find('.warehouseCheck').addClass('activeForInput');
+            let roleNum = $('body').find('#users-role_id').val();
+            let csrfToken = $('meta[name="csrf-token"]').attr("content");
+            $.ajax({
+                url:'/users/premissions',
+                method:'get',
+                datatype:'html',
+                data:{
+                    roleNum:roleNum,
+                    currentUrl:currentUrl,
+                    _csrf: csrfToken,
+                },
+                success:function (data){
+                    $('body').find('.premission-content').html(data);
+                }
+            })
+        }else if ($('body').find('#users-role_id').val() == 'null') {
+            $('body').find('.warehouseCheck').removeClass('activeForInput');
         }else {
             $('body').find('.warehouseCheck').removeClass('activeForInput');
+            let roleNum = $('body').find('#users-role_id').val();
+            let csrfToken = $('meta[name="csrf-token"]').attr("content");
+            $.ajax({
+                url:'/users/premissions',
+                method:'get',
+                datatype:'html',
+                data:{
+                    roleNum:roleNum,
+                    currentUrl:currentUrl,
+                    _csrf: csrfToken,
+                },
+                success:function (data){
+                    $('body').find('.premission-content').html(data);
+                }
+            })
         }
     }
     $('body').find('.card thead th').each(function () {
@@ -1187,8 +1249,8 @@ window.addEventListener('load', function() {
                                 myLatitude = result.geoObjects.get(0).geometry.getCoordinates()[0];
                                 myLongitude = result.geoObjects.get(0).geometry.getCoordinates()[1];
                                 result.geoObjects.options.set('preset', 'islands#blueCircleIcon');
-                                console.log(myLatitude)
-                                console.log(myLongitude)
+                                // console.log(myLatitude)
+                                // console.log(myLongitude)
                                 myMap.geoObjects.add(result.geoObjects);
                                 var csrfToken = $('meta[name="csrf-token"]').attr("content");
                                 $.ajax({

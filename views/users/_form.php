@@ -29,9 +29,16 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 usersUsername">
                     <?= $form->field($model, 'username')->textInput(['maxlength' => true,'required' => true]) ?>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 usersUsername">
-                    <?= $form->field($model, 'role_id')->dropDownList($roles,['required' => true]) ?>
-                </div>
+                <?php if ($model->id){ ?>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 usersUsername">
+                        <?= $form->field($model, 'role_id')->dropDownList($roles,['required' => true]) ?>
+                    </div>
+                <?php }else{ ?>
+                    <div class="form-group col-md-12 col-lg-12 col-sm-12 usersUsername">
+                        <?= $form->field($model, 'role_id')->dropDownList(['null' => 'Ընտրել կարգավիճակ'] + $roles,['required' => true]) ?>
+                    </div>
+                <?php } ?>
+
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 usersUsername warehouseCheck">
                     <?= $form->field($model, 'warehouse_id')->dropDownList($warehouse) ?>
                 </div>
@@ -81,26 +88,7 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
             <div class="panel-title premission">
                 <span class="non-active">Թույլտվություններ</span>
             </div>
-            <?php if($model->id){?>
-                <div class="premission-content">
-                    <?php foreach ($premissions_check as $premission){?>
-                       <div class="premission-content-items">
-                            <label for="premission<?=$premission['id']?>" class="items-title"><?=$premission['name']?></label>
-                            <input id="premission<?=$premission['id']?>" type="checkbox" <?php echo (in_array($premission['id'], array_column($user_premission_select, 'premission_id'))) ? 'checked' : ''; ?> value="<?=$premission['id']?>" name="premission[]">
-                       </div>
-                  <?php } ?>
-                </div>
-            <?php } else{ ?>
-                <div class="premission-content">
-                    <?php foreach ($premissions_check as $premission){ ?>
-                        <div class="premission-content-items">
-                            <label for="premission<?=$premission['id']?>" class="items-title"><?=$premission['name']?></label>
-                            <input id="premission<?=$premission['id']?>" type="checkbox" value="<?=$premission['id']?>" name="premission[]">
-                        </div>
-                       <?php }
-                    ?>
-                </div>
-                <?php } ?>
+                <div class="premission-content"> </div>
         </div>
         <div class="card-footer">
             <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary submit_save']) ?>
