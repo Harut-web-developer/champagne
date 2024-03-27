@@ -43,6 +43,7 @@ $view_log = Users::checkPremission(28);
 $view_nom = Users::checkPremission(12);
 $view_notificationBell = Users::checkPremission(91);
 ?>
+<div id="mapmain"></div>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>" class="h-100">

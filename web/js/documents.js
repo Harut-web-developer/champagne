@@ -110,7 +110,7 @@ $(document).ready(function () {
         }
         newTbody.append(documentsTableBody);
         $('.documentsAddingTable tbody').replaceWith(newTbody);
-            $('body').find('.saveAll').attr('disabled',false);
+        $('body').find('.saveAll').attr('disabled',false);
         trCounter($('body').find('.documentsAddingTable'));
     })
 
