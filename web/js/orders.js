@@ -1,22 +1,28 @@
 $(document).ready(function () {
     var id_count = {};
+    var count_product = {};
     $('body').on('input', '.ordersCountInput', function () {
         count_id($(this));
     });
     function count_id(el) {
         let id = el.closest('tr').find('.prodId').data('id');
+        let idnom = el.closest('tr').find('.nomId').data('product');
         let count = el.val();
         if (count) {
-            id_count[String(id).trim()] = parseInt(count.trim());
+            if (!id_count[id]) {
+                id_count[id] = {};
+            }
+            id_count[id]['nomId'] = idnom;
+            id_count[id]['count'] = count;
+            // id_count[String(id).trim()] = parseInt(count.trim());
         }else{
             delete id_count[String(id).trim()];
         }
     }
-    var count_product = {};
     function product_count() {
+        Object.keys(count_product).forEach(key => delete count_product  [key]);
         $('.ordersAddingTable .tableNomenclature .nom_Id').each(function() {
             let id = $(this).closest('tr').find('.nom_Id').val();
-            let nomIdValue = $(this).val();
             let stringCount = $(this).closest('tr').find('.stringCount').val();
             let countProductValue = $(this).closest('tr').find('.countProduct').val();
             let discountProductValue = $(this).closest('tr').find('input[name="discount[]"]').val();
@@ -33,7 +39,6 @@ $(document).ready(function () {
             count_product[id]['stringCount'] = stringCount;
 
         });
-        // console.log(count_product)
         var ordersTotalPriceSum = 0;
         var ordersTotalCount = 0;
         var ordersBeforTotalPriceSum = 0;
@@ -51,9 +56,7 @@ $(document).ready(function () {
                 ordersTotalPriceSum += parseFloat(count_product[i].price);     //yndhanur zexchvac gumar
                 ordersBeforTotalPriceSum += parseFloat(count_product[i].beforePrice);  //yndhanur gumar
             for (let k = 0; k < discountArray.length;k++){
-                // console.log(discountArray[i])
                 totalDiscount += parseFloat(discountArray[k]) * parseInt(strCount[k]);
-
             }
             // }
         }
@@ -211,48 +214,46 @@ $(document).ready(function () {
                         }
                         sequenceNumber++;
                         trss[nomenclature] = `<tr class="tableNomenclature">
-                                                     <td>
-                                                        <span>`+sequenceNumber+`</span>
-                                                        <input type="hidden" name="order_items[]" value="`+stringProductId+`">
-                                                        <input type="hidden" name="string_price[]" value="`+stringPrice+`">
-                                                        <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
-                                                        <input class="stringCount" type="hidden" name="string_count[]" value="`+stringCount+`">
-                                                        <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
-                                                        <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
-                                                        <input class="nom_Id" type="hidden" name="nom_id[]" value="`+nomenclature+`">
-                                                        <input type="hidden" name="count_discount_id[]" value="`+countDiscountId+`">
-                                                        <input type="hidden" name="aah[]" value="`+aah+`">
-                                                        `+prod_clients+`
-                                                        <input type="hidden" name="cost[]" value="`+cost+`">
-                                                     </td>
-                                                     <td  class="name">`+name+`</td>
-                                                     <td class="count">
-                                                        <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProduct">
-                                                     </td>
-                                                     <td class="discount">
-                                                        <span>`+stringDiscount+`</span>
-                                                        <input type="hidden" name="discount[]" value="`+stringDiscount+`">
-                                                     </td>
-                                                     <td class="beforePrice">
-                                                        <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
-                                                        <input type="hidden" name="beforePrice[]" value="`+parseFloat(lastBeforePrice).toFixed(2)+`">
-                                                     </td>
-                                                     <td class="price">
-                                                        <span>`+parseFloat(lastPrice).toFixed(2)+`</span>
-                                                        <input type="hidden" name="price[]" value="`+parseFloat(lastPrice).toFixed(2)+`">
-                                                     </td>
-                                                     <td class="totalBeforePrice">
-                                                        <span>`+parseFloat(beforePriceProd).toFixed(2)+`</span>
-                                                        <input type="hidden" name="total_before_price[]" value="`+parseFloat(beforePriceProd).toFixed(2)+`">
-                                                     </td>
-                                                     <td class="totalPrice">
-                                                        <span>`+parseFloat(priceProd).toFixed(2)+`</span>
-                                                        <input type="hidden" name="total_price[]" value="`+parseFloat(priceProd).toFixed(2)+`">
-                                                     </td>
-                                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
-                                                 </tr>`;
-
-
+                                             <td>
+                                                <span>`+sequenceNumber+`</span>
+                                                <input type="hidden" name="order_items[]" value="`+stringProductId+`">
+                                                <input type="hidden" name="string_price[]" value="`+stringPrice+`">
+                                                <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
+                                                <input class="stringCount" type="hidden" name="string_count[]" value="`+stringCount+`">
+                                                <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
+                                                <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
+                                                <input class="nom_Id" type="hidden" name="nom_id[]" value="`+nomenclature+`">
+                                                <input type="hidden" name="count_discount_id[]" value="`+countDiscountId+`">
+                                                <input type="hidden" name="aah[]" value="`+aah+`">
+                                                `+prod_clients+`
+                                                <input type="hidden" name="cost[]" value="`+cost+`">
+                                             </td>
+                                             <td  class="name">`+name+`</td>
+                                             <td class="count">
+                                                <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProduct">
+                                             </td>
+                                             <td class="discount">
+                                                <span>`+stringDiscount+`</span>
+                                                <input type="hidden" name="discount[]" value="`+stringDiscount+`">
+                                             </td>
+                                             <td class="beforePrice">
+                                                <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
+                                                <input type="hidden" name="beforePrice[]" value="`+parseFloat(lastBeforePrice).toFixed(2)+`">
+                                             </td>
+                                             <td class="price">
+                                                <span>`+parseFloat(lastPrice).toFixed(2)+`</span>
+                                                <input type="hidden" name="price[]" value="`+parseFloat(lastPrice).toFixed(2)+`">
+                                             </td>
+                                             <td class="totalBeforePrice">
+                                                <span>`+parseFloat(beforePriceProd).toFixed(2)+`</span>
+                                                <input type="hidden" name="total_before_price[]" value="`+parseFloat(beforePriceProd).toFixed(2)+`">
+                                             </td>
+                                             <td class="totalPrice">
+                                                <span>`+parseFloat(priceProd).toFixed(2)+`</span>
+                                                <input type="hidden" name="total_price[]" value="`+parseFloat(priceProd).toFixed(2)+`">
+                                             </td>
+                                             <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
+                                         </tr>`;
                         ordersTableLength--;
                         if(ordersTableLength == 0){
                             $('.discountDesc tbody').html('');
@@ -288,12 +289,16 @@ $(document).ready(function () {
                                     newTbody.append(trss[key]);
                                 }
                             }
-                                $('.ordersAddingTable tbody').empty();
+                            $('.ordersAddingTable tbody').empty();
                             $('.ordersAddingTable tbody').replaceWith(newTbody);
                             trCounter($('body').find('.ordersAddingTable'));
                             newTbody = $('<tbody></tbody>');
-
-
+                            if ($('#orders-user_id').val() != '' && $('#singleClients').val() != null && $('#orders-orders_date').val() != '' && $('.ordersAddingTable tr').length-1!=0) {
+                                $('.submit_save').prop('disabled', false);
+                            } else {
+                                $('.submit_save').prop('disabled', true);
+                            }
+                            // Object.keys(trss).forEach(key => delete trss[key]);
                             var result = product_count();
                             $('body').find('#orders-total_price').val(parseFloat(result.ordersTotalPriceSum).toFixed(2));
                             $('body').find('#orders-total_count').val(Math.round(result.ordersTotalCount));
@@ -302,6 +307,21 @@ $(document).ready(function () {
                         }
                     }
                 })
+            }else {
+                for (let key in trss) {
+                    if (trss.hasOwnProperty(key)) {
+                        newTbody.append(trss[key]);
+                    }
+                }
+                $('.ordersAddingTable tbody').empty();
+                $('.ordersAddingTable tbody').replaceWith(newTbody);
+                trCounter($('body').find('.ordersAddingTable'));
+                newTbody = $('<tbody></tbody>');
+                var result = product_count();
+                $('body').find('#orders-total_price').val(parseFloat(result.ordersTotalPriceSum).toFixed(2));
+                $('body').find('#orders-total_count').val(Math.round(result.ordersTotalCount));
+                $('body').find('#orders-total_price_before_discount').val(parseFloat(result.ordersBeforTotalPriceSum).toFixed(2));
+                $('body').find('#orders-total_discount').val(parseFloat(result.totalDiscount).toFixed(2));
             }
         })
     })
@@ -312,10 +332,17 @@ $(document).ready(function () {
         if (confirmed){
             $(this).closest('.tableNomenclature').remove();
             alert('Հաջողությամբ ջնջված է:');
-
+            let id = $(this).closest('tr').find('.prodId').val();
             let id_delete = $(this).closest('.tableNomenclature').find('.nom_Id').val();
             if (id_delete) {
                 delete count_product[id_delete];
+                delete id_count[String(id).trim()];
+                delete trss[String(id_delete).trim()];
+            }
+            if ($('#orders-user_id').val() != '' && $('#singleClients').val() != null && $('#orders-orders_date').val() != '' && $('.ordersAddingTable tr').length-1!=0) {
+                $('.submit_save').prop('disabled', false);
+            } else {
+                $('.submit_save').prop('disabled', true);
             }
             var result = product_count();
             $('body').find('#orders-total_price').val(parseFloat(result.ordersTotalPriceSum).toFixed(2));
@@ -562,6 +589,40 @@ $(document).ready(function () {
                         }
                     }
                 })
+            }else {
+                newTbody.append(old_table);
+                for (let key in trss) {
+                    if (trss.hasOwnProperty(key)) {
+                        newTbody.append(trss[key]);
+                    }
+                }
+                $('.ordersAddingTable tbody').empty();
+                $('.ordersAddingTable tbody').replaceWith(newTbody);
+                trCounter($('body').find('.ordersAddingTable'));
+                newTbody = $('<tbody></tbody>');
+                if (Object.keys(trss).length === 0){
+                    $('.ordersAddingTable tbody').empty();
+                    $('.ordersAddingTable tbody').html(old_table);
+                    $('.ordersAddingTable tbody').append(fromModal);
+                }
+                let ordersTotalCount = 0;
+                let ordersTotalPriceSum = 0;
+                let ordersBeforTotalPriceSum = 0;
+                let totalDiscount = 0;
+                $('.tableNomenclature').each(function () {
+                    let count_str = $(this).find('.stringCount').val().split(',');
+                    let discount = $(this).find('.discount').children('input').val().split(',');
+                    for (let k = 0; k < count_str.length; k++){
+                        totalDiscount += parseInt(count_str[k]) * parseFloat(discount[k]);
+                    }
+                    ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
+                    ordersTotalCount += parseInt($(this).find('.count').children('input').val());
+                    ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
+                })
+                $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
+                $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
+                $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
+                $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
             }
         })
         giveOldValues();
@@ -825,11 +886,15 @@ $(document).ready(function () {
     })
     $('body').on('keyup','.ordersCountInput',function (){
         if ($(this).val() < 1){
-            $(this).val('')
-        }else {
+            let id = $(this).closest('.addOrdersTableTr').find(".nomId").attr('data-product');
+            delete count_product[String(id).trim()];
+            delete trss[String(id).trim()];
+            $(this).val('');
+        }
+        else {
             var this_ = $(this);
             let warehouse_id = $('body').find('.warehouse_id').val();
-            var id = this_.closest('.addOrdersTableTr').find(".nomId").attr('data-product');
+            let id = this_.closest('.addOrdersTableTr').find(".nomId").attr('data-product');
             var count = this_.val();
             let id_product = $(this).closest('tr').find('.prodId').data('id');
             var csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -857,15 +922,23 @@ $(document).ready(function () {
                         }else if (p.count === 'dontExists'){
                             alert('Նման ապրանք պահեստում գոյություն չունի')
                             // this_.val('')
+                        }else if (p.count === 'exists'){
+                            // this_.val('')
+                            delete count_product[String(id).trim()];
                         }
                     }
                 }
             })
         }
     })
+
     $('body').on('click','.ordersCountInput',function (){
         if ($(this).val() < 1){
+            let id = $(this).closest('.addOrdersTableTr').find(".nomId").attr('data-product');
+            delete count_product[String(id).trim()];
+            delete trss[String(id).trim()];
             $(this).val('')
+
         }else {
             var this_ = $(this);
             let warehouse_id = $('body').find('.warehouse_id').val();
@@ -1204,60 +1277,49 @@ $(document).ready(function () {
 
                         sequenceNumber++;
                         trss[nomenclature] = `<tr class="tableNomenclature">
-                                                     <td>
-                                                        <span>`+sequenceNumber+`</span>
-                                                        <input type="hidden" name="order_items[]" value="`+stringProductId+`">
-                                                        <input type="hidden" name="string_price[]" value="`+stringPrice+`">
-                                                        <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
-                                                        <input class="stringCount" type="hidden" name="string_count[]" value="`+stringCount+`">
-                                                        <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
-                                                        <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
-                                                        <input class="nom_Id" type="hidden" name="nom_id[]" value="`+nomenclature+`">
-                                                        <input type="hidden" name="count_discount_id[]" value="`+countDiscountId+`">
-                                                        <input type="hidden" name="aah[]" value="`+aah+`">
-                                                        `+prod_clients+`
-                                                        <input type="hidden" name="cost[]" value="`+cost+`">
-                                                     </td>
-                                                     <td  class="name">`+name+`</td>
-                                                     <td class="count">
-                                                        <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProduct">
-                                                     </td>
-                                                     <td class="discount">
-                                                        <span>`+stringDiscount+`</span>
-                                                        <input type="hidden" name="discount[]" value="`+stringDiscount+`">
-                                                     </td>
-                                                     <td class="beforePrice">
-                                                        <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
-                                                        <input type="hidden" name="beforePrice[]" value="`+parseFloat(lastBeforePrice).toFixed(2)+`">
-                                                     </td>
-                                                     <td class="price">
-                                                        <span>`+parseFloat(lastPrice).toFixed(2)+`</span>
-                                                        <input type="hidden" name="price[]" value="`+parseFloat(lastPrice).toFixed(2)+`">
-                                                     </td>
-                                                     <td class="totalBeforePrice">
-                                                        <span>`+parseFloat(beforePriceProd).toFixed(2)+`</span>
-                                                        <input type="hidden" name="total_before_price[]" value="`+parseFloat(beforePriceProd).toFixed(2)+`">
-                                                     </td>
-                                                     <td class="totalPrice">
-                                                        <span>`+parseFloat(priceProd).toFixed(2)+`</span>
-                                                        <input type="hidden" name="total_price[]" value="`+parseFloat(priceProd).toFixed(2)+`">
-                                                     </td>
-                                                     <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
-                                                 </tr>`;
+                                             <td>
+                                                <span>`+sequenceNumber+`</span>
+                                                <input type="hidden" name="order_items[]" value="`+stringProductId+`">
+                                                <input type="hidden" name="string_price[]" value="`+stringPrice+`">
+                                                <input type="hidden" name="string_before_price[]" value="`+stringBeforePrice+`">
+                                                <input class="stringCount" type="hidden" name="string_count[]" value="`+stringCount+`">
+                                                <input type="hidden" name="count_balance[]" value="`+stringCountBalance+`">
+                                                <input class="prodId" type="hidden" name="product_id[]" value="`+stringProductId+`">
+                                                <input class="nom_Id" type="hidden" name="nom_id[]" value="`+nomenclature+`">
+                                                <input type="hidden" name="count_discount_id[]" value="`+countDiscountId+`">
+                                                <input type="hidden" name="aah[]" value="`+aah+`">
+                                                `+prod_clients+`
+                                                <input type="hidden" name="cost[]" value="`+cost+`">
+                                             </td>
+                                             <td  class="name">`+name+`</td>
+                                             <td class="count">
+                                                <input type="number" readonly name="count_[]" value="`+countProd+`" class="form-control countProduct">
+                                             </td>
+                                             <td class="discount">
+                                                <span>`+stringDiscount+`</span>
+                                                <input type="hidden" name="discount[]" value="`+stringDiscount+`">
+                                             </td>
+                                             <td class="beforePrice">
+                                                <span>`+parseFloat(lastBeforePrice).toFixed(2)+`</span>
+                                                <input type="hidden" name="beforePrice[]" value="`+parseFloat(lastBeforePrice).toFixed(2)+`">
+                                             </td>
+                                             <td class="price">
+                                                <span>`+parseFloat(lastPrice).toFixed(2)+`</span>
+                                                <input type="hidden" name="price[]" value="`+parseFloat(lastPrice).toFixed(2)+`">
+                                             </td>
+                                             <td class="totalBeforePrice">
+                                                <span>`+parseFloat(beforePriceProd).toFixed(2)+`</span>
+                                                <input type="hidden" name="total_before_price[]" value="`+parseFloat(beforePriceProd).toFixed(2)+`">
+                                             </td>
+                                             <td class="totalPrice">
+                                                <span>`+parseFloat(priceProd).toFixed(2)+`</span>
+                                                <input type="hidden" name="total_price[]" value="`+parseFloat(priceProd).toFixed(2)+`">
+                                             </td>
+                                             <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
+                                         </tr>`;
 
                         ordersTableLength--;
                         if(ordersTableLength == 0){
-                            // $('.discountDesc tbody').parent().append(discountBody);
-                            // for (let i in trss) {
-                            //     if(trss[i] != ''){
-                            //         newTbody.append(trss[i]);
-                            //     }
-                            // }
-                            // $('.ordersAddingTable tbody').replaceWith(newTbody);
-                            // trCounter($('body').find('.ordersAddingTable'));
-                            // newTbody = $('<tbody></tbody>');
-                            // $('body').find('.ordersAddingTable').removeClass('d-none');
-                            // $('body').find('.loader').toggleClass('d-none');
                             $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
                             $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
                             $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
@@ -1415,45 +1477,51 @@ $(document).ready(function () {
 
                         ordersTableLength--;
                         if(ordersTableLength == 0){
-                            // for (let i in trss) {
-                            //     if(trss[i] != ''){
-                            //         newTbody.append(trss[i]);
-                            //     }
-                            // }
-                            // $('.ordersAddingTable tbody').replaceWith(newTbody);
-                            // trCounter($('body').find('.ordersAddingTable'));
-                            // newTbody = $('<tbody></tbody>');
-                            $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
-                            $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-                            $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
-                            $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
+                            var result = product_count();
+                            $('body').find('#orders-total_price').val(parseFloat(result.ordersTotalPriceSum).toFixed(2));
+                            $('body').find('#orders-total_count').val(Math.round(result.ordersTotalCount));
+                            $('body').find('#orders-total_price_before_discount').val(parseFloat(result.ordersBeforTotalPriceSum).toFixed(2));
+                            $('body').find('#orders-total_discount').val(parseFloat(result.totalDiscount).toFixed(2));
                         }
                     }
                 })
             }
         })
     })
-    // $('body').on('click', '.deleteUpdateItems',function (){
-    //     let  ordersTotalPriceSum = 0;
-    //     let  ordersTotalCount = 0;
-    //     let  ordersBeforTotalPriceSum = 0;
-    //     let  totalDiscount = 0;
-    //     let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
-    //     if (confirmed){
-    //         $(this).closest('.tableNomenclature').remove();
-    //         $('body').find('.tableNomenclature').each(function () {
-    //             ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
-    //             ordersTotalCount += parseInt($(this).find('.count').children('input').val());
-    //             ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
-    //             totalDiscount += parseFloat($(this).find('.discount').children('input').val()) * parseInt($(this).find('.count').children('input').val());
-    //         })
-    //         $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
-    //         $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
-    //         $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
-    //         $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
-    //         alert('Հաջողությամբ ջնջված է:');
-    //     }
-    // })
+
+    $('body').on('click', '.deleteUpdateItems',function (){
+        let confirmed =  confirm("Այս ապրանքը դուք ուզում եք ջնջե՞լ:");
+        if (confirmed){
+            $(this).closest('.tableNomenclature').remove();
+            alert('Հաջողությամբ ջնջված է:');
+            let id_delete = $(this).closest('.tableNomenclature').find('.nomId').val();
+            let id = $(this).closest('tr').find('.prodId').val();
+            console.log(trss,id_delete,id)
+            if (id_delete) {
+                delete trss[String(id_delete).trim()];
+                delete id_count[String(id).trim()];
+            }
+            console.log(trss)
+            let ordersTotalCount = 0;
+            let ordersTotalPriceSum = 0;
+            let ordersBeforTotalPriceSum = 0;
+            let totalDiscount = 0;
+            $('.tableNomenclature').each(function () {
+                let count_str = $(this).find('.stringCount').val().split(',');
+                let discount = $(this).find('.discount').children('input').val().split(',');
+                for (let k = 0; k < count_str.length; k++){
+                    totalDiscount += parseInt(count_str[k]) * parseFloat(discount[k]);
+                }
+                ordersTotalPriceSum += parseFloat($(this).find('.totalPrice').children('input').val());
+                ordersTotalCount += parseInt($(this).find('.count').children('input').val());
+                ordersBeforTotalPriceSum += parseFloat($(this).find('.totalBeforePrice').children('input').val());
+            })
+            $('body').find('#orders-total_price').val(parseFloat(ordersTotalPriceSum).toFixed(2));
+            $('body').find('#orders-total_count').val(Math.round(ordersTotalCount));
+            $('body').find('#orders-total_price_before_discount').val(parseFloat(ordersBeforTotalPriceSum).toFixed(2));
+            $('body').find('#orders-total_discount').val(parseFloat(totalDiscount).toFixed(2));
+        }
+    })
     $('body').on('click', '.changeCount',function () {
         let orderItemsId = $(this).data('orders');
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -1561,8 +1629,6 @@ $(document).ready(function () {
                     // newProductId.pop();
                 }
             }
-            // console.log(countBalance)
-            // console.log(newProductId)
             let newstrDiscount = strDiscount.join(',');
             let newCountBalance = countBalance.join(',');
             let newPriceArrStr = newPriceArr.join(',');

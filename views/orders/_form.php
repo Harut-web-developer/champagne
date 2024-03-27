@@ -46,7 +46,7 @@ $session = Yii::$app->session;
                     <?php } elseif ($session['role_id'] == 2){ ?>
                         <label class="label_clients" for="singleClients">Հաճախորդ</label>
                         <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
-                            <option  value=""></option>
+<!--                            <option  value=""></option>-->
                             <?php foreach ($clients as $client){
                                 $isSelected = in_array($client['id'], $orders_clients);
                                 ?>
@@ -57,7 +57,7 @@ $session = Yii::$app->session;
                         <div class="clients_ajax_content">
                             <label class="label_clients" for="singleClients">Հաճախորդ</label>
                             <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
-                                <option  value=""></option>
+<!--                                <option  value=""></option>-->
                                 <?php foreach ($clients as $client){
                                     $isSelected = in_array($client['id'], $orders_clients);
                                     ?>
@@ -327,7 +327,7 @@ $session = Yii::$app->session;
                     <?php if ($session['role_id'] == 2){ ?>
                         <label class="label_clients" for="singleClients">Հաճախորդ</label>
                         <select id="singleClients" class="js-example-basic-single form-control" name="clients_id">
-                            <option  value=""></option>
+<!--                            <option  value=""></option>-->
                             <?php if (isset($clients)){
                                 foreach ($clients as $client){
                                     ?>
@@ -446,7 +446,7 @@ $session = Yii::$app->session;
                 </div>
             </div>
             <div class="card-footer">
-                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary submit_save']) ?>
+                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary submit_save', 'disabled' => true]) ?>
             </div>
             <?php ActiveForm::end(); ?>
         </div>

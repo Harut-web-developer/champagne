@@ -12,7 +12,6 @@ $this->title = $name;
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <div class="site-error container">
-<!--    <img src="/upload/pngwing(6).png" alt="404 image" style="width: 50%;">-->
     <div class="top_left_error">Այս էջում ունեք տվյալների սահմանափակում։</div>
 </div>
 
@@ -25,13 +24,6 @@ $this->title = $name;
         font-size: 2vw;
         text-shadow: 1px 1px #dd1f1f;
     }
-    /*.top_left_error {*/
-    /*    !*position: absolute;*!*/
-    /*    top: 8px;*/
-    /*    left: 16px;*/
-    /*    text-decoration: underline;*/
-    /*    color: black;*/
-    /*}*/
     @media screen and (max-width: 424px) {
         .top_left_error{
             font-size:3em;
