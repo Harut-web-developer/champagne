@@ -313,10 +313,9 @@ else { ?>
             <?php }elseif ($session['role_id'] == '2'){ ?>
                 <input class="changeManager" type="hidden" value="<?=$session['user_id']?>">
             <?php }?>
-            <select class="form-control changeClients" style="width: 210px; margin: 0px 10px 15px 5px;">
+            <select class="js-example-basic-single form-control changeClients" style="width: 210px; margin: 0px 10px 15px 5px;">
                 <option value="null">Բոլոր հաճախորդները</option>
                 <?php
-                var_dump($clients);
                 foreach ($clients as $client){
                     ?>
                     <option value="<?=$client['id']?>"><?=$client['name']?></option>

@@ -118,7 +118,7 @@ if (!empty($access_buttons)) {
                 <?php } ?>
             </p>
             <div class="filtersField filtersFieldord" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
-                <select class="form-control byPrint" style="margin: 0px 5px 10px 0px;">
+                <select class="form-control byPrint" style="width: 150px; margin: 0px 10px 15px 5px;">
                     <option value="null">Ընդհանուր</option>
                     <option value="1">Չտպել</option>
                     <option value="0">Տպել</option>
@@ -127,7 +127,7 @@ if (!empty($access_buttons)) {
                     <option value="order">Ըստ պատվերի</option>
                     <option value="product">Ըստ ապրանքի</option>
                 </select>
-                <input type="date" class="form-control ordersDate" style="margin: 0px 10px 15px 5px;">
+                <input type="date" class="form-control ordersDate" style="width: 150px; margin: 0px 10px 15px 5px;">
                 <?php
                 $users = Users::find()->select('id,name')->where(['=','role_id',2])->andWhere(['status' => '1'])->asArray()->all();
                 if($session['role_id'] == '1' || $session['role_id'] == '4'){?>
@@ -144,7 +144,7 @@ if (!empty($access_buttons)) {
                 <?php }elseif ($session['role_id'] == '2'){ ?>
                     <input class="changeManager" type="hidden" value="<?=$session['user_id']?>">
                 <?php }?>
-                <select class="form-control changeClients" style="width: 210px; margin: 0px 10px 15px 5px;">
+                <select class="js-example-basic-single form-control changeClients" style="width: 210px; margin: 0px 10px 15px 5px;">
                     <option value="null">Բոլոր հաճախորդները</option>
                     <?php
                     foreach ($clients as $client){

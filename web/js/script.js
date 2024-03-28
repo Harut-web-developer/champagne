@@ -1206,7 +1206,7 @@ window.addEventListener('load', function() {
                         var startTime = new Date();
                         startTime.setHours(8, 0, 0);
                         var endTime = new Date();
-                        endTime.setHours(22, 0, 0);
+                        endTime.setHours(19, 0, 0);
                         if (currentDate >= startTime && currentDate <= endTime) {
                             function init () {
                                 var location_value = data['route'];
