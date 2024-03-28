@@ -100,7 +100,9 @@ $(document).ready(function () {
                                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                   </tr>`.trim();
                 }
-
+            }else{
+                let id = $(this).closest('tr').find('.nom_id').data('id');
+                delete trs[String(id).trim()];
             }
         })
         for (let i in trs) {
@@ -128,7 +130,6 @@ $(document).ready(function () {
             $(this).closest('tr').remove();
         }
         alert('Հաջողությամբ ջնջված է:');
-        console.log($(this).closest('tbody').length == 0)
         if ($(this).closest('tbody').length == 0){
             $('body').find('.saveAll').prop('disabled', true);
         }
@@ -189,7 +190,9 @@ $(document).ready(function () {
                                          <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                       </tr>`.trim();
                 }
-
+            }else{
+                let id = $(this).closest('tr').find('.nom_id').data('id');
+                delete trs[String(id).trim()];
             }
         })
         newTbody.append(old_table);
