@@ -92,7 +92,14 @@ $this->params['date_tab'] = $date_tab;
                                 type: 'viaPoint',
                                 params: {
                                     routingMode: 'masstransit',
+                                    reverseGeocoding: false, //Որպեսզի պիտակների վրա հասցեները չցուցադրվեն
                                 },
+                            });
+                            multiRoute.options.set({
+                                wayPointFinishIconLayout: "default#image",
+                                wayPointFinishIconImageHref: "/upload/transparent_picture.png",
+                                wayPointFinishIconImageSize: [30, 30],
+                                wayPointFinishIconImageOffset: [-15, -15],
                             });
                             ymaps.modules.require([
                                 'MultiRouteColorizer'
@@ -184,8 +191,25 @@ $this->params['date_tab'] = $date_tab;
                                 referencePoints: arr2,
                                 type: 'viaPoint',
                                 params: {
-                                    routingMode: 'masstransit',
+                                    routingMode: 'auto',
                                 },
+                            }, {
+                                // Set the appearance of the starting point.
+                                wayPointStartIconLayout: "default#image",
+                                wayPointStartIconImageHref: "/upload/start.png",
+                                wayPointStartIconImageSize: [30, 30],
+                                wayPointStartIconImageOffset: [-15, -15],
+                                // Set the appearance of the ending point.
+                                wayPointFinishIconLayout: "default#image",
+                                wayPointFinishIconImageHref: "/upload/end.png",
+                                wayPointFinishIconImageSize: [30, 30],
+                                wayPointFinishIconImageOffset: [-15, -15],
+                                // Set the appearance of the intermediary point.
+                                wayPointIconLayout: "default#image",
+                                wayPointIconImageHref: "/upload/transparent_picture.png",
+                                wayPointIconImageSize: [10, 10],
+                                wayPointIconImageOffset: [-5, -5],
+                                boundsAutoApply: true
                             });
                             ymaps.modules.require([
                                 'MultiRouteColorizer'
