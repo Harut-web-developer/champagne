@@ -891,6 +891,7 @@ class DocumentsController extends Controller
         $document_items = DocumentItems::find()->select('document_items.*,nomenclature.name, nomenclature.id as nom_id')
             ->leftJoin('nomenclature','document_items.nomenclature_id = nomenclature.id')
             ->where(['document_items.document_id' => $urlId])
+            ->andWhere(['document_items.status' => '1'])
             ->asArray()->all();
         $query = Nomenclature::find();
         $nomenclatures = $query->select('nomenclature.id as nomenclature_id,nomenclature.name,nomenclature.image,nomenclature.cost,nomenclature.price');

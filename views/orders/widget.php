@@ -287,20 +287,20 @@ else { ?>
             <?php } ?>
         </p>
         <div class="filtersField filtersFieldord" style="display: flex; justify-content: space-between; align-items: baseline;align-items: baseline;">
-            <select class="form-control byPrint" style="margin: 0px 5px 10px 0px;">
+            <select class="form-control byPrint" style="margin: 0px 5px 15px 5px;">
                 <option value="null">Ընդհանուր</option>
                 <option value="1">Չտպել</option>
                 <option value="0">Տպել</option>
             </select>
-            <select class="form-control byType" style="margin: 0px 0px 10px 0px;">
+            <select class="form-control byType" style="margin: 0px 5px 15px 5px;">
                 <option value="order">Ըստ պատվերի</option>
                 <option value="product">Ըստ ապրանքի</option>
             </select>
-            <input type="date" class="form-control ordersDate" style="margin: 0px 5px 0px 10px;">
+            <input type="date" class="form-control ordersDate" style="margin: 0px 5px 15px 5px;">
             <?php
             $users = Users::find()->select('id,name')->where(['=','role_id',2])->asArray()->all();
             if($session['role_id'] == '1' || $session['role_id'] == '4'){?>
-                <select class="form-control changeManager">
+                <select class="form-control changeManager" style="min-width:165px;margin: 0px 5px 15px 5px">
                     <option value="null">Ընտրել մենեջերին</option>
                     <?php
                     foreach ($users as $user){
@@ -313,16 +313,6 @@ else { ?>
             <?php }elseif ($session['role_id'] == '2'){ ?>
                 <input class="changeManager" type="hidden" value="<?=$session['user_id']?>">
             <?php }?>
-            <select class="js-example-basic-single form-control changeClients" style="width: 210px; margin: 0px 10px 15px 5px;">
-                <option value="null">Բոլոր հաճախորդները</option>
-                <?php
-                foreach ($clients as $client){
-                    ?>
-                    <option value="<?=$client['id']?>"><?=$client['name']?></option>
-                    <?php
-                }
-                ?>
-            </select>
             <select class="form-select orderStatus" aria-label="Default select example" style="width: 150px; margin: 0px 10px 15px 5px;">
                 <?php
                 if($session['role_id'] == '1'){?>
@@ -335,6 +325,16 @@ else { ?>
                     <option value="2">Հաստատված</option>
                     <option value="1">Ընթացքի մեջ</option>
                 <?php }?>
+            </select>
+            <select class="js-example-basic-single form-control changeClients" style="width: 210px; margin: 0px 5px 15px 5px;">
+                <option value="null">Բոլոր հաճախորդները</option>
+                <?php
+                foreach ($clients as $client){
+                    ?>
+                    <option value="<?=$client['id']?>"><?=$client['name']?></option>
+                    <?php
+                }
+                ?>
             </select>
             <?php if (Users::checkPremission(56)){ ?>
                 <div class="iconsPrintAndXlsx">
