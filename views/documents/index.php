@@ -100,7 +100,11 @@ if(!empty($new_fields)){
     for ($i = 0; $i < count($new_fields); $i++){
         $fields_arr[$i]['attribute'] = $new_fields[$i]['attribute'];
         $fields_arr[$i]['value'] = function ($model,$key, $index, $column) {
-            return CustomfieldsBlocksInputValues::getValue($model->id, $column->filterAttribute);
+            if ($model->document_type == 1 || $model->document_type == 2 || $model->document_type == 3 || $model->document_type == 4){
+                return CustomfieldsBlocksInputValues::getValue($model->id, $column->filterAttribute);
+            }else{
+                return 'Դատարկ';
+            }
         };
     }
 }
