@@ -292,6 +292,18 @@
 }
 .premission-content-items{
     margin: 0px 10px 10px;
+    flex-basis:23%;
+}
+.premission-content-items > label{
+    width:200px;
+}
+.premission-content-items > label:hover{
+    cursor:pointer;
+}
+@media screen and (max-width: 356px) {
+    .premission-content-items > label{
+        width:140px;
+    }
 }
 .right-btn{
     color:grey;

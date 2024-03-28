@@ -880,9 +880,12 @@ $(document).ready(function () {
                     }
                 }
             })
-
         }
     })
+    // $('body').on('click', '.deleteItemsFromDB, .deleteUpdateItems', function () {
+    //     console.log($(this).closest())
+    //
+    // })
     $('body').on('keyup','.ordersCountInput',function (){
         if ($(this).val() < 1){
             let id = $(this).closest('.addOrdersTableTr').find(".nomId").attr('data-product');

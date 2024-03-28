@@ -50,11 +50,11 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'users','block_type'=>
                 </div>
                 <?php if (isset($model->id)) { ?>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 usersPassword">
-                        <?= $form->field($model, 'password')->passwordInput(['placeholder' => 'Ձեր գաղտնաբառն']) ?>
+                        <?= $form->field($model, 'password')->passwordInput(['placeholder' => 'Ձեր գաղտնաբառը']) ?>
                     </div>
                 <?php } else { ?>
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 usersPassword">
-                    <?= $form->field($model, 'password')->passwordInput(['required' => true, 'placeholder' => 'Մուտքագրեք ձեր գաղտնաբառն']) ?>
+                    <?= $form->field($model, 'password')->passwordInput(['required' => true, 'placeholder' => 'Մուտքագրեք ձեր գաղտնաբառը']) ?>
                 </div>
                 <?php } ?>
                 <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>18])->all(); ?>
