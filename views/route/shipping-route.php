@@ -201,7 +201,7 @@ $this->params['date_tab'] = $date_tab;
                                 wayPointStartIconImageOffset: [-15, -15],
                                 // Set the appearance of the ending point.
                                 wayPointFinishIconLayout: "default#image",
-                                wayPointFinishIconImageHref: "/upload/end.png",
+                                wayPointFinishIconImageHref: "/upload/ending_.png",
                                 wayPointFinishIconImageSize: [30, 30],
                                 wayPointFinishIconImageOffset: [-15, -15],
                                 // Set the appearance of the intermediary point.
@@ -227,7 +227,7 @@ $this->params['date_tab'] = $date_tab;
                             var myPlacemark = new ymaps.Placemark(switchedLocation, {
                                 balloonContentHeader: item.name,
                                 balloonContentBody: `Կանգառը ՝ <em>${item.time}</em> րոպե։`,
-                                balloonContentFooter: "Առաքված",
+                                // balloonContentFooter: "Առաքված",
                                 hintContent: "Առաքման կարգավիճակ"
                             });
                             myMap.geoObjects.add(myPlacemark);

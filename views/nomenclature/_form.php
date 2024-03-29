@@ -31,7 +31,9 @@ if(isset($action__)){
                 <div class="card-body formDesign">
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 nomenclatureImage">
                         <?= $form->field($model, 'image')->fileInput() ?>
-                        <img style="width:50px" src="/upload/<?= $model->image ?>" alt="">
+                        <?php if (isset($model->id)){ ?>
+                            <img style="width:50px" src="/upload/<?= $model->image ?>" alt="">
+                        <?php }?>
                     </div>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 nomenclatureName">
                         <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => true]) ?>
