@@ -154,7 +154,7 @@ $session = Yii::$app->session;
                                             <span><?=number_format($sum_price,2,'.','')?></span>
                                             <input type="hidden" name="total_price[]" value="<?=number_format($sum_price,2,'.','')?>">
                                         </td>
-                                        <td>
+                                        <td class="ordersButtons">
                                         <?php if ($oldattributes['is_exit'] == 0){
                                             if ($session['role_id'] != 4){?>
                                                 <button type="button" data-orders="<?=$item['id']?>" class="btn rounded-pill btn-outline-info changeCount" data-bs-toggle="modal" data-bs-target="#modalCenter">

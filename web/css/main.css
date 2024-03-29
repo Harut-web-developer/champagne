@@ -775,3 +775,9 @@
     background: #555;
     cursor:pointer;
 }
+.ordersButtons{
+    display: flex;
+    flex-direction: column;
+    min-height: 105px;
+    justify-content: space-around;
+}
