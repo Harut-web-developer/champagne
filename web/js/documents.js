@@ -53,7 +53,7 @@ $(document).ready(function () {
         delete trs[id.trim()];
     }
 
-    var newTbody = $('<tbody></tbody>');
+    var newTbody = $('<tbody class="old_tbody"></tbody>');
     var trs = {};
     $('body').on('click', '.createDocuments', function () {
         let docType = $('body').find('#documents-document_type').val();
@@ -136,9 +136,19 @@ $(document).ready(function () {
     })
 
     var old_table = $('.table.documentsAddingTable').find('.old_tbody').html();
+    var product = {};
+    function product_() {
+        $('body').find('.documentsAddingTable .old_tbody').find('.oldTr').each(function() {
+            let id = $(this).find('.itemsId').val();
+            if (!product[id]) {
+                product[id] = {};
+            }
+            product[id] = $(this);
+        });
+        return product;
+    }
     var old_attrs = {};
     $('body').on('input', '.documentsAddingTable td input', function () {
-        // let el = $(this);
         let id = $(this).closest('tr').find('.itemsId').val(); // iitem_id
         let count = $(this).closest('tr').find('.countDocuments').val(); // iitem_id
         let price = $(this).closest('tr').find('.PriceDocuments').val(); // iitem_id
@@ -148,6 +158,7 @@ $(document).ready(function () {
     $('body').on('click', '.updateDocuments', function () {
         var documentsTableBody = '';
         let docType = $('body').find('#documents-document_type').val();
+        product_()
         $('.documentsAddingTable tbody').html('')
         $('.documentsTableTr').each(function () {
             if ($(this).find(".documentsCountInput").val() != '') {
@@ -193,9 +204,15 @@ $(document).ready(function () {
             }else{
                 let id = $(this).closest('tr').find('.nom_id').data('id');
                 delete trs[String(id).trim()];
+                delete product[String(id).trim()];
             }
         })
-        newTbody.append(old_table);
+        // newTbody.append(old_table);
+        for (let i in product) {
+            if(product[i] != '' &&  !trs[i]){
+                trs[i] = product[i];
+            }
+        }
         for (let i in trs) {
             if(trs[i] != ''){
                 newTbody.append(trs[i]);
@@ -261,6 +278,10 @@ $(document).ready(function () {
                                          <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                                       </tr>`.trim();
                 }
+            }else{
+                let id = $(this).closest('tr').find('.nom_id').data('id');
+                delete trs[String(id).trim()];
+                delete product[String(id).trim()];
             }
         })
     })
@@ -296,6 +317,7 @@ $(document).ready(function () {
                 success: function (data) {
                     if (data === 'true') {
                         this_.closest('.oldTr').remove();
+                        old_table = $('.table.documentsAddingTable').find('.old_tbody').html();
                         alert('Հաջողությամբ ջնջված է:');
                     }else if (data === 'false'){
                         alert('Մեկ անուն ապրանքի դեպքում պետք է ջնջել ամբողջ փաստաթուղթը:');
@@ -545,7 +567,10 @@ $(document).ready(function () {
                      <td><button  type="button" class="btn rounded-pill btn-outline-danger deleteItems">Ջնջել</button></td>
                   </tr>`.trim();
                 }
-
+            }else{
+                let id = $(this).closest('tr').find('.nom_id').data('id');
+                delete trs[String(id).trim()];
+                delete product[String(id).trim()];
             }
         })
     })
