@@ -236,7 +236,7 @@ class PaymentsController extends Controller
             ['name' => 'Վիճակագրություն','address' => '/payments/statistics']
         ];
         $date_tab = [];
-        $client = Clients::find()->select('id,name')->asArray()->all();
+        $client = Clients::find()->select('id,name')->andWhere(['status' => '1'])->asArray()->all();
         $rates = Rates::find()->select('id,name')->where(['status' => ['1','2']])->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
         return $this->render('create', [
@@ -292,14 +292,11 @@ class PaymentsController extends Controller
         $date_tab = [];
         $payment_clients = Payments::find()->select('client_id')->where(['=','id',$id])->asArray()->all();
         $payment_clients = array_column($payment_clients,'client_id');
-        $clients = Clients::find()->select('id, name')->Where(['=','status',1])->asArray()->all();
+        $clients = Clients::find()->select('id, name')->asArray()->all();
         $rates = Rates::find()->select('id,name')->where(['status' => ['1','2']])->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
-        $client = Clients::find()->select('id,name')->asArray()->all();
-        $client = ArrayHelper::map($client,'id','name');
         return $this->render('update', [
             'model' => $model,
-            'client' => $client,
             'rates' => $rates,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,

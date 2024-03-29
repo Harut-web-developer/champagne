@@ -699,8 +699,7 @@ class OrdersController extends Controller
 //        $user_id = $session['user_id'];
 
         $clients = Clients::find()
-            ->select('id, name')
-            ->where(['=','status',1]);
+            ->select('id, name');
         if ($session['role_id'] == 2) {
             $manager_route_id = ManagerDeliverCondition::find()
                 ->select('route_id, deliver_id')

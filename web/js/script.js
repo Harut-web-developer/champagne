@@ -1182,9 +1182,10 @@ $(document).ready(function() {
         })
     })
     $('body').on('keyup', '#users-phone', function () {
-        var inputValue = $(this).val();
-        var sanitizedValue = inputValue.replace(/[^0-9]/g, '');
-        $(this).val(sanitizedValue);
+        $(this).val($(this).val().replace(/[^0-9]/g, ''));
+    })
+    $('body').on('keyup', '#clients-phone',function () {
+        $(this).val($(this).val().replace(/[^0-9]/g, ''));
     })
 });
 window.addEventListener('load', function() {

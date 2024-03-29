@@ -276,7 +276,9 @@ class RouteController extends Controller
             ->where(['id' => 51])
             ->asArray()
             ->one();
-        $this->findModel($id)->delete();
+        $route = Route::findOne($id);
+        $route->status = '0';
+        $route->save(false);
         Log::afterSaves('Delete', '', $oldattributes['route'], '#', $premission);
         return $this->redirect(['index']);
     }

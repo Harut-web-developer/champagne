@@ -132,7 +132,7 @@ class ManagerDeliverConditionController extends Controller
             Log::afterSaves('Create', $model_l, '', $url.'?'.'id'.'='.$model->id, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
-        $route = Route::find()->select('id, route')->asArray()->all();
+        $route = Route::find()->select('id, route')->andWhere(['status' => '1'])->asArray()->all();
         $manager_id = Users::find()->select('id,name')->where(['and',['status' => '1'],['role_id' => '2']])->asArray()->all();
         $deliver_id = Users::find()->select('id,name')->where(['and',['status' => '1'],['role_id' => '3']])->asArray()->all();
         return $this->render('create', [
@@ -212,7 +212,7 @@ class ManagerDeliverConditionController extends Controller
             Log::afterSaves('Update', $model_l, '', $url.$modal->id, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
-        $route = Route::find()->select('id, route')->asArray()->all();
+        $route = Route::find()->select('id, route')->andWhere(['status' => '1'])->asArray()->all();
         $manager_id = Users::find()->select('id,name')->where(['and',['status' => '1'],['role_id' => '2']])->asArray()->all();
         $deliver_id = Users::find()->select('id,name')->where(['and',['status' => '1'],['role_id' => '3']])->asArray()->all();
         return $this->render('update', [

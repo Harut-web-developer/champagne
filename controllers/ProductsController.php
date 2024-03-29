@@ -67,8 +67,8 @@ class ProductsController extends Controller
         }
         $sub_page = [];
         if (Users::checkPremission(4)){
-            $warehouse = ['name' => 'Պահեստ','address' => '/warehouse'];
-            array_push($sub_page,$warehouse);
+            $warehouses = ['name' => 'Պահեստ','address' => '/warehouse'];
+            array_push($sub_page,$warehouses);
         }
         if (Users::checkPremission(40)){
             $documents = ['name' => 'Փաստաթղթեր','address' => '/documents'];
@@ -88,6 +88,7 @@ class ProductsController extends Controller
         $dataProvider = $searchModel->search($this->request->queryParams);
         $warehouse = Warehouse::find()
             ->select('id, name')
+            ->where(['status' => '1'])
             ->asArray()
             ->all();
         return $this->render('index', [
