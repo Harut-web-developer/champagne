@@ -200,6 +200,7 @@ class ClientsController extends Controller
             $model->route_id = $post['Clients']['route'];
             $model->client_warehouse_id = $post['Clients']['warehouse_id'];
             $model->phone = $post['Clients']['phone'];
+            $model->debt_limit = $post['Clients']['debt_limit'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model = Clients::getDefVals($model);
@@ -347,6 +348,7 @@ class ClientsController extends Controller
             $model->route_id = $post['Clients']['route'];
             $model->client_warehouse_id = $post['Clients']['warehouse_id'];
             $model->phone = $post['Clients']['phone'];
+            $model->debt_limit = $post['Clients']['debt_limit'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);

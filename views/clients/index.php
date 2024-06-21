@@ -123,6 +123,7 @@ if(!empty($new_fields)){
             ],
             'name',
             'phone',
+            'debt_limit',
             ...$fields_arr,
 
         ],

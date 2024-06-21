@@ -29,7 +29,7 @@ class AppAsset extends AssetBundle
         '/js/perfect-scrollbar.js',
         '/js/menu.js',
         '/js/main.js',
-        '/js/script.js',
+        '/js/script.js?v=2',
         '/js/plugins/html5-3.6-respond-1.1.0.min.js',
         '/js/plugins/jQuery.print.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.2.1/exceljs.min.js',

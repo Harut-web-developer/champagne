@@ -947,11 +947,11 @@ $(document).ready(function() {
     })
 
     $('.js-example-basic-single').select2();
-    $('body').on('change','#orders-orders_date, #singleClients',function(){
-        if($('#orders-orders_date').val() != '' && $('#singleClients').val() != ''){
-            $('body').find('.addOrders').attr('disabled',false);
-        }
-    })
+    // $('body').on('change','#orders-orders_date, #singleClients',function(){
+    //     if($('#orders-orders_date').val() != '' && $('#singleClients').val() != ''){
+    //         $('body').find('.addOrders').attr('disabled',false);
+    //     }
+    // })
 
     $('body').on('change', '.productStatus', function () {
         let numberVal = $(this).val();

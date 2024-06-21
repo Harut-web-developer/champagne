@@ -79,6 +79,9 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'clients','block_type'
                 <div class="form-group col-md-12 col-lg-12 col-sm-12 clientPhone">
                     <?= $form->field($model, 'phone')->input('text') ?>
                 </div>
+                <div class="form-group col-md-12 col-lg-12 col-sm-12 clientPhone">
+                    <?= $form->field($model, 'debt_limit')->input('number') ?>
+                </div>
                 <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>17])->all(); ?>
                 <?php if(!empty($fields)){ ?>
                     <?php foreach ($fields as $fild => $fild_simple){ ?>

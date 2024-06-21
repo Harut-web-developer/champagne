@@ -16,6 +16,7 @@ use app\models\Notifications;
 use app\models\OrderItems;
 use app\models\Orders;
 use app\models\OrdersSearch;
+use app\models\Payments;
 use app\models\Premissions;
 use app\models\Products;
 use app\models\Users;
@@ -403,16 +404,26 @@ class OrdersController extends Controller
             $post = $this->request->post();
             $client_id =$post['client_id'];
             $warehouse = Warehouse::find()
-                ->select('warehouse.id, warehouse.name')
+                ->select('warehouse.id')
                 ->leftJoin('clients', 'clients.client_warehouse_id = warehouse.id')
                 ->where(['warehouse.status' => '1'])
                 ->andWhere(['clients.status' => '1'])
                 ->andWhere(['clients.id' => $client_id])
                 ->asArray()
-                ->all();
-
+                ->scalar();
+            $debt_limit = Clients::find()->select('debt_limit')
+                ->where(['and',['status' => '1'],['id' => $client_id]])
+                ->asArray()
+                ->one();
+            $client_debt_price = Payments::find()->select('client_debt_price')
+                ->where(['and',['status' => '1'],['client_id' => $client_id]])
+                ->orderBy(['client_id' => SORT_DESC])
+                ->asArray()
+                ->one();
             return $this->renderAjax('warhouse_form', [
                 'warehouse' => $warehouse,
+                'debt_limit' => $debt_limit,
+                'client_debt_price' => $client_debt_price,
             ]);
         }
     }
