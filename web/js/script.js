@@ -47,7 +47,10 @@ $(document).ready(function() {
     });
     $('body').on('click','.remove-field-new', function (){
         let confirm_ = confirm('Are you sure you want to delete this item?');
-        if(confirm_){
+        if ((window.location.pathname === "/documents/create" || window.location.pathname === "/clients/create" ||
+            window.location.pathname === "/warehouse/create") && confirm_){
+            $(this).closest('.new-field').remove();
+        } else if(confirm_){
             var this_ = $(this);
             var removeField = this_.closest('.new-field').data('field');
             var csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -69,7 +72,10 @@ $(document).ready(function() {
     })
     $('body').on('click', '.edite-block-trash', function () {
         let confirm_ = confirm('Are you sure you want to delete this item?');
-        if(confirm_){
+        if ((window.location.pathname === "/documents/create" || window.location.pathname === "/clients/create" ||
+            window.location.pathname === "/warehouse/create") && confirm_){
+            $(this).closest('.default-panel').remove();
+        }else if(confirm_){
             var this_ = $(this);
             var blockId = this_.closest('.default-panel').data('id');
             var csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -403,30 +409,67 @@ $(document).ready(function() {
         let warehouse_id = $('.documentWarehouseStatus').val();
         let clickXLSX = 'clickXLSX';
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
+
+        function addImage(url, workbook, worksheet, excelCell) {
+            return new Promise(function (resolve, reject) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url);
+                xhr.responseType = 'blob';
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        var reader = new FileReader();
+                        reader.readAsDataURL(xhr.response);
+                        reader.onloadend = function () {
+                            var base64data = reader.result;
+                            const image = workbook.addImage({
+                                base64: base64data,
+                                extension: 'png',
+                            });
+                            worksheet.getRow(excelCell.row).height = 75;
+                            worksheet.addImage(image, {
+                                tl: { col: excelCell.col - 1, row: excelCell.row - 1 },
+                                br: { col: excelCell.col, row: excelCell.row }
+                            });
+                            resolve();
+                        };
+                    } else {
+                        console.error('Failed to fetch image. Status code:', xhr.status);
+                        resolve();
+                    }
+                };
+                xhr.onerror = function () {
+                    console.error('Could not add image to excel cell');
+                    resolve();
+                };
+                xhr.send();
+            });
+        }
+
         $.ajax({
-            url:'/documents/filter-status',
+            url: '/documents/filter-status',
             method: 'get',
             data: {
                 _csrf: csrfToken,
                 action: 'xls-alldata',
-                numberVal:numberVal,
-                documentsDate:documentsDate,
-                warehouse_id:warehouse_id,
-                clickXLSX:clickXLSX,
+                numberVal: numberVal,
+                documentsDate: documentsDate,
+                warehouse_id: warehouse_id,
+                clickXLSX: clickXLSX,
             },
             dataType: "html",
-            success: function(data) {
+            success: function (data) {
                 $('body').append(data);
                 tables = document.getElementsByClassName("chatgbti_");
                 $(".chatgbti_").hide();
                 $(".deletesummary").hide();
                 for (var i = 0; i < tables.length; i++) {
                     var table = tables[i];
-                    var sheet = excel.addWorksheet("Sheet " + sheetNumber);
+                    var sheet = excel.addWorksheet("Sheet " + sheetNumber, {
+                        properties: { defaultColWidth: 20, defaultRowHeight: 25 }
+                    });
                     var headRow = table.querySelector("thead tr");
                     if (headRow) {
                         var headerData = [];
-                        // var headerCells = headRow.querySelectorAll("th:not(:last-child)");
                         var headerCells = headRow.querySelectorAll("th");
                         headerCells.forEach(function (headerCell) {
                             headerData.push(headerCell.textContent);
@@ -436,10 +479,20 @@ $(document).ready(function() {
                     var rows = table.querySelectorAll("tbody tr");
                     rows.forEach(function (row) {
                         var rowData = [];
-                        // var cells = row.querySelectorAll("td:not(:last-child)");
                         var cells = row.querySelectorAll("td");
-                        cells.forEach(function (cell) {
-                            rowData.push(cell.textContent);
+                        cells.forEach(function (cell, colIndex) {
+                            if (cell.querySelector("img")) {
+                                var imgElement = cell.querySelector("img");
+                                var imageUrl = imgElement.src;
+                                var excelCell = {
+                                    row: sheet.rowCount + 1,
+                                    col: colIndex + 1
+                                };
+                                PromiseArray.push(addImage(imageUrl, excel, sheet, excelCell));
+                                rowData.push(""); // Placeholder for image column
+                            } else {
+                                rowData.push(cell.textContent);
+                            }
                         });
                         if (rowData.length > 0) {
                             sheet.addRow(rowData);
@@ -475,6 +528,7 @@ $(document).ready(function() {
             },
         });
     });
+
 
     $('body').on('change','.byPrint',function () {
         let ordersDate = $('.ordersDate').val();

@@ -1,7 +1,10 @@
 <?php
 
 namespace app\models;
+namespace app\models;
 
+use yii\helpers\Html;
+//use PHPUnit\TextUI\XmlConfiguration\CodeCoverage\Report\Html;
 use Yii;
 
 /**
@@ -46,14 +49,25 @@ class CustomfieldsBlocksInputValues extends \yii\db\ActiveRecord
             'type' => 'Type',
         ];
     }
-    public static function getValue($item_id,$fild_name)
+    public static function getValue($item_id, $fild_name)
     {
-        $input_id = CustomfieldsBlocksInputs::findOne(['label'=>$fild_name]);
-        $value = CustomfieldsBlocksInputValues::findOne(['input_id'=>$input_id,'item_id'=>$item_id]);
-        if(!empty($value)){
-
+        $input_id = CustomfieldsBlocksInputs::findOne(['label' => $fild_name]);
+        if ($input_id === null) {
+            return '';
+        }
+        $value = CustomfieldsBlocksInputValues::findOne(['input_id' => $input_id->id, 'item_id' => $item_id]);
+        if ($value === null) {
+            return '';
+        }
+        if ($input_id->type === '3' && $value->value_ !== 'null') {
+            $imageUrl = '/' . $value->value_;
+            return Html::img($imageUrl, ['style' => 'width:100px;']);
+        }
+        if (!empty($value)) {
             return $value->value_;
         }
         return '';
     }
+
+
 }

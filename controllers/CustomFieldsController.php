@@ -92,8 +92,6 @@ class CustomFieldsController extends Controller
                     $model->page = $post['page'];
                     $model->order_number = 1;
                     $model->save(false);
-//                     var_dump($post['new_fild_name']);
-//                     exit;
                     if(!empty($post['new_fild_name'][$newBlock])){
                        foreach ($post['new_fild_name'][$newBlock] as $input_item => $input_val){
 
@@ -147,7 +145,6 @@ class CustomFieldsController extends Controller
                        }
                     }
                 }
-
                 if(!empty($post['CF'])){
                     foreach ($post['CF'] as $field_ => $field_val){
                         if(isset($_FILES['CF']['name'][$field_]) && $_FILES['CF']['name'][$field_]){
@@ -161,19 +158,17 @@ class CustomFieldsController extends Controller
                         if(!$new_input_value) {
                             $new_input_value = new CustomfieldsBlocksInputValues();
                         }
-
-                        $new_input_value->input_id = $field_;
                         if($field_val) {
+                            $new_input_value->input_id = $field_;
                             $new_input_value->value_ = $field_val;
+                            $new_input_value->item_id = intval($_POST['item_id']);
+                            $new_input_value->save(false);
                         }
-                        $new_input_value->item_id = intval($_POST['item_id']);
-                        $new_input_value->save(false);
                     }
                 }
 
                 return true;
             }
-
             return false;
         }
         return false;
@@ -195,6 +190,7 @@ class CustomFieldsController extends Controller
         if(!empty($res)){
             return $res;
         }
+
         return  $fields_arr;
 
     }
@@ -203,25 +199,38 @@ class CustomFieldsController extends Controller
         if($this->request->isPost){
             $post = Yii::$app->request->post();
             if ($post['total_'] === "true"){
-                $delete_block = CustomfieldsBlocksTitle::findOne(intval($post['blockId']))->delete();
-                $delete_field = CustomfieldsBlocksInputs::findOne(['iblock_id'=>intval($post['blockId'])])->deleteAll();
+                $delete_block = CustomfieldsBlocksTitle::findOne(intval($post['blockId']));
+                $delete_block->status = '0';
+                $delete_block->save();
+                $delete_field = CustomfieldsBlocksInputs::find()->where(['iblock_id' => intval($post['blockId'])])->all();
+                foreach ($delete_field as $field) {
+                    $field->status = '0';
+//                    $field->save();
+                    $delete_field = $field->save();
+                }
+//                echo "<pre>";
+//                var_dump($delete_block);
+//                var_dump($delete_field);
+//                die;
                 if ($delete_block && $delete_field){
                     return json_encode(true);
                 }
             }else{
-                $delete_block = CustomfieldsBlocksTitle::findOne(['id' => intval($post['blockId'])])->delete();
-                if ($delete_block){
-                    return json_encode(true);
-                }
+//                $delete_block = CustomfieldsBlocksTitle::findOne(['id' => intval($post['blockId'])])->delete();
+//                if ($delete_block){
+//                    return json_encode(true);
+//                }
             }
-
         }
     }
     public function actionDeleteField(){
         if($this->request->isPost){
             $post = Yii::$app->request->post();
-            $delete_block_field = CustomfieldsBlocksInputs::findOne(['id'=>intval($post['removeField'])])->delete();
-            if ($delete_block_field){
+            $delete_custom_inputs = CustomfieldsBlocksInputs::findOne(['id'=>intval($post['removeField'])]);
+            $delete_custom_inputs->status = '0';
+            $delete_custom_inputs->save();
+//            $delete_block_field = CustomfieldsBlocksInputs::findOne(['id'=>intval($post['removeField'])])->delete();
+            if ($delete_custom_inputs){
                 return json_encode(true);
             }
         }
