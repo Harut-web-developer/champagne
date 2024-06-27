@@ -94,18 +94,24 @@ if (!empty($access_buttons)) {
         }
     ];
 }
+if ($session->hasFlash('error')) {
+    $error = addslashes($session->getFlash('error'));
+    $this->registerJs("
+        alert('{$error}');
+    ");
+}
 $fields_arr = [];
-
-if(!empty($new_fields)){
-    for ($i = 0; $i < count($new_fields); $i++){
-        $fields_arr[$i]['attribute'] = $new_fields[$i]['attribute'];
-        $fields_arr[$i]['value'] = function ($model,$key, $index, $column) {
-            if ($model->document_type == 1 || $model->document_type == 2 || $model->document_type == 3 || $model->document_type == 4){
-                return CustomfieldsBlocksInputValues::getValue($model->id, $column->filterAttribute);
-            }else{
-                return 'Դատարկ';
-            }
-        };
+if (!empty($new_fields)) {
+    foreach ($new_fields as $index => $field) {
+        if (!is_null($field['attribute'])) {
+            $fields_arr[$index] = [
+                'attribute' => $field['attribute'],
+                'value' => function ($model, $key, $index, $column) {
+                    return CustomfieldsBlocksInputValues::getValue($model->id, $column->filterAttribute);
+                },
+                'format' => 'raw',
+            ];
+        }
     }
 }
 ?>
@@ -119,7 +125,6 @@ if(!empty($new_fields)){
             <h3><?= Html::a('', ['create-fields'], ['class' => 'bx bx-cog right-btn']) ?></h3>
         <?php } ?>
     </div>
-
     <div class="filtersParentsField" style="display: flex; justify-content: space-between; align-items: baseline;flex-wrap: wrap">
         <p>
             <?php if($have_access_create){ ?>

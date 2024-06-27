@@ -64,14 +64,25 @@ if (!empty($access_buttons)) {
         ],
     ];
 }
+$session = Yii::$app->session;
+if ($session->hasFlash('error')) {
+    $error = addslashes($session->getFlash('error'));
+    $this->registerJs("
+        alert('{$error}');
+    ");
+}
 $fields_arr = [];
-
 if(!empty($new_fields)){
-    for ($i = 0; $i < count($new_fields); $i++){
-        $fields_arr[$i]['attribute'] = $new_fields[$i]['attribute'];
-        $fields_arr[$i]['value'] = function ($model,$key, $index, $column) {
-            return CustomfieldsBlocksInputValues::getValue($model->id, $column->filterAttribute);
-        };
+    foreach ($new_fields as $index => $field) {
+        if (!is_null($field['attribute'])) {
+            $fields_arr[$index] = [
+                'attribute' => $field['attribute'],
+                'value' => function ($model, $key, $index, $column) {
+                    return CustomfieldsBlocksInputValues::getValue($model->id, $column->filterAttribute);
+                },
+                'format' => 'raw',
+            ];
+        }
     }
 }
 ?>
