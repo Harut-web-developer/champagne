@@ -64,8 +64,14 @@ if (!empty($access_buttons)) {
         ],
     ];
 }
+$session = Yii::$app->session;
+if ($session->hasFlash('error')) {
+    $error = addslashes($session->getFlash('error'));
+    $this->registerJs("
+        alert('{$error}');
+    ");
+}
 $fields_arr = [];
-
 if(!empty($new_fields)){
     foreach ($new_fields as $index => $field) {
         if (!is_null($field['attribute'])) {

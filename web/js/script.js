@@ -48,7 +48,8 @@ $(document).ready(function() {
     $('body').on('click','.remove-field-new', function (){
         let confirm_ = confirm('Are you sure you want to delete this item?');
         if ((window.location.pathname === "/documents/create" || window.location.pathname === "/clients/create" ||
-            window.location.pathname === "/warehouse/create") && confirm_){
+            window.location.pathname === "/warehouse/create" || window.location.pathname === "/nomenclature/create" ||
+            window.location.pathname === "/users/create") && confirm_){
             $(this).closest('.new-field').remove();
         } else if(confirm_){
             var this_ = $(this);
@@ -73,7 +74,8 @@ $(document).ready(function() {
     $('body').on('click', '.edite-block-trash', function () {
         let confirm_ = confirm('Are you sure you want to delete this item?');
         if ((window.location.pathname === "/documents/create" || window.location.pathname === "/clients/create" ||
-            window.location.pathname === "/warehouse/create") && confirm_){
+            window.location.pathname === "/warehouse/create" || window.location.pathname === "/nomenclature/create" ||
+            window.location.pathname === "/users/create") && confirm_){
             $(this).closest('.default-panel').remove();
         }else if(confirm_){
             var this_ = $(this);

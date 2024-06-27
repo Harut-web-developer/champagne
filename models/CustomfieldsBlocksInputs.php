@@ -48,11 +48,6 @@ class CustomfieldsBlocksInputs extends \yii\db\ActiveRecord
         ];
     }
     public static function  createElement($element, $item_id, $values = true){
-//        echo "<pre>";
-//        var_dump($element->id);
-//        var_dump($item_id);
-//        var_dump($item_id);
-//        var_dump(is_null($item_id));
         if(empty($element)){
             return 'Cant create input';
         }
@@ -79,12 +74,10 @@ class CustomfieldsBlocksInputs extends \yii\db\ActiveRecord
             $style_display_none = 'style="display:none"';
             $disabled = 'disabled';
         }
-//        var_dump($item_id);
-//        var_dump($element);
-//        var_dump($value);
-//        var_dump($field_value);
-//        die;
-        if ($field_value !== '' || $_SERVER['REQUEST_URI'] == '/documents/create-fields'  || $_SERVER['REQUEST_URI'] == '/documents/create' || $_SERVER['REQUEST_URI'] == '/clients/create-fields'  || $_SERVER['REQUEST_URI'] == '/clients/create'){
+        if ($field_value !== '' || $_SERVER['REQUEST_URI'] == '/documents/create-fields'  || $_SERVER['REQUEST_URI'] == '/documents/create'
+            || $_SERVER['REQUEST_URI'] == '/warehouse/create-fields'  || $_SERVER['REQUEST_URI'] == '/warehouse/create'
+            || $_SERVER['REQUEST_URI'] == '/nomenclature/create-fields'  || $_SERVER['REQUEST_URI'] == '/nomenclature/create'
+            || $_SERVER['REQUEST_URI'] == '/users/create-fields'  || $_SERVER['REQUEST_URI'] == '/users/create'){
             switch ($element->type){
                 case 0:
                     $input_ .= '<label>'.$element->label.'</label><input type="number" value="'.$field_value.'" '.$type_.'="CF['.$element->id.']" '. $readonly .'>';

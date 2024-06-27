@@ -51,6 +51,7 @@ class CustomfieldsBlocksInputValues extends \yii\db\ActiveRecord
     }
     public static function getValue($item_id, $fild_name)
     {
+
         $input_id = CustomfieldsBlocksInputs::findOne(['label' => $fild_name]);
         if ($input_id === null) {
             return '';

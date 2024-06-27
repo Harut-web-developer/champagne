@@ -94,6 +94,12 @@ if (!empty($access_buttons)) {
         }
     ];
 }
+if ($session->hasFlash('error')) {
+    $error = addslashes($session->getFlash('error'));
+    $this->registerJs("
+        alert('{$error}');
+    ");
+}
 $fields_arr = [];
 if (!empty($new_fields)) {
     foreach ($new_fields as $index => $field) {
@@ -101,10 +107,7 @@ if (!empty($new_fields)) {
             $fields_arr[$index] = [
                 'attribute' => $field['attribute'],
                 'value' => function ($model, $key, $index, $column) {
-                    if (in_array($model->document_type, [1, 2, 3, 4])) {
-                        return CustomfieldsBlocksInputValues::getValue($model->id, $column->filterAttribute);
-                    }
-                    return 'Դատարկ';
+                    return CustomfieldsBlocksInputValues::getValue($model->id, $column->filterAttribute);
                 },
                 'format' => 'raw',
             ];

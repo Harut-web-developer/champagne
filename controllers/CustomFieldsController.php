@@ -9,6 +9,7 @@ use app\models\CustomfieldsBlocksTitle;
 use app\models\CustomfieldsBlocksInputs;
 use app\models\CustomfieldsBlocksInputValues;
 use app\models\CustomfieldsBlocksSelectOptions;
+use yii\bootstrap5\Alert;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -94,19 +95,24 @@ class CustomFieldsController extends Controller
                     $model->save(false);
                     if(!empty($post['new_fild_name'][$newBlock])){
                        foreach ($post['new_fild_name'][$newBlock] as $input_item => $input_val){
-
                            if(!empty($input_val)){
                                for ($i = 0; $i < count($input_val); $i++){
-
-                                   $new_input = new CustomfieldsBlocksInputs();
-                                   $new_input->iblock_id = $model->id;
-                                   if(!is_array($input_val[$i])) {
-                                       $new_input->label = $input_val[$i];
+                                   $exists = CustomfieldsBlocksInputs::find()
+                                       ->where(['label' => $input_val[$i]])
+                                       ->exists();
+                                   if ($exists) {
+                                       Yii::$app->session->setFlash('error', "'{$input_val[$i]}' անունը չի կարող կրկնվել, գրանցումն չի հաստատվել, նորից փորձեք: ");
                                    } else {
-                                       $new_input->label = $input_val[$i][0];
+                                       $new_input = new CustomfieldsBlocksInputs();
+                                       $new_input->iblock_id = $model->id;
+                                       if (!is_array($input_val[$i])) {
+                                           $new_input->label = $input_val[$i];
+                                       } else {
+                                           $new_input->label = $input_val[$i][0];
+                                       }
+                                       $new_input->type = $input_item;
+                                       $new_input->save(false);
                                    }
-                                   $new_input->type = $input_item;
-                                   $new_input->save(false);
 
                                    if(isset($post['new_fild_value'][$newBlock][$input_item][$i])){
 
@@ -154,6 +160,9 @@ class CustomFieldsController extends Controller
                                 $field_val = $uploadfile;
                             }
                         }
+//                        echo "<pre>";
+//                        var_dump($_POST);
+//                        die;
                         $new_input_value =  CustomfieldsBlocksInputValues::findOne(['input_id'=>$field_,'item_id'=> intval($_POST['item_id'])]);
                         if(!$new_input_value) {
                             $new_input_value = new CustomfieldsBlocksInputValues();
@@ -190,7 +199,9 @@ class CustomFieldsController extends Controller
         if(!empty($res)){
             return $res;
         }
-
+        echo "<pre>";
+        var_dump($res);
+        die;
         return  $fields_arr;
 
     }
@@ -205,21 +216,18 @@ class CustomFieldsController extends Controller
                 $delete_field = CustomfieldsBlocksInputs::find()->where(['iblock_id' => intval($post['blockId'])])->all();
                 foreach ($delete_field as $field) {
                     $field->status = '0';
-//                    $field->save();
                     $delete_field = $field->save();
                 }
-//                echo "<pre>";
-//                var_dump($delete_block);
-//                var_dump($delete_field);
-//                die;
                 if ($delete_block && $delete_field){
                     return json_encode(true);
                 }
             }else{
-//                $delete_block = CustomfieldsBlocksTitle::findOne(['id' => intval($post['blockId'])])->delete();
-//                if ($delete_block){
-//                    return json_encode(true);
-//                }
+                $delete_block = CustomfieldsBlocksTitle::findOne(intval($post['blockId']));
+                $delete_block->status = '0';
+                $delete_block->save();
+                if ($delete_block){
+                    return json_encode(true);
+                }
             }
         }
     }
@@ -229,7 +237,6 @@ class CustomFieldsController extends Controller
             $delete_custom_inputs = CustomfieldsBlocksInputs::findOne(['id'=>intval($post['removeField'])]);
             $delete_custom_inputs->status = '0';
             $delete_custom_inputs->save();
-//            $delete_block_field = CustomfieldsBlocksInputs::findOne(['id'=>intval($post['removeField'])])->delete();
             if ($delete_custom_inputs){
                 return json_encode(true);
             }
