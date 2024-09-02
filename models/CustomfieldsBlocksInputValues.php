@@ -69,6 +69,4 @@ class CustomfieldsBlocksInputValues extends \yii\db\ActiveRecord
         }
         return '';
     }
-
-
 }

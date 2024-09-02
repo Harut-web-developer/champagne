@@ -1775,7 +1775,7 @@ $(document).ready(function () {
             $.ajax({
                 url:'/orders/get-warehouse',
                 method:'post',
-                datatype:'json',
+                datatype:'html',
                 data:{
                     client_id:client_id,
                     _csrf:csrfToken,
