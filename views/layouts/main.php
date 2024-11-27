@@ -62,7 +62,7 @@ $view_notificationBell = Users::checkPremission(91);
     <link rel="stylesheet" href="/css/apex-charts.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css" type="text/css" media="all" />
     <link rel="stylesheet" href="/css/price_range_style.css">
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/main.css?v=123">
     <script src="/js/helpers.js""></script>
     <script src="/js/config.js""></script>
     <?php if ($session['role_id'] == 2 || $session['role_id'] == 3) { ?>
