@@ -2,13 +2,17 @@
 
 namespace app\controllers;
 
+use app\models\BranchGroups;
 use app\models\Log;
 use app\models\Nomenclature;
+use app\models\Notifications;
 use app\models\Orders;
 use app\models\Payments;
 use app\models\Premissions;
+use app\models\Warehouse;
 use Psy\Command\EditCommand;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use app\models\Clients;
 use app\models\Route;
@@ -18,7 +22,6 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-
 /**
  * ClientsController implements the CRUD actions for Clients model.
  */
@@ -27,6 +30,7 @@ class ClientsController extends Controller
     /**
      * @inheritDoc
      */
+
     public function init()
     {
         parent::init();
@@ -67,13 +71,27 @@ class ClientsController extends Controller
      */
     public function actionIndex()
     {
+        $session = Yii::$app->session;
         $have_access = Users::checkPremission(8);
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [
-            ['name' => 'Խմբեր','address' => '/groups-name'],
-        ];
+        $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'clients']);
+
+        $sub_page = [];
+        if (Users::checkPremission(61)){
+            $groups_discount = ['name' => 'Զեղչի խմբեր','address' => '/groups-name'];
+            array_push($sub_page,$groups_discount);
+        }
+        if (Users::checkPremission(85)){
+            $branches = ['name' => 'Մասնաճյուղի Խմբեր','address' => '/branch-groups'];
+            array_push($sub_page,$branches);
+        }
+        if (Users::checkPremission(89)){
+            $company = ['name' => 'Ընկերություններ','address' => '/companies-with-cash'];
+            array_push($sub_page,$company);
+        }
+
         $date_tab = [];
         $searchModel = new ClientsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -83,6 +101,8 @@ class ClientsController extends Controller
             'dataProvider' => $dataProvider,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'new_fields'=>$res,
+
         ]);
     }
 
@@ -108,28 +128,41 @@ class ClientsController extends Controller
     }
     public function actionClientsDebt()
     {
+        $have_access = Users::checkPremission(68);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $id = intval(Yii::$app->request->get('id'));
         $sub_page = [];
         $date_tab = [];
-
+        $itemsPerPage = 2;
         $client_orders = Orders::find()
             ->select(['orders.id', 'orders.total_price as debt'])
             ->leftJoin('clients', 'orders.clients_id = clients.id')
             ->where(['orders.clients_id' => $id])
-            ->andWhere(['or',['orders.status' => '2'],['orders.status' => '3']])
-            ->groupBy('orders.id')
+            ->andwhere(['or',['orders.status' => '2'],['orders.status' => '3'],['orders.status' => '4'],['orders.status' => '5']])
+            ->andWhere(['clients.status' => 1])
+            ->groupBy('orders.id');
+        $totalPages = ceil($client_orders->count() / $itemsPerPage);
+        $page = Yii::$app->request->get('page', 1);
+        $offset = ($page - 1) * $itemsPerPage;
+        $client_orders = $client_orders
+            ->offset($offset)
+            ->limit($itemsPerPage)
             ->asArray()
             ->all();
-
-        $payments = Payments::find()->select('SUM(payment_sum) as payments_total')->where(['client_id'=> $id])->asArray()->one();
+        $payments = Payments::find()->select('SUM(payment_sum) as payments_total')->where(['client_id'=> $id])->andWhere(['status' => '1'])->asArray()->one();
 
         return $this->render('clients_debt', [
             'model' => $this->findModel($id),
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
             'client_orders' => $client_orders,
             'payments' => $payments['payments_total'],
+            'itemsPerPage' => $itemsPerPage,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'id' => $id,
         ]);
     }
     /**
@@ -152,20 +185,36 @@ class ClientsController extends Controller
         $premission = Premissions::find()
             ->select('name')
             ->where(['id' => 5])
+            ->andWhere(['status' => 1])
             ->asArray()
             ->one();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
+            $session = Yii::$app->session;
             $post = $this->request->post();
+            if (!empty($post['Clients']['branch_groups_id'])){
+                $model->branch_groups_id = $post['Clients']['branch_groups_id'];
+            }
             $model->name = $post['Clients']['name'];
             $model->location = $post['Clients']['location'];
             $model->route_id = $post['Clients']['route'];
+            $model->client_warehouse_id = $post['Clients']['warehouse_id'];
             $model->phone = $post['Clients']['phone'];
+            $model->debt_limit = $post['Clients']['debt_limit'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model = Clients::getDefVals($model);
             $model->save();
             Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
+            if ($session['role_id'] == '2' || $session['role_id'] == '3'  || $session['role_id'] == '4') {
+                $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
+                $text = $user_name['name'] . '(ն/ը) ' . 'ստեղծել է նոր հաճախորդ։ Հաճախորդը ստեղծվել է՝ «' . $model->name . '» անունով։';
+                if ($session['role_id'] == '4'){
+                    Notifications::createNotifications('Ստեղծել հաճախորդ', $text, 'createclientskeeper');
+                }else{
+                    Notifications::createNotifications('Ստեղծել հաճախորդ', $text, 'createclients');
+                }
+            }
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
@@ -174,13 +223,18 @@ class ClientsController extends Controller
         } else {
             $model->loadDefaultValues();
         }
-        $route = Route::find()->select('id, route')->asArray()->all();
+        $route = Route::find()->select('id, route')->where(['status' => 1])->asArray()->all();
+        $warehouse = Warehouse::find()->select('id, name')->where(['status' => 1])->asArray()->all();
+        $branch_groups = BranchGroups::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
+        $branch_groups = ArrayHelper::map($branch_groups,'id','name');
+
         return $this->render('create', [
             'model' => $model,
+            'warehouse' => $warehouse,
             'route' => $route,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
+            'branch_groups' => $branch_groups,
         ]);
     }
 
@@ -197,14 +251,34 @@ class ClientsController extends Controller
     public function actionClientsLocation()
     {
         if ($this->request->isPost) {
-            $allDataClients = Clients::find()->select('location')->asArray()->all();
+            $allDataClients = Clients::find()->select('location')->where(['status' => 1])->asArray()->all();
             return json_encode($allDataClients);
         }
     }
 
     public function actionCreateFields()
     {
+        $have_access = Users::checkPremission(70);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $sub_page = [];
+        if (Users::checkPremission(61)){
+            $groups_discount = ['name' => 'Զեղչի խմբեր','address' => '/groups-name'];
+            array_push($sub_page,$groups_discount);
+        }
+        if (Users::checkPremission(85)){
+            $branches = ['name' => 'Մասնաճյուղի Խմբեր','address' => '/branch-groups'];
+            array_push($sub_page,$branches);
+        }
+        if (Users::checkPremission(89)){
+            $company = ['name' => 'Ընկերություններ','address' => '/companies-with-cash'];
+            array_push($sub_page,$company);
+        }
+        if (Users::checkPremission(8)){
+            $clients = ['name' => 'Հաճախորդներ','address' => '/clients'];
+            array_push($sub_page,$clients);
+        }
         $date_tab = [];
 
         $model = new Clients();
@@ -251,38 +325,62 @@ class ClientsController extends Controller
         $oldattributes = Clients::find()
             ->select('*')
             ->where(['id' => $id])
+            ->andWhere(['status' => 1])
             ->asArray()
             ->one();
         $premission = Premissions::find()
             ->select('name')
             ->where(['id' => 6])
+            ->andWhere(['status' => 1])
             ->asArray()
             ->one();
         $route_value_update = Clients::find()->select('id, route_id')->where(['id' => $model->id])->one();
+        $warehouse_value_update = Clients::find()->select('id, client_warehouse_id')->where(['id' => $model->id])->one();
+
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+            if (!empty($post['Clients']['branch_groups_id'])){
+                $model->branch_groups_id = $post['Clients']['branch_groups_id'];
+            }
             $model->name = $post['Clients']['name'];
             $model->location = $post['Clients']['location'];
             $model->route_id = $post['Clients']['route'];
+            $model->client_warehouse_id = $post['Clients']['warehouse_id'];
             $model->phone = $post['Clients']['phone'];
+            $model->debt_limit = $post['Clients']['debt_limit'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
+            $session = Yii::$app->session;
+            if ($session['role_id'] == '2' || $session['role_id'] == '3' || $session['role_id'] == '4') {
+                $user_name = Users::find()->select('*')->where(['id' => $session['user_id']])->asArray()->one();
+                $text = $user_name['name'] . '(ն/ը) ' . 'փոփոխել է հաճախորդի ինֆորմացիան։ Փոփոխված հաճախորդն է՝ «' . $model->name . '»։';
+                if ($session['role_id'] == '4'){
+                    Notifications::createNotifications('Փոփոխել հաճախորդ', $text, 'updateclientskeeper');
+                }else{
+                    Notifications::createNotifications('Փոփոխել հաճախորդ', $text, 'updateclients');
+                }
+            }
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
             return $this->redirect(['index', 'id' => $model->id]);
         }
-        $route = Route::find()->select('id, route')->asArray()->all();
+        $route = Route::find()->select('id, route')->where(['status' => 1])->asArray()->all();
+        $warehouse = Warehouse::find()->select('id, name')->where(['status' => 1])->asArray()->all();
+        $branch_groups = BranchGroups::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
+        $branch_groups = ArrayHelper::map($branch_groups,'id','name');
         return $this->render('update', [
             'model' => $model,
             'route' => $route,
             'route_value_update' => $route_value_update,
+            'warehouse_value_update' => $warehouse_value_update,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
+            'warehouse' => $warehouse,
+            'branch_groups' => $branch_groups,
         ]);
     }
 
@@ -302,12 +400,14 @@ class ClientsController extends Controller
         $oldattributes = Clients::find()
             ->select('name')
             ->where(['id' => $id])
+            ->andWhere(['status' => 1])
             ->asArray()
             ->one();
 
         $premission = Premissions::find()
             ->select('name')
             ->where(['id' => 7])
+            ->andWhere(['status' => 1])
             ->asArray()
             ->one();
         $clients = Clients::findOne($id);
@@ -317,6 +417,14 @@ class ClientsController extends Controller
         return $this->redirect(['index']);
     }
 
+    public  function actionBranchModal(){
+        if($this->request->isGet){
+            $get = $this->request->get('clientId');
+        }
+        return $this->renderAjax('branches',[
+            'id' => $get,
+        ]);
+    }
     public function actionGetOrderId(){
         if ($this->request->isPost){
             $post = intval($this->request->post('id'));

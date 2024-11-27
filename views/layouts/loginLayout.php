@@ -15,7 +15,13 @@ AppAsset::register($this);
         <title>Login page</title>
         <meta name="description" content="" />
         <!-- Favicon -->
-        <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
+        <?php
+        $this->registerLinkTag([
+            'rel' => 'icon',
+            'type' => 'image/x-icon',
+            'href' => Yii::getAlias('@web/favicon.ico')
+        ]);
+        ?>
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -48,14 +54,14 @@ AppAsset::register($this);
                                 </div>
                             </div>
                             <!-- /Logo -->
-                            <h4 class="mb-2">Welcome to Champagne! </h4>
-                            <p class="mb-4">Please sign-in to your account and start the adventure</p>
-                                <?= $content ?>
+                            <h4 class="mb-2">Բարի գալուստ Champagne </h4>
+                            <p class="mb-4">Խնդրում ենք մուտք գործել ձեր հաշիվ</p>
+                            <?= $content ?>
                             <p class="text-center">
-                                <span>New on our platform?</span>
-                                <a href="auth-register-basic.html">
-                                    <span>Create an account</span>
-                                </a>
+<!--                                <span>Նորությո՞ւն մեր հարթակում:</span>-->
+<!--                                <a href="auth-register-basic.html">-->
+<!--                                    <span>Ստեղծել հաշիվ</span>-->
+<!--                                </a>-->
                             </p>
                         </div>
                     </div>
@@ -65,7 +71,7 @@ AppAsset::register($this);
         <script src="/js/helpers.js"></script>
         <script src="/js/config.js"></script>
         <script src="/js/jquery.js"></script>
-        <script src="/js/popper/popper.js"></script>
+        <script src="/js/popper.js"></script>
         <script src="/js/bootstrap.js"></script>
         <script src="/js/perfect-scrollbar.js"></script>
         <script src="/js/menu.js"></script>

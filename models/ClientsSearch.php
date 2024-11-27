@@ -18,7 +18,7 @@ class ClientsSearch extends Clients
     {
         return [
             [['id', 'phone'], 'integer'],
-            [['name', 'location', 'route_id', 'status', 'created_at', 'updated_at'], 'safe'],
+            [['name', 'location', 'route_id', 'client_warehouse_id', 'status', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -45,7 +45,7 @@ class ClientsSearch extends Clients
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $query->orderBy(['created_at'=> SORT_DESC]),
         ]);
 
         $this->load($params);

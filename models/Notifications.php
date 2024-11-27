@@ -8,9 +8,14 @@ use Yii;
  * This is the model class for table "notifications".
  *
  * @property int $id
+ * @property int $role_id
+ * @property int $user_id
  * @property string $title
  * @property string $message
  * @property string $datetime
+ * @property string $watched
+ * @property int $status
+ * @property string $sort_
  */
 class Notifications extends \yii\db\ActiveRecord
 {
@@ -46,5 +51,23 @@ class Notifications extends \yii\db\ActiveRecord
             'message' => 'Message',
             'datetime' => 'Datetime',
         ];
+    }
+
+    public static function createNotifications($title,$text,$sort)
+    {
+        date_default_timezone_set('Asia/Yerevan');
+        $session = Yii::$app->session;
+        $role_id = $session['role_id'];
+        $user_id = $session['user_id'];
+        if ($session['role_id'] != '1') {
+            $model = new Notifications();
+            $model->role_id = $role_id;
+            $model->user_id = $user_id;
+            $model->title = $title;
+            $model->message = $text;
+            $model->datetime = date('Y-m-d H:i:s');
+            $model->sort_ = $sort;
+            $model->save();
+        }
     }
 }

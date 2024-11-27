@@ -31,14 +31,30 @@ $this->params['sub_page'] = $sub_page;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
             'name',
             'username',
-            'password',
+            [
+                'attribute' => 'warehouse_id',
+                'value' => function ($model) {
+                    if ($model->warehouseName) {
+                        return $model->warehouseName->name;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
+            [
+                'attribute' => 'role_id',
+                'value' => function ($model) {
+                    if ($model->roleName) {
+                        return $model->roleName->name;
+                    } else {
+                        return 'Դատարկ';
+                    }
+                }
+            ],
             'email',
             'phone',
-            'role_id',
-            'auth_key',
             'created_at',
             'updated_at',
         ],

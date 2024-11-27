@@ -82,11 +82,23 @@
 }
 .clientLocation{
     padding: 0px 10px;
+    position:relative
+}
+.clientAbsolute{
+    position:absolute;
+    top:2px;
+    left:0px;
+    height:60px;
+    width:100%;
+    z-index:10
 }
 .clientPhone{
     padding: 0px 10px;
 }
 .route{
+    padding: 0px 10px;
+}
+.warehouse{
     padding: 0px 10px;
 }
 .nomenclatureImage{
@@ -117,6 +129,9 @@
      padding: 0px 10px;
  }
 .usersPassword{
+    padding: 0px 10px;
+}
+.clients_ajax_content,.label_clients,.warehouse_style{
     padding: 0px 10px;
 }
 .table > thead > tr > th{
@@ -237,11 +252,12 @@
     position:relative;
     padding:10px;
     padding-right:50px;
-    margin-bottom:20px;
+    margin:20px 10px;
 }
 
 .bx-trash{
-    font-size:40px;
+    padding: 10px 5px 0px 0px;
+    font-size: 25px;
     cursor:pointer;
 }
 .new-field input,.new-field select,.new-field textarea{
@@ -271,15 +287,23 @@
 }
 .premission-content{
     display:flex;
-    flex-direction: column;
-}
-.rows-checkbox{
-    display: flex;
     justify-content: center;
     flex-wrap: wrap;
 }
 .premission-content-items{
     margin: 0px 10px 10px;
+    flex-basis:23%;
+}
+.premission-content-items > label{
+    width:200px;
+}
+.premission-content-items > label:hover{
+    cursor:pointer;
+}
+@media screen and (max-width: 356px) {
+    .premission-content-items > label{
+        width:140px;
+    }
 }
 .right-btn{
     color:grey;
@@ -294,6 +318,19 @@
 .mapFilter{
     display:flex;
     flex-wrap:wrap;
+}
+@media only screen and (max-width: 1000px) {
+    .filtersFieldord{
+        display:flex;
+        flex-direction:column;
+        width: 210px; margin: 0px 10px 15px 5px;
+    }
+}
+@media only screen and (max-width: 650px) {
+    .filtersFielddoc{
+        display:flex;
+        flex-direction:column;
+    }
 }
 @media screen and (max-width: 424px) {
     .loguser, .logAction{
@@ -317,6 +354,12 @@
 .select2-selection{
     width:100% !important;
 }
+/*.groupName > .select2-container{*/
+/*    max-width: 1246px;*/
+/*}*/
+/*.groupName{*/
+/*    margin-left:10px;*/
+/*}*/
 .selGroup{
     display:flex;
     flex-direction:column;
@@ -338,6 +381,9 @@
     height: 1.375rem;
 }
 .countDocuments{
+    min-width: 100px;
+}
+.input_wastrel{
     min-width: 100px;
 }
 .PriceDocuments{
@@ -424,6 +470,9 @@
     color: #fff;
     font-weight: 300;
     padding: 10px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .title-text {
     font-weight: bold;
@@ -447,10 +496,19 @@
     cursor: pointer;
     height: 40px;
 }
+.print_orders_table{
+    width: 40px;
+    height: 40px;
+    cursor:pointer;
+}
 .downloadUpdateXLSX{
     cursor: pointer;
 }
 .orders-update h5{
+    display: inline-block;
+}
+
+.documents-update h5{
     display: inline-block;
 }
 
@@ -534,4 +592,240 @@
 .customBtnIcon{
     border:none;
     background:none;
+}
+.loader{
+    text-align:center;
+}
+.loader > img{
+    width:150px !important;
+    height:150px !important;
+}
+.help-block{
+    color: #ff3333!important;
+}
+#orders-total_price_before_discount{
+    border:none !important;
+}
+#orders-total_price{
+    border:none !important;
+}
+#orders-total_discount{
+    border:none !important;
+}
+#orders-total_count{
+    border:none !important;
+}
+.field-orders-total_price_before_discount > .help-block{
+    display:none !important;
+}
+.field-orders-total_price > .help-block{
+    display:none !important;
+}
+.field-orders-total_discount > .help-block{
+    display:none !important;
+}
+.field-orders-total_count > .help-block{
+    display:none !important;
+}
+.pageStyle > .text-nowrap > ul{
+    margin-top:5px !important;
+}
+.pageStyle > .text-nowrap > ul > li > a{
+    border-radius: 3px;
+    margin: 0px 3px;
+    padding: 2px 8px;
+    background-color: #F0F2F4;
+}
+.pageStyle > .text-nowrap > ul > .active > a{
+    padding: 3px 8px;
+    margin: 0px 3px;
+    border-radius: 5px;
+}
+.pageStyle > .text-nowrap > ul > .prev > a{
+    border-radius: 3px;
+    margin: 0px 3px;
+    padding: 2px 8px;
+    background-color: #F0F2F4;
+}
+.pageStyle > .text-nowrap > ul > .next > a{
+    border-radius: 3px;
+    margin: 0px 3px;
+    padding: 2px 8px;
+    background-color: #F0F2F4;
+}
+.pageStyle > .text-nowrap > ul > li > a:hover{
+    background-color: #E1E4E8;
+}
+.changeManager{
+    margin: 10px 0px 10px 5px;
+}
+/*@media screen and (min-width: 395px) and (max-width: 446px) {*/
+/*    .filtersField {*/
+/*        display: flex;*/
+/*        align-items: end;*/
+/*    }*/
+/*}*/
+@media only screen and (min-width: 447px) {
+    .iconsPrintAndXlsx{
+        display:flex;
+        flex-direction:row;
+    }
+}
+
+@media only screen and (max-width: 446px) {
+    .filtersParentsField{
+        display:flex;
+        flex-direction:column;
+    }
+    .filtersField {
+        display:flex;
+        flex-direction:column;
+        justify-content:end;
+    }
+    .iconsPrintAndXlsx{
+        display:flex;
+        flex-direction:row;
+    }
+}
+.iconsPrintAndXlsx{
+    margin-bottom:10px;
+}
+.toWarehouse{
+    display:none;
+}
+.docType{
+    display:none;
+}
+.deliveredOrders{
+    display:none;
+}
+.warehouseCheck{
+    display:none;
+}
+.companies{
+    display:none;
+}
+.deliverOrdersId{
+    display:none;
+}
+.activeForInput{
+    display:block;
+}
+.activeForInputDocument{
+    display:flex;
+    flex-direction:column;
+}
+.table > tbody > tr > td > a{
+    padding: 0px 5px !important;
+}
+.index_not {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(30%, -72%);
+    --bs-badge-color: #f90606;
+}
+
+.bx-block:hover{
+    cursor:pointer;
+}
+.print_document_table{
+    width: 40px;
+    height: 40px;
+    cursor:pointer;
+}
+.documents_downloadXLSX{
+    cursor: pointer;
+    height: 40px;
+}
+.refusePriceDocuments{
+    max-width:130px;
+    margin: 0px auto;
+}
+.refuseCountDocuments{
+    min-width: 100px;
+}
+.rawInput{
+    min-width: 100px;
+}
+.exitOrders:hover{
+    cursor:pointer;
+}
+.branchClients:hover{
+    cursor:pointer;
+}
+.betweenCards{
+    margin-top:30px;
+}
+.customPages{
+    margin: 20px 0px 0px !important;
+}
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    cursor:pointer;
+}
+.ordersButtons{
+    display: flex;
+    flex-direction: column;
+    min-height: 105px;
+    justify-content: space-around;
+    align-items: center !important;
+}
+.deleteItemsFromDB{
+    max-width:80px;
+}
+.clientLimit{
+    margin: 10px;
+    width: max-content;
+    height: min-content;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.limitPrice{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 10px;
+}
+.clientPriceDebt{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+@media only screen and (min-width: 1200px) and (max-width: 1300px){
+    .clientLimit{
+        flex-direction: column;
+        align-items: start;
+    }
+}
+@media only screen and (max-width: 525px){
+    .clientLimit{
+        width: inherit;
+        flex-direction: column;
+        align-items: center;
+    }
+    .limitPrice{
+        margin-right: 0px;
+    }
+}
+@media only screen and (max-width: 350px){
+    .limitPrice{
+        align-items: start;
+    }
+    .clientPriceDebt{
+        align-items: start;
+    }
 }

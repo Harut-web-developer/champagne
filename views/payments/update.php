@@ -19,8 +19,9 @@ $this->params['date_tab'] = $date_tab;
 
     <?= $this->render('_form', [
         'model' => $model,
-        'client' => $client,
         'rates' => $rates,
+        'payment_clients' => $payment_clients,
+        'clients' => $clients,
     ]) ?>
 
 </div>

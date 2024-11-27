@@ -7,6 +7,7 @@ use app\models\Log;
 use app\models\Premissions;
 use app\models\User;
 use app\models\UserPremissions;
+use app\models\Warehouse;
 use Yii;
 use app\models\Users;
 use app\models\UsersSearch;
@@ -67,15 +68,17 @@ class UsersController extends Controller
      */
     public function actionIndex()
     {
+        $session = Yii::$app->session;
         $have_access = Users::checkPremission(16);
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [
-            ['name' => 'Կարգավիճակ','address' => '/roles'],
-            ['name' => 'Թույլտվություն','address' => '/premissions'],
-
-        ];
+        $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'users']);
+        $sub_page = [];
+        if (Users::checkPremission(80)){
+            $manager = ['name' => 'Մենեջեր-առաքիչ','address' => '/manager-deliver-condition'];
+            array_push($sub_page,$manager);
+        }
         $date_tab = [];
 
         $searchModel = new UsersSearch();
@@ -86,6 +89,7 @@ class UsersController extends Controller
             'dataProvider' => $dataProvider,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'new_fields'=>$res,
 
         ]);
     }
@@ -99,7 +103,9 @@ class UsersController extends Controller
         if($this->request->isPost){
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-            $model->password = $post['Users']['password'];
+            $password = $post['Users']['password'];
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $model->password = $hash;
             $model->email = $post['Users']['email'];
             $model->phone = $post['Users']['phone'];
             $model->updated_at = date('Y-m-d H:i:s');
@@ -166,8 +172,15 @@ class UsersController extends Controller
             $model->name = $post['Users']['name'];
             $model->username = $post['Users']['username'];
             $model->role_id = $post['Users']['role_id'];
+            if ($post['Users']['role_id'] == 4){
+                $model->warehouse_id = $post['Users']['warehouse_id'];
+            }else{
+                $model->warehouse_id = null;
+            }
+            $password = $post['Users']['password'];
+            $hash = password_hash($password, PASSWORD_DEFAULT);
             $model->auth_key = $this->generateRandomString();
-            $model->password = $post['Users']['password'];
+            $model->password = $hash;
             $model->email = $post['Users']['email'];
             $model->phone = $post['Users']['phone'];
             $model->created_at = date('Y-m-d H:i:s');
@@ -188,32 +201,108 @@ class UsersController extends Controller
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
             }
-                Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission_users);
-                return $this->redirect(['index', 'id' => $model->id]);
+            Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission_users);
+            return $this->redirect(['index', 'id' => $model->id]);
         } else {
             $model->loadDefaultValues();
         }
         $roles = Roles::find()->select('id,name')->asArray()->all();
         $roles = ArrayHelper::map($roles,'id','name');
+        $warehouse = Warehouse::find()->select('id,name')->where(['status' => 1])->asArray()->all();
+        $warehouse = ArrayHelper::map($warehouse,'id','name');
+        $premissions_check = Premissions::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
         return $this->render('create', [
             'model' => $model,
             'roles' => $roles,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'warehouse' => $warehouse,
+            'premissions_check' => $premissions_check
 
         ]);
     }
 
+    public function actionPremissions(){
+        if ($this->request->isGet){
+            $premissions_check = [];
+            $get_role = $this->request->get('roleNum');
+            $href = $this->request->get('currentUrl');
+            if(isset($href)){
+                $urlParts = parse_url($href);
+                parse_str($urlParts['query'], $query);
+                $id = $query['id'];
+                $user_premission_select = UserPremissions::find()->select('id,premission_id')->where(['user_id' => intval($id)])->asArray()->all();
+                $exist_role = Premissions::find()->select('id,role_id,name')->where(['status' => '1'])->asArray()->all();
+                foreach ($exist_role as $item){
+                    $array_role = explode(',',$item['role_id']);
+                    if (in_array(intval($get_role),$array_role)){
+                        $array = [];
+                        $array['id'] = $item['id'];
+                        $array['name'] = $item['name'];
+                        $premissions_check[] = $array;
+                    }
+                }
+                return $this->renderAjax('update-premission',[
+                    'premissions_check' => $premissions_check,
+                    'user_premission_select' => $user_premission_select
+                ]);
+
+            }else{
+                $exist_role = Premissions::find()->select('id,role_id,name')->where(['status' => '1'])->asArray()->all();
+                foreach ($exist_role as $item){
+                    $array_role = explode(',',$item['role_id']);
+                    if (in_array(intval($get_role),$array_role)){
+                        $array = [];
+                        $array['id'] = $item['id'];
+                        $array['name'] = $item['name'];
+                        $premissions_check[] = $array;
+                    }
+                }
+                return $this->renderAjax('premission',[
+                    'premissions_check' => $premissions_check,
+                ]);
+            }
+        }
+    }
+    public function actionCheckUsers(){
+        if ($this->request->isPost){
+            $users = Users::find()->where(['username' => $this->request->post('userText')])->andWhere(['status' => '1'])->exists();
+            if ($users){
+                return json_encode(true);
+            }else{
+                return json_encode(false);
+            }
+        }
+    }
+    public function actionCheckMail(){
+        if ($this->request->isPost){
+            $users = Users::find()->where(['email' => $this->request->post('userText')])->andWhere(['status' => '1'])->exists();
+            if ($users){
+                return json_encode(true);
+            }else{
+                return json_encode(false);
+            }
+        }
+    }
     public function actionCreateFields()
     {
-        $sub_page = [
-            ['name' => 'Կարգավիճակ','address' => '/roles'],
-            ['name' => 'Թույլտվություն','address' => '/premissions'],
-            ['name' => 'Օգտատեր','address' => '/users'],
-        ];
+        $have_access = Users::checkPremission(74);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+        $sub_page = [];
+        if (Users::checkPremission(80)){
+            $manager = ['name' => 'Մենեջեր-առաքիչ','address' => '/manager-deliver-condition'];
+            array_push($sub_page,$manager);
+        }
+        if (Users::checkPremission(16)){
+            $users = ['name' => 'Օգտատեր','address' => '/users'];
+            array_push($sub_page,$users);
+        }
         $date_tab = [];
 
         $model = new Users();
+
         if ($this->request->isPost) {
             $post = $this->request->post();
 
@@ -248,6 +337,7 @@ class UsersController extends Controller
             $this->redirect('/site/403');
         }
         $model = $this->findModel($id);
+        unset($model->password);
         $sub_page = [];
         $date_tab = [];
         if ($this->findModel($id)->status == 0) {
@@ -267,11 +357,26 @@ class UsersController extends Controller
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
+//            echo "<pre>";
+//            var_dump($post);
+//            exit();
+            if ($post['Users']['role_id'] == 4){
+                $model->warehouse_id = $post['Users']['warehouse_id'];
+            }else{
+                $model->warehouse_id = null;
+            }
             $model->name = $post['Users']['name'];
             $model->username = $post['Users']['username'];
             $model->role_id = $post['Users']['role_id'];
+            if ($post['Users']['role_id'] == 4){
+                $model->warehouse_id = $post['Users']['warehouse_id'];
+            }
             $model->auth_key = $this->generateRandomString();
-            $model->password = $post['Users']['password'];
+            if ($post['Users']['password'] != ''){
+                $password = $post['Users']['password'];
+                $hash = password_hash($password, PASSWORD_DEFAULT);
+                $model->password = $hash;
+            }
             $model->email = $post['Users']['email'];
             $model->phone = $post['Users']['phone'];
             $model->updated_at = date('Y-m-d H:i:s');
@@ -294,17 +399,21 @@ class UsersController extends Controller
             }
             return $this->redirect(['index', 'id' => $model->id]);
         }
-        $roles = Roles::find()->select('id,name')->asArray()->all();
+        $role = Users::findOne($id);
+        $roles = Roles::find()->select('id,name')->where(['status' => '1'])->andWhere(['id' => $role->role_id])->asArray()->all();
         $roles = ArrayHelper::map($roles,'id','name');
-        $user_premission_select = UserPremissions::find()->select('id,premission_id')->where(['user_id' => $id])->asArray()->all();
-//        $user_premission_select = array_column($user_premission_select,'premission_id');
+        $warehouse = Warehouse::find()->select('id,name')->where(['status' => 1])->asArray()->all();
+        $warehouse = ArrayHelper::map($warehouse,'id','name');
+//        $user_premission_select = UserPremissions::find()->select('id,premission_id')->where(['user_id' => $id])->asArray()->all();
+//        $premissions_check = Premissions::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
         return $this->render('update', [
             'model' => $model,
             'roles' => $roles,
-            'user_premission_select' => $user_premission_select,
+//            'user_premission_select' => $user_premission_select,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
+            'warehouse' => $warehouse,
+//            'premissions_check' => $premissions_check
         ]);
     }
 
@@ -334,7 +443,7 @@ class UsersController extends Controller
             ->one();
         $users = Users::findOne($id);
         $users->status = '0';
-        $users->save();
+        $users->save(false);
         Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }

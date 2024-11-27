@@ -3,13 +3,17 @@
 namespace app\controllers;
 
 use app\models\Clients;
+use app\models\CoordinatesUser;
 use app\models\Log;
+use app\models\ManagerDeliverCondition;
 use app\models\Orders;
 use app\models\Premissions;
 use app\models\Route;
 use app\models\RouteSearch;
 use app\models\Users;
+use app\models\Warehouse;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -272,7 +276,9 @@ class RouteController extends Controller
             ->where(['id' => 51])
             ->asArray()
             ->one();
-        $this->findModel($id)->delete();
+        $route = Route::findOne($id);
+        $route->status = '0';
+        $route->save(false);
         Log::afterSaves('Delete', '', $oldattributes['route'], '#', $premission);
         return $this->redirect(['index']);
     }
@@ -291,5 +297,129 @@ class RouteController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionShippingRoute(){
+        $have_access = Users::checkPremission(69);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+        $id = Yii::$app->request->get('id');
+        $sub_page = [];
+        $date_tab = [];
+        $route = Route::find()->select('route')
+            ->where(['id' => $id])
+            ->asArray()
+            ->one();
+        $users = Users::find()
+            ->where(['status' => 1])
+            ->andWhere(['in', 'role_id', [2,3]])
+            ->asArray()->all();
+//        $users = Users::find()->select('users.id, users.name')
+//            ->leftJoin('orders', 'orders.user_id = users.id')
+//            ->leftJoin('clients', 'clients.id = orders.clients_id')
+//            ->where(['clients.route_id' => $id])
+//            ->asArray()
+//            ->all();
+        $all_managers = Users::find()
+            ->select('id')
+            ->where(['and', ['role_id' => '2'], ['status' => 1]])
+            ->asArray()
+            ->all();
+        $managers_senders = [];
+        foreach ($all_managers as $manager) {
+            $managerId = $manager['id'];
+            $senders = ManagerDeliverCondition::find()
+                ->select('deliver_id')
+                ->where(['manager_id' => $managerId, 'status' => 1])
+                ->asArray()
+                ->all();
+            $senderIds = array_column($senders, 'deliver_id');
+            $managers_senders[$managerId] = $senderIds;
+        }
+        return $this->render('shipping-route', [
+            'id' => $id,
+            'route' => $route,
+            'users' => $users,
+            'sub_page' => $sub_page,
+            'date_tab' => $date_tab,
+            'managers_senders' => $managers_senders,
+
+        ]);
+    }
+
+    public function actionDeleteAllVisit()
+    {
+        if(isset($_GET)){
+            $coordinatesUsers = CoordinatesUser::find()->where(['not', ['visit' => null]])->all();
+            foreach ($coordinatesUsers as $coordinatesUser) {
+                $coordinatesUser->visit = 0;
+                $coordinatesUser->save(false);
+            }
+        }
+    }
+    public function actionUpdateVisit()
+    {
+        if(isset($_GET)){
+            $visit_get = CoordinatesUser::findOne(['id' => $_GET['coord_id']]);
+            $visit_get->visit = $_GET['visit'];
+            $visit_get->save(false);
+        }
+    }
+    public function actionLocationValue()
+    {
+        if (isset($_GET)) {
+            $get = $this->request->get();
+            $route_id = intval($get['urlId']);
+            $valuedate = $get['date'];
+            $formattedSelectedDate = Yii::$app->formatter->asDatetime($valuedate, 'yyyy-MM-dd');
+            $userId =  intval($get['user']);
+            $coordinatesUser = CoordinatesUser::find()
+                ->select('id, latitude, longitude')
+                ->where(['or',['user_id' => $userId]])
+                ->andWhere(['route_id' => $route_id])
+                ->andWhere(['and',['>=','created_at', $valuedate.' 00:00:00'],
+                    ['<','created_at', $valuedate.' 23:59:59']])
+                ->orderBy(['created_at'=>SORT_ASC])
+                ->groupBy('latitude')
+                ->asArray()
+                ->all();
+            $coordinatesUserCopy = $coordinatesUser;
+            if (count($coordinatesUser) != 0) {
+                $warhouse_id_clients = Clients::find()
+                    ->select('clients.client_warehouse_id, warehouse.location')
+                    ->leftJoin('warehouse', 'warehouse.id = clients.client_warehouse_id')
+                    ->where(['clients.route_id' => $route_id])
+                    ->asArray()
+                    ->one();
+                $locations = Orders::find()
+                    ->select(["clients.location", 'clients.name', 'DATE_FORMAT(orders.orders_date, "%Y-%m-%d") as orders_date'])
+                    ->leftJoin('clients', 'clients.id = orders.clients_id')
+                    ->where(['route_id' => $route_id])
+                    ->andWhere(['and', ['>=', 'orders.orders_date', $formattedSelectedDate . ' 00:00:00'],
+                        ['<', 'orders.orders_date', $formattedSelectedDate . ' 23:59:59']])
+                    ->andWhere(['!=', 'orders.status', '0'])
+//                ->andwhere(['=', 'orders.user_id', $userId])
+                    ->asArray()
+                    ->orderBy('clients.sort_', SORT_DESC)
+                    ->all();
+                $clients_locations = $locations;
+                $visit = CoordinatesUser::find()
+                    ->select('visit, id')
+                    ->where(['or', ['user_id' => $userId]])
+                    ->asArray()
+                    ->all();
+                $locations = array_chunk($locations, 20);
+                $coordinatesUserCopy = array_chunk($coordinatesUserCopy, 20);
+                return json_encode([
+                    'location' => $locations,
+                    'clients_locations' => $clients_locations,
+                    'warehouse' => $warhouse_id_clients,
+                    'coordinatesUser' => $coordinatesUser,
+                    'coordinatesUserCopy' => $coordinatesUserCopy,
+                    'visit' => $visit,
+                ]);
+            }
+        }
     }
 }

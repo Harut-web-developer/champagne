@@ -12,6 +12,8 @@ use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
 use yii\helpers\Url;
+use app\models\Roles;
+use app\models\Users;
 $session = Yii::$app->session;
 AppAsset::register($this);
 
@@ -23,9 +25,25 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
 $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii::getAlias('@web/favicon.ico')]);
 $sub_page = $this->params['sub_page'];
 $date_tab = $this->params['date_tab'];
-
-
+$view_groups_name = Users::checkPremission(61);
+$view_branch_groups = Users::checkPremission(85);
+$view_company = Users::checkPremission(89);
+$view_clients = Users::checkPremission(8);
+$view_role = Users::checkPremission(32);
+$view_users = Users::checkPremission(16);
+$view_deliver_manager = Users::checkPremission(80);
+$view_payments = Users::checkPremission(65);
+$view_statistic = Users::checkPremission(66);
+$view_rate = Users::checkPremission(48);
+$view_warehouse = Users::checkPremission(4);
+$view_documents = Users::checkPremission(40);
+$view_nomenclature = Users::checkPremission(12);
+$view_products = Users::checkPremission(20);
+$view_log = Users::checkPremission(28);
+$view_nom = Users::checkPremission(12);
+$view_notificationBell = Users::checkPremission(91);
 ?>
+<div id="mapmain"></div>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>" class="h-100">
@@ -44,9 +62,12 @@ $date_tab = $this->params['date_tab'];
     <link rel="stylesheet" href="/css/apex-charts.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css" type="text/css" media="all" />
     <link rel="stylesheet" href="/css/price_range_style.css">
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/main.css?v=123">
     <script src="/js/helpers.js""></script>
     <script src="/js/config.js""></script>
+    <?php if ($session['role_id'] == 2 || $session['role_id'] == 3) { ?>
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=e243c296-f6a7-46b7-950a-bd42eb4b2684" type="text/javascript"></script>
+    <?php } ?>
     <?= Html::csrfMetaTags() ?>
 </head>
 <body>
@@ -65,174 +86,223 @@ $date_tab = $this->params['date_tab'];
         <!-- Menu -->
 
         <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme" data-bg-class="bg-menu-theme">
-<!--            <div class="app-brand demo logoLoc">-->
-<!--                <a href="index.html" class="app-brand-link">-->
-<!--              <span class="app-brand-logo demo">-->
-<!--                  <img src="/img/logo.png">-->
-<!--              </span>-->
-<!--                    <span class="app-brand-text demo menu-text fw-bold ms-2">Champagne</span>-->
-<!--                </a>-->
-<!---->
-<!--                <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-xl-none">-->
-<!--                    <i class="bx bx-chevron-left bx-sm align-middle"></i>-->
-<!--                </a>-->
-<!--            </div>-->
-
             <div class="menu-inner-shadow"></div>
-
             <ul class="menu-inner py-1 ps ps--active-y scrollMenu">
                 <!-- Dashboards -->
                 <li class="menu-item open">
                     <div class="dashboardName">
                         <img src="/img/logo.png">
-<!--                        <i class="menu-icon tf-icons bx bx-home-circle"></i>-->
-                        <div data-i18n="Dashboards"><a href="/dashboard">Dashboards</a></div>
+                        <?php if ($session['role_id'] == 3) { ?>
+                            <div data-i18n="Dashboards"><a href="/map">Dashboards</a></div>
+                        <?php } ?>
+                        <?php if ($session['role_id'] == 1 || $session['role_id'] == 2) { ?>
+                            <div data-i18n="Dashboards"><a href="/dashboard">Dashboards</a></div>
+                        <?php } ?>
+                        <?php if ($session['role_id'] == 4) { ?>
+                            <div data-i18n="Dashboards"><a href="/warehouse">Dashboards</a></div>
+                        <?php } ?>
                     </div>
                 </li>
                 <li class="menu-item open">
                     <ul class="menu-sub main_menu">
-                        <li class="menu-item ">
-                            <a href="/dashboard" class="menu-link">
-                                <i class='bx bx-bar-chart-alt-2'></i>
-                                <div data-i18n="Analytics">Վահանակ</div>
-                            </a>
-                        </li>
-                        <li class="menu-item ">
-                            <a href="/map" class="menu-link">
-                                <i class='bx bx-map-alt'></i>
-                                <div data-i18n="Analytics">Քարտեզ</div>
-                            </a>
-                        </li>
+                        <?php if (Users::checkPremission(57)) { ?>
+                            <li class="menu-item ">
+                                <a href="/dashboard" class="menu-link">
+                                    <i class='bx bx-bar-chart-alt-2'></i>
+                                    <div data-i18n="Analytics">Վահանակ</div>
+                                </a>
+                            </li>
+                        <?php } ?>
+                        <?php if (Users::checkPremission(53)) { ?>
+                            <li class="menu-item ">
+                                <a href="/map" class="menu-link">
+                                    <i class='bx bx-map-alt'></i>
+                                    <div data-i18n="Analytics">Քարտեզ</div>
+                                </a>
+                            </li>
+                        <?php } ?>
+                        <?php if (Users::checkPremission(24)) { ?>
                         <li class="menu-item ">
                             <a href="/orders" class="menu-link">
                                 <i class='bx bx-cart-add' ></i>
                                 <div data-i18n="Analytics">Վաճառքներ</div>
                             </a>
                         </li>
-                        <li class="menu-item" style="">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bx-building"></i>
-                                <div data-i18n="warehouse">Պահեստներ</div>
-                            </a>
+                        <?php } ?>
+                            <?php if ($view_warehouse || $view_documents || $view_nomenclature || $view_products || $view_log || $view_nom) { ?>
+                            <li class="menu-item" style="">
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <i class="menu-icon tf-icons bx bx-building"></i>
+                                    <div data-i18n="warehouse">Պահեստներ</div>
+                                </a>
+                                <ul class="menu-sub sub_menu_sub">
+                                    <?php if ($view_documents) { ?>
+                                        <li class="menu-item">
+                                            <a href="/documents" class="menu-link">
+                                                <div data-i18n="documents">Փաստաթուղթ</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if ($view_nom) { ?>
+                                        <li class="menu-item">
+                                            <a href="/nomenclature" class="menu-link">
+                                                <div data-i18n="nomenclature">Անվանակարգ</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if ($view_products) { ?>
+                                        <li class="menu-item">
+                                            <a href="/products" class="menu-link">
+                                                <div data-i18n="products">Ապրանքներ</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if ($view_log){ ?>
+                                        <li class="menu-item">
+                                            <a href="/log" class="menu-link">
+                                                <div data-i18n="log">Տեղեկամատյան</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if ($view_warehouse) { ?>
+                                        <li class="menu-item">
+                                            <a href="/warehouse" class="menu-link">
+                                                <div data-i18n="Blank">Պահեստներ</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                            </li>
+                            <?php } ?>
+                        <?php if ($view_groups_name || $view_branch_groups || $view_company || $view_clients) { ?>
+                            <li class="menu-item">
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <i class="menu-icon tf-icons bx bx-male-female"></i>
+                                    <div data-i18n="users">Հաճախորդներ</div>
+                                </a>
+                                <ul class="menu-sub sub_menu_sub">
+                                    <?php if ($view_groups_name) { ?>
+                                        <li class="menu-item">
+                                            <a href="/groups-name" class="menu-link">
+                                                <div data-i18n="groups-name">Զեղչի Խմբեր</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if ($view_branch_groups) { ?>
+                                        <li class="menu-item">
+                                            <a href="/branch-groups" class="menu-link">
+                                                <div data-i18n="branch-groups">Մասնաճյուղի Խմբեր</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if ($view_company) { ?>
+                                        <li class="menu-item">
+                                            <a href="/companies-with-cash" class="menu-link">
+                                                <div data-i18n="companies-with-cash">Ընկերություններ</div>
+                                            </a>
+                                        </li>
+                                    <? } ?>
+                                    <?php if ($view_clients) { ?>
+                                    <li class="menu-item">
+                                        <a href="/clients" class="menu-link">
+                                            <div data-i18n="clients">Հաճախորդներ</div>
+                                        </a>
+                                    </li>
+                                    <?php } ?>
+                                </ul>
+                            </li>
+                        <? } ?>
+                        <?php if ($view_role || $view_users || $view_deliver_manager) { ?>
+                            <li class="menu-item" style="">
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <i class="menu-icon tf-icons bx bx-male-female"></i>
+                                    <div data-i18n="users">Օգտատեր</div>
+                                </a>
+                                <ul class="menu-sub sub_menu_sub">
+<!--                                    --><?php //if ($view_role) { ?>
+<!--                                        <li class="menu-item">-->
+<!--                                            <a href="/roles" class="menu-link">-->
+<!--                                                <div data-i18n="roles">Կարգավիճակ</div>-->
+<!--                                            </a>-->
+<!--                                        </li>-->
+<!--                                    --><?php //} ?>
+                                    <?php if ($view_users) { ?>
+                                        <li class="menu-item">
+                                            <a href="/users" class="menu-link">
+                                                <div data-i18n="users">Օգտատեր</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if ($view_deliver_manager) { ?>
+                                        <li class="menu-item">
+                                            <a href="/manager-deliver-condition" class="menu-link">
+                                                <div data-i18n="users">Մենեջեր-առաքիչ</div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                            </li>
+                        <?php } ?>
+                        <?php if ($view_payments || $view_statistic || $view_rate) { ?>
+                            <li class="menu-item" style="">
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <i class="menu-icon tf-icons bx bx-money-withdraw"></i>
+                                    <div data-i18n="users">Վճարումներ</div>
+                                </a>
 
-                            <ul class="menu-sub sub_menu_sub">
-                                <li class="menu-item">
-                                    <a href="/documents" class="menu-link">
-                                        <div data-i18n="documents">Փաստաթուղթ</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/nomenclature" class="menu-link">
-                                        <div data-i18n="nomenclature">Անվանակարգ</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/products" class="menu-link">
-                                        <div data-i18n="products">Ապրանքներ</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/log" class="menu-link">
-                                        <div data-i18n="log">Տեղեկամատյան</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/warehouse" class="menu-link">
-                                        <div data-i18n="Blank">Պահեստներ</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item" style="">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon bx bx-store-alt"></i>
-                                <div data-i18n="clients">Հաճախորդներ</div>
-                            </a>
-                            <ul class="menu-sub sub_menu_sub">
-                                <li class="menu-item">
-                                    <a href="/clients" class="menu-link">
-                                        <div data-i18n="clients">Հաճախորդներ</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/groups-name" class="menu-link">
-                                        <div data-i18n="groups-name">Խմբեր</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item" style="">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bx-male-female"></i>
-                                <div data-i18n="users">Օգտատեր</div>
-                            </a>
-
-                            <ul class="menu-sub sub_menu_sub">
-                                <li class="menu-item">
-                                    <a href="/roles" class="menu-link">
-                                        <div data-i18n="roles">Կարգավիճակ</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/premissions" class="menu-link">
-                                        <div data-i18n="premissions">Թույլտվություններ</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/users" class="menu-link">
-                                        <div data-i18n="users">Օգտատեր</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item" style="">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bx-money-withdraw"></i>
-                                <div data-i18n="users">Վճարումներ</div>
-                            </a>
-
-                            <ul class="menu-sub sub_menu_sub">
-                                <li class="menu-item">
-                                    <a href="/payments" class="menu-link">
-                                        <div data-i18n="roles">Վճարումներ</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/payments/statistics" class="menu-link">
-                                        <div data-i18n="premissions">Վիճակագրություն</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/rates" class="menu-link">
-                                        <div data-i18n="users">Փոխարժեք</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item" style="">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bxs-bank"></i>
-                                <div data-i18n="users">Զեղչեր</div>
-                            </a>
-                            <ul class="menu-sub sub_menu_sub">
-                                <li class="menu-item">
-                                    <a href="/discount" class="menu-link">
-                                        <div data-i18n="discount">Ակտիվ զեղչեր</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="/discount/inactive" class="menu-link">
-                                        <div data-i18n="discount">Ոչ ակտիվ զեղչեր</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item ">
-                            <a href="/route" class="menu-link">
-                                <i class='bx bxs-direction-left'></i>
-                                <div data-i18n="Analytics">Երթուղի</div>
-                            </a>
-                        </li>
+                                <ul class="menu-sub sub_menu_sub">
+                                    <?php if ($view_payments) { ?>
+                                    <li class="menu-item">
+                                        <a href="/payments" class="menu-link">
+                                            <div data-i18n="roles">Վճարումներ</div>
+                                        </a>
+                                    </li>
+                                    <?php } ?>
+                                    <?php if ($view_statistic) { ?>
+                                    <li class="menu-item">
+                                        <a href="/payments/statistics" class="menu-link">
+                                            <div data-i18n="premissions">Վիճակագրություն</div>
+                                        </a>
+                                    </li>
+                                    <?php } ?>
+                                    <?php if ($view_rate) { ?>
+                                    <li class="menu-item">
+                                        <a href="/rates" class="menu-link">
+                                            <div data-i18n="users">Փոխարժեք</div>
+                                        </a>
+                                    </li>
+                                    <?php } ?>
+                                </ul>
+                            </li>
+                        <?php } ?>
+                        <?php if (Users::checkPremission(44)) { ?>
+                            <li class="menu-item" style="">
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <i class="menu-icon tf-icons bx bxs-bank"></i>
+                                    <div data-i18n="users">Զեղչեր</div>
+                                </a>
+                                <ul class="menu-sub sub_menu_sub">
+                                    <li class="menu-item">
+                                        <a href="/discount" class="menu-link">
+                                            <div data-i18n="discount">Ակտիվ զեղչեր</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/discount/inactive" class="menu-link">
+                                            <div data-i18n="discount">Ոչ ակտիվ զեղչեր</div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        <?php } ?>
+                        <?php if (Users::checkPremission(52)) { ?>
+                            <li class="menu-item ">
+                                <a href="/route" class="menu-link">
+                                    <i class='bx bxs-direction-left'></i>
+                                    <div data-i18n="Analytics">Երթուղի</div>
+                                </a>
+                            </li>
+                        <?php } ?>
                     </ul>
                 </li>
 
@@ -281,17 +351,20 @@ $date_tab = $this->params['date_tab'];
 
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
                         <!-- Place this tag where you want the button to render. -->
-                        <li class="nav-item lh-1 me-3">
-                            <div class="notifications-container">
-                                <div class="bell-icon"><i id="notificationBell" class="bx bx-bell notificationIcon"></i></div>
-                                <div id="notifications-dropdown">
-                                    <div class="notification-ui_dd-header">
-                                        <h3 class="text-center">Notification</h3>
+                        <?php if ($view_notificationBell) { ?>
+                            <li class="nav-item lh-1 me-3">
+                                <div class="notifications-container">
+                                    <div class="bell-icon"><i id="notificationBell" class="bx bx-bell notificationIcon"></i>
+                                        <span class="badge badge-light index_not"></span>
+                                    </div>
+                                    <div id="notifications-dropdown">
+                                        <div class="notification-ui_dd-header">
+                                            <h3 class="text-center">Notification</h3>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </li>
-
+                            </li>
+                        <? } ?>
                         <!-- User -->
                         <li class="nav-item navbar-dropdown dropdown-user dropdown">
                             <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
@@ -311,7 +384,10 @@ $date_tab = $this->params['date_tab'];
                                             </div>
                                             <div class="flex-grow-1">
                                                 <span class="fw-medium d-block"><?=$session['name']?></span>
-                                                <small class="text-muted"><?=$session['username']?></small>
+                                                <?php
+                                                $role = Roles::find()->leftJoin('users', 'users.role_id = roles.id')->where(['users.id' => $session['user_id']])->one();
+                                                ?>
+                                                <small class="text-muted"><?=$role->name?></small>
                                             </div>
                                         </div>
                                     </a>
@@ -325,28 +401,28 @@ $date_tab = $this->params['date_tab'];
                                         <span class="align-middle">Իմ պրոֆիլը</span>
                                     </a>
                                 </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bx bx-cog me-2"></i>
-                                        <span class="align-middle">Կարգավորումներ</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                        <span class="d-flex align-items-center align-middle">
-                          <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
-                          <span class="flex-grow-1 align-middle ms-1">Վաճառք</span>
-                          <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
-                        </span>
-                                    </a>
-                                </li>
+<!--                                <li>-->
+<!--                                    <a class="dropdown-item" href="#">-->
+<!--                                        <i class="bx bx-cog me-2"></i>-->
+<!--                                        <span class="align-middle">Կարգավորումներ</span>-->
+<!--                                    </a>-->
+<!--                                </li>-->
+<!--                                <li>-->
+<!--                                    <a class="dropdown-item" href="#">-->
+<!--                        <span class="d-flex align-items-center align-middle">-->
+<!--                          <i class="flex-shrink-0 bx bx-credit-card me-2"></i>-->
+<!--                          <span class="flex-grow-1 align-middle ms-1">Վաճառք</span>-->
+<!--                          <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>-->
+<!--                        </span>-->
+<!--                                    </a>-->
+<!--                                </li>-->
                                 <li>
                                     <div class="dropdown-divider"></div>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="<?= Url::to(['site/logout']) ?>">
                                         <i class="bx bx-power-off me-2"></i>
-                                        <span class="align-middle">Log Out</span>
+                                        <span class="align-middle">Դուրս գալ</span>
                                     </a>
                                 </li>
                             </ul>

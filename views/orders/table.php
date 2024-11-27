@@ -1,15 +1,22 @@
 <?php
 
+use app\models\CompaniesWithCash;
 use app\widgets\CustomLinkPager;
 
 /** @var yii\web\View $this */
 /** @var app\models\Orders $model */
 /** @var yii\widgets\ActiveForm $form */
-echo __DIR__;
+
+
+$this->registerCssFile('@web/css/bootstrap.min.css');
+$CompaniesWithCash = CompaniesWithCash::find()
+    ->select('companies_with_cash.name')
+    ->leftJoin('orders', 'orders.company_id = companies_with_cash.id')
+    ->where(['orders.is_exist_company' => '1'])
+    ->andWhere(['orders.id' => $model['id']])
+    ->asArray()->one();
 ?>
 
-<!--<link href="/assets/d8c33cc9/dist/css/bootstrap.css" rel="stylesheet">-->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 <!-- Basic Bootstrap Table -->
 <div id="print">
     <div class="card">
@@ -18,11 +25,14 @@ echo __DIR__;
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Օգտատեր</th>
+                    <th>Մենեջեր</th>
                     <th>Հաճախորդ</th>
-                    <th>Ընդհանուր գումար</th>
-                    <th>Ընդհանուր քանակ</th>
                     <th>Մեկնաբանություն</th>
+                    <th>Ընդհանուր գումար</th>
+                    <th>Ընդհանուր զեղչված գումար</th>
+                    <th>Կանխիկ վճորող ընկերություն</th>
+                    <th>Ընդհանուր զեղչի չափ</th>
+                    <th>Ընդհանուր քանակ</th>
                     <th>Պատվերի ամսաթիվ</th>
                 </tr>
                 </thead>
@@ -30,40 +40,55 @@ echo __DIR__;
                 <tr>
                     <td><?=$users[$model->user_id]; ?></td>
                     <td><?=$clients[$model['clients_id']]; ?></td>
-                    <td><?=$model['total_price']?></td>
-                    <td><?=$model['total_count']?></td>
                     <td><?=$model['comment']?></td>
+                    <td><?=number_format($model['total_price_before_discount'],2) . " դր"?></td>
+                    <td><?=number_format($model['total_price'],2) . " դր"?></td>
+                    <td>
+                        <?= $CompaniesWithCash ?$CompaniesWithCash['name'] : 'Դատարկ'; ?>
+                    </td>
+                    <td><?=number_format($model['total_discount'],2) . " դր"?></td>
+                    <td><?=$model['total_count'] . " հատ"?></td>
                     <td><?=$model['orders_date']?></td>
                 </tr>
                 </tbody>
             </table>
-    <?php if (!empty($order_items)) {?>
-    <h1>Վաճառքի ցուցակ</h1>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>ԱՆՈՒՆ</th>
-                <th>ՔԱՆԱԿ</th>
-                <th>ԳԻՆ</th>
-                <th>ԻՆՔՆԱՐԺԵՔ</th>
-                <th>ԸՆԴՀԱՆՈՒՐ ԳՈՒՄԱՐ</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php
-            for ($i=0; $i<count($order_items); $i++){ ?>
-            <tr>
-                <td><?=$i; ?></td>
-                <td><?=$order_items[$i]['name']; ?></td>
-                <td><?=$order_items[$i]['count']; ?></td>
-                <td><?=$order_items[$i]['price']; ?></td>
-                <td><?=$order_items[$i]['cost']; ?></td>
-                <td><?=$order_items[$i]['count']*$order_items[$i]['price']; ?></td>
-            </tr>
-            <?php } ?>
-            </tbody>
-        </table>
+            <?php if (!empty($order_items)) {?>
+            <h1>Վաճառքի ցուցակ</h1>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ԱՆՈՒՆ</th>
+                    <th>ՔԱՆԱԿ</th>
+                    <th>ԶԵՂՉ</th>
+                    <th>ԳԻՆԸ ՄԻՆՉԵՒ ԶԵՂՉԵԼԸ</th>
+                    <th>ԶԵՂՉՎԱԾ ԳԻՆ</th>
+                    <th>Ընդհանուր զեղչ</th>
+                    <th>ԸՆԴՀԱՆՈՒՐ ԳՈՒՄԱՐ</th>
+                    <th>ԸՆԴՀԱՆՈՒՐ ԶԵՂՉՎԱԾ ԳՈՒՄԱՐ</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                $j = 1;
+                for ($i=0; $i<count($order_items); $i++){
+                    $str_price = explode(',',$order_items[$i]['string_price']);
+                    $str_before_price = explode(',',$order_items[$i]['string_before_price']);
+                    ?>
+                    <tr>
+                        <td><?=$j++; ?></td>
+                        <td><?=$order_items[$i]['name']; ?></td>
+                        <td><?=$order_items[$i]['count_by'] . " հատ"; ?></td>
+                        <td><?=$order_items[$i]['string_discount']?></td>
+                        <td><?=number_format($str_before_price[count($str_before_price) - 1],2) . " դր" ?></td>
+                        <td><?=number_format($str_price[count($str_price) - 1],2) . " դր" ?></td>
+                        <td><?=$order_items[$i]['discount_by']?></td>
+                        <td><?=number_format($order_items[$i]['price_before_discount_by'],2) . " դր" ?></td>
+                        <td><?=number_format($order_items[$i]['price_by'],2) . " դր" ?></td>
+                    </tr>
+                <?php } ?>
+                </tbody>
+            </table>
         </div>
     </div>
     <?php }?>

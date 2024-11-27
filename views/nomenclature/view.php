@@ -32,7 +32,7 @@ $this->params['date_tab'] = $date_tab;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
+            'name',
             [
                 'attribute' => 'image',
                 'format' => 'raw',
@@ -43,7 +43,6 @@ $this->params['date_tab'] = $date_tab;
                     ]);
                 },
             ],
-            'name',
             'price',
             'cost',
             'created_at',

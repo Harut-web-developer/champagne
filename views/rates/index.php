@@ -7,6 +7,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use app\widgets\CustomGridView;
 
 /** @var yii\web\View $this */
 /** @var app\models\RatesSearch $searchModel */
@@ -21,29 +22,30 @@ $have_access_create = Users::checkPremission(45);
 $have_access_update = Users::checkPremission(46);
 $have_access_delete = Users::checkPremission(47);
 $action_column = [];
-if ($have_access_update && $have_access_delete){
+$access_buttons = '';
+if($have_access_delete){
+    $access_buttons .='{delete}';
+}
+if($have_access_update){
+    $access_buttons .='{update}';
+}
+if (!empty($access_buttons)) {
     $action_column[] = [
         'header' => 'Գործողություն',
         'class' => ActionColumn::className(),
-        'template' => '{update} {delete}',
-        'urlCreator' => function ($action, Rates $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_update){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{update}',
-        'urlCreator' => function ($action, Rates $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{delete}',
+        'template' => $access_buttons,
+        'buttons' => [
+            'delete' => function ($url, $model, $key) {
+                $del_icon = '<svg aria-hidden="true" style="display:inline-block;font-size:inherit;height:1em;overflow:visible;vertical-align:-.125em;width:.875em;color:red" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M32 464a48 48 0 0048 48h288a48 48 0 0048-48V128H32zm272-256a16 16 0 0132 0v224a16 16 0 01-32 0zm-96 0a16 16 0 0132 0v224a16 16 0 01-32 0zm-96 0a16 16 0 0132 0v224a16 16 0 01-32 0zM432 32H312l-9-19a24 24 0 00-22-13H167a24 24 0 00-22 13l-9 19H16A16 16 0 000 48v32a16 16 0 0016 16h416a16 16 0 0016-16V48a16 16 0 00-16-16z"></path></svg>';
+                return Html::a($del_icon, $url, [
+                    'title' => Yii::t('yii', 'Ջնջել'),
+                    'data' => [
+                        'confirm' => Yii::t('yii', 'Վստա՞հ եք, որ ցանկանում եք ջնջել այս տարրը:'),
+                        'method' => 'post',
+                    ],
+                ]);
+            },
+        ],
         'urlCreator' => function ($action, Rates $model, $key, $index, $column) {
             return Url::toRoute([$action, 'id' => $model->id]);
         }
@@ -62,8 +64,8 @@ if ($have_access_update && $have_access_delete){
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-    <div class="card">
-    <?= GridView::widget([
+    <div class="card pageStyle">
+    <?= CustomGridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],
         'dataProvider' => new ActiveDataProvider([
@@ -74,8 +76,8 @@ if ($have_access_update && $have_access_delete){
         ]),
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'name',
             ...$action_column,
+            'name',
         ],
     ]); ?>
 

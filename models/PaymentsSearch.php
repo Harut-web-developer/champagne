@@ -46,7 +46,7 @@ class PaymentsSearch extends Payments
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $query->orderBy(['created_at'=> SORT_DESC]),
         ]);
 
         $this->load($params);

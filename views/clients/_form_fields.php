@@ -8,7 +8,7 @@ use app\models\CustomfieldsBlocksInputs;
 /** @var yii\web\View $this */
 /** @var app\models\Clients $model */
 /** @var yii\widgets\ActiveForm $form */
-$blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'clients','block_type'=>1])->orderBy(['order_number'=>SORT_ASC])->all();
+$blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'clients','block_type'=>1])->andWhere(['status'=>'1'])->orderBy(['order_number'=>SORT_ASC])->all();
 $req = true;
 if(isset($action__)){
     $req = false;
@@ -28,16 +28,7 @@ if(isset($action__)){
                     <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
                     <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 clientName">
-                    <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => $req]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 clientLocation">
-                    <?= $form->field($model, 'location')->textInput(['maxlength' => true,'required' => $req]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 clientPhone">
-                    <?= $form->field($model, 'phone')->input('number',['required' => $req]) ?>
-                </div>
-                <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>17])->all(); ?>
+                <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>17])->andWhere(['status'=>'1'])->all(); ?>
                 <?php if(!empty($fields)){ ?>
                     <?php foreach ($fields as $fild => $fild_simple){ ?>
                         <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id,false);?>
@@ -70,7 +61,7 @@ if(isset($action__)){
                             <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
                             <button type="button" class="btn btn-default btn-sm edite-block-trash"><i class="bx bx-trash"></i></button>
                         </div>
-                        <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->all(); ?>
+                        <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->andWhere(['status'=>'1'])->all(); ?>
                         <?php if(!empty($fields)){ ?>
                             <?php foreach ($fields as $fild => $fild_simple){ ?>
                                 <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id,false);?>

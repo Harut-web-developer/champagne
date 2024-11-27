@@ -7,6 +7,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use app\widgets\CustomGridView;
 
 /** @var yii\web\View $this */
 /** @var app\models\LogSearch $searchModel */
@@ -17,38 +18,38 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->params['sub_page'] = $sub_page;
 $this->params['date_tab'] = $date_tab;
 
-$have_access_create = Users::checkPremission(25);
-$have_access_update = Users::checkPremission(26);
-$have_access_delete = Users::checkPremission(27);
-$action_column = [];
-if ($have_access_update && $have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{update} {delete}',
-        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-} else if($have_access_update){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{update}',
-        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}else if($have_access_delete){
-    $action_column[] = [
-        'header' => 'Գործողություն',
-        'class' => ActionColumn::className(),
-        'template' => '{delete}',
-        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
-            return Url::toRoute([$action, 'id' => $model->id]);
-        }
-    ];
-}
+//$have_access_create = Users::checkPremission(25);
+//$have_access_update = Users::checkPremission(26);
+//$have_access_delete = Users::checkPremission(27);
+//$action_column = [];
+//if ($have_access_update && $have_access_delete){
+//    $action_column[] = [
+//        'header' => 'Գործողություն',
+//        'class' => ActionColumn::className(),
+//        'template' => '{update} {delete}',
+//        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
+//            return Url::toRoute([$action, 'id' => $model->id]);
+//        }
+//    ];
+//} else if($have_access_update){
+//    $action_column[] = [
+//        'header' => 'Գործողություն',
+//        'class' => ActionColumn::className(),
+//        'template' => '{update}',
+//        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
+//            return Url::toRoute([$action, 'id' => $model->id]);
+//        }
+//    ];
+//}else if($have_access_delete){
+//    $action_column[] = [
+//        'header' => 'Գործողություն',
+//        'class' => ActionColumn::className(),
+//        'template' => '{delete}',
+//        'urlCreator' => function ($action, Log $model, $key, $index, $column) {
+//            return Url::toRoute([$action, 'id' => $model->id]);
+//        }
+//    ];
+//}
 ?>
 <div class="log-index">
     <div class="titleAndPrevPage">
@@ -60,8 +61,8 @@ if ($have_access_update && $have_access_delete){
 <!--            --><?php //= Html::a('Ստեղծել տեղեկամատյան', ['create'], ['class' => 'btn rounded-pill btn-secondary']) ?>
 <!--        --><?php //} ?>
     </p>
-    <div class="card">
-    <?= GridView::widget([
+    <div class="card pageStyle">
+    <?= CustomGridView::widget([
         'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
         'summaryOptions' => ['class' => 'summary'],
         'dataProvider' => new ActiveDataProvider([

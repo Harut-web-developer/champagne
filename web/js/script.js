@@ -2,18 +2,18 @@ $(document).ready(function() {
     var x = "/" + window.location.href.split("/")[3];
     var y = "/" + window.location.href.split("/")[4];
     var t = 0;
-        $(".menu-sub a").each(function () {
-            var currentHref = $(this).attr("href");
+    $(".menu-sub a").each(function () {
+        var currentHref = $(this).attr("href");
 
-            if ((currentHref === x && y === '/undefined') || currentHref === x + y) {
+        if ((currentHref === x && y === '/undefined') || currentHref === x + y) {
+            $(this).parent().addClass("active");
+        } else if (currentHref.indexOf(x) !== -1 && t === 0) {
+            if (y !== '/undefined') {
                 $(this).parent().addClass("active");
-            } else if (currentHref.indexOf(x) !== -1 && t === 0) {
-                if (y !== '/undefined') {
-                    $(this).parent().addClass("active");
-                    t++;
-                }
+                t++;
             }
-        });
+        }
+    });
 
     // var pgurl = window.location.href.substr(window.location.href
     //     .lastIndexOf("/")+1);
@@ -21,7 +21,6 @@ $(document).ready(function() {
     //     if($(this).attr("href") == '/'+pgurl || $(this).attr("href") == '' )
     //         $(this).parent().addClass("active");
     // })
-
 
     $('body').on('click','.edite-block-title',function (){
         $(this).closest('.panel-title').find('.non-active').hide();
@@ -48,7 +47,11 @@ $(document).ready(function() {
     });
     $('body').on('click','.remove-field-new', function (){
         let confirm_ = confirm('Are you sure you want to delete this item?');
-        if(confirm_){
+        if ((window.location.pathname === "/documents/create" || window.location.pathname === "/clients/create" ||
+            window.location.pathname === "/warehouse/create" || window.location.pathname === "/nomenclature/create" ||
+            window.location.pathname === "/users/create") && confirm_){
+            $(this).closest('.new-field').remove();
+        } else if(confirm_){
             var this_ = $(this);
             var removeField = this_.closest('.new-field').data('field');
             var csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -70,7 +73,11 @@ $(document).ready(function() {
     })
     $('body').on('click', '.edite-block-trash', function () {
         let confirm_ = confirm('Are you sure you want to delete this item?');
-        if(confirm_){
+        if ((window.location.pathname === "/documents/create" || window.location.pathname === "/clients/create" ||
+            window.location.pathname === "/warehouse/create" || window.location.pathname === "/nomenclature/create" ||
+            window.location.pathname === "/users/create") && confirm_){
+            $(this).closest('.default-panel').remove();
+        }else if(confirm_){
             var this_ = $(this);
             var blockId = this_.closest('.default-panel').data('id');
             var csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -165,18 +172,82 @@ $(document).ready(function() {
     });
 
     //notifications
-    function fetchNotifications() {
-        var csrfToken = $('meta[name="csrf-token"]').attr("content");
-        $.ajax({
-            type: "GET",
-            url: "/site/get-notifications",
-            dataType: "json",
-            data: { _csrf: csrfToken },
-            success: function (data) {
-                displayNotifications(data['notifications_today']);
-                $('body').on('click','#viweall',function () {
-                    // displayNotifications(data['notifications_all']);
-                    var notifications = data['notifications_all'];
+    var csrfToken = $('meta[name="csrf-token"]').attr("content");
+    $.ajax({
+        url:"/site/view-notification",
+        method: 'post',
+        dataType:'json',
+        data:{
+            _csrf : csrfToken
+        },
+        success:function(data){
+            if (data == true){
+                function fetchNotifications() {
+                    var csrfToken = $('meta[name="csrf-token"]').attr("content");
+                    $.ajax({
+                        type: "GET",
+                        url: "/site/get-notifications",
+                        dataType: "json",
+                        data: { _csrf: csrfToken },
+                        success: function (data) {
+                            if (data['notifications_today'] !== 0) {
+                                displayNotifications(data, data['notifications_today']);
+                                $('body').on('click','#viweall',function () {
+                                    // displayNotifications(data['notifications_all']);
+                                    var notifications = data['notifications_all'];
+                                    var notificationsDropdown = $("#notifications-dropdown");
+                                    notificationsDropdown.empty();
+                                    notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
+                                        '<h3 class="text-center">Ծանուցումներ</h3>\n' +
+                                        '</div>' +
+                                        '<hr>'
+                                    );
+                                    notifications.forEach(function (notification) {
+                                        notificationsDropdown.append('<div class="notification-item">' +
+                                            '<p class="notification-title">' +
+                                            '<span class="title-text">' + notification.title + '</span>' +
+                                            '</br>' +
+                                            notification.message +
+                                            '<br>' +
+                                            '<small style="font-size: 60%">' +
+                                            notification.datetime +
+                                            '</small>' +
+                                            '</p>' +
+                                            '</div>');
+                                    });
+                                })
+                            }
+                        }
+                    });
+                }
+                function fetchNotificationstoast() {
+                    var csrfToken = $('meta[name="csrf-token"]').attr("content");
+                    $.ajax({
+                        url: '/site/check-notifications',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.success !== undefined) {
+                                displayNotificationtoast(data.notifications);
+                            }
+                        },
+                    });
+                    $.ajax({
+                        url:"/site/index-notifications",
+                        method: 'get',
+                        dataType:'json',
+                        data:{
+                            _csrf : csrfToken
+                        },
+                        success:function(data){
+                            if (data['notification_badge']>0){
+                                $('.index_not').text(data['notification_badge'])
+                            }
+                        }
+                    })
+                }
+                function displayNotifications(data, notifications) {
+                    $('.index_not').text('')
                     var notificationsDropdown = $("#notifications-dropdown");
                     notificationsDropdown.empty();
                     notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
@@ -197,65 +268,43 @@ $(document).ready(function() {
                             '</p>' +
                             '</div>');
                     });
-                })
-            }
-        });
-    }
-    function fetchNotificationstoast() {
-        $.ajax({
-            url: '/site/check-notifications',
-            type: 'GET',
-            dataType: 'json',
-            success: function (data) {
-                if (data.success) {
-                    displayNotificationtoast(data.notifications);
+                    notificationsDropdown.append('<div id="viweall" class="notification-ui_dd-footer">\n' +
+                        '<a href="#!" class="btn bg-secondary text-white" style="display: block">Տեսնել բոլորը</a>\n' +
+                        '</div>'
+                    );
                 }
-            },
-        });
-    }
-    function displayNotifications(notifications) {
-        var notificationsDropdown = $("#notifications-dropdown");
-        notificationsDropdown.empty();
-        notificationsDropdown.append('<div class="notification-ui_dd-header">\n' +
-            '<h3 class="text-center">Ծանուցումներ</h3>\n' +
-            '</div>' +
-            '<hr>'
-        );
-        notifications.forEach(function (notification) {
-            notificationsDropdown.append('<div class="notification-item">' +
-                '<p class="notification-title">' +
-                '<span class="title-text">' + notification.title + '</span>' +
-                '</br>' +
-                notification.message +
-                '<br>' +
-                '<small style="font-size: 60%">' +
-                notification.datetime +
-                '</small>' +
-                '</p>' +
-                '</div>');
-        });
-        notificationsDropdown.append('<div id="viweall" class="notification-ui_dd-footer">\n' +
-            '<a href="#!" class="btn bg-secondary text-white" style="display: block">Տեսնել բոլորը</a>\n' +
-            '</div>'
-        );
-    }
-    function displayNotificationtoast(notification) {
-        if (notification!=null) {
-            $('.bs-toast .toast-header .me-auto').text(notification.title);
-            $('.bs-toast .toast-body').text(notification.message);
-            $('.bs-toast').toast('show');
+                function displayNotificationtoast(notification) {
+                    if (notification!=null) {
+                        $('.bs-toast .toast-header .me-auto').text(notification.title);
+                        $('.bs-toast .toast-body').html('');
+                        $('.bs-toast .toast-body').append(notification.message);
+                        $('.bs-toast').toast('show');
+                    }
+                }
+                $(".bell-icon").click(function () {
+                    $("#notifications-dropdown").toggle();
+                    fetchNotifications();
+                    $('.index_not').text('');
+                    var csrfToken = $('meta[name="csrf-token"]').attr("content");
+                    $.ajax({
+                        url:"/site/index-notifications-click",
+                        method: 'get',
+                        dataType:'json',
+                        data:{
+                            _csrf : csrfToken
+                        },
+                    })
+                });
+                $('#notificationBell').click(function () {
+                    fetchNotifications();
+                });
+                fetchNotifications();
+                fetchNotificationstoast();
+                setInterval(fetchNotificationstoast, 10000);
+            }
         }
-    }
-    $(".bell-icon").click(function () {
-        $("#notifications-dropdown").toggle();
-        fetchNotifications();
-    });
-    $('#notificationBell').click(function () {
-        fetchNotifications();
-    });
-    fetchNotifications();
-    fetchNotificationstoast();
-    setInterval(fetchNotificationstoast, 100000);
+    })
+
 
     $(document).mouseup(function(e)
     {
@@ -266,19 +315,31 @@ $(document).ready(function() {
         }
     });
 
-    // downloadXLSX
+    // downloadXLSX orders
     $('.downloadXLSX').click(function () {
         var excel = new ExcelJS.Workbook();
         var tables = '';
         var sheetNumber = 1;
         var PromiseArray = [];
+        let clientsVal = $('.content-wrapper').find('.changeClients').val();
+        let managerId = $('.content-wrapper').find('.changeManager').val();
+        let numberVal = $('.content-wrapper').find('.orderStatus').val();
+        let clickXLSX = 'clickXLSX';
+        let ordersDate = $('.ordersDate').val();
+        // let type = $(this).val()
         var csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
-            url: 'orders',
-            method: 'post',
+            url:'/orders/filter-status',
+            method: 'get',
             data: {
                 _csrf: csrfToken,
                 action: 'xls-alldata',
+                numberVal:numberVal,
+                clientsVal:clientsVal,
+                managerId:managerId,
+                ordersDate:ordersDate,
+                // type:type,
+                clickXLSX:clickXLSX,
             },
             dataType: "html",
             success: function(data) {
@@ -292,7 +353,7 @@ $(document).ready(function() {
                     var headRow = table.querySelector("thead tr");
                     if (headRow) {
                         var headerData = [];
-                        var headerCells = headRow.querySelectorAll("th:not(:last-child)");
+                        var headerCells = headRow.querySelectorAll("th:not(:nth-child(2))");
                         headerCells.forEach(function (headerCell) {
                             headerData.push(headerCell.textContent);
                         });
@@ -301,9 +362,139 @@ $(document).ready(function() {
                     var rows = table.querySelectorAll("tbody tr");
                     rows.forEach(function (row) {
                         var rowData = [];
-                        var cells = row.querySelectorAll("td:not(:last-child)");
+                        var cells = row.querySelectorAll("td:not(:nth-child(2))");
                         cells.forEach(function (cell) {
                             rowData.push(cell.textContent);
+                        });
+                        if (rowData.length > 0) {
+                            sheet.addRow(rowData);
+                        }
+                    });
+                    sheetNumber++;
+                }
+                Promise.all(PromiseArray)
+                    .then(function () {
+                        return excel.xlsx.writeBuffer();
+                    })
+                    .then(function (buffer) {
+                        var blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        const date = new Date();
+                        let day = date.getDate();
+                        let month = date.getMonth() + 1;
+                        let year = date.getFullYear();
+                        let currentDate = `${day}-${month}-${year}`;
+                        a.download = 'orders-' + currentDate + ".xlsx";
+                        a.style.display = 'none';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    })
+                    .catch(function (error) {
+                        console.error('Error:', error);
+                    });
+                $(".chatgbti_").removeClass();
+            },
+        });
+    });
+
+    // downloadXLSX documents
+    $('.documents_downloadXLSX').click(function () {
+        var excel = new ExcelJS.Workbook();
+        var tables = '';
+        var sheetNumber = 1;
+        var PromiseArray = [];
+        let numberVal = $('.documents-index').find('.documentStatus').val();
+        let documentsDate = $('.documentsDate').val();
+        let warehouse_id = $('.documentWarehouseStatus').val();
+        let clickXLSX = 'clickXLSX';
+        var csrfToken = $('meta[name="csrf-token"]').attr("content");
+
+        function addImage(url, workbook, worksheet, excelCell) {
+            return new Promise(function (resolve, reject) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url);
+                xhr.responseType = 'blob';
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        var reader = new FileReader();
+                        reader.readAsDataURL(xhr.response);
+                        reader.onloadend = function () {
+                            var base64data = reader.result;
+                            const image = workbook.addImage({
+                                base64: base64data,
+                                extension: 'png',
+                            });
+                            worksheet.getRow(excelCell.row).height = 75;
+                            worksheet.addImage(image, {
+                                tl: { col: excelCell.col - 1, row: excelCell.row - 1 },
+                                br: { col: excelCell.col, row: excelCell.row }
+                            });
+                            resolve();
+                        };
+                    } else {
+                        console.error('Failed to fetch image. Status code:', xhr.status);
+                        resolve();
+                    }
+                };
+                xhr.onerror = function () {
+                    console.error('Could not add image to excel cell');
+                    resolve();
+                };
+                xhr.send();
+            });
+        }
+
+        $.ajax({
+            url: '/documents/filter-status',
+            method: 'get',
+            data: {
+                _csrf: csrfToken,
+                action: 'xls-alldata',
+                numberVal: numberVal,
+                documentsDate: documentsDate,
+                warehouse_id: warehouse_id,
+                clickXLSX: clickXLSX,
+            },
+            dataType: "html",
+            success: function (data) {
+                $('body').append(data);
+                tables = document.getElementsByClassName("chatgbti_");
+                $(".chatgbti_").hide();
+                $(".deletesummary").hide();
+                for (var i = 0; i < tables.length; i++) {
+                    var table = tables[i];
+                    var sheet = excel.addWorksheet("Sheet " + sheetNumber, {
+                        properties: { defaultColWidth: 20, defaultRowHeight: 25 }
+                    });
+                    var headRow = table.querySelector("thead tr");
+                    if (headRow) {
+                        var headerData = [];
+                        var headerCells = headRow.querySelectorAll("th");
+                        headerCells.forEach(function (headerCell) {
+                            headerData.push(headerCell.textContent);
+                        });
+                        sheet.addRow(headerData);
+                    }
+                    var rows = table.querySelectorAll("tbody tr");
+                    rows.forEach(function (row) {
+                        var rowData = [];
+                        var cells = row.querySelectorAll("td");
+                        cells.forEach(function (cell, colIndex) {
+                            if (cell.querySelector("img")) {
+                                var imgElement = cell.querySelector("img");
+                                var imageUrl = imgElement.src;
+                                var excelCell = {
+                                    row: sheet.rowCount + 1,
+                                    col: colIndex + 1
+                                };
+                                PromiseArray.push(addImage(imageUrl, excel, sheet, excelCell));
+                                rowData.push(""); // Placeholder for image column
+                            } else {
+                                rowData.push(cell.textContent);
+                            }
                         });
                         if (rowData.length > 0) {
                             sheet.addRow(rowData);
@@ -321,8 +512,12 @@ $(document).ready(function() {
                         var url = window.URL.createObjectURL(blob);
                         var a = document.createElement('a');
                         a.href = url;
-                        var tablename = Math.floor(Math.random() * (1000000 - 1000 + 1)) + 1000;
-                        a.download = tablename + "table_data.xlsx";
+                        const date = new Date();
+                        let day = date.getDate();
+                        let month = date.getMonth() + 1;
+                        let year = date.getFullYear();
+                        let currentDate = `${day}-${month}-${year}`;
+                        a.download = 'documents-' + currentDate + ".xlsx";
                         a.style.display = 'none';
                         document.body.appendChild(a);
                         a.click();
@@ -336,46 +531,168 @@ $(document).ready(function() {
         });
     });
 
-    var tableToExcel =
-        (function() {
-            var uri = 'data:application/vnd.ms-excel;base64,',
-                template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">' +
-                    '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->' +
-                    '<meta http-equiv="content-type" content="text/plain; charset=UTF-8"/>' +
-                    '</head><body><table>{table}</table></body></html>'
-                , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) },
-                format = function(s, c) {
-                return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; })    }
-                , downloadURI = function(uri, name) {
-                var link = document.createElement("a");
-                link.download = $('h1').text();
-                link.href = uri;
-                link.click();    }
-            return function(table, name, fileName) {
-                table = $('#' + table).clone();
-                table.find('.hidden-item').remove();
-                table.find('.action-column').remove();
-                table.find('#w0-filters').remove();
-                table.find('a').removeAttr("href");
-                var ctx = {worksheet: $('h1').text() || 'Worksheet', table: table.html()}
-                var resuri = uri + base64(format(template, ctx))
-                downloadURI(resuri, fileName);
-            }
-        });
 
-    $('body').on('change', '.orderStatus', function () {
-        let numberVal = $(this).val();
+    $('body').on('change','.byPrint',function () {
+        let ordersDate = $('.ordersDate').val();
+        let managerId = $('.changeManager').val();
+        let numberVal = $('.orderStatus').val();
+        let clientsVal = $('.changeClients').val();
+        let printType = $(this).val();
+        let type = $('.byType').val()
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
         $.ajax({
             url:'/orders/filter-status',
             method:'get',
             datatype:'json',
             data:{
+                type:type,
+                ordersDate:ordersDate,
                 numberVal:numberVal,
+                managerId:managerId,
+                clientsVal:clientsVal,
+                printType:printType,
                 _csrf: csrfToken,
             },
             success:function (data){
                 $('body').find('.card').html(data);
+                clearWidget();
+            }
+        })
+    })
+
+    $('body').on('change','.byType',function () {
+        let ordersDate = $('.ordersDate').val();
+        let managerId = $('.changeManager').val();
+        let numberVal = $('.orderStatus').val();
+        let clientsVal = $('.changeClients').val();
+        let printType = $('.byPrint').val();
+        let type = $(this).val()
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/orders/filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                type:type,
+                ordersDate:ordersDate,
+                numberVal:numberVal,
+                managerId:managerId,
+                clientsVal:clientsVal,
+                printType:printType,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+                clearWidget();
+            }
+        })
+    })
+    $('body').on('change', '.orderStatus', function () {
+        let ordersDate = $('.ordersDate').val();
+        let managerId = $('.changeManager').val();
+        let numberVal = $(this).val();
+        let type = $('.byType').val();
+        let clientsVal = $('.changeClients').val();
+        let printType = $('.byPrint').val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/orders/filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                type:type,
+                ordersDate:ordersDate,
+                numberVal:numberVal,
+                managerId:managerId,
+                clientsVal:clientsVal,
+                printType:printType,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+                clearWidget()
+            }
+        })
+    })
+    $('body').on('change', '.changeManager', function () {
+        let ordersDate = $('.ordersDate').val();
+        let managerId = $(this).val();
+        let type = $('.byType').val();
+        let numberVal = $('.orderStatus').val();
+        let clientsVal = $('.changeClients').val();
+        let printType = $('.byPrint').val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/orders/filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                type:type,
+                ordersDate:ordersDate,
+                numberVal:numberVal,
+                managerId:managerId,
+                clientsVal:clientsVal,
+                printType:printType,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+                clearWidget()
+            }
+        })
+    })
+
+    $('body').on('change', '.changeClients', function () {
+        let ordersDate = $('.ordersDate').val();
+        let managerId = $('.changeManager').val();
+        let numberVal = $('.orderStatus').val();
+        let clientsVal = $(this).val();
+        let type = $('.byType').val();
+        let printType = $('.byPrint').val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/orders/filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                type:type,
+                ordersDate:ordersDate,
+                numberVal:numberVal,
+                managerId:managerId,
+                clientsVal:clientsVal,
+                printType:printType,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+                clearWidget()
+            }
+        })
+    })
+    $('body').on('change', '.ordersDate', function () {
+        let ordersDate = $(this).val();
+        let type = $('.byType').val();
+        let managerId = $('.changeManager').val();
+        let numberVal = $('.orderStatus').val();
+        let clientsVal = $('.changeClients').val();
+        let printType = $('.byPrint').val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/orders/filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                type:type,
+                ordersDate:ordersDate,
+                numberVal:numberVal,
+                managerId:managerId,
+                clientsVal:clientsVal,
+                printType:printType,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+                clearWidget()
             }
         })
     })
@@ -386,8 +703,8 @@ $(document).ready(function() {
             window.location.href = $(this).attr('href');
         }
     })
-
     $('.js-example-basic-multiple').select2();
+
     $("#slider-range").slider({
         range:true,
         orientation:"horizontal",
@@ -421,7 +738,7 @@ $(document).ready(function() {
                 let pars = JSON.parse(data);
                 const today = new Date();
                 const year = today.getFullYear();
-                const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based, so we add 1
+                const month = String(today.getMonth() + 1).padStart(2, '0');
                 const day = String(today.getDate()).padStart(2, '0');
                 if(pars == 'later'){
                     alert('Զեղչի սկիզբը չի կարող ավելի շուտ լինել քան այսօրը:')
@@ -434,7 +751,7 @@ $(document).ready(function() {
             }
         })
     })
-    $('body').on('keyup', '.min-value, .max-value', function (){
+    $('body').on('change', '.min-value, .max-value', function (){
         let min = $('.min-value').val();
         let max = $('.max-value').val();
         let csrfToken = $('meta[name="csrf-token"]').attr("content");
@@ -448,10 +765,10 @@ $(document).ready(function() {
                 _csrf: csrfToken,
             },
             success:function (data){
-                let pars = JSON.parse(data);
-
-                if(pars == 'maxMoreThanMin'){
-                    alert('Թվերը գրել ճիշտ:')
+                let param = JSON.parse(data);
+                // console.log(param)
+                if(param == 'maxMoreThanMin'){
+                    alert('Թվերը գրել ճիշտ հերթականությամբ:');
                     $('.min-value').val('');
                     $('.max-value').val('');
                 }
@@ -463,7 +780,6 @@ $(document).ready(function() {
             $(element).find('.balance').each(function (x,el) {
                 if ($(el).text() == 0){
                     let id = $(el).closest('tr').find('.orderIdDebt').text();
-                    // console.log(id)
                     let csrfToken = $('meta[name="csrf-token"]').attr("content");
                     $.ajax({
                         url:'/clients/get-order-id',
@@ -478,7 +794,553 @@ $(document).ready(function() {
             })
         })
     })
+    $('body').on('click', '.customIcon',function (e) {
+        if ($('.start_date').val() > $('.end_date').val()){
+            alert('Ամսաթվերը գրել ճիշտ հերթականությամբ:');
+            e.preventDefault()
+            $('.start_date').val('');
+            $('.end_date').val('')
+        }
+    })
 
+    $('body').on('change','#payments-rate_id',function () {
+        let id = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url: '/documents/change-rates',
+            method: 'post',
+            datatype: 'json',
+            data: {
+                id: id,
+                _csrf: csrfToken
+            },
+            success: function (data) {
+                let param = JSON.parse(data)
+                if (param == 'others') {
+                    // alert(2222)
+                    $('body').find('#payments-rate_value').attr('readonly', false);
+                    $('body').find('#payments-rate_value').val('');
+                }else if(param == 'amd'){
+                    $('body').find('#payments-rate_value').attr('readonly', true);
+                    $('body').find('#payments-rate_value').val(1);
+                }
+            }
+        })
+    })
+    $('body').on('change', '.filterClientsChart', function () {
+        let clientsId = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        let getHref = window.location.href
+        $.ajax({
+            url: '/dashboard/change-clients',
+            method: 'get',
+            datatype: 'html',
+            data: {
+                clientsId: clientsId,
+                getHref:getHref,
+                _csrf: csrfToken
+            },
+            success: function (data) {
+                $('body').find('.paymentsPart').html(data)
+            }
+        })
+    })
+    //print orders table
+    $('body').on('click','.print_orders_table',function (){
+        var url = '/orders/print-doc';
+        var t_length = $('body').find('#w0 table tbody tr').length;
+        var table = '<table id="ele4">';
+        $('body').find('table').each(function (){
+            if($(this).css('display') === 'none'){
+                $(this).remove();
+            }
+        })
+        $('body').find('table').find('tbody tr').each(function () {
+            var el = $(this).clone();
+            var thead = `
+                                    <tr>
+                                        <th>Օգտատեր</th>
+                                        <th>Հաճախորդ</th>
+                                        <th>Մեկնաբանություն</th>
+                                        <th>Կարգավիճակ</th>
+                                        <th>Փաստաթուղթ</th>
+                                        <th>Ընդհ. զեղչված գումար</th>
+                                        <th>Ընդհ. գումար</th>
+                                        <th>Կանխիկ վճորող ընկերություն</th>
+                                        <th>Ընդհ. զեղչի չափ</th>                                        
+                                        <th>Ընդհ. քանակ</th>
+                                        <th>Պատվերի ամսաթիվ</th>
+                                    </tr>
+                                `;
+            el.find('td:nth-child(1), td:nth-child(2)').remove();
+            let id = $(this).data('key');
+            if (id) {
+                $.ajax({
+                    url: url,
+                    method: 'get',
+                    dataType: 'html',
+                    data: { id: id },
+                    success: function (data) {
+                        table += thead;
+                        table += '<tr>' + el.html() + '</tr>';
+                        table += data;
+                        for (let i = 0; i < 20; i++){
+                            table += '<tr><td colspan="7"></td></tr>';
+                        }
+                        if (--t_length == 0) {
+                            table += '</table>';
+                            var $table = $(table);
+                            $table.print({
+                                globalStyles: false,
+                                mediaPrint: false,
+                                stylesheet: "http://fonts.googleapis.com/css?family=Inconsolata",
+                                iframe: false,
+                                noPrintSelector: ".avoid-this",
+                                deferred: $.Deferred().done(function () {
+                                    console.log('Printing done', arguments);
+                                })
+                            });
+                        }
+                    }
+
+                })
+            }
+        })
+    });
+
+    //print document table
+    $('body').on('click','.print_document_table',function (){
+        var url = '/documents/print-doc';
+        var t_length = $('body').find('#w0 table tbody tr').length;
+        var table = '<table id="ele4">';
+        $('body').find('table').each(function (){
+            if($(this).css('display') === 'none'){
+                $(this).remove();
+            }
+        })
+        var thead = `
+                            <th>Փաստաթղթի տեսակ</th>
+                            <th>Պահեստապետ</th>
+                            <th>Պահեստ</th>
+                            <th>Փոխարժեք</th>
+                            <th>Առաքիչ</th>
+                            <th>Մեկնաբանություն</th>
+                            <th>Ստեղծման Ժամանակ</th>
+                        `;
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url: '/documents/print-doc-fild',
+            method: 'get',
+            datatype: 'json',
+            data: {
+                _csrf: csrfToken
+            },
+            success: function(data1) {
+                let param = JSON.parse(data1)
+                for (let i = 0; i < param['attribute'].length; i++) {
+                    thead += `<th>${param['attribute'][i]}</th>`;
+                }
+                thead = `<tr>`+ thead +`</tr>`;
+                $('body').find('table tbody tr').each(function () {
+                    var el = $(this).clone();
+                    el.find('td:nth-child(1), td:nth-child(2)').remove();
+                    let id = $(this).data('key');
+                    if (id) {
+                        $.ajax({
+                            url: url,
+                            method: 'get',
+                            dataType: 'html',
+                            data: { id: id },
+                            success: function (data) {
+                                table += thead;
+                                table += '<tr>' + el.html() + '</tr>';
+                                table += data;
+                                for (let i = 0; i < 20; i++){
+                                    table += '<tr><td colspan="7"></td></tr>';
+                                }
+                                if (--t_length == 0) {
+                                    table += '</table>';
+                                    var $table = $(table);
+                                    $table.print({
+                                        globalStyles: false,
+                                        mediaPrint: false,
+                                        stylesheet: "http://fonts.googleapis.com/css?family=Inconsolata",
+                                        iframe: false,
+                                        noPrintSelector: ".avoid-this",
+                                        deferred: $.Deferred().done(function () {
+                                            console.log('Printing done', arguments);
+                                        })
+                                    });
+                                }
+                            }
+
+                        })
+                    }
+                })
+            }
+        })
+    });
+
+    $('body').on('change', '.documentsDate, .documentStatus, .documentWarehouseStatus', function () {
+        let numberVal = $('.documentStatus').val();
+        let documentsDate = $('.documentsDate').val();
+        let warehouse_id = $('.documentWarehouseStatus').val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/documents/document-filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                numberVal:numberVal,
+                documentsDate:documentsDate,
+                warehouse_id:warehouse_id,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+            }
+        })
+    })
+
+    $('.js-example-basic-single').select2();
+    // $('body').on('change','#orders-orders_date, #singleClients',function(){
+    //     if($('#orders-orders_date').val() != '' && $('#singleClients').val() != ''){
+    //         $('body').find('.addOrders').attr('disabled',false);
+    //     }
+    // })
+
+    $('body').on('change', '.productStatus', function () {
+        let numberVal = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/products/products-filter-status',
+            method:'get',
+            datatype:'json',
+            data:{
+                numberVal:numberVal,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.card').html(data);
+            }
+        })
+    })
+    $('body').on('change','#users-role_id', function () {
+        let roleNum = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        if ($(this).val() == 4){
+            $('body').find('.warehouseCheck').addClass('activeForInput');
+            $.ajax({
+                url:'/users/premissions',
+                method:'get',
+                datatype:'html',
+                data:{
+                    roleNum:roleNum,
+                    _csrf: csrfToken,
+                },
+                success:function (data){
+                    $('body').find('.premission-content').html(data);
+                }
+            })
+            // $("#documents-to_warehouse").attr('required',true);
+        }else if($(this).val() == 'null') {
+            $('body').find('.warehouseCheck').removeClass('activeForInput');
+            $('body').find('.premission-content').html('');
+            // $("#documents-to_warehouse").removeAttr('required');
+        }else {
+            $('body').find('.warehouseCheck').removeClass('activeForInput');
+            $.ajax({
+                url:'/users/premissions',
+                method:'get',
+                datatype:'html',
+                data:{
+                    roleNum:roleNum,
+                    _csrf: csrfToken,
+                },
+                success:function (data){
+                    $('body').find('.premission-content').html(data);
+                }
+            })
+        }
+    })
+
+    let currentUrl = window.location.href;
+    let hasUpdate = currentUrl.includes('users/update');
+    if (hasUpdate){
+        if ($('body').find('#users-role_id').val() == '4'){
+            $('body').find('.warehouseCheck').addClass('activeForInput');
+            let roleNum = $('body').find('#users-role_id').val();
+            let csrfToken = $('meta[name="csrf-token"]').attr("content");
+            $.ajax({
+                url:'/users/premissions',
+                method:'get',
+                datatype:'html',
+                data:{
+                    roleNum:roleNum,
+                    currentUrl:currentUrl,
+                    _csrf: csrfToken,
+                },
+                success:function (data){
+                    $('body').find('.premission-content').html(data);
+                }
+            })
+        }else if ($('body').find('#users-role_id').val() == 'null') {
+            $('body').find('.warehouseCheck').removeClass('activeForInput');
+        }else {
+            $('body').find('.warehouseCheck').removeClass('activeForInput');
+            let roleNum = $('body').find('#users-role_id').val();
+            let csrfToken = $('meta[name="csrf-token"]').attr("content");
+            $.ajax({
+                url:'/users/premissions',
+                method:'get',
+                datatype:'html',
+                data:{
+                    roleNum:roleNum,
+                    currentUrl:currentUrl,
+                    _csrf: csrfToken,
+                },
+                success:function (data){
+                    $('body').find('.premission-content').html(data);
+                }
+            })
+        }
+    }
+    $('body').find('.card thead th').each(function () {
+        if ($(this).has('a')){
+            $(this).html( $(this).find('a').html())
+        }
+    })
+    function clearWidget(){
+        $('body').find('#w0 table thead th').each(function () {
+            if ($(this).has('a')){
+                $(this).html( $(this).find('a').html())
+            }
+        })
+    }
+    $('body').on('click','.exitOrders',function(){
+        let ordersId = $(this).data('id');
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/orders/exit-modal',
+            method:'get',
+            datatype:'html',
+            data:{
+                ordersId:ordersId,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.modalsExit').html(data);
+            }
+        })
+    })
+    $('body').on('click','.refuseDocument',function(){
+        refuseDocument($(this));
+    })
+
+    $('body').on('keyup','#payments-payment_sum', function () {
+        let inputValue = $(this).val();
+        let sanitizedValue = inputValue.replace(/[^0-9.]/g, '');
+        let parts = sanitizedValue.split('.');
+        if (parts[0] == ''){
+                 sanitizedValue = inputValue.replace(/./, '');
+        }else {
+            if (parts.length > 1) {
+                parts[1] = parts[1].replace(/\./g, '');
+                sanitizedValue = parts[0] + '.' + parts[1];
+            }
+        }
+        $(this).val(sanitizedValue);
+    })
+    $('body').on('keyup','#nomenclature-cost', function () {
+        let inputValue = $(this).val();
+        let sanitizedValue = inputValue.replace(/[^0-9.]/g, '');
+        let parts = sanitizedValue.split('.');
+        if (parts[0] == ''){
+            sanitizedValue = inputValue.replace(/./, '');
+        }else {
+            if (parts.length > 1) {
+                parts[1] = parts[1].replace(/\./g, '');
+                sanitizedValue = parts[0] + '.' + parts[1];
+            }
+        }
+        $(this).val(sanitizedValue);
+    })
+    $('body').on('keyup','#nomenclature-price', function () {
+        let inputValue = $(this).val();
+        let sanitizedValue = inputValue.replace(/[^0-9.]/g, '');
+        let parts = sanitizedValue.split('.');
+        if (parts[0] == ''){
+            sanitizedValue = inputValue.replace(/./, '');
+        }else {
+            if (parts.length > 1) {
+                parts[1] = parts[1].replace(/\./g, '');
+                sanitizedValue = parts[0] + '.' + parts[1];
+            }
+        }
+        $(this).val(sanitizedValue);
+    })
+    function refuseDocument(el) {
+        let docId = el.data('id');
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/documents/refuse-modal',
+            method:'get',
+            datatype:'html',
+            data:{
+                documentId:docId,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                $('body').find('.modals').html(data);
+            }
+        })
+    }
+    $('body').on('keyup', '#users-username', function (){
+        let this_ = $(this);
+        let userText = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/users/check-users',
+            method:'post',
+            datatype:'json',
+            data:{
+                userText:userText,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                let param = JSON.parse(data);
+                if (param == true){
+                    alert('Նման օգտանունով գրանցում կա:');
+                    this_.val('');
+                }
+            }
+        })
+    })
+    $('body').on('keyup', '#users-email', function (){
+        let this_ = $(this);
+        let userText = $(this).val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content");
+        $.ajax({
+            url:'/users/check-mail',
+            method:'post',
+            datatype:'json',
+            data:{
+                userText:userText,
+                _csrf: csrfToken,
+            },
+            success:function (data){
+                let param = JSON.parse(data);
+                if (param == true){
+                    alert('Նման էլ. հասցեով գրանցում կա:');
+                    this_.val('');
+                }
+            }
+        })
+    })
+    $('body').on('keyup', '#users-phone', function () {
+        $(this).val($(this).val().replace(/[^0-9]/g, ''));
+    })
+    $('body').on('keyup', '#clients-phone',function () {
+        $(this).val($(this).val().replace(/[^0-9]/g, ''));
+    })
 });
-
-
+window.addEventListener('load', function() {
+    var global = '';
+    var csrfToken = $('meta[name="csrf-token"]').attr("content");
+    $.ajax({
+        url:"/map/window-load-data",
+        method: 'get',
+        dataType:'json',
+        data:{
+            _csrf:csrfToken,
+        },
+        success:function(data){
+            let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+            days.forEach((day,index)=>{
+                    if(index == new Date().getDay() && index != '0'){
+                        var currentDateStr = data['today'];
+                        var currentDate = new Date(currentDateStr);
+                        var startTime = new Date();
+                        startTime.setHours(8, 0, 0);
+                        var endTime = new Date();
+                        endTime.setHours(19, 0, 0);
+                        if (currentDate >= startTime && currentDate <= endTime) {
+                            function init () {
+                                var location_value = data['route'];
+                                var date = data['today'];
+                                var managerId, deliverId = '';
+                                global = data['role_id'];
+                                if (data['role_id'] == 2) {
+                                    managerId = data['manager_id'];
+                                }
+                                if (data['role_id'] == 3) {
+                                    deliverId = data['deliver_id'];
+                                }
+                                if (data['role_id'] == 2 || data['role_id'] == 3) {
+                                    setInterval(function () {
+                                        var myLatitude = 40;
+                                        var myLongitude = 44;
+                                        var geolocation = ymaps.geolocation, myMap = new ymaps.Map('mapmain', {
+                                            center: [40.2100725, 44.4987508],
+                                            zoom: 8
+                                        }, {
+                                            searchControlProvider: 'yandex#search'
+                                        }, {
+                                            buttonMaxWidth: 300
+                                        });
+                                        var myMap;
+                                        geolocation.get({
+                                            provider: 'yandex',
+                                            mapStateAutoApply: true
+                                        }).then(function (result) {
+                                            result.geoObjects.options.set('preset', 'islands#redCircleIcon');
+                                            result.geoObjects.get(0).properties.set({
+                                                balloonContentBody: 'Мое местоположение'
+                                            });
+                                            myMap.geoObjects.add(result.geoObjects);
+                                        });
+                                        geolocation.get({
+                                            provider: 'browser',
+                                            mapStateAutoApply: true
+                                        }).then(function (result) {
+                                            myLatitude = result.geoObjects.get(0).geometry.getCoordinates()[0];
+                                            myLongitude = result.geoObjects.get(0).geometry.getCoordinates()[1];
+                                            result.geoObjects.options.set('preset', 'islands#blueCircleIcon');
+                                            console.log(myLatitude)
+                                            console.log(myLongitude)
+                                            myMap.geoObjects.add(result.geoObjects);
+                                            var csrfToken = $('meta[name="csrf-token"]').attr("content");
+                                            $.ajax({
+                                                url: "/map/coordinates-user",
+                                                method: 'post',
+                                                dataType: 'json',
+                                                data: {
+                                                    myLatitude: myLatitude,
+                                                    myLongitude: myLongitude,
+                                                    route_id: location_value,
+                                                    date:date,
+                                                    manager:managerId,
+                                                    deliver:deliverId,
+                                                    _csrf: csrfToken,
+                                                },
+                                            });
+                                        }).catch(function (error) {
+                                            // console.log(error);
+                                        });
+                                    }, 60 * 1000);
+                                }
+                            }
+                            ymaps.ready(init);
+                        }
+                    }
+                }
+            )
+        }
+    })
+    if (global == 2) {
+        ymaps.ready(init);
+    }
+    if (global == 3) {
+        ymaps.ready(init);
+    }
+})

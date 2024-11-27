@@ -78,8 +78,8 @@ class DiscountController extends Controller
         ];
         $date_tab = [];
 
-        $searchModel = new DiscountSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+//        $searchModel = new DiscountSearch();
+//        $dataProvider = $searchModel->search($this->request->queryParams);
         $discount_overdue = Discount::find()->where(['status' => 1])->all();
 
         foreach ($discount_overdue as $key => $value){
@@ -88,11 +88,11 @@ class DiscountController extends Controller
                 $value->save(false);
             }
         }
-        $discount_sortable = Discount::find()->where(['status' => 1])->orderBy(['end_date'=> SORT_ASC])->asArray()->all();
+        $discount_sortable = Discount::find()->where(['status' => 1])->orderBy(['discount_sortable'=> SORT_ASC])->asArray()->all();
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+//            'searchModel' => $searchModel,
+//            'dataProvider' => $dataProvider,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
 
@@ -104,24 +104,28 @@ class DiscountController extends Controller
         if ($this->request->isPost) {
             if (!empty($_POST['sort'])) {
                 foreach ($_POST['sort'] as $i => $row) {
-
                     $discount = Discount::find()->where(['and',['status'=> 1],['id'=>intval($row)]])->one();
                     $discount->discount_sortable = $i;
                     $discount->save(false);
                 }
             }
-            return 'success';
-        } else {
-            return 'error';
+//            return 'success';
         }
+//        else {
+//            return 'error';
+//        }
     }
     public function actionInactive(){
+        $have_access = Users::checkPremission(44);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $sub_page = [
             ['name' => 'Ակտիվ զեղչեր','address' => '/discount'],
         ];
         $date_tab = [];
 
-        $discount_sortable = Discount::find()->where(['or',['status' => '0'],['status' => '2']])->asArray()->all();
+        $discount_sortable = Discount::find()->where(['or',['status' => '0'],['status' => '2']])->orderBy(['created_at'=> SORT_DESC])->asArray()->all();
         return $this->render('inactive', [
             'date_tab' => $date_tab,
             'sub_page' => $sub_page,
@@ -199,6 +203,16 @@ class DiscountController extends Controller
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model = Discount::getDefVals($model);
+            if(!empty($post['clients']) && !empty($post['products'])){
+                $model->discount_available_type = 3;
+            }elseif(!empty($post['clients']) && empty($post['products'])){
+                $model->discount_available_type = 1;
+            }elseif(empty($post['clients']) && !empty($post['products'])){
+                $model->discount_available_type = 2;
+            }elseif (empty($post['clients']) && empty($post['products'])){
+                $model->discount_available_type = 4;
+            }
+
             $model->save();
             if(!empty($post['clients'])){
                 $client_groups_id = [];
@@ -214,8 +228,10 @@ class DiscountController extends Controller
                 for ($t=0; $t < count($client_groups_id); $t++)
                 {
                     $all_client_groups_id[$t] = ClientsGroups::find()
-                        ->select('clients_id')
+                        ->select('clients_groups.clients_id')
+                        ->leftJoin('groups_name','groups_name.id = clients_groups.groups_id')
                         ->where(['groups_id' => $client_groups_id[$t]])
+                        ->andWhere(['groups_name.status' => 1])
                         ->asArray()
                         ->all();
                 }
@@ -271,9 +287,9 @@ class DiscountController extends Controller
         } else {
             $model->loadDefaultValues();
         }
-            $clients = Clients::find()->select('id,name')->asArray()->all();
-            $products = Nomenclature::find()->select('id,name')->asArray()->all();
-            $discount_client_groups = GroupsName::find()->select('*')->asArray()->all();
+            $clients = Clients::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
+            $products = Nomenclature::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
+            $discount_client_groups = GroupsName::find()->select('*')->where(['status' => '1'])->asArray()->all();
 
         return $this->render('create', [
             'model' => $model,
@@ -310,6 +326,7 @@ class DiscountController extends Controller
         $oldattributes = Discount::find()
             ->select('*')
             ->where(['id' => $id])
+            ->andWhere(['status' => 1])
             ->asArray()
             ->one();
         $premission = Premissions::find()
@@ -341,9 +358,22 @@ class DiscountController extends Controller
                 $model->discount_filter_type = $post['Discount']['discount_filter_type'];
                 $model->min = $post['min'];
                 $model->max = $post['max'];
+            }else{
+                $model->discount_filter_type = null;
+                $model->min = null;
+                $model->max = null;
             }
             $model->comment = $post["Discount"]['comment'];
             $model->updated_at = date('Y-m-d H:i:s');
+            if(!empty($post['clients']) && !empty($post['products'])){
+                $model->discount_available_type = 3;
+            }elseif(!empty($post['clients']) && empty($post['products'])){
+                $model->discount_available_type = 1;
+            }elseif(empty($post['clients']) && !empty($post['products'])){
+                $model->discount_available_type = 2;
+            }elseif (empty($post['clients']) && empty($post['products'])){
+                $model->discount_available_type = 4;
+            }
             $model->save();
             if(!empty($post['clients'])){
                 $client_groups_id = [];
@@ -359,8 +389,10 @@ class DiscountController extends Controller
                 for ($t=0; $t < count($client_groups_id); $t++)
                 {
                     $all_client_groups_id[$t] = ClientsGroups::find()
-                        ->select('clients_id')
+                        ->select('clients_groups.clients_id')
+                        ->leftJoin('groups_name','groups_name.id = clients_groups.groups_id')
                         ->where(['groups_id' => $client_groups_id[$t]])
+                        ->andWhere(['groups_name.status' => 1])
                         ->asArray()
                         ->all();
                 }
@@ -430,19 +462,21 @@ class DiscountController extends Controller
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
-        $clients = Clients::find()->select('id,name')->asArray()->all();
-        $discount_clients_id = DiscountClients::find()->select('client_id')->where(['discount_id' => $id, 'group_id' => 0])->asArray()->all();
+        $clients = Clients::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
+        $discount_clients_id = DiscountClients::find()->select('client_id')->where(['discount_id' => $id, 'group_id' => 0])->andWhere(['status' => '1'])->asArray()->all();
         $discount_clients_id = array_column($discount_clients_id,'client_id');
-        $products = Nomenclature::find()->select('id,name')->asArray()->all();
+        $products = Nomenclature::find()->select('id,name')->where(['status' => '1'])->asArray()->all();
         $discount_products_id = DiscountProducts::find()->select('product_id')->where(['discount_id' => $id])->asArray()->all();
         $discount_products_id = array_column($discount_products_id,'product_id');
         $min = Discount::find()->select('min')->where(['id' => $id])->asArray()->one();
         $max = Discount::find()->select('max')->where(['id' => $id])->asArray()->one();
-        $discount_client_groups = GroupsName::find()->select('*')->asArray()->all();
+        $discount_client_groups = GroupsName::find()->select('*')->where(['status' => '1'])->asArray()->all();
         $discount_client_groups_name = GroupsName::find()
             ->select('groups_name')
             ->leftJoin('discount_clients', 'discount_clients.group_id = groups_name.id')
             ->where(['discount_clients.discount_id' => $id])
+            ->andwhere(['groups_name.status' => '1'])
+            ->andwhere(['discount_clients.status' => '1'])
             ->asArray()
             ->all();
         $uniqueArray = array_unique($discount_client_groups_name, SORT_REGULAR);
@@ -453,6 +487,7 @@ class DiscountController extends Controller
             ->select('client_id, group_id')
             ->where(['discount_id' => $id])
             ->andWhere(['<>','group_id', 0])
+            ->andwhere(['status' => '1'])
             ->asArray()
             ->all();
         $discount_client_groups_id = array_column($discount_client_groups_id, 'client_id');
@@ -500,6 +535,15 @@ class DiscountController extends Controller
         $discount = Discount::findOne($id);
         $discount->status = '0';
         $discount->save();
+        $discount_ = DiscountClients::find()
+            ->select('id')
+            ->where(['discount_id' => $id])
+            ->andWhere(['status' => '1'])
+            ->asArray()
+            ->all();
+        foreach ($discount_ as $discount_in) {
+            DiscountClients::updateAll(['status' => '0'], ['id' => $discount_in['id']]);
+        }
         Log::afterSaves('Delete', '', $oldattributes['discount'], '#', $premission);
         return $this->redirect(['index']);
     }
@@ -521,8 +565,14 @@ class DiscountController extends Controller
     public function actionCheckFilterValue(){
         if ($this->request->isPost){
             $post = $this->request->post();
-            if (!empty($post['min']) && !empty($post['max']) && $post['min'] > $post['max']){
-                return json_encode('maxMoreThanMin');
+            if ($post['min'] != '' && $post['max'] != ''){
+                if ($post['min'] > $post['max']){
+                    return json_encode('maxMoreThanMin');
+                }else{
+                    return json_encode(false);
+                }
+            }else{
+                return json_encode('empty');
             }
         }
     }

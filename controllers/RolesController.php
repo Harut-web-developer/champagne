@@ -67,7 +67,8 @@ class RolesController extends Controller
         }
         $sub_page = [
             ['name' => 'Օգտատեր','address' => '/users'],
-            ['name' => 'Թույլտվություն','address' => '/premissions'],
+            ['name' => 'Մենեջեր-առաքիչ','address' => '/manager-deliver-condition'],
+//            ['name' => 'Թույլտվություն','address' => '/premissions'], pak mna
         ];
         $date_tab = [];
 

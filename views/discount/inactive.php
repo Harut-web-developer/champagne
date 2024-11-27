@@ -1,9 +1,13 @@
 <?php
+$itemsPerPage = 20;
+$totalPages = ceil(count($discount_sortable) / $itemsPerPage);
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$startIndex = ($page - 1) * $itemsPerPage;
+$discount_sortablePerPage = array_slice($discount_sortable, $startIndex, $itemsPerPage);
+
 $this->params['sub_page'] = $sub_page;
 $this->params['date_tab'] = $date_tab;
-
 ?>
-
 <div class="discount-index">
     <div class="card">
         <div class="table-responsive text-nowrap">
@@ -17,7 +21,6 @@ $this->params['date_tab'] = $date_tab;
                     <th>Զեղչի սկիզբ</th>
                     <th>Զեղչի ավարտ</th>
                     <th>Ստուգում</th>
-                    <th>Զեղչի տեսակավորում</th>
                     <th>Զեղչի ձև</th>
                     <th>Զեղչի տեսակ</th>
                     <th>Նվազագույն</th>
@@ -27,68 +30,65 @@ $this->params['date_tab'] = $date_tab;
                 </thead>
                 <tbody class="table-border-bottom-0 sortable-ul">
                 <?php
-                foreach ($discount_sortable as $keys => $item) {?>
+                foreach ($discount_sortablePerPage as $keys => $items) {?>
                     <tr>
-                        <td>
-                            <span class="fw-medium"><?=$keys + 1?></span>
-                        </td>
+                        <td><?=($startIndex + $keys + 1)?></td>
                         <td>
                             <?php
-                            if ($item['name'] == ''){
+                            if ($items['name'] == ''){
                                 echo 'Դատարկ';
                             }else{
-                                echo $item['name'];
+                                echo $items['name'];
                             }?>
                         </td>
                         <td>
                             <?php
-                            if ($item['type'] == 'percent'){
+                            if ($items['type'] == 'percent'){
                                 echo 'Տոկոս';
                             }else{
                                 echo 'Գումար';
                             }?>
                         </td>
-                        <td><?=$item['discount']?></td>
+                        <td><?=$items['discount']?></td>
                         <td>
                             <?php
-                            if ($item['start_date'] == ''){
+                            if ($items['start_date'] == ''){
                                 echo 'Դատարկ';
                             }else{
-                                echo $item['start_date'];
+                                echo $items['start_date'];
                             }?>
                         </td>
                         <td>
                             <?php
-                            if ($item['end_date'] == ''){
+                            if ($items['end_date'] == ''){
                                 echo 'Դատարկ';
                             }else{
-                                echo $item['end_date'];
+                                echo $items['end_date'];
                             }?>
                         </td>
                         <td>
                             <?php
-                            if ($item['discount_check'] == '1'){
+                            if ($items['discount_check'] == '1'){
                                 echo 'Կիրառել մյուս զեղչերի հետ';
-                            }elseif ($item['discount_check'] == '0'){
+                            }elseif ($items['discount_check'] == '0'){
                                 echo 'Կիրառելի չէ մյուս զեղչերի հետ';
                             }
                             ?>
                         </td>
-                        <td><?=$item['discount_sortable']?></td>
                         <td>
                             <?php
-                            if ($item['discount_option'] == '1'){
+                            if ($items['discount_option'] == '1'){
                                 echo 'Մեկ անգամյա';
-                            }elseif ($item['discount_option'] == '2'){
+                            }elseif ($items['discount_option'] == '2'){
                                 echo 'Բազմակի';
                             }
                             ?>
                         </td>
                         <td>
                             <?php
-                            if ($item['discount_filter_type'] == 'count'){
+                            if ($items['discount_filter_type'] == 'count'){
                                 echo 'Ըստ քանակի';
-                            }elseif ($item['discount_filter_type'] == 'price'){
+                            }elseif ($items['discount_filter_type'] == 'price'){
                                 echo 'Ըստ գնի';
                             }else{
                                 echo 'Դատարկ';
@@ -97,27 +97,27 @@ $this->params['date_tab'] = $date_tab;
                         </td>
                         <td>
                             <?php
-                            if (empty($item['min'])){
+                            if (empty($items['min'])){
                                 echo 'Դատարկ';
                             }else{
-                                echo $item['min'];
+                                echo $items['min'];
                             }
                             ?>
                         </td>
                         <td>
                             <?php
-                            if (empty($item['max'])){
+                            if (empty($items['max'])){
                                 echo 'Դատարկ';
                             }else{
-                                echo $item['max'];
+                                echo $items['max'];
                             }
                             ?>
                         </td>
                         <td>
                             <?php
-                            if ($item['status'] == 0){
+                            if ($items['status'] == 0){
                                 echo 'Ջնջված';
-                            }elseif($item['status'] == 2){
+                            }elseif($items['status'] == 2){
                                 echo 'Ժամկետանց';
                             }
                             ?>
@@ -128,43 +128,36 @@ $this->params['date_tab'] = $date_tab;
                 </tbody>
             </table>
         </div>
-        <!--    --><?php //= GridView::widget([
-        //        'summary' => 'Ցուցադրված է <b>{totalCount}</b>-ից <b>{begin}-{end}</b>-ը',
-        //        'summaryOptions' => ['class' => 'summary'],
-        //        'dataProvider' => new ActiveDataProvider([
-        //            'query' => $dataProvider->query->andWhere(['status' => '1']),
-        ////                'pagination' => [
-        ////                    'pageSize' => 20,
-        ////                ],
-        //        ]),
-        //        'columns' => [
-        //            ['class' => 'yii\grid\SerialColumn'],
-        //
-        //            'type',
-        //            'discount',
-        //            [
-        //                'attribute' => 'Զեղչի սկիզբ',
-        //                'value' => function ($model) {
-        //                    if ($model->start_date) {
-        //                        return $model->start_date;
-        //                    } else {
-        //                        return 'Դատարկ';
-        //                    }
-        //                }
-        //            ],
-        //            [
-        //                'attribute' => 'Զեղչի ավարտ',
-        //                'value' => function ($model) {
-        //                    if ($model->end_date) {
-        //                        return $model->end_date;
-        //                    } else {
-        //                        return 'Դատարկ';
-        //                    }
-        //                }
-        //            ],
-        //            ...$action_column,
-        //        ],
-        //    ]); ?>
+        <?php if (count($discount_sortable) > $itemsPerPage){ ?>
+        <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm customPages">
+                <li class="<?= $page == 1 ? 'prev disabled' : 'prev' ?> page-item">
+                    <?php if ($page > 1) : ?>
+                        <a class="page-link" href="?page=<?= $page - 1 ?>" aria-label="Previous">
+                            <i class="tf-icon bx bx-chevrons-left"></i>
+                        </a>
+                    <?php else : ?>
+                        <span>«</span>
+                    <?php endif; ?>
+                </li>
+
+                <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+                    <li class="<?= $i == $page ? 'active' : '' ?> page-item">
+                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                    </li>
+                <?php endfor; ?>
+
+                <li class="<?= $page == $totalPages ? 'next disabled' : 'next' ?> page-item">
+                    <?php if ($page < $totalPages) : ?>
+                        <a class="page-link" href="?page=<?= $page + 1 ?>" aria-label="Next">
+                            <i class="tf-icon bx bx-chevrons-right"></i>
+                        </a>
+                    <?php else : ?>
+                        <span>»</span>
+                    <?php endif; ?>
+                </li>
+            </ul>
+        </nav>
+        <?php } ?>
     </div>
 </div>
-

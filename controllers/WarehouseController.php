@@ -63,18 +63,31 @@ class WarehouseController extends Controller
      */
     public function actionIndex()
     {
+        $session = Yii::$app->session;
         $have_access = Users::checkPremission(4);
         if(!$have_access){
             $this->redirect('/site/403');
         }
         $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'warehouse']);
-        $sub_page = [
-            ['name' => 'Փաստաթղթեր','address' => '/documents'],
-            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-            ['name' => 'Ապրանք','address' => '/products'],
-            ['name' => 'Տեղեկամատյան','address' => '/log'],
 
-        ];
+            $sub_page = [];
+        if (Users::checkPremission(40)){
+            $documents = ['name' => 'Փաստաթղթեր','address' => '/documents'];
+            array_push($sub_page,$documents);
+        }
+        if (Users::checkPremission(12)){
+            $nom = ['name' => 'Անվանակարգ','address' => '/nomenclature'];
+            array_push($sub_page,$nom);
+        }
+        if (Users::checkPremission(20)){
+            $prod = ['name' => 'Ապրանք','address' => '/products'];
+            array_push($sub_page,$prod);
+        }
+        if (Users::checkPremission(28)){
+            $log = ['name' => 'Տեղեկամատյան','address' => '/log'];
+            array_push($sub_page,$log);
+        }
+
         $date_tab = [];
 
         $searchModel = new WarehouseSearch();
@@ -135,6 +148,9 @@ class WarehouseController extends Controller
             ->one();
         if ($this->request->isPost) {
             $post = $this->request->post();
+//            echo "<pre>";
+//            var_dump($post);
+//            exit();
             date_default_timezone_set('Asia/Yerevan');
 
             $model->name = $post['Warehouse']['name'];
@@ -163,14 +179,31 @@ class WarehouseController extends Controller
 
     public function actionCreateFields()
     {
-        $sub_page = [
-            ['name' => 'Պահեստ','address' => '/warehouse'],
-            ['name' => 'Փաստաթղթեր','address' => '/documents'],
-            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-            ['name' => 'Ապրանք','address' => '/products'],
-            ['name' => 'Տեղեկամատյան','address' => '/log'],
-
-        ];
+        $have_access = Users::checkPremission(73);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+        $sub_page = [];
+        if (Users::checkPremission(4)){
+            $warehouse = ['name' => 'Պահեստ','address' => '/warehouse'];
+            array_push($sub_page,$warehouse);
+        }
+        if (Users::checkPremission(40)){
+            $documents = ['name' => 'Փաստաթղթեր','address' => '/documents'];
+            array_push($sub_page,$documents);
+        }
+        if (Users::checkPremission(12)){
+            $nom = ['name' => 'Անվանակարգ','address' => '/nomenclature'];
+            array_push($sub_page,$nom);
+        }
+        if (Users::checkPremission(20)){
+            $prod = ['name' => 'Ապրանք','address' => '/products'];
+            array_push($sub_page,$prod);
+        }
+        if (Users::checkPremission(28)){
+            $log = ['name' => 'Տեղեկամատյան','address' => '/log'];
+            array_push($sub_page,$log);
+        }
         $date_tab = [];
 
         $model = new Warehouse();
@@ -278,7 +311,14 @@ class WarehouseController extends Controller
         Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }
-
+    public function actionCoordsLocation()
+    {
+        if ($this->request->isPost) {
+            $post = $this->request->post();
+            $latlong = $post['coords'][0].','.$post['coords'][1];
+            return json_encode($latlong);
+        }
+    }
     /**
      * Finds the Warehouse model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

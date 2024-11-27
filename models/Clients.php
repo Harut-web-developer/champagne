@@ -10,7 +10,9 @@ use Yii;
  * @property int $id
  * @property int $status
  * @property int $sort_
+ * @property int $debt_limit
  * @property string $name
+ * @property string $client_warehouse_id
  * @property string $location
  * @property string $route_id
  * @property string $phone
@@ -33,8 +35,8 @@ class Clients extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'location', 'phone', 'route_id'], 'required'],
-            [['route_id'], 'integer'],
+            [['name','location', 'phone', 'debt_limit' ], 'required'],
+            [['route_id','debt_limit'], 'integer'],
             [['status', 'phone'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'location'], 'string', 'max' => 255],
@@ -48,8 +50,11 @@ class Clients extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'branch_groups_id' => 'Հիմնական անուն',
             'route_id' => 'Երթուղի',
+            'client_warehouse_id' => 'Պահեստ',
             'sort_' => 'Երթուղու համար',
+            'debt_limit' => 'Պարտքի սահմանաչափ',
             'name' => 'Անուն',
             'location' => 'Տեղադիրք',
             'phone' => 'Հեռախոսահամար',
@@ -72,5 +77,20 @@ class Clients extends \yii\db\ActiveRecord
     }
     public function getRouteName(){
         return $this->hasOne(Route::className(), ['id'=>'route_id']);
+    }
+    public function getWarehouseName(){
+        return $this->hasOne(Warehouse::className(), ['id'=>'client_warehouse_id']);
+    }
+    public function getOrders()
+    {
+        return $this->hasMany(Orders::class, ['clients_id' => 'id'])->onCondition(['orders.status' => '2']);
+    }
+    public function getOrdersSum()
+    {
+        return $this->hasMany(Orders::class, ['clients_id' => 'id'])->onCondition(['orders.status' => '2'])->orOnCondition(['orders.status' => '4']);
+    }
+    public function getPayments()
+    {
+        return $this->hasMany(Payments::class, ['client_id' => 'id'])->onCondition(['payments.status' => '1']);
     }
 }

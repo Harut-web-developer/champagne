@@ -60,27 +60,43 @@ class ProductsController extends Controller
      */
     public function actionIndex()
     {
+        $session = Yii::$app->session;
         $have_access = Users::checkPremission(20);
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [
-            ['name' => 'Պահեստ','address' => '/warehouse'],
-            ['name' => 'Փաստաթղթեր','address' => '/documents'],
-            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-            ['name' => 'Տեղեկամատյան','address' => '/log'],
-        ];
+        $sub_page = [];
+        if (Users::checkPremission(4)){
+            $warehouses = ['name' => 'Պահեստ','address' => '/warehouse'];
+            array_push($sub_page,$warehouses);
+        }
+        if (Users::checkPremission(40)){
+            $documents = ['name' => 'Փաստաթղթեր','address' => '/documents'];
+            array_push($sub_page,$documents);
+        }
+        if (Users::checkPremission(12)){
+            $nom = ['name' => 'Անվանակարգ','address' => '/nomenclature'];
+            array_push($sub_page,$nom);
+        }
+        if (Users::checkPremission(28)){
+            $log = ['name' => 'Տեղեկամատյան','address' => '/log'];
+            array_push($sub_page,$log);
+        }
         $date_tab = [];
 
         $searchModel = new ProductsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-
+        $warehouse = Warehouse::find()
+            ->select('id, name')
+            ->where(['status' => '1'])
+            ->asArray()
+            ->all();
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
+            'warehouse' => $warehouse,
         ]);
     }
 
@@ -152,13 +168,7 @@ class ProductsController extends Controller
 
     public function actionCreateFields()
     {
-        $sub_page = [
-            ['name' => 'Պահեստ','address' => '/warehouse'],
-            ['name' => 'Փաստաթղթեր','address' => '/documents'],
-            ['name' => 'Ապրանք','address' => '/products'],
-            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-            ['name' => 'Տեղեկամատյան','address' => '/log'],
-        ];
+        $sub_page = [];
         $date_tab = [];
 
         $model = new Products();
@@ -248,7 +258,16 @@ class ProductsController extends Controller
     public function actionGetProducts(){
         if ($this->request->isPost){
             $post = $this->request->post();
-            $products_count = Products::find()->select('SUM(count) as count')->where(['nomenclature_id' => $post['itemId']])->asArray()->all();
+
+            $products_count = Products::find()->select('SUM(count_balance) as count')
+                ->where(['nomenclature_id' => intval($post['itemId'])])
+                ->andWhere(['warehouse_id' => $post['warehouse_id']])
+                ->andWhere(['status' => '1'])
+                ->andWhere(['or',['type' => 1],['type' => 3],['type' => 8]])
+                ->asArray()
+                ->all();
+//            var_dump($products_count);
+//            exit();
             if ($products_count[0]['count'] === null){
                 return json_encode(['count' => 'dontExists']);
             }elseif ($post['count'] > intval($products_count[0]['count'])){
@@ -274,5 +293,36 @@ class ProductsController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public  function actionProductsFilterStatus(){
+        if ($_GET){
+            $page_value = null;
+            if(isset($_GET["dp-1-page"]))
+                $page_value = intval($_GET["dp-1-page"]);
+            $searchModel = new ProductsSearch();
+            $dataProvider = $searchModel->search($this->request->queryParams);
+            $sub_page = [];
+            $date_tab = [];
+            $warehouse = Warehouse::find()
+                ->select('id, name')
+                ->asArray()
+                ->all();
+
+            $render_array = [
+                'sub_page' => $sub_page,
+                'date_tab' => $date_tab,
+                'page_value' => $page_value,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+                'warehouse' => $warehouse,
+            ];
+
+            if(Yii::$app->request->isAjax){
+                return $this->renderAjax('widget', $render_array);
+            }else{
+                return $this->render('widget', $render_array);
+            }
+        }
     }
 }

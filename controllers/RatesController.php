@@ -65,10 +65,15 @@ class RatesController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [
-            ['name' => 'Վիճակագրություն','address' => '/payments/statistics'],
-            ['name' => 'Վճարումներ','address' => '/payments'],
-        ];
+        $sub_page = [];
+        if (Users::checkPremission(65)){
+            $rates = ['name' => 'Վճարումներ','address' => '/payments'];
+            array_push($sub_page,$rates);
+        }
+        if (Users::checkPremission(66)){
+            $statistics = ['name' => 'Վիճակագրություն','address' => '/payments/statistics'];
+            array_push($sub_page,$statistics);
+        }
         $date_tab = [];
 
         $searchModel = new RatesSearch();

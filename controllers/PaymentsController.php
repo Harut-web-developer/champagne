@@ -3,11 +3,18 @@
 namespace app\controllers;
 
 use app\models\Clients;
+use app\models\Log;
+use app\models\ManagerDeliverCondition;
+use app\models\Orders;
 use app\models\Payments;
 use app\models\PaymentsSearch;
+use app\models\Premissions;
 use app\models\Rates;
+use app\models\Route;
+use app\models\Users;
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -60,10 +67,20 @@ class PaymentsController extends Controller
      */
     public function actionIndex()
     {
-        $sub_page = [
-            ['name' => 'Վիճակագրություն','address' => '/payments/statistics'],
-            ['name' => 'Փոխարժեք','address' => '/rates']
-        ];
+        $have_access = Users::checkPremission(65);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+        $sub_page = [];
+        if (Users::checkPremission(66)){
+            $statistics = ['name' => 'Վիճակագրություն','address' => '/payments/statistics'];
+            array_push($sub_page,$statistics);
+        }
+        if (Users::checkPremission(48)){
+            $rates = ['name' => 'Փոխարժեք','address' => '/rates'];
+            array_push($sub_page,$rates);
+        }
+
         $date_tab = [];
 
         $searchModel = new PaymentsSearch();
@@ -85,19 +102,37 @@ class PaymentsController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public  function actionStatistics(){
-//        echo "<pre>";
-        $statistics = Payments::find()->select('orders.id as orders_id,SUM(orders.total_price) as debt,orders.status,
-         clients.name, payments.id as payment_id,payments.payment_sum,')
-            ->leftJoin('orders','orders.clients_id = payments.client_id')
-            ->leftJoin('clients', 'clients.id = payments.client_id')
-            ->where(['orders.status' => '2'])
-            ->groupBy('payments.client_id')
+        $have_access = Users::checkPremission(66);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+        $session = Yii::$app->session;
+        if ($session['role_id'] == '1' || $session['role_id'] == '4'){
+            $routeIds = Route::find()->select('id')->asArray()->all();
+            $route_id = ArrayHelper::getColumn($routeIds, 'id');
+        }else{
+            if ($session['role_id'] == '2'){
+                $routeIds = ManagerDeliverCondition::find()->select('route_id')->where(['manager_id' => $session['user_id']])->asArray()->all();
+                $route_id = ArrayHelper::getColumn($routeIds, 'route_id');
+            } elseif ($session['role_id'] == '3'){
+                $routeIds = ManagerDeliverCondition::find()->select('route_id')->where(['deliver_id' => $session['user_id']])->asArray()->all();
+                $route_id = ArrayHelper::getColumn($routeIds, 'route_id');
+            }
+        }
+        $statistics = Clients::find()
+            ->innerJoinWith(['orders' , 'payments'])
+            ->where(['in','route_id', $route_id])
             ->asArray()
             ->all();
-        $sub_page = [
-            ['name' => 'Վճարումներ','address' => '/payments'],
-            ['name' => 'Փոխարժեք','address' => '/rates']
-        ];
+        $sub_page = [];
+        if (Users::checkPremission(65)){
+            $rates = ['name' => 'Վճարումներ','address' => '/payments'];
+            array_push($sub_page,$rates);
+        }
+        if (Users::checkPremission(48)){
+            $rates = ['name' => 'Փոխարժեք','address' => '/rates'];
+            array_push($sub_page,$rates);
+        }
         $date_tab = [];
 
         return $this->render('statistics',[
@@ -129,20 +164,71 @@ class PaymentsController extends Controller
      */
     public function actionCreate()
     {
+        $have_access = Users::checkPremission(62);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = new Payments();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
+            $url = Url::to('', 'http');
+            $url = str_replace('create', 'view', $url);
+            $premission = Premissions::find()
+                ->select('name')
+                ->where(['id' => 62])
+                ->asArray()
+                ->one();
+            $model_l = array();
             $post = $this->request->post();
-            $model->client_id = $post['Payments']['client_id'];
-            $model->payment_sum = $post['Payments']['payment_sum'];
+            $model->client_id = $post['client_id'];
+            $model->payment_sum = floatval($post['Payments']['payment_sum']);
             $model->pay_date = $post['Payments']['pay_date'];
             $model->rate_id = $post['Payments']['rate_id'];
             $model->rate_value = $post['Payments']['rate_value'];
             $model->comment = $post['Payments']['comment'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
-            $model->save();
-            return $this->redirect(['index', 'id' => $model->id]);
+            if ($model->save()) {
+                foreach ($model as $index => $item) {
+                    $model_l[$index] = $item;
+                }
+                $client_orders = Orders::find()
+                    ->select(['orders.id', 'orders.total_price as debt'])
+                    ->leftJoin('clients', 'orders.clients_id = clients.id')
+                    ->where(['orders.clients_id' => $post['client_id']])
+                    ->andwhere(['or',['orders.status' => '2'],['orders.status' => '3'],['orders.status' => '4'],['orders.status' => '5']])
+                    ->groupBy('orders.id')
+                    ->asArray()
+                    ->all();
+
+                $payments = Payments::find()
+                    ->select('SUM(payment_sum) as payments_total')
+                    ->where(['client_id'=> $post['client_id']])
+                    ->andWhere(['status' => '1'])
+                    ->asArray()->one();
+                $payments = $payments['payments_total'];
+                $debt_total = 0;
+                foreach ($client_orders as $keys => $client_order) {
+                    if ($payments) {
+                        if ($payments >= intval($client_order['debt'])) {
+                            $payments -= intval($client_order['debt']);
+                            $orders = Orders::findOne($client_order['id']);
+                            $orders->status = '3';
+                            $orders->save(false);
+                            foreach ($orders as $index => $item) {
+                                $model_l[$index.$keys] = $item;
+                            }
+                        } else {
+                            $debt_total += intval($client_order['debt']) - $payments;
+                            $payments = 0;
+                        }
+                    } else {
+                        $debt_total += intval($client_order['debt']) - $payments;
+                    }
+                }
+                Log::afterSaves('Create', $model_l, '', $url.'?'.'id'.'='.$model->id, $premission);
+                return $this->redirect(['index', 'id' => $model->id]);
+            }
         } else {
             $model->loadDefaultValues();
         }
@@ -150,13 +236,9 @@ class PaymentsController extends Controller
             ['name' => 'Վիճակագրություն','address' => '/payments/statistics']
         ];
         $date_tab = [];
-
-//        echo "<pre>";
-        $client = Clients::find()->select('id,name')->asArray()->all();
-        $client = ArrayHelper::map($client,'id','name');
-        $rates = Rates::find()->select('id,name')->asArray()->all();
+        $client = Clients::find()->select('id,name')->andWhere(['status' => '1'])->asArray()->all();
+        $rates = Rates::find()->select('id,name')->where(['status' => ['1','2']])->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
-//        var_dump($client);
         return $this->render('create', [
             'model' => $model,
             'client' => $client,
@@ -176,38 +258,50 @@ class PaymentsController extends Controller
      */
     public function actionUpdate($id)
     {
+        $have_access = Users::checkPremission(63);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $model = $this->findModel($id);
-
+        $url = Url::to('', 'http');
+        $url = str_replace('update', 'view', $url);
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 63])
+            ->asArray()
+            ->one();
+        $model_l = array();
         if ($this->request->isPost) {
             date_default_timezone_set('Asia/Yerevan');
             $post = $this->request->post();
-            $model->client_id = $post['Payments']['client_id'];
-            $model->payment_sum = $post['Payments']['payment_sum'];
+            $model->client_id = $post['client_id'];
+            $model->payment_sum = floatval($post['Payments']['payment_sum']);
             $model->pay_date = $post['Payments']['pay_date'];
             $model->rate_id = $post['Payments']['rate_id'];
             $model->rate_value = $post['Payments']['rate_value'];
             $model->comment = $post['Payments']['comment'];
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
+            $model_l = $model;
+            Log::afterSaves('Update', $model_l, '', $url, $premission);
             return $this->redirect(['index', 'id' => $model->id]);
         }
         $sub_page = [
             ['name' => 'Վիճակագրություն','address' => '/payments/statistics']
         ];
         $date_tab = [];
-
-        $rates = Rates::find()->select('id,name')->asArray()->all();
+        $payment_clients = Payments::find()->select('client_id')->where(['=','id',$id])->asArray()->all();
+        $payment_clients = array_column($payment_clients,'client_id');
+        $clients = Clients::find()->select('id, name')->asArray()->all();
+        $rates = Rates::find()->select('id,name')->where(['status' => ['1','2']])->asArray()->all();
         $rates = ArrayHelper::map($rates,'id','name');
-        $client = Clients::find()->select('id,name')->asArray()->all();
-        $client = ArrayHelper::map($client,'id','name');
         return $this->render('update', [
             'model' => $model,
-            'client' => $client,
             'rates' => $rates,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
-
-
+            'payment_clients' => $payment_clients,
+            'clients' => $clients,
         ]);
     }
 
@@ -220,9 +314,25 @@ class PaymentsController extends Controller
      */
     public function actionDelete($id)
     {
+        $have_access = Users::checkPremission(64);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+        $premission = Premissions::find()
+            ->select('name')
+            ->where(['id' => 64])
+            ->asArray()
+            ->one();
+        $oldattributes = Payments::find()
+            ->select(['clients.name'])
+            ->leftJoin('clients', 'clients.id = payments.client_id')
+            ->where(['payments.id' => $id])
+            ->asArray()
+            ->one();
         $payments = Payments::findOne($id);
         $payments->status = '0';
         $payments->save();
+        Log::afterSaves('Delete', '', $oldattributes['name'], '#', $premission);
         return $this->redirect(['index']);
     }
 

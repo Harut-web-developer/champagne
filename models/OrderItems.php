@@ -36,8 +36,8 @@ class OrderItems extends \yii\db\ActiveRecord
     {
         return [
             [['order_id', 'product_id', 'price', 'count', 'cost', 'discount', 'price_before_discount', 'created_at', 'updated_at'], 'required'],
-            [['order_id', 'product_id', 'count', 'discount'], 'integer'],
-            [['price', 'cost', 'price_before_discount'], 'number'],
+            [['order_id', 'product_id', 'count',], 'integer'],
+            [['price', 'cost', 'price_before_discount', 'discount'], 'number'],
             [['status','count_discount_id'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
         ];

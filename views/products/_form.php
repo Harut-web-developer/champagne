@@ -80,7 +80,7 @@ $blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'products','block_type
             <?php } ?>
         </div>
         <div class="card-footer">
-            <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
+            <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary submit_save']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

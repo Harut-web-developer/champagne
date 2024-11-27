@@ -32,7 +32,7 @@ class Payments extends \yii\db\ActiveRecord
     {
         return [
             [['client_id', 'payment_sum', 'pay_date','rate_id','rate_value'], 'required'],
-            [['client_id','payment_sum','rate_id','rate_value'], 'integer'],
+            [['client_id','rate_id','rate_value'], 'integer'],
             [['pay_date', 'created_at', 'updated_at'], 'safe'],
             [['status','comment'], 'string'],
         ];
@@ -47,6 +47,7 @@ class Payments extends \yii\db\ActiveRecord
             'id' => 'ID',
             'client_id' => 'Հաճախորդ',
             'payment_sum' => 'Վճարման գումար',
+            'comment' => 'Մեկնաբանություն',
             'pay_date' => 'Վճարման օր',
             'rate_id' => 'Փոխարժեք',
             'rate_value' => 'Փոխարժեքի չափ',

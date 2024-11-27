@@ -38,6 +38,7 @@ class Users extends ActiveRecord implements IdentityInterface
         return [
             [['name', 'username','role_id'], 'required'],
             [['role_id'], 'string'],
+            [['warehouse_id'],'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'username', 'password', 'auth_key'], 'string', 'max' => 255],
         ];
@@ -52,6 +53,7 @@ class Users extends ActiveRecord implements IdentityInterface
             'id' => 'ID',
             'name' => 'Անուն',
             'username' => 'Օգտանուն',
+            'warehouse_id' => 'Պահեստներ',
             'password' => 'Գաղտնաբառ',
             'role_id' => 'Կարգավիճակ',
             'auth_key' => 'Auth Key',
@@ -127,14 +129,19 @@ class Users extends ActiveRecord implements IdentityInterface
     public function getRoleName(){
         return $this->hasOne(Roles::className(), ['id'=>'role_id']);
     }
+    public static function Drivers($id){
+        return ManagerDeliverCondition::find()->where(['manager_id'=>$id])->all();
+    }
+    public function getWarehouseName(){
+        return $this->hasOne(Warehouse::className(), ['id'=>'warehouse_id']);
+    }
     public static function checkPremission($premission){
          $session = Yii::$app->session;
-         $have_access = false;
          $userPrem = UserPremissions::findOne(['user_id'=>$session->get('user_id'),'premission_id'=>$premission]);
          if($userPrem){
-             $have_access = true;
+             return true;
          }
-         return  $have_access;
+         return  false;
     }
     public function getDefaultTitle(){
         return CustomfieldsBlocksTitle::findOne(['id'=>18]);

@@ -16,11 +16,11 @@ use yii\widgets\ActiveForm;
                 <span class="non-active">Փոխարժեք</span>
             </div>
             <div class="form-group col-md-12 col-lg-12 col-sm-12 ordersName">
-                <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => true]) ?>
+                <?= $form->field($model, 'name')->textInput(['maxlength' => 255,'required' => true]) ?>
             </div>
         </div>
             <div class="card-footer">
-                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary']) ?>
+                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill  btn-secondary submit_save']) ?>
             </div>
         <?php ActiveForm::end(); ?>
     </div>

@@ -1,6 +1,7 @@
 <?php
 $this->params['sub_page'] = $sub_page;
 $this->params['date_tab'] = $date_tab;
+$session = Yii::$app->session;
 ?>
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="row">
@@ -18,7 +19,7 @@ $this->params['date_tab'] = $date_tab;
 
 
                         <div class="resize-triggers"><div class="expand-trigger"><div style="width: 398px; height: 139px;"></div></div><div class="contract-trigger"></div></div></div>
-                    <ul class="p-0 m-0">
+                    <ul class="p-0 m-0" style="max-height: 160px;overflow-y: scroll;">
                         <?php
                         if (!empty($chart_round_products)){
                             foreach ($chart_round_products as $item){
@@ -47,102 +48,112 @@ $this->params['date_tab'] = $date_tab;
             </div>
         </div>
         <!-- Transactions -->
-        <div class="col-md-6 col-lg-4 order-1 mb-4">
-            <div class="card h-100">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <h5 class="card-title m-0 me-2">Վճարումներ</h5>
-                </div>
-                <div class="card-body">
-                    <ul class="p-0 m-0">
-                        <?php
-                        if (!empty($clients_payment)){
-                            foreach ($clients_payment as $item){
+            <div class="col-md-6 col-lg-4 order-1 mb-4">
+                <div class="card h-100" style="max-height: 610px;">
+                    <div class="card-header">
+                        <h5 class="card-title m-0 me-2">Վճարումներ</h5>
+                            <select id="singleClients" class="js-example-basic-single form-control mt-2 filterClientsChart" name="client_id">
+                                <option value="null">Ընտրել հաճախորդին</option>
+                                <?php
+                                foreach ($get_clients as $client){
+                                    ?>
+                                    <option value="<?=$client['id']?>"><?=$client['name']?></option>
+                                    <?php
+                                }
                                 ?>
-                                <li class="d-flex mb-4 pb-1">
-                                    <div class="avatar flex-shrink-0 me-3">
-                                        <img src="/img/icons/unicons/chart.png" alt="User" class="rounded">
-                                    </div>
-                                    <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                        <div class="me-2">
-                                            <h6 class="mb-0"><?=$item['name']?></h6>
-                                            <small class="text-muted d-block mb-1">Վճարված</small>
-                                        </div>
-                                        <div class="user-progress d-flex align-items-center gap-1">
-                                            <h6 class="mb-0"><?=number_format($item['total_price']) . ' դր.'?></h6>
-<!--                                            <span class="text-muted">դր.</span>-->
-                                        </div>
-                                    </div>
-                                </li>
-                        <?php
-                            }
-                        }else{
-                            ?>
-                            <li class="d-flex mb-4 pb-1">Վճարված ապրանք չկա</li>
+                            </select>
+                    </div>
+                    <div class="card-body  paymentsPart" style="overflow-y: scroll;">
+                        <ul class="p-0 m-0">
                             <?php
-                        }
-                        ?>
+                            if (!empty($clients_payment)){
+                                foreach ($clients_payment as $item){
+                                    ?>
+                                    <li class="d-flex mb-4 pb-1">
+                                        <div class="avatar flex-shrink-0 me-3">
+                                            <img src="/img/icons/unicons/chart.png" alt="User" class="rounded">
+                                        </div>
+                                        <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                            <div class="me-2">
+                                                <h6 class="mb-0"><?=$item['name']?></h6>
+                                                <small class="text-muted d-block mb-1">Վճարված</small>
+                                            </div>
+                                            <div class="user-progress d-flex align-items-center gap-1">
+                                                <h6 class="mb-0"><?=number_format($item['payment_sum']) . ' դր.'?></h6>
+                                                <!--                                            <span class="text-muted">դր.</span>-->
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <?php
+                                }
+                            }else{
+                                ?>
+                                <li class="d-flex mb-4 pb-1">Վճարված ապրանք չկա</li>
+                                <?php
+                            } ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-                    </ul>
+            <div class="col-md-4 col-lg-4 order-2">
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 col-6 mb-4">
+                        <div class="card">
+                            <div class="card-title d-flex align-items-start justify-content-between">
+                                <div class="avatar flex-shrink-0">
+                                    <img src="/img/icons/unicons/chart-success.png" alt="chart success" class="rounded">
+                                </div>
+                            </div>
+                            <span class="fw-medium d-block mb-1">Շահույթ</span>
+                            <h4 style="font-size: 15px" class="card-title mb-2 orders_profit"><?=number_format($cost) . ' դր.'?></h4>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-6 mb-4">
+                        <div class="card">
+                            <div class="card-title d-flex align-items-start justify-content-between">
+                                <div class="avatar flex-shrink-0">
+                                    <img src="/img/icons/unicons/wallet-info.png" alt="Credit Card" class="rounded">
+                                </div>
+                            </div>
+                            <span class="fw-medium d-block mb-1">Վաճառք</span>
+                            <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_sale"><?=number_format($sale) . ' դր.'?></h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 col-6 mb-4">
+                        <div class="card">
+                            <div class="card-title d-flex align-items-start justify-content-between">
+                                <div class="avatar flex-shrink-0">
+                                    <img src="/img/icons/unicons/paypal.png" alt="Credit Card" class="rounded">
+                                </div>
+                            </div>
+                            <span class="fw-medium d-block mb-1">Վճարումներ</span>
+                                <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_pay"><?=number_format($payment) . ' դր.'?></h4>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-6 mb-4">
+                        <div class="card">
+                            <div class="card-title d-flex align-items-start justify-content-between">
+                                <div class="avatar flex-shrink-0">
+                                    <img src="/img/icons/unicons/cc-primary.png" alt="Credit Card" class="rounded">
+                                </div>
+                            </div>
+                            <span class="fw-medium d-block mb-1">Գործարքներ</span>
+                            <h4 style="font-size: 15px" class="card-title mb-2 orders_deal"><?=number_format($deal) . ' դր.'?></h4>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+    </div>
+        <div class="row">
+            <div id="chart"></div>
         </div>
-        <div class="col-md-4 col-lg-4 order-2">
-            <div class="row">
-                <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <div class="card">
-                        <div class="card-title d-flex align-items-start justify-content-between">
-                            <div class="avatar flex-shrink-0">
-                                <img src="/img/icons/unicons/chart-success.png" alt="chart success" class="rounded">
-                            </div>
-                        </div>
-                        <span class="fw-medium d-block mb-1">Շահույթ</span>
-                        <h4 style="font-size: 15px" class="card-title mb-2 orders_profit"><?=number_format($cost) . ' դր.'?></h4>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <div class="card">
-                        <div class="card-title d-flex align-items-start justify-content-between">
-                            <div class="avatar flex-shrink-0">
-                                <img src="/img/icons/unicons/wallet-info.png" alt="Credit Card" class="rounded">
-                            </div>
-                        </div>
-                        <span class="fw-medium d-block mb-1">Վաճառք</span>
-                        <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_sale"><?=number_format($sale) . ' դր.'?></h4>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <div class="card">
-                        <div class="card-title d-flex align-items-start justify-content-between">
-                            <div class="avatar flex-shrink-0">
-                                <img src="/img/icons/unicons/paypal.png" alt="Credit Card" class="rounded">
-                            </div>
-                        </div>
-                        <span class="fw-medium d-block mb-1">Վճարումներ</span>
-                        <h4 style="font-size: 15px" class="card-title text-nowrap mb-2 orders_pay"><?=number_format($payment) . ' դր.'?></h4>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <div class="card">
-                        <div class="card-title d-flex align-items-start justify-content-between">
-                            <div class="avatar flex-shrink-0">
-                                <img src="/img/icons/unicons/cc-primary.png" alt="Credit Card" class="rounded">
-                            </div>
-                        </div>
-                        <span class="fw-medium d-block mb-1">Գործարքներ</span>
-                        <h4 style="font-size: 15px" class="card-title mb-2 orders_deal"><?=number_format($deal) . ' դր.'?></h4>
-                    </div>
-                </div>
-            </div>
+        <div class="row">
+            <div id="chart2"></div>
         </div>
-    </div>
-    <div class="row">
-        <div id="chart"></div>
-    </div>
-    <div class="row">
-        <div id="chart2"></div>
-    </div>
 
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.42.0/apexcharts.min.js" ></script>
@@ -177,9 +188,9 @@ $this->params['date_tab'] = $date_tab;
             },
         },
     };
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
 
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
 
     var options1 = {
         series: <?php echo json_encode($round_chart_percent); ?>,
@@ -201,7 +212,7 @@ $this->params['date_tab'] = $date_tab;
                         label: 'Ընդհանուր',
                         formatter: function (w) {
                             // By default this function returns the average of all series. The below is just an example to show the use of custom formatter function
-                            return <?php echo $chart_round_total ?>
+                            return '<?php echo number_format($chart_round_total,'0',',',',') ?>'
                         }
                     }
                 }
@@ -246,9 +257,9 @@ $this->params['date_tab'] = $date_tab;
         }
     };
 
-    var chart2 = new ApexCharts(document.querySelector("#chart2"), options2);
-    chart2.render();
 
+        var chart2 = new ApexCharts(document.querySelector("#chart2"), options2);
+        chart2.render();
 
 </script>
 

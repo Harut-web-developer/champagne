@@ -8,7 +8,7 @@ use app\models\CustomfieldsBlocksInputs;
 /** @var yii\web\View $this */
 /** @var app\models\Warehouse $model */
 /** @var yii\widgets\ActiveForm $form */
-$blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'warehouse','block_type'=>1])->orderBy(['order_number'=>SORT_ASC])->all();
+$blocks = CustomfieldsBlocksTitle::find()->where(['page'=>'warehouse','block_type'=>1])->andWhere(['status'=>'1'])->orderBy(['order_number'=>SORT_ASC])->all();
 $req = true;
 if(isset($action__)){
     $req = false;
@@ -28,16 +28,7 @@ if(isset($action__)){
                     <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
                     <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
                 </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseName">
-                    <?= $form->field($model, 'name')->textInput(['required'=>$req]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseLocation">
-                    <?= $form->field($model, 'location')->textInput(['required'=>$req]) ?>
-                </div>
-                <div class="form-group col-md-12 col-lg-12 col-sm-12 warehouseType">
-                    <?= $form->field($model, 'type')->dropDownList([ 'usual' => 'Սովորական', 'virtual' => 'Վիրտուալ', ], ['prompt' => 'Ընտրել տեսակը','options' => ['required' => $req,]]) ?>
-                </div>
-                <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>1])->all(); ?>
+                <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>1])->andWhere(['status'=>'1'])->all(); ?>
                 <?php if(!empty($fields)){ ?>
                     <?php foreach ($fields as $fild => $fild_simple){ ?>
                         <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id, false);?>
@@ -61,7 +52,8 @@ if(isset($action__)){
                 </div>
             </div>
             <?php if(!empty($blocks)){ ?>
-                <?php foreach ($blocks as $block => $block_val){ ?>
+                <?php foreach ($blocks as $block => $block_val){
+                    ?>
                     <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="warehouse">
                         <div class="panel-title">
                             <span class="non-active"><?=$block_val->title?></span>
@@ -70,7 +62,7 @@ if(isset($action__)){
                             <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
                             <button type="button" class="btn btn-default btn-sm edite-block-trash"><i class="bx bx-trash"></i></button>
                         </div>
-                        <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->all(); ?>
+                        <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->andWhere(['status'=>'1'])->all(); ?>
                         <?php if(!empty($fields)){ ?>
                             <?php foreach ($fields as $fild => $fild_simple){ ?>
                                 <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id, false);?>

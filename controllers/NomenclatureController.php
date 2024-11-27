@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Clients;
 use app\models\Discount;
 use app\models\Log;
+use app\models\Notifications;
 use app\models\Premissions;
 use yii\helpers\Url;
 use Yii;
@@ -70,12 +71,24 @@ class NomenclatureController extends Controller
         if(!$have_access){
             $this->redirect('/site/403');
         }
-        $sub_page = [
-            ['name' => 'Պահեստ','address' => '/warehouse'],
-            ['name' => 'Փաստաթղթեր','address' => '/documents'],
-            ['name' => 'Ապրանք','address' => '/products'],
-            ['name' => 'Տեղեկամատյան','address' => '/log'],
-        ];
+        $res = Yii::$app->runAction('custom-fields/get-table-data',['page'=>'nomenclature']);
+        $sub_page = [];
+        if (Users::checkPremission(4)){
+            $warehouse = ['name' => 'Պահեստ','address' => '/warehouse'];
+            array_push($sub_page,$warehouse);
+        }
+        if (Users::checkPremission(40)){
+            $documents = ['name' => 'Փաստաթղթեր','address' => '/documents'];
+            array_push($sub_page,$documents);
+        }
+        if (Users::checkPremission(20)){
+            $prod = ['name' => 'Ապրանք','address' => '/products'];
+            array_push($sub_page,$prod);
+        }
+        if (Users::checkPremission(28)){
+            $log = ['name' => 'Տեղեկամատյան','address' => '/log'];
+            array_push($sub_page,$log);
+        }
         $date_tab = [];
 
         $searchModel = new NomenclatureSearch();
@@ -84,6 +97,7 @@ class NomenclatureController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'new_fields'=>$res,
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
 
@@ -141,13 +155,22 @@ class NomenclatureController extends Controller
             $model->image = UploadedFile::getInstance($model, 'image');
             $model->image->saveAs('upload/'.$imageName );
             $model->name = $post['Nomenclature']['name'];
-            $model->cost = intval($post['Nomenclature']['cost']);
-            $model->price = intval($post['Nomenclature']['price']);
+            $model->cost = floatval($post['Nomenclature']['cost']);
+            $model->price = floatval($post['Nomenclature']['price']);
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             $model = Nomenclature::getDefVals($model);
             $model->save(false);
             Log::afterSaves('Create', $model, '', $url.'?'.'id'.'='.$model->id, $premission);
+            $session = Yii::$app->session;
+            if ($session->has('role_id') && ($session['role_id'] == 4 || $session['role_id'] == 2 || $session['role_id'] == 3)) {
+                $user_name = Users::find()->select('name')->where(['id' => $session['user_id']])->asArray()->one();
+                $photoUrl = Yii::$app->urlManager->createAbsoluteUrl(['/upload/' . $model->image]);
+                $text = $user_name['name'] . '(ն/ը) ' . 'ստեղծել է անվանակարգ։ Անվանակարգը ստեղծվել է՝
+            «' . $model->name . '» անունով։ <img style="width:50px" src="' . $photoUrl . '" alt="photo">';
+                Notifications::createNotifications('Ստեղծել անվանակարգ', $text, 'createNomenclature');
+            }
+
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);
@@ -168,13 +191,31 @@ class NomenclatureController extends Controller
 
     public function actionCreateFields()
     {
-        $sub_page = [
-            ['name' => 'Պահեստ','address' => '/warehouse'],
-            ['name' => 'Փաստաթղթեր','address' => '/documents'],
-            ['name' => 'Անվանակարգ','address' => '/nomenclature'],
-            ['name' => 'Ապրանք','address' => '/products'],
-            ['name' => 'Տեղեկամատյան','address' => '/log'],
-        ];
+        $have_access = Users::checkPremission(72);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
+        $sub_page = [];
+        if (Users::checkPremission(4)){
+            $warehouse = ['name' => 'Պահեստ','address' => '/warehouse'];
+            array_push($sub_page,$warehouse);
+        }
+        if (Users::checkPremission(40)){
+            $documents = ['name' => 'Փաստաթղթեր','address' => '/documents'];
+            array_push($sub_page,$documents);
+        }
+        if (Users::checkPremission(12)){
+            $nom = ['name' => 'Անվանակարգ','address' => '/nomenclature'];
+            array_push($sub_page,$nom);
+        }
+        if (Users::checkPremission(20)){
+            $prod = ['name' => 'Ապրանք','address' => '/products'];
+            array_push($sub_page,$prod);
+        }
+        if (Users::checkPremission(28)){
+            $log = ['name' => 'Տեղեկամատյան','address' => '/log'];
+            array_push($sub_page,$log);
+        }
         $date_tab = [];
 
         $model = new Nomenclature();
@@ -236,11 +277,19 @@ class NomenclatureController extends Controller
                 $model->image->saveAs('upload/'.$imageName );
             }
             $model->name = $post['Nomenclature']['name'];
-            $model->cost = intval($post['Nomenclature']['cost']);
-            $model->price = $post['Nomenclature']['price'];
+            $model->cost = floatval($post['Nomenclature']['cost']);
+            $model->price = floatval($post['Nomenclature']['price']);
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
             Log::afterSaves('Update', $model, $oldattributes, $url, $premission);
+            $session = Yii::$app->session;
+            if ($session->has('role_id') && ($session['role_id'] == 4 || $session['role_id'] == 2 || $session['role_id'] == 3)) {
+                $user_name = Users::find()->select('name')->where(['id' => $session['user_id']])->asArray()->one();
+                $photoUrl = Yii::$app->urlManager->createAbsoluteUrl(['/upload/' . $model->image]);
+                $text = $user_name['name'] . '(ն/ը) ' . 'փոփոխել է անվանակարգը։ Փոփոխված անվանակարգն է՝
+            «' . $model->name . '»։ <img style="width:50px" src="' . $photoUrl . '" alt="photo">';
+                Notifications::createNotifications('Փոփոխել անվանակարգ', $text, 'updateNomenclature');
+            }
             $_POST['item_id'] = $model->id;
             if($post['newblocks'] || $post['new_fild_name']){
                 Yii::$app->runAction('custom-fields/create-title',$post);

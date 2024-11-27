@@ -6,13 +6,6 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var app\models\Discount $model */
 /** @var yii\widgets\ActiveForm $form */
-//echo "<pre>";
-//var_dump($clients);
-//var_dump($discount_client_groups);
-//var_dump($discount_clients_id);
-//var_dump($discount_client_groups_name);
-//var_dump($discount_client_groups_id);
-//die;
 ?>
 
 <div class="discount-form">
@@ -36,7 +29,7 @@ use yii\widgets\ActiveForm;
                 </div>
                 <?php if ($model->id){ ?>
                     <div class="clientSelect">
-                        <label for="multipleClients">Հաճախորդ և խմբեր</label>
+                        <label for="multipleClients">Խմբեր և հաճախորդներ</label>
                         <select id="multipleClients" class="js-example-basic-multiple form-control" name="clients[]" multiple="multiple">
                             <?php foreach ($clients as $client){
                                 $isSelected = in_array($client['id'], $discount_clients_id);
@@ -68,8 +61,8 @@ use yii\widgets\ActiveForm;
                             </div>
                             <div id="slider-range" class="price-filter-range" name="rangeInput"></div>
                             <div>
-                                <input type="number" name="min" min=0 max="500000" value="<?=$min['min']?>" oninput="validity.valid||(value='0');" id="min_price" class="price-range-field min-value" />
-                                <input type="number" name="max" min=0 max="1000000" value="<?=$max['max']?>" oninput="validity.valid||(value='1000000');" id="max_price" class="price-range-field max-value" />
+                                <input type="number" name="min" min=0 max="10000000" value="<?=$min['min']?>" oninput="validity.valid||(value='0');" id="min_price" class="price-range-field min-value" />
+                                <input type="number" name="max" min=0 max="100000000" value="<?=$max['max']?>" oninput="validity.valid||(value='1000000');" id="max_price" class="price-range-field max-value" />
                             </div>
                             <!--                        <div id="searchResults" class="search-results-block"></div>-->
                         </div>
@@ -77,7 +70,7 @@ use yii\widgets\ActiveForm;
                     <?php }else{ ?>
                         <div class="form-group selGroup">
                             <div class="clientSelect">
-                                <label for="multipleClients">Հաճախորդ և խմբեր</label>
+                                <label for="multipleClients">Խմբեր և հաճախորդներ</label>
                                 <select id="multipleClients" class="js-example-basic-multiple form-control" name="clients[]" multiple="multiple">
                                     <?php foreach ($clients as $client){ ?>
                                         <option value="<?=$client['id']?>"><?=$client['name']?></option>
@@ -128,7 +121,7 @@ use yii\widgets\ActiveForm;
 
             </div>
             <div class="card-footer">
-                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
+                <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary submit_save']) ?>
             </div>
         <?php ActiveForm::end(); ?>
     </div>

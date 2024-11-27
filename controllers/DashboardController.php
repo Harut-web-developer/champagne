@@ -43,14 +43,131 @@ class DashboardController extends Controller
         }
         return parent::beforeAction($action);
     }
+    public  function actionChangeClients(){
+        if ($this->request->isGet) {
+            $client_id = $this->request->get('clientsId');
+            $href = $this->request->get('getHref');
+            if (strpos($href, '?') !== false){
+                $queryString = parse_url($href, PHP_URL_QUERY);
+                parse_str($queryString, $queryParams);
+                if (isset($queryParams['date']) && $queryParams['date'] === 'day') {
+                    if ($client_id == 'null'){
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['=', 'DATE(payments.pay_date)', date('Y-m-d')])
+                            ->asArray()
+                            ->all();
+                    }else{
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['=', 'DATE(payments.pay_date)', date('Y-m-d')])
+                            ->andWhere(['=','clients.id',intval($client_id)])
+                            ->asArray()
+                            ->all();
+                    }
+                }elseif (isset($queryParams['date']) && $queryParams['date'] === 'monthly'){
+                    if ($client_id == 'null'){
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['=', 'MONTH(payments.pay_date)', date('m')])
+                            ->andWhere(['=', 'YEAR(payments.pay_date)', date('Y')])
+                            ->asArray()
+                            ->all();
+                    }else{
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['=', 'MONTH(payments.pay_date)', date('m')])
+                            ->andWhere(['=', 'YEAR(payments.pay_date)', date('Y')])
+                            ->andWhere(['=','clients.id',intval($client_id)])
+                            ->asArray()
+                            ->all();
+                    }
+                }elseif (isset($queryParams['date']) && $queryParams['date'] === 'year'){
+                    if ($client_id == 'null'){
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['=', 'YEAR(payments.pay_date)', date('Y')])
+                            ->asArray()
+                            ->all();
+                    }else{
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['=', 'YEAR(payments.pay_date)', date('Y')])
+                            ->andWhere(['=','clients.id',intval($client_id)])
+                            ->asArray()
+                            ->all();
+                    }
+                }elseif (isset($queryParams['start_date']) && isset($queryParams['end_date'])){
+                    $start = $queryParams['start_date'];
+                    $end = $queryParams['end_date'];
+                    if ($client_id == 'null'){
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['>=', 'DATE(payments.pay_date)', $start])
+                            ->andWhere(['<=', 'DATE(payments.pay_date)', $end])
+                            ->asArray()
+                            ->all();
+                    }else{
+                        $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                            ->leftJoin('clients', 'payments.client_id = clients.id')
+                            ->where(['payments.status' => '1'])
+                            ->andWhere(['>=', 'DATE(payments.pay_date)', $start])
+                            ->andWhere(['<=', 'DATE(payments.pay_date)', $end])
+                            ->andWhere(['=','clients.id',intval($client_id)])
+                            ->asArray()
+                            ->all();
+                    }
+                }
+            }else{
+                if ($client_id == 'null'){
+                    $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                        ->leftJoin('clients', 'payments.client_id = clients.id')
+                        ->where(['payments.status' => '1'])
+                        ->andWhere(['=', 'DATE(payments.pay_date)', date('Y-m-d')])
+                        ->asArray()
+                        ->all();
+                }else{
+                    $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                        ->leftJoin('clients', 'payments.client_id = clients.id')
+                        ->where(['payments.status' => '1'])
+                        ->andWhere(['=', 'DATE(payments.pay_date)', date('Y-m-d')])
+                        ->andWhere(['=','clients.id',intval($client_id)])
+                        ->asArray()
+                        ->all();
+                }
+
+            }
+            return $this->renderAjax('payments_file', [
+                'clients_payment' => $clients_payment,
+            ]);
+        }
+
+    }
     public function actionIndex(){
+        $have_access = Users::checkPremission(57);
+        if(!$have_access){
+            $this->redirect('/site/403');
+        }
         $payment = 0;
         $sale = 0;
         $deal = 0;
         $chart_round_total = 0;
+        $session = Yii::$app->session;
+        if ($session['role_id'] == 2){
+            $role = ['orders.user_id' => $session['user_id']];
+        }else{
+            $role = [];
+        }
         if (empty($_GET) || isset($_GET['date']) && !isset($_GET['start_date']) && !isset($_GET['end_date'])){
             if (empty($_GET) || $_GET['date'] === 'day'){
-//                echo "<pre>";
+                $get_clients = Clients::find()->select('id,name')->asArray()->all();
                 $order_payment = Payments::find()->select('SUM(payment_sum) as payment')
                     ->where(['status' => '1'])
                     ->andWhere(['=', 'DATE(pay_date)', date('Y-m-d')])
@@ -61,8 +178,9 @@ class DashboardController extends Controller
                 }
                 $orders_sale = Orders::find()
                     ->select('SUM(total_price) as sale')
-                    ->where(['or',['status' => '2'],['status' => '3']])
+                    ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                     ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
+                    ->andWhere($role)
                     ->asArray()
                     ->all();
                 if ($orders_sale[0]['sale'] != null){
@@ -70,39 +188,50 @@ class DashboardController extends Controller
                 }
                 $orders_deal = Orders::find()
                     ->select('SUM(total_price) as deal')
-                    ->where(['or',['status' => '1'],['status' => '2'],['status' => '3']])
+                    ->where(['or',['status' => '1'],['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                     ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
+                    ->andWhere($role)
                     ->asArray()
                     ->all();
                 if ($orders_deal[0]['deal'] != null){
                     $deal = $orders_deal[0]['deal'];
                 }
                 $orders_cost = OrderItems::find()
-                    ->select('(SUM(order_items.price) - SUM(order_items.cost)) as profit')
+                    ->select('(SUM(order_items.price_by) - SUM(order_items.cost_by)) as profit')
                     ->leftJoin('orders','orders.id = order_items.order_id')
-                    ->where(['orders.status' => '3'])
+                    ->where(['or',['orders.status' => '3'],['orders.status' => '5']])
+                    ->andWhere(['order_items.status' => '1'])
                     ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
+                    ->andWhere($role)
                     ->groupBy('order_items.order_id')
                     ->asArray()
                     ->all();
                 $cost = array_sum(array_column($orders_cost,'profit'));
                 $total_order = Orders::find()
                     ->select('SUM(total_price) as total')
-                    ->where(['or',['status' => '2'],['status' => '3']])
+                    ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                     ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
+                    ->andWhere($role)
                     ->asArray()
                     ->all();
+//                echo "<pre>";
+
                 if ($total_order[0]['total'] != null){
                     $chart_round_total = $total_order[0]['total'];
                 }
-                $chart_round_products = OrderItems::find()->select('SUM(order_items.price) as price,nomenclature.name')
+
+                $chart_round_products = OrderItems::find()->select('SUM(order_items.price_by) as price,nomenclature.name')
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
-                    ->where(['or',['orders.status' => '2'],['orders.status' => '3']])
+                    ->where(['or',['orders.status' => '2'],['orders.status' => '3'],['orders.status' => '4'],['orders.status' => '5']])
+                    ->andWhere(['order_items.status' => '1'])
                     ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
+                    ->andWhere($role)
                     ->groupBy('order_items.nom_id_for_name')
                     ->asArray()
                     ->all();
+//                var_dump($chart_round_products);
+
                 $round_chart_label = [];
                 $round_chart_percent = [];
                 if (!empty($chart_round_products)){
@@ -113,15 +242,17 @@ class DashboardController extends Controller
                 }else{
                     array_push($round_chart_percent,0);
                 }
-                $clients_payment = Orders::find()->select('clients.name, total_price')
-                    ->leftJoin('clients', 'orders.clients_id = clients.id')
-                    ->where(['orders.status' => '3'])
-                    ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
-                    ->asArray()
-                    ->all();
+//                exit();
+                    $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                        ->leftJoin('clients', 'payments.client_id = clients.id')
+                        ->where(['payments.status' => '1'])
+                        ->andWhere(['=', 'DATE(payments.pay_date)', date('Y-m-d')])
+                        ->asArray()
+                        ->all();
                 $line_chart_debt = Orders::find()->select('SUM(total_price) as debt')
-                    ->where(['orders.status' => '2'])
+                    ->where(['or',['orders.status' => '2'],['orders.status' => '4']])
                     ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
+                    ->andWhere($role)
                     ->asArray()
                     ->all();
                 $line_chart_label = [];
@@ -136,8 +267,9 @@ class DashboardController extends Controller
                     array_push($line_chart_label,'Այսօր');
                 }
                 $line_chart_orders = Orders::find()->select('SUM(total_price) as orders')
-                    ->where(['or',['status' => '2'],['status' => '3']])
+                    ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                     ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d')])
+                    ->andWhere($role)
                     ->asArray()
                     ->all();
                 $line_chart_orders_label = [];
@@ -148,8 +280,9 @@ class DashboardController extends Controller
                     array_push($line_chart_orders_this_year,0);
                 }
                 $line_chart_orders_last =  Orders::find()->select('SUM(total_price) as orders')
-                    ->where(['or',['status' => '2'],['status' => '3']])
+                    ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                     ->andWhere(['=', 'DATE(orders_date)', date('Y-m-d',strtotime("-1 year"))])
+                    ->andWhere($role)
                     ->asArray()
                     ->all();
                 $line_chart_orders_last_year = [];
@@ -168,7 +301,7 @@ class DashboardController extends Controller
                     array_push($line_chart_orders_label,'Այսօր');
                 }
             }elseif ($_GET['date'] === 'monthly'){
-//        echo "<pre>";
+                $get_clients = Clients::find()->select('id,name')->asArray()->all();
                 $order_payment = Payments::find()->select('SUM(payment_sum) as payment')
                     ->where(['status' => '1'])
                     ->andWhere(['=', 'MONTH(pay_date)', date('m')])
@@ -180,9 +313,10 @@ class DashboardController extends Controller
                 }
                 $orders_sale = Orders::find()
                     ->select('SUM(total_price) as sale')
-                    ->where(['or',['status' => '2'],['status' => '3']])
+                    ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                     ->andWhere(['=', 'MONTH(orders_date)', date('m')])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                    ->andWhere($role)
                     ->asArray()
                     ->all();
                 if ($orders_sale[0]['sale'] != null){
@@ -190,40 +324,46 @@ class DashboardController extends Controller
                 }
                 $orders_deal = Orders::find()
                     ->select('SUM(total_price) as deal')
-                    ->where(['or',['status' => '1'],['status' => '2'],['status' => '3']])
+                    ->where(['or',['status' => '1'],['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                     ->andWhere(['=', 'MONTH(orders_date)', date('m')])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                    ->andWhere($role)
                     ->asArray()
                     ->all();
                 if ($orders_deal[0]['deal'] != null){
                     $deal = $orders_deal[0]['deal'];
                 }
                 $orders_cost = OrderItems::find()
-                    ->select('(SUM(order_items.price) - SUM(order_items.cost)) as profit')
+                    ->select('(SUM(order_items.price_by) - SUM(order_items.cost_by)) as profit')
                     ->leftJoin('orders','orders.id = order_items.order_id')
-                    ->where(['orders.status' => '3'])
+                    ->where(['or',['orders.status' => '3'],['orders.status' => '5']])
+                    ->andWhere(['order_items.status' => '1'])
                     ->andWhere(['=', 'MONTH(orders_date)', date('m')])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                    ->andWhere($role)
                     ->groupBy('order_items.order_id')
                     ->asArray()
                     ->all();
                 $cost = array_sum(array_column($orders_cost,'profit'));
                 $total_order = Orders::find()
                     ->select('SUM(total_price) as total')
-                    ->where(['or',['status' => '2'],['status' => '3']])
+                    ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                     ->andWhere(['=', 'MONTH(orders_date)', date('m')])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                    ->andWhere($role)
                     ->asArray()
                     ->all();
                 if ($total_order[0]['total'] != null){
                     $chart_round_total = $total_order[0]['total'];
                 }
-                $chart_round_products = OrderItems::find()->select('SUM(order_items.price) as price,nomenclature.name')
+                $chart_round_products = OrderItems::find()->select('SUM(order_items.price_by) as price,nomenclature.name')
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
-                    ->where(['or',['orders.status' => '2'],['orders.status' => '3']])
+                    ->where(['or',['orders.status' => '2'],['orders.status' => '3'],['orders.status' => '4'],['orders.status' => '5']])
+                    ->andWhere(['order_items.status' => '1'])
                     ->andWhere(['=', 'MONTH(orders_date)', date('m')])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                    ->andWhere($role)
                     ->groupBy('order_items.nom_id_for_name')
                     ->asArray()
                     ->all();
@@ -237,17 +377,18 @@ class DashboardController extends Controller
                 }else{
                     array_push($round_chart_percent,0);
                 }
-                $clients_payment = Orders::find()->select('clients.name, total_price')
-                    ->leftJoin('clients', 'orders.clients_id = clients.id')
-                    ->where(['orders.status' => '3'])
-                    ->andWhere(['=', 'MONTH(orders_date)', date('m')])
-                    ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                    ->leftJoin('clients', 'payments.client_id = clients.id')
+                    ->where(['payments.status' => '1'])
+                    ->andWhere(['=', 'MONTH(payments.pay_date)', date('m')])
+                    ->andWhere(['=', 'YEAR(payments.pay_date)', date('Y')])
                     ->asArray()
                     ->all();
                 $line_chart_debt = Orders::find()->select('SUM(total_price) as debt, DATE(orders_date) as orders_date')
-                    ->where(['orders.status' => '2'])
+                    ->where(['or',['orders.status' => '2'],['orders.status' => '4']])
                     ->andWhere(['=', 'MONTH(orders_date)', date('m')])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                    ->andWhere($role)
                     ->groupBy('DATE(orders_date)')
                     ->asArray()
                     ->all();
@@ -264,9 +405,10 @@ class DashboardController extends Controller
                     array_push($line_chart_label,date('Y-m'));
                 }
                 $line_chart_orders = Orders::find()->select('SUM(total_price) as orders,DATE(orders_date) as orders_date')
-                    ->where(['or',['status' => '2'],['status' => '3']])
+                    ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                     ->andWhere(['=', 'MONTH(orders_date)', date('m')])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                    ->andWhere($role)
                     ->groupBy('DATE(orders_date)')
                     ->asArray()
                     ->all();
@@ -307,9 +449,10 @@ class DashboardController extends Controller
                 $firstDayLastYear = date('Y-m-01', strtotime("-1 year"));
                 $lastDayLastYear = date('Y-m-t', strtotime("-1 year"));
                 $line_chart_orders_last =  Orders::find()->select('SUM(total_price) as orders,DATE(orders_date) as orders_date')
-                    ->where(['or',['status' => '2'],['status' => '3']])
+                    ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                     ->andWhere(['>=', 'DATE(orders_date)',$firstDayLastYear])
                     ->andWhere(['<=', 'DATE(orders_date)',$lastDayLastYear])
+                    ->andWhere($role)
                     ->groupBy('DATE(orders_date)')
                     ->asArray()
                     ->all();
@@ -348,8 +491,10 @@ class DashboardController extends Controller
                         $line_chart_orders_label[] = $day;
                     }
 
-            }elseif ($_GET['date'] === 'year'){
+            }
+            elseif ($_GET['date'] === 'year'){
 //                echo "<pre>";
+                $get_clients = Clients::find()->select('id,name')->asArray()->all();
                 $order_payment = Payments::find()->select('SUM(payment_sum) as payment')
                     ->where(['status' => '1'])
                     ->andWhere(['=', 'YEAR(pay_date)', date('Y-m-d')])
@@ -360,8 +505,9 @@ class DashboardController extends Controller
                 }
                 $orders_sale = Orders::find()
                     ->select('SUM(total_price) as sale')
-                    ->where(['or',['status' => '2'],['status' => '3']])
+                    ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y-m-d')])
+                    ->andWhere($role)
                     ->asArray()
                     ->all();
                 if ($orders_sale[0]['sale'] != null){
@@ -369,36 +515,43 @@ class DashboardController extends Controller
                 }
                 $orders_deal = Orders::find()
                     ->select('SUM(total_price) as deal')
-                    ->where(['or',['status' => '1'],['status' => '2'],['status' => '3']])
+                    ->where(['or',['status' => '1'],['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y-m-d')])
+                    ->andWhere($role)
                     ->asArray()
                     ->all();
                 if ($orders_deal[0]['deal'] != null){
                     $deal = floor($orders_deal[0]['deal']);
                 }
                 $orders_cost = OrderItems::find()
-                    ->select('(SUM(order_items.price) - SUM(order_items.cost)) as profit')
+                    ->select('(SUM(order_items.price_by) - SUM(order_items.cost_by)) as profit')
                     ->leftJoin('orders','orders.id = order_items.order_id')
-                    ->where(['orders.status' => '3'])
+                    ->where(['or',['orders.status' => '3'],['orders.status' => '5']])
+                    ->andWhere(['order_items.status' => '1'])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y-m-d')])
+                    ->andWhere($role)
                     ->groupBy('order_items.order_id')
                     ->asArray()
                     ->all();
                 $cost = array_sum(array_column($orders_cost,'profit'));
                 $total_order = Orders::find()
                     ->select('SUM(total_price) as total')
-                    ->where(['or',['status' => '2'],['status' => '3']])
+                    ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y-m-d')])
+                    ->andWhere($role)
                     ->asArray()
                     ->all();
                 if ($total_order[0]['total'] != null){
                     $chart_round_total = $total_order[0]['total'];
                 }
-                $chart_round_products = OrderItems::find()->select('SUM(order_items.price) as price,nomenclature.name')
+                $chart_round_products = OrderItems::find()->select('SUM(order_items.price_by) as price,nomenclature.name')
                     ->leftJoin('orders','orders.id = order_items.order_id')
                     ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
-                    ->where(['or',['orders.status' => '2'],['orders.status' => '3']])
+                    ->where(['or',['orders.status' => '2'],['orders.status' => '3'],['orders.status' => '4'],['orders.status' => '5']])
+                    ->andWhere(['order_items.status' => '1'])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                    ->andWhere(['order_items.status' => '1'])
+                    ->andWhere($role)
                     ->groupBy('order_items.nom_id_for_name')
                     ->asArray()
                     ->all();
@@ -412,39 +565,21 @@ class DashboardController extends Controller
                 }else{
                     array_push($round_chart_percent,0);
                 }
-                $clients_payment = Orders::find()->select('clients.name, total_price')
-                    ->leftJoin('clients', 'orders.clients_id = clients.id')
-                    ->where(['orders.status' => '3'])
-                    ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                    ->leftJoin('clients', 'payments.client_id = clients.id')
+                    ->where(['payments.status' => '1'])
+                    ->andWhere(['=', 'YEAR(payments.pay_date)', date('Y')])
                     ->asArray()
                     ->all();
                 $line_chart_debt = Orders::find()->select('SUM(total_price) as debt, DATE(orders_date) as orders_date')
-                    ->where(['orders.status' => '2'])
+                    ->where(['or',['orders.status' => '2'],['orders.status' => '4']])
                     ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                    ->andWhere($role)
                     ->groupBy('MONTH(orders_date)')
                     ->asArray()
                     ->all();
                 $line_chart_label = [];
                 $line_chart_number = [];
-                if (!empty($line_chart_debt)){
-                    for ($k = 0; $k < count($line_chart_debt);$k++){
-                        array_push($line_chart_number,$line_chart_debt[$k]['debt']);
-                        array_push($line_chart_label,substr($line_chart_debt[$k]['orders_date'],0,7));
-                    }
-                }else{
-                    array_push($line_chart_number,0);
-                    array_push($line_chart_label,date('Y'). ' թ.');
-                }
-                $line_chart_orders = Orders::find()->select('SUM(total_price) as orders,DATE(orders_date) as orders_date')
-                    ->where(['or',['status' => '2'],['status' => '3']])
-                    ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
-                    ->groupBy('MONTH(orders_date)')
-                    ->asArray()
-                    ->all();
-//                var_dump($line_chart_orders);
-                $line_chart_orders_label = [];
-                $line_chart_orders_this_year = [];
-
                 $months = [];
                 for ($n = 1; $n <= date('m');$n++){
                     if ($n < 10) {
@@ -455,6 +590,39 @@ class DashboardController extends Controller
                         array_push($months, $monthData);
                     }
                 }
+                if (!empty($line_chart_debt)){
+                    foreach ($months as $month) {
+                        $found = false;
+                        foreach ($line_chart_debt as $row) {
+                            if (substr($row["orders_date"],5,2) == $month) {
+                                $line_chart_number[] = $row["debt"];
+                                $found = true;
+                                break;
+                            }
+                        }
+                        if (!$found) {
+                            $line_chart_number[] = 0;
+                        }
+                    }
+                }else{
+                    foreach ($months as $month){
+                        $line_chart_number[] = 0;
+
+                    }
+                }
+                foreach ($months as $month){
+                    $line_chart_label[] = date($month . '-Y' ) . ' թ.';
+                }
+                $line_chart_orders = Orders::find()->select('SUM(total_price) as orders,DATE(orders_date) as orders_date')
+                    ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
+                    ->andWhere(['=', 'YEAR(orders_date)', date('Y')])
+                    ->andWhere($role)
+                    ->groupBy('MONTH(orders_date)')
+                    ->asArray()
+                    ->all();
+                $line_chart_orders_label = [];
+                $line_chart_orders_this_year = [];
+
                 if (!empty($line_chart_orders)){
                     foreach ($months as $month) {
                         $found = false;
@@ -477,8 +645,9 @@ class DashboardController extends Controller
                 }
                 $lastYear = date('Y-m-d',strtotime("-1 year"));
                 $line_chart_orders_last =  Orders::find()->select('SUM(total_price) as orders,DATE(orders_date) as orders_date')
-                    ->where(['or',['status' => '2'],['status' => '3']])
+                    ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                     ->andWhere(['=', 'YEAR(orders_date)',$lastYear])
+                    ->andWhere($role)
                     ->groupBy('MONTH(orders_date)')
                     ->asArray()
                     ->all();
@@ -514,14 +683,15 @@ class DashboardController extends Controller
                     }
                 }
                 foreach ($lastYearMonths as $month){
-                    $line_chart_orders_label[] = date('Y-' . $month);;
+                    $line_chart_orders_label[] = date($month . '-Y' ) . ' թ.';
                 }
 
             }
-        }elseif (!isset($_GET['date']) && isset($_GET['start_date']) && isset($_GET['end_date'])){
-//            echo "<pre>";
+        }
+        elseif (!isset($_GET['date']) && isset($_GET['start_date']) && isset($_GET['end_date'])){
             $start = $_GET['start_date'];
             $end = $_GET['end_date'];
+            $get_clients = Clients::find()->select('id,name')->asArray()->all();
             $order_payment = Payments::find()->select('SUM(payment_sum) as payment')
                 ->where(['status' => '1'])
                 ->andWhere(['>=', 'DATE(pay_date)', $start])
@@ -533,9 +703,10 @@ class DashboardController extends Controller
             }
             $orders_sale = Orders::find()
                 ->select('SUM(total_price) as sale')
-                ->where(['or',['status' => '2'],['status' => '3']])
+                ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                 ->andWhere(['>=', 'DATE(orders_date)', $start])
                 ->andWhere(['<=', 'DATE(orders_date)', $end])
+                ->andWhere($role)
                 ->asArray()
                 ->all();
             if ($orders_sale[0]['sale'] != null){
@@ -543,41 +714,47 @@ class DashboardController extends Controller
             }
             $orders_deal = Orders::find()
                 ->select('SUM(total_price) as deal')
-                ->where(['or',['status' => '1'],['status' => '2'],['status' => '3']])
+                ->where(['or',['status' => '1'],['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                 ->andWhere(['>=', 'DATE(orders_date)', $start])
                 ->andWhere(['<=', 'DATE(orders_date)', $end])
+                ->andWhere($role)
                 ->asArray()
                 ->all();
             if ($orders_deal[0]['deal'] != null){
                 $deal = $orders_deal[0]['deal'];
             }
             $orders_cost = OrderItems::find()
-                ->select('(SUM(order_items.price) - SUM(order_items.cost)) as profit')
+                ->select('(SUM(order_items.price_by) - SUM(order_items.cost_by)) as profit')
                 ->leftJoin('orders','orders.id = order_items.order_id')
-                ->where(['orders.status' => '3'])
+                ->where(['or',['orders.status' => '3'],['orders.status' => '5']])
+                ->andWhere(['order_items.status' => '1'])
                 ->andWhere(['>=', 'DATE(orders_date)', $start])
                 ->andWhere(['<=', 'DATE(orders_date)', $end])
+                ->andWhere($role)
                 ->groupBy('order_items.order_id')
                 ->asArray()
                 ->all();
             $cost = array_sum(array_column($orders_cost,'profit'));
             $total_order = Orders::find()
                 ->select('SUM(total_price) as total')
-                ->where(['or',['status' => '2'],['status' => '3']])
+                ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                 ->andWhere(['>=', 'DATE(orders_date)', $start])
                 ->andWhere(['<=', 'DATE(orders_date)', $end])
+                ->andWhere($role)
                 ->asArray()
                 ->all();
             if ($total_order[0]['total'] != null){
                 $chart_round_total = $total_order[0]['total'];
             }
 //            echo "<pre>";
-            $chart_round_products = OrderItems::find()->select('SUM(order_items.price) as price,nomenclature.name')
+            $chart_round_products = OrderItems::find()->select('SUM(order_items.price_by) as price,nomenclature.name')
                 ->leftJoin('orders','orders.id = order_items.order_id')
                 ->leftJoin('nomenclature', 'order_items.nom_id_for_name = nomenclature.id')
-                ->where(['or',['orders.status' => '2'],['orders.status' => '3']])
+                ->where(['or',['orders.status' => '2'],['orders.status' => '3'],['orders.status' => '4'],['orders.status' => '5']])
+                ->andWhere(['order_items.status' => '1'])
                 ->andWhere(['>=', 'DATE(orders_date)', $start])
                 ->andWhere(['<=', 'DATE(orders_date)', $end])
+                ->andWhere($role)
                 ->groupBy('order_items.nom_id_for_name')
                 ->asArray()
                 ->all();
@@ -591,24 +768,26 @@ class DashboardController extends Controller
             }else{
                 array_push($round_chart_percent,0);
             }
-            $clients_payment = Orders::find()->select('clients.name, total_price')
-                ->leftJoin('clients', 'orders.clients_id = clients.id')
-                ->where(['orders.status' => '3'])
-                ->andWhere(['>=', 'DATE(orders_date)', $start])
-                ->andWhere(['<=', 'DATE(orders_date)', $end])
+            $clients_payment = Payments::find()->select('clients.name, payments.payment_sum')
+                ->leftJoin('clients', 'payments.client_id = clients.id')
+                ->where(['payments.status' => '1'])
+                ->andWhere(['>=', 'DATE(payments.pay_date)', $start])
+                ->andWhere(['<=', 'DATE(payments.pay_date)', $end])
                 ->asArray()
                 ->all();
             $line_chart_debt = Orders::find()->select('SUM(total_price) as debt, DATE(orders_date) as orders_date')
-                ->where(['orders.status' => '2'])
+                ->where(['or',['orders.status' => '2'],['orders.status' => '4']])
                 ->andWhere(['>=', 'DATE(orders_date)', $start])
                 ->andWhere(['<=', 'DATE(orders_date)', $end])
+                ->andWhere($role)
                 ->groupBy('DATE(orders_date)')
                 ->asArray()
                 ->all();
             $line_chart_debt_months = Orders::find()->select('SUM(total_price) as debt, DATE(orders_date) as orders_date')
-                ->where(['orders.status' => '2'])
+                ->where(['or',['orders.status' => '2'],['orders.status' => '4']])
                 ->andWhere(['>=', 'DATE(orders_date)', $start])
                 ->andWhere(['<=', 'DATE(orders_date)', $end])
+                ->andWhere($role)
                 ->groupBy('MONTH(orders_date)')
                 ->orderBy('orders_date')
                 ->asArray()
@@ -717,16 +896,18 @@ class DashboardController extends Controller
                 array_push($line_chart_label,'օր-ամիս-տարի');
             }
             $line_chart_orders = Orders::find()->select('SUM(total_price) as orders,DATE(orders_date) as orders_date')
-                ->where(['or',['status' => '2'],['status' => '3']])
+                ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                 ->andWhere(['>=', 'DATE(orders_date)', $start])
                 ->andWhere(['<=', 'DATE(orders_date)', $end])
+                ->andWhere($role)
                 ->groupBy('DATE(orders_date)')
                 ->asArray()
                 ->all();
             $line_chart_orders_months = Orders::find()->select('SUM(total_price) as orders,DATE(orders_date) as orders_date')
-                ->where(['or',['status' => '2'],['status' => '3']])
+                ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                 ->andWhere(['>=', 'DATE(orders_date)', $start])
                 ->andWhere(['<=', 'DATE(orders_date)', $end])
+                ->andWhere($role)
                 ->groupBy('MONTH(orders_date)')
                 ->orderBy('orders_date')
                 ->asArray()
@@ -738,16 +919,18 @@ class DashboardController extends Controller
             $lastStart = $dateTimeStart->format('Y-m-d');
             $lastEnd = $dateTimeEnd->format('Y-m-d');
             $line_chart_orders_last =  Orders::find()->select('SUM(total_price) as orders,DATE(orders_date) as orders_date')
-                ->where(['or',['status' => '2'],['status' => '3']])
+                ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                 ->andWhere(['>=', 'DATE(orders_date)', $lastStart])
                 ->andWhere(['<=', 'DATE(orders_date)', $lastEnd])
+                ->andWhere($role)
                 ->groupBy('DATE(orders_date)')
                 ->asArray()
                 ->all();
             $line_chart_orders_last_month =  Orders::find()->select('SUM(total_price) as orders,DATE(orders_date) as orders_date')
-                ->where(['or',['status' => '2'],['status' => '3']])
+                ->where(['or',['status' => '2'],['status' => '3'],['status' => '4'],['status' => '5']])
                 ->andWhere(['>=', 'DATE(orders_date)', $lastStart])
                 ->andWhere(['<=', 'DATE(orders_date)', $lastEnd])
+                ->andWhere($role)
                 ->groupBy('MONTH(orders_date)')
                 ->orderBy('orders_date')
                 ->asArray()
@@ -1012,9 +1195,11 @@ class DashboardController extends Controller
             ['name' => 'Ամսական','address' => '/dashboard/index?date=monthly'],
             ['name' => 'Տարեկան','address' => '/dashboard/index?date=year'],
         ];
+        $chart_round_products = $chart_round_products ?? 11;
         return $this->render('index',[
             'sub_page' => $sub_page,
             'date_tab' => $date_tab,
+            'get_clients' => $get_clients,
             'payment' => $payment,
             'sale' => $sale,
             'deal' => $deal,

@@ -1,5 +1,6 @@
 <?php
 
+use app\models\CustomfieldsBlocksInputValues;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\models\CustomfieldsBlocksTitle;
@@ -31,63 +32,101 @@ if(isset($action__)){
                 <div class="card-body formDesign">
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 nomenclatureImage">
                         <?= $form->field($model, 'image')->fileInput() ?>
-                        <img src="/upload/<?= $model->image ?>" alt="">
+                        <?php if (isset($model->id)){ ?>
+                            <img style="width:50px" src="/upload/<?= $model->image ?>" alt="">
+                        <?php }?>
                     </div>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 nomenclatureName">
                         <?= $form->field($model, 'name')->textInput(['maxlength' => true,'required' => true]) ?>
                     </div>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 nomenclaturePrice">
-                        <?= $form->field($model, 'cost')->input('number',['required' => true]) ?>
+                        <?= $form->field($model, 'cost')->input('text',['required' => true]) ?>
                     </div>
                     <div class="form-group col-md-12 col-lg-12 col-sm-12 nomenclaturePrice">
-                        <?= $form->field($model, 'price')->input('number',['required' => true]) ?>
+                        <?= $form->field($model, 'price')->input('text',['required' => true]) ?>
                     </div>
                 </div>
-                <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>2])->all(); ?>
-                <?php if(!empty($fields)){ ?>
-                    <?php foreach ($fields as $fild => $fild_simple){ ?>
-                        <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id, false);?>
+                <?php if ($model->id){ ?>
+                    <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>2])->all(); ?>
+                    <?php if(!empty($fields)){ ?>
+                        <?php foreach ($fields as $fild => $fild_simple){ ?>
+                            <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
+                        <?php } ?>
+                    <?php } ?>
+                <?php } else {?>
+                    <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>2])->andWhere(['status'=>'1'])->all(); ?>
+                    <?php if(!empty($fields)){ ?>
+                        <?php foreach ($fields as $fild => $fild_simple){ ?>
+                            <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
+                        <?php } ?>
                     <?php } ?>
                 <?php } ?>
             </div>
-            <?php if(!empty($blocks)){ ?>
-                <?php foreach ($blocks as $block => $block_val){ ?>
-                    <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="clients">
-                        <div class="panel-title">
-                            <span class="non-active"><?=$block_val->title?></span>
-                            <input type="text" name="newblocks[<?php echo $block_val->id;?>]" value="<?=$block_val->title?>"  class="only-active form-control">
-                            <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
-                            <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
-                            <button type="button" class="btn btn-default btn-sm edite-block-trash"><i class="bx bx-trash"></i></button>
-                        </div>
-                        <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->all(); ?>
-                        <?php if(!empty($fields)){ ?>
-                            <?php foreach ($fields as $fild => $fild_simple){ ?>
-                                <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id,false);?>
-                            <?php } ?>
-                        <?php } ?>
-                        <div class="actions">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default btn-sm create-block-item dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Ստեղծել դաշտ
-                                </button>
-                                <ul class="dropdown-menu custom_field_menu" style="">
-                                    <li data-type="number">NUMBER <br><span>Թվային արժեք ավելացնելու դաշտ:</span></li>
-                                    <li data-type="varchar">TEXT (255 Simbols) <br><span>Տեքստ ավելացնելու դաշտ:</span></li>
-                                    <li data-type="list">LIST <br><span>Ցուցակներ լրացնելու դաշտ:</span></li>
-                                    <li data-type="file">FILE <br><span>Նկար ավելացնելու դաշտ:</span></li>
-                                    <li data-type="text">TEXTAREA <br><span>Մեշ ծավալով տեքստ ավելացնելու դաշտ:</span></li>
-                                    <li data-type="date">DATE <br><span>Ամսաթիվ ավելացնելու դաշտ:</span></li>
-                                    <li data-type="datetime">DATETIME <br><span>Ժամ և ամսաթիվ ավելացնելու դաշտ:</span></li>
-                                </ul>
+            <?php if ($model->id){ ?>
+                <?php if(!empty($blocks)){ ?>
+                    <?php foreach ($blocks as $block => $block_val){ ?>
+                        <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->all();
+                        foreach ($fields as $field) {
+                            $value = CustomfieldsBlocksInputValues::find()
+                                ->where(['input_id' => $field->id])
+                                ->andWhere(['item_id' => $model->id])
+                                ->one();
+                            if ($value) {
+                                $fieldValues = true;
+                                break;
+                            } else {
+                                $fieldValues = false;
+                            }
+                        }
+                        if ($fieldValues){ ?>
+                            <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="warehouse">
+                                <div class="panel-title">
+                                    <span class="non-active"><?=$block_val->title?></span>
+                                    <input type="text" name="newblocks[<?php echo $block_val->id;?>]" value="<?=$block_val->title?>"  class="only-active form-control">
+                                </div>
+                                <?php if(!empty($fields)){ ?>
+                                    <?php foreach ($fields as $fild => $fild_simple){ ?>
+                                        <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
+                                    <?php } ?>
+                                <?php } ?>
                             </div>
-                        </div>
-                    </div>
+                        <?php } ?>
+                    <?php } ?>
+                <?php } ?>
+            <?php } else {?>
+                <?php if(!empty($blocks)){ $fieldValues = ''; ?>
+                    <?php foreach ($blocks as $block => $block_val){ ?>
+                        <?php $fields = CustomfieldsBlocksInputs::find()->where(['iblock_id'=>$block_val->id])->andWhere(['status'=>'1'])->all();
+                        foreach ($fields as $field) {
+                            if ($field->id) {
+                                $fieldValues = true;
+                                break;
+                            } else {
+                                $fieldValues = false;
+                            }
+                        }
+                        if ($fieldValues){ ?>
+                            <div class="default-panel"  data-id="<?php echo $block_val->id;?>" data-page="nomenclature">
+                                <div class="panel-title">
+                                    <span class="non-active"><?=$block_val->title?></span>
+                                    <input type="text" name="newblocks[<?php echo $block_val->id;?>]" value="<?=$block_val->title?>"  class="only-active form-control">
+                                    <button type="button" class="btn btn-default btn-sm edite-block-title" ><i class='bx bx-edit-alt'></i></button>
+                                    <button type="button" class="btn btn-default btn-sm edite-block-title-save" ><i class='bx bx-save'></i></button>
+                                    <button type="button" class="btn btn-default btn-sm edite-block-trash"><i class="bx bx-trash"></i></button>
+                                </div>
+                                <?php if(!empty($fields)){ ?>
+                                    <?php foreach ($fields as $fild => $fild_simple){; ?>
+                                        <?php echo CustomfieldsBlocksInputs::createElement($fild_simple,$model->id);?>
+                                    <?php } ?>
+                                <?php } ?>
+                            </div>
+                        <?php } ?>
+                    <?php } ?>
                 <?php } ?>
             <?php } ?>
         </div>
         <div class="card-footer">
-            <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary']) ?>
+            <?= Html::submitButton('Պահպանել', ['class' => 'btn rounded-pill btn-secondary submit_save']) ?>
         </div>
         <?php ActiveForm::end(); ?>
     </div>
